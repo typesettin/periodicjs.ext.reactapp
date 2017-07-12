@@ -1,8 +1,8 @@
-# periodicjs.ext.reactadmin [![Coverage Status](https://coveralls.io/repos/github/githubUserOrgName/periodicjs.ext.reactadmin/badge.svg?branch=master)](https://coveralls.io/github/githubUserOrgName/periodicjs.ext.reactadmin?branch=master) [![Build Status](https://travis-ci.org/githubUserOrgName/periodicjs.ext.reactadmin.svg?branch=master)](https://travis-ci.org/githubUserOrgName/periodicjs.ext.reactadmin)
+# periodicjs.ext.reactapp [![Coverage Status](https://coveralls.io/repos/github/githubUserOrgName/periodicjs.ext.reactapp/badge.svg?branch=master)](https://coveralls.io/github/githubUserOrgName/periodicjs.ext.reactapp?branch=master) [![Build Status](https://travis-ci.org/githubUserOrgName/periodicjs.ext.reactapp.svg?branch=master)](https://travis-ci.org/githubUserOrgName/periodicjs.ext.reactapp)
 
   A simple extension.
 
-  [API Documentation](https://github.com/githubUserOrgName/periodicjs.ext.reactadmin/blob/master/doc/api.md)
+  [API Documentation](https://github.com/githubUserOrgName/periodicjs.ext.reactapp/blob/master/doc/api.md)
 
   ## Usage
 
@@ -12,14 +12,14 @@
   ```
   $ cd path/to/application/root
   ### Using the CLI
-  $ periodicjs ext periodicjs.ext.reactadmin hello  
+  $ periodicjs ext periodicjs.ext.reactapp hello  
   ### Calling Manually
-  $ node index.js --cli --command --ext --name=periodicjs.ext.reactadmin --task=hello 
+  $ node index.js --cli --command --ext --name=periodicjs.ext.reactapp --task=hello 
   ```
 
   ## Configuration
 
-  You can configure periodicjs.ext.reactadmin
+  You can configure periodicjs.ext.reactapp
 
   ### Default Configuration
   ```javascript
@@ -37,19 +37,19 @@
 
   ### Installing the Extension
 
-  Install like any other extension, run `npm run install periodicjs.ext.reactadmin` from your periodic application root directory and then normally you would run `periodicjs addExtension periodicjs.ext.reactadmin`, but this extension does this in the post install npm script.
+  Install like any other extension, run `npm run install periodicjs.ext.reactapp` from your periodic application root directory and then normally you would run `periodicjs addExtension periodicjs.ext.reactapp`, but this extension does this in the post install npm script.
   ```
   $ cd path/to/application/root
-  $ npm run install periodicjs.ext.reactadmin
-  $ periodicjs addExtension periodicjs.ext.reactadmin //this extension does this in the post install script
+  $ npm run install periodicjs.ext.reactapp
+  $ periodicjs addExtension periodicjs.ext.reactapp //this extension does this in the post install script
   ```
   ### Uninstalling the Extension
 
-  Run `npm run uninstall periodicjs.ext.reactadmin` from your periodic application root directory and then normally you would run `periodicjs removeExtension periodicjs.ext.reactadmin` but this extension handles this in the npm post uninstall script.
+  Run `npm run uninstall periodicjs.ext.reactapp` from your periodic application root directory and then normally you would run `periodicjs removeExtension periodicjs.ext.reactapp` but this extension handles this in the npm post uninstall script.
   ```
   $ cd path/to/application/root
-  $ npm run uninstall periodicjs.ext.reactadmin
-  $ periodicjs removeExtension periodicjs.ext.reactadmin // this is handled in the npm postinstall script
+  $ npm run uninstall periodicjs.ext.reactapp
+  $ periodicjs removeExtension periodicjs.ext.reactapp // this is handled in the npm postinstall script
   ```
 
 

@@ -3,15 +3,15 @@
 const periodic = require('periodicjs');
 const extensionRouter = periodic.express.Router();
 const utilities = require('../utilities');
-const reactadminRouter = require('./reactadmin');
+const reactappRouter = require('./reactapp');
 const securecontentRouter = require('./securecontent');
 const contentRouter = require('./content');
 const componentRouter = require('./component');
-const reactadmin = utilities.reactadmin();
+const reactapp = utilities.reactapp();
 
-extensionRouter.use(`${reactadmin.manifest_prefix}securecontent`, securecontentRouter);
-extensionRouter.use(`${reactadmin.manifest_prefix}contentdata`, contentRouter);
-extensionRouter.use(`${reactadmin.manifest_prefix}load`, componentRouter);
-extensionRouter.use(`${reactadmin.manifest_prefix}`, reactadminRouter);
+extensionRouter.use(`${reactapp.manifest_prefix}securecontent`, securecontentRouter);
+extensionRouter.use(`${reactapp.manifest_prefix}contentdata`, contentRouter);
+extensionRouter.use(`${reactapp.manifest_prefix}load`, componentRouter);
+extensionRouter.use(`${reactapp.manifest_prefix}`, reactappRouter);
 
 module.exports = extensionRouter;

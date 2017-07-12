@@ -1,5 +1,5 @@
 {
-  "name": "periodicjs.ext.reactadmin",
+  "name": "periodicjs.ext.reactapp",
   "description": "react based admin.",
   "version": "3.0.0",
   "main": "index.js",
@@ -16,8 +16,8 @@
   "license": "MIT",
   "scripts": {
     "test": "mocha -R spec --recursive",
-    "postinstall": "cd ../../ && periodicjs aex periodicjs.ext.reactadmin",
-    "postuninstall": "cd ../../ && periodicjs rex periodicjs.ext.reactadmin",
+    "postinstall": "cd ../../ && periodicjs aex periodicjs.ext.reactapp",
+    "postuninstall": "cd ../../ && periodicjs rex periodicjs.ext.reactapp",
     "build_ie": "node_modules/.bin/webpack --config adminclient/config/webpack.config.ie.js --debug --progress",
     "build_ie_full": "node_modules/.bin/webpack --config adminclient/config/webpack.config.ie.js && cp -r public/ ../../../public/themes/periodicjs.theme.cis/",
     "ssr_build": "babel adminclient/src -d adminclient/_src --ignore adminclient/src/components/RACodeMirror/",
@@ -132,11 +132,11 @@
     "url": "http://about.me/yawjosephetse"
   },
   "bugs": {
-    "url": "https://github.com/typesettin/periodicjs.ext.reactadmin/issues"
+    "url": "https://github.com/typesettin/periodicjs.ext.reactapp/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/typesettin/periodicjs.ext.reactadmin.git"
+    "url": "git://github.com/typesettin/periodicjs.ext.reactapp.git"
   },
   "directories": {},
   "optionalDependencies": {}

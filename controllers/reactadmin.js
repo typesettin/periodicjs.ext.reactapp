@@ -42,7 +42,7 @@ appSettings.themename = periodic.settings.container.name;
 let manifestSettings;
 let navigationSettings;
 let unauthenticatedManifestSettings;
-const extsettings = utilities.reactadmin().settings;
+const extsettings = utilities.reactapp().settings;
 // const themeSettings = periodic.settings.themeSettings;
 // const appenvironment = appSettings.application.environment;
 const CoreController = periodic.core.controller;
@@ -50,7 +50,7 @@ const CoreController = periodic.core.controller;
 const logger = periodic.logger;
 const versions = (extsettings.application.use_offline_cache) ? {
   theme: fs.readJsonSync(path.join(__dirname, '../../../', `content/themes/${ appSettings.theme || appSettings.themename }/package.json`)).version,
-  reactadmin: fs.readJsonSync(path.join(__dirname, '../package.json')).version,
+  reactapp: fs.readJsonSync(path.join(__dirname, '../package.json')).version,
 } : false;
 
 
@@ -136,8 +136,8 @@ var removeNullIndexes = function(data) {
 };
 
 /**
- * Used for reading the periodicjs.reactadmin.json configuration as it can be either a json or js file
- * @param  {string} filepath Path toe the reactadmin configuration file
+ * Used for reading the periodicjs.reactapp.json configuration as it can be either a json or js file
+ * @param  {string} filepath Path toe the reactapp configuration file
  * @return {Object}          Resolved configuration object
  */
 var handleAmbiguousExtensionType = function(filepath) {
@@ -285,11 +285,11 @@ var admin_index = function(req, res, next) {
       }
     }
     // UserAgentParser.setUA(uastring);
-    // logger.silly('render reactadmin, ssr', extsettings.server_side_react);
-    // logger.silly('render reactadmin, req.query.format',req.query.format);
+    // logger.silly('render reactapp, ssr', extsettings.server_side_react);
+    // logger.silly('render reactapp, req.query.format',req.query.format);
     let viewtemplate = {
       viewname,
-      extname: 'periodicjs.ext.reactadmin',
+      extname: 'periodicjs.ext.reactapp',
     };
     let viewdata = {
       pagedata: {
@@ -297,7 +297,7 @@ var admin_index = function(req, res, next) {
         // toplink: '&raquo; Multi-Factor Authenticator',
       },
       user: req.user,
-      reactadmin: utilities.reactadmin(),
+      reactapp: utilities.reactapp(),
       theme_name: appSettings.themename,
       // adminPostRoute: adminPostRoute
     };
@@ -329,10 +329,10 @@ var admin_index = function(req, res, next) {
       periodic.core.controller.render(req, res, viewtemplate, viewdata);
     }
   } else {
-    // console.log('SKIPPING REACTADMIN req._parsedOriginalUrl.pathname', req._parsedOriginalUrl.pathname);
-    // console.log('SKIPPING REACTADMIN: req._parsedOriginalUrl.pathname.indexOf(/extensiondata/) === -1', req._parsedOriginalUrl.pathname.indexOf('/extensiondata/') === -1);
-    // console.log('SKIPPING REACTADMIN req.query.format !== json',req.query.format !== 'json');
-    // console.log('SKIPPING REACTADMIN req.query.format !== json&',req.query.format !== 'json&');
+    // console.log('SKIPPING reactapp req._parsedOriginalUrl.pathname', req._parsedOriginalUrl.pathname);
+    // console.log('SKIPPING reactapp: req._parsedOriginalUrl.pathname.indexOf(/extensiondata/) === -1', req._parsedOriginalUrl.pathname.indexOf('/extensiondata/') === -1);
+    // console.log('SKIPPING reactapp req.query.format !== json',req.query.format !== 'json');
+    // console.log('SKIPPING reactapp req.query.format !== json&',req.query.format !== 'json&');
     next();
   }
 };
@@ -359,9 +359,9 @@ var handleManifestCompilation = function(manifests) {
 var pullManifestSettings = function(configuration, isUnauthenticated = false) {
   let extensions = configuration.extensions || [];
   let filePaths = extensions.reduce((result, config) => {
-    if (config.enabled && config.periodicConfig && config.periodicConfig['periodicjs.ext.reactadmin'] && config.periodicConfig['periodicjs.ext.reactadmin'][(isUnauthenticated) ? 'unauthenticated_manifests' : 'manifests']) {
-      if (Array.isArray(config.periodicConfig['periodicjs.ext.reactadmin'][(isUnauthenticated) ? 'unauthenticated_manifests' : 'manifests'])) return result.concat(config.periodicConfig['periodicjs.ext.reactadmin'][(isUnauthenticated) ? 'unauthenticated_manifests' : 'manifests']);
-      result.push(config.periodicConfig['periodicjs.ext.reactadmin'][(isUnauthenticated) ? 'unauthenticated_manifests' : 'manifests']);
+    if (config.enabled && config.periodicConfig && config.periodicConfig['periodicjs_ext_reactapp'] && config.periodicConfig['periodicjs_ext_reactapp'][(isUnauthenticated) ? 'unauthenticated_manifests' : 'manifests']) {
+      if (Array.isArray(config.periodicConfig['periodicjs_ext_reactapp'][(isUnauthenticated) ? 'unauthenticated_manifests' : 'manifests'])) return result.concat(config.periodicConfig['periodicjs_ext_reactapp'][(isUnauthenticated) ? 'unauthenticated_manifests' : 'manifests']);
+      result.push(config.periodicConfig['periodicjs_ext_reactapp'][(isUnauthenticated) ? 'unauthenticated_manifests' : 'manifests']);
     }
     return result;
   }, []);
@@ -406,7 +406,7 @@ var handleNavigationCompilation = function(navigation, isExtension) {
 var pullNavigationSettings = function(configuration) {
   let extensions = configuration.extensions || [];
   let filePaths = extensions.reduce((result, config) => {
-    if (config.enabled && config.periodicConfig && config.periodicConfig['periodicjs.ext.reactadmin'] && config.periodicConfig['periodicjs.ext.reactadmin'].navigation) result.push(config.periodicConfig['periodicjs.ext.reactadmin'].navigation);
+    if (config.enabled && config.periodicConfig && config.periodicConfig['periodicjs_ext_reactapp'] && config.periodicConfig['periodicjs_ext_reactapp'].navigation) result.push(config.periodicConfig['periodicjs_ext_reactapp'].navigation);
     return result;
   }, []);
   return readAndStoreConfigurations(filePaths || [], 'navigation')
@@ -424,10 +424,10 @@ var pullNavigationSettings = function(configuration) {
  * @return {Object}      Aggregated manifest and navigation configuration
  */
 var finalizeSettingsWithTheme = function(data) {
-  let filePath = path.join(__dirname, '../../../content/container', appSettings.theme || appSettings.themename, 'periodicjs.reactadmin.json');
+  let filePath = path.join(__dirname, '../../../content/container', appSettings.theme || appSettings.themename, 'periodicjs.reactapp.json');
   return handleAmbiguousExtensionType(filePath)
     .then(result => {
-      result = result['periodicjs.ext.reactadmin'];
+      result = result['periodicjs.ext.reactapp'];
       return Promisie.parallel({
         manifests: readAndStoreConfigurations.bind(null, result.manifests || [], 'manifest'),
         unauthenticated_manifests: readAndStoreConfigurations.bind(null, result.unauthenticated_manifests || [], 'unauthenticated'),
@@ -454,9 +454,9 @@ var finalizeSettingsWithTheme = function(data) {
       return { manifest: manifests, navigation, unauthenticated_manifest: unauthenticated_manifests, };
     })
     .catch(e => {
-      logger.error(`There is not a reactadmin config for ${appSettings.theme || appSettings.themename}`, e);
-      fs.outputJson(path.join(periodic.config.app_root, 'content/container', appSettings.theme || appSettings.themename, 'periodicjs.reactadmin.json'), {
-        'periodicjs.ext.reactadmin': {
+      logger.error(`There is not a reactapp config for ${appSettings.theme || appSettings.themename}`, e);
+      fs.outputJson(path.join(periodic.config.app_root, 'content/container', appSettings.theme || appSettings.themename, 'periodicjs.reactapp.json'), {
+        'periodicjs_ext_reactapp': {
           manifests: [],
           'unauthenticated_manifests': [],
           'navigation': false,
@@ -510,12 +510,12 @@ var pullConfigurationSettings = function(reload) {
   return Promisie.all(
       [
         Promise.resolve(Array.from(periodic.extensions.values())), // fs.readJsonAsync(path.join(__dirname, '../../../content/config/extensions.json')),
-        handleAmbiguousExtensionType(path.join(__dirname, '../periodicjs.reactadmin.json')),
+        handleAmbiguousExtensionType(path.join(__dirname, '../periodicjs.reactapp.json')),
       ]
     )
     .then(configurationData => {
       let [configuration, adminExtSettings, ] = configurationData;
-      adminExtSettings = adminExtSettings['periodicjs.ext.reactadmin'];
+      adminExtSettings = adminExtSettings['periodicjs.ext.reactapp'];
       let operations = {};
       if (reload === 'manifest' || reload === true || !manifestSettings) {
         operations = Object.assign(operations, {
@@ -674,15 +674,15 @@ var assignComponentStatus = function(component) {
 var pullComponentSettings = function(refresh) {
   if (components && !refresh) return Promisie.resolve(components);
   return readAndStoreConfigurations([
-      handleAmbiguousExtensionType.bind(null, path.join(__dirname, '../periodicjs.reactadmin.json')),
-      handleAmbiguousExtensionType.bind(null, path.join(__dirname, `../../../content/container/${appSettings.theme || appSettings.themename}/periodicjs.reactadmin.json`)),
+      handleAmbiguousExtensionType.bind(null, path.join(__dirname, '../periodicjs.reactapp.json')),
+      handleAmbiguousExtensionType.bind(null, path.join(__dirname, `../../../content/container/${appSettings.theme || appSettings.themename}/periodicjs.reactapp.json`)),
     ])
     .then(results => {
       switch (Object.keys(results).length.toString()) {
         case '1':
-          return Object.assign({}, (results[0]['periodicjs.ext.reactadmin']) ? results[0]['periodicjs.ext.reactadmin'].components : {});
+          return Object.assign({}, (results[0]['periodicjs.ext.reactapp']) ? results[0]['periodicjs.ext.reactapp'].components : {});
         case '2':
-          return Object.assign({}, (results[0]['periodicjs.ext.reactadmin']) ? results[0]['periodicjs.ext.reactadmin'].components : {}, (results[1]['periodicjs.ext.reactadmin']) ? results[1]['periodicjs.ext.reactadmin'].components : {});
+          return Object.assign({}, (results[0]['periodicjs.ext.reactapp']) ? results[0]['periodicjs.ext.reactapp'].components : {}, (results[1]['periodicjs.ext.reactapp']) ? results[1]['periodicjs.ext.reactapp'].components : {});
         default:
           return {};
       }

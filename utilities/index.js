@@ -10,7 +10,7 @@ const ROUTE_MAP = new Map();
 const generateDetailManifests = require('./detail_views/index').generateManifest;
 
 function getSettings() {
-  return periodic.settings.extensions['periodicjs.ext.reactadmin'];
+  return periodic.settings.extensions['periodicjs.ext.reactapp'];
 }
 
 function getParameterized(route) {
@@ -36,9 +36,9 @@ function findMatchingRoute(routes, location) {
   return matching;
 }
 
-function reactadmin() {
+function reactapp() {
   const extensionConfig = getSettings();
-  const reactadminConfig = {
+  const reactappConfig = {
     settings: extensionConfig,
     route_prefix: route_prefixes.route_prefix(extensionConfig.adminPath),
     admin_prefix: route_prefixes.admin_prefix(extensionConfig.adminPath),
@@ -48,9 +48,9 @@ function reactadmin() {
   periodic.app.locals.theme_name = periodic.settings.container.name;
   periodic.app.locals.adminPath = extensionConfig.adminPath;
   // periodic.app.locals.extension = Object.assign({}, periodic.app.locals.extension, {
-  //   reactadmin: reactadminConfig,
+  //   reactapp: reactappConfig,
   // });
-  return reactadminConfig;
+  return reactappConfig;
 }
 
 module.exports = {
@@ -60,5 +60,5 @@ module.exports = {
   ssr_manifest,
   reloader,
   getSettings,
-  reactadmin,
+  reactapp,
 };
