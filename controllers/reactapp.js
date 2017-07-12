@@ -37,6 +37,7 @@ const CORE_DATA_CONFIGURATIONS = {
 
 let components;
 const appSettings = periodic.settings;
+// console.log('periodic', periodic);
 appSettings.theme = periodic.settings.container.name;
 appSettings.themename = periodic.settings.container.name;
 let manifestSettings;
@@ -425,9 +426,10 @@ var pullNavigationSettings = function(configuration) {
  */
 var finalizeSettingsWithTheme = function(data) {
   let filePath = path.join(__dirname, '../../../content/container', appSettings.theme || appSettings.themename, 'periodicjs.reactapp.json');
+  console.log({ filePath })
   return handleAmbiguousExtensionType(filePath)
     .then(result => {
-      result = result['periodicjs.ext.reactapp'];
+      result = result['periodicjs_ext_reactapp'];
       return Promisie.parallel({
         manifests: readAndStoreConfigurations.bind(null, result.manifests || [], 'manifest'),
         unauthenticated_manifests: readAndStoreConfigurations.bind(null, result.unauthenticated_manifests || [], 'unauthenticated'),
@@ -515,7 +517,8 @@ var pullConfigurationSettings = function(reload) {
     )
     .then(configurationData => {
       let [configuration, adminExtSettings, ] = configurationData;
-      adminExtSettings = adminExtSettings['periodicjs.ext.reactapp'];
+      adminExtSettings = adminExtSettings['periodicjs_ext_reactapp'];
+      // console.log({ adminExtSettings })
       let operations = {};
       if (reload === 'manifest' || reload === true || !manifestSettings) {
         operations = Object.assign(operations, {

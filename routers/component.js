@@ -26,13 +26,13 @@ ensureApiAuthenticated = (req, res, next) => {
   next();
 };
 
-componentRouter.post('/manifest', ensureApiAuthenticated, uacController.loadUserRoles, controllers.reactadmin.loadManifest);
-componentRouter.get('/public_manifest', controllers.reactadmin.loadUnauthenticatedManifest);
-componentRouter.post('/preferences', ensureApiAuthenticated, uacController.loadUserRoles, controllers.reactadmin.loadUserPreferences);
-componentRouter.post('/navigation', ensureApiAuthenticated, uacController.loadUserRoles, controllers.reactadmin.loadNavigation);
-componentRouter.post('/configurations', ensureApiAuthenticated, uacController.loadUserRoles, controllers.reactadmin.loadConfigurations);
+componentRouter.post('/manifest', ensureApiAuthenticated, uacController.loadUserRoles, controllers.reactapp.loadManifest);
+componentRouter.get('/public_manifest', controllers.reactapp.loadUnauthenticatedManifest);
+componentRouter.post('/preferences', ensureApiAuthenticated, uacController.loadUserRoles, controllers.reactapp.loadUserPreferences);
+componentRouter.post('/navigation', ensureApiAuthenticated, uacController.loadUserRoles, controllers.reactapp.loadNavigation);
+componentRouter.post('/configurations', ensureApiAuthenticated, uacController.loadUserRoles, controllers.reactapp.loadConfigurations);
 componentRouter.post('/mfa', ensureApiAuthenticated, mfaController.authenticate_totp);
-componentRouter.get('/components/:component', controllers.reactadmin.loadComponent);
+componentRouter.get('/components/:component', controllers.reactapp.loadComponent);
 componentRouter.get('/healthcheck', function(req, res) {
   res.status(200).send({ status: 'ok', });
 });

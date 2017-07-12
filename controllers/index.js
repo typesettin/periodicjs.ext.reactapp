@@ -1,8 +1,8 @@
 'use strict';
-const reactadmin = require('./reactadmin');
+const reactapp = require('./reactapp');
 // const extensions = require('./extensions');
 
 module.exports = {
-  reactadmin,
+  reactapp,
   // extensions,
 };
