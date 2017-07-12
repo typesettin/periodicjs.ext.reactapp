@@ -62,12 +62,12 @@ const IndexManifest = {
 };
 // const periodic = require('periodicjs');
 const utilities = require('../../../utilities');
-const reactadmin = utilities.reactadmin();
+const reactapp = utilities.reactapp();
 
 module.exports = () => {
   return {
     'containers': {
-      [`${reactadmin.manifest_prefix}`]: {
+      [`${reactapp.manifest_prefix}`]: {
         'layout': IndexManifest,
         'resources': {},
         'onFinish': 'render',
@@ -76,7 +76,7 @@ module.exports = () => {
           'navLabel': 'Home',
         },
       },
-      [`${reactadmin.manifest_prefix}home`]: {
+      [`${reactapp.manifest_prefix}home`]: {
         'layout': IndexManifest,
         'resources': {},
         'onFinish': 'render',
