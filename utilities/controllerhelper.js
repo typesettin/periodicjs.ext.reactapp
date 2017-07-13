@@ -205,11 +205,11 @@ function pullConfigurationSettings(reload) {
 
 /**
  * Reads a react admin configuration from a specified file path or from files that exist in a directory path (although this can read .js modules it is recommended you use json files as js files are cached and can not be reloaded)
- * @param  {string} filePath A file or directory path
+ * @param  {string} originalFilePath A file or directory path
  * @return {Object|Object[]}          Either a single react admin configuration or an array of configurations
  */
-function readConfigurations(filePath, configurationType) {
-  filePath = path.join(__dirname, '../../../', filePath);
+function readConfigurations(originalFilePath, configurationType) {
+  const filePath = path.join(periodic.config.app_root, originalFilePath);
   let _import = function(_path) {
     if (path.extname(_path) !== '.js' && path.extname(_path) !== '.json') {
       return undefined;
@@ -548,7 +548,7 @@ function removeNullIndexes(data) {
  * @param  {boolean} [isRoot=false]   If true assumes that the configuration object is contained within the "layout" property of the provided object
  * @return {Object|Object[]}             Filtered configuration object
  */
-function recursivePrivilegesFilter(privileges, config = {}, isRoot = false) {
+function recursivePrivilegesFilter(privileges = {}, config = {}, isRoot = false) {
   privileges = (Array.isArray(privileges)) ? privileges : [];
   return Object.keys(config).reduce((result, key) => {
     let layout = (isRoot) ? config[key].layout : config[key];

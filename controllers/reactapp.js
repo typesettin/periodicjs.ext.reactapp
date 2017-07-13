@@ -230,7 +230,8 @@ function loadNavigation(req, res, next) {
       }
       navigation.wrapper = extsettings.navigationLayout.wrapper;
       navigation.container = extsettings.navigationLayout.container;
-      navigation.layout = utilities.controllerhelper.recursivePrivilegesFilter(Object.keys(req.session.userprivilegesdata), [navigation.layout, ])[0];
+      console.log({ navigation }, 'req.session.userprivilegesdata', req.session.userprivilegesdata);
+      navigation.layout = utilities.controllerhelper.recursivePrivilegesFilter(Object.keys(req.session.userprivilegesdata ||{}), [navigation.layout, ])[0];
       if (res && typeof res.send === 'function') {
         res.status(200).send({
           result: 'success',
@@ -246,6 +247,7 @@ function loadNavigation(req, res, next) {
 }
 
 function loadConfigurations(req, res) {
+  console.log('loading configs');
   return utilities.controllerhelper.pullConfigurationSettings((req.query && req.query.refresh) ? true : false)
     .then(() => {
       if (req.query) delete req.query.refresh;
@@ -264,6 +266,7 @@ function loadConfigurations(req, res) {
       });
     })
     .catch(e => {
+      logger.error(e);
       res.status(500).send({
         result: 'error',
         status: 500,

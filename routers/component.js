@@ -12,6 +12,7 @@ let ensureApiAuthenticated = oauth2serverControllers.auth.ensureApiAuthenticated
 //   const accountController = resources.app.controller.native.account;
 const uacController = {
   loadUserRoles: (req, res, next) => {
+    req.session.userprivilegesdata = {};
     next();
   },
 }; //resources.app.controller.extension.user_access_control.uac;
@@ -21,10 +22,10 @@ const mfaController = {
   },
 }; //resources.app.controller.extension.login_mfa
 
-ensureApiAuthenticated = (req, res, next) => {
-  console.log('ensureApiAuthenticated', req.headers);
-  next();
-};
+// ensureApiAuthenticated = (req, res, next) => {
+//   console.log('ensureApiAuthenticated', req.headers);
+//   next();
+// };
 
 componentRouter.post('/manifest', ensureApiAuthenticated, uacController.loadUserRoles, controllers.reactapp.loadManifest);
 componentRouter.get('/public_manifest', controllers.reactapp.loadUnauthenticatedManifest);
