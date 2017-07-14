@@ -6,7 +6,6 @@ const controllers = require('../controllers');
 const componentRouter = periodic.express.Router();
 // const componentSettings = utilities.getSettings();
 
-// componentRouter.get('/dashboard', controllers.component.dashboardView);
 const oauth2serverControllers = periodic.controllers.extension.get('periodicjs.ext.oauth2server');
 let ensureApiAuthenticated = oauth2serverControllers.auth.ensureApiAuthenticated;
 //   const accountController = resources.app.controller.native.account;
@@ -21,11 +20,6 @@ const mfaController = {
     next();
   },
 }; //resources.app.controller.extension.login_mfa
-
-// ensureApiAuthenticated = (req, res, next) => {
-//   console.log('ensureApiAuthenticated', req.headers);
-//   next();
-// };
 
 componentRouter.post('/manifest', ensureApiAuthenticated, uacController.loadUserRoles, controllers.reactapp.loadManifest);
 componentRouter.get('/public_manifest', controllers.reactapp.loadUnauthenticatedManifest);

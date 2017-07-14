@@ -2,7 +2,7 @@
 const utilities = require('../../../utilities');
 const reactapp = utilities.reactapp();
 
-// const dbstatsLayout = require('../../../utilities/detail_views/layouts/dbstats.manifest.layout.js');
+const dbstatsLayout = require('../../../utilities/detail_views/layouts/dbstats.manifest.layout.js');
 
 module.exports = {
   containers: {
@@ -19,8 +19,8 @@ module.exports = {
           // developertabs('data'),
           {
             component: 'Container',
-            children: 'ok',
-            // children: dbstatsLayout({}),
+            // children:'ok',
+            children: dbstatsLayout({}),
 
           },
         ],

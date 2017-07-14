@@ -1,8 +1,8 @@
 'use strict';
 const reactapp = require('./reactapp');
-// const extensions = require('./extensions');
+const helper = require('./helper');
 
 module.exports = {
   reactapp,
-  // extensions,
+  helper,
 };
