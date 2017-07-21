@@ -262,7 +262,7 @@ function readAndStoreConfigurations(paths, type) {
   });
   return Promisie.settle(reads)
     .then(result => {
-      if (result.rejected.length) logger.error('Invalid Manifest', result.rejected);
+      if (result.rejected.length) logger.error('Invalid Manifest', result.rejected, result.rejected);
       let { fulfilled, } = result;
       fulfilled = fulfilled.map(data => data.value);
       let flatten = function(result, data) {
