@@ -13,16 +13,16 @@
     } else{%>'Welcome'<%}%></title>
     <link href="/extensions/periodicjs.ext.reactapp/static/css/main.c0dda779.css" rel="stylesheet">
     <%- (locals.reactapp.settings.custom_css_stylesheet)?`<link href="${locals.reactapp.settings.custom_css_stylesheet}" rel="stylesheet">`:'' %>
-    <% if(locals.reactapp.settings.application.additional_header){ %><%- include(`../../../../content/themes/${locals.theme_name}/views/shared/reactapp/header`,{locals}) ;%><% } %>
+    <% if(locals.reactapp.settings.application.additional_header){ %><%- include(`../../../../content/container/${locals.theme_name}/views/shared/reactapp/header`,{locals}) ;%><% } %>
   </head>
   <body>
     <div id="root"><%- (typeof body!=='undefined')?body:'' %></div>
     <script type="text/javascript">
       <%- locals.periodic.viewHelper.passObjToClient(locals.reactapp.settings,"__padmin") %>
     </script>
-      <% if(locals.reactapp.settings.application.use_custom_elements){ %><%- include(`../../../../content/themes/${locals.theme_name}/views/shared/reactapp/custom_elements`,{locals});%><% } %>
+      <% if(locals.reactapp.settings.application.use_custom_elements){ %><%- include(`../../../../content/container/${locals.theme_name}/views/shared/reactapp/custom_elements`,{locals});%><% } %>
     
     <script type="text/javascript" src="/extensions/periodicjs.ext.reactapp/static/js/main.7b5be586.js"></script>
-    <% if(locals.reactapp.settings.application.additional_footer){ %><%- include(`../../../../content/themes/${locals.theme_name}/views/shared/reactapp/footer`,{locals}) ;%><% } %>
+    <% if(locals.reactapp.settings.application.additional_footer){ %><%- include(`../../../../content/container/${locals.theme_name}/views/shared/reactapp/footer`,{locals}) ;%><% } %>
   </body>
 </html>
