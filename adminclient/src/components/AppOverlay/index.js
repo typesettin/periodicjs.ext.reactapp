@@ -119,7 +119,7 @@ class Overlay extends Component {
         dynamicRenderComponent={this.getRenderedComponent} />
       : null;
     return (
-      <div className="__reactadmin_overlay" {...overlayStyleOverrides} style={{ position: 'fixed', bottom: 0, width: 'auto', zIndex:100000, }}>
+      <div className="__reactapp_overlay" {...overlayStyleOverrides} style={{ position: 'fixed', bottom: 0, width: 'auto', zIndex:100000, }}>
         {modal}
         {notices}
       </div>

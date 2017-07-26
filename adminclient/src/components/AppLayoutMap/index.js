@@ -56,7 +56,7 @@ export function getRenderedComponent(componentObject, resources, debug) {
     let asyncprops = (componentObject.asyncprops && typeof componentObject.asyncprops === 'object') ? utilities.traverse(componentObject.asyncprops, resources) : {};
     let windowprops = (componentObject.windowprops && typeof componentObject.windowprops === 'object') ? utilities.traverse(componentObject.windowprops, window) : {};
     let thisprops = (componentObject.thisprops && typeof componentObject.thisprops === 'object') ? utilities.traverse(componentObject.thisprops, Object.assign({
-      __reactadmin_manifest: {
+      __reactapp_manifest: {
         _component: componentObject,
         _resources: resources,
       },

@@ -35,7 +35,7 @@
                     },
                     "thisprops":{
                       "locationdata":[
-                        "__reactadmin_manifest","_resources"
+                        "__reactapp_manifest","_resources"
                       ]
                     }
                   }

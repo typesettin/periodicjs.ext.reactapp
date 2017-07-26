@@ -219,7 +219,7 @@ var Overlay = function (_Component3) {
         dynamicRenderComponent: this.getRenderedComponent })) : null;
       return _react2.default.createElement(
         'div',
-        (0, _extends3.default)({ className: '__reactadmin_overlay' }, overlayStyleOverrides, { style: { position: 'fixed', bottom: 0, width: 'auto', zIndex: 100000 } }),
+        (0, _extends3.default)({ className: '__reactapp_overlay' }, overlayStyleOverrides, { style: { position: 'fixed', bottom: 0, width: 'auto', zIndex: 100000 } }),
         modal,
         notices
       );

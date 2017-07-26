@@ -167,6 +167,7 @@ var ResponsiveTable = function (_Component) {
       selectedRowData: {},
       selectedRowIndex: {},
       showFilterSearch: props.showFilterSearch
+      // usingFiltersInSearch: props.usingFiltersInSearch,
     };
     _this.searchFunction = (0, _debounce2.default)(_this.updateTableData, 200);
     _this.getRenderedComponent = _AppLayoutMap.getRenderedComponent.bind(_this);
@@ -328,6 +329,7 @@ var ResponsiveTable = function (_Component) {
                 updatefunction(newRows);
               }, {
                 options: _this2.props.csvOptions
+                // keys: this.state.headers.map(header => header.sortid),  
               });
             } else {
               var newRows = JSON.parse(e.target.result);

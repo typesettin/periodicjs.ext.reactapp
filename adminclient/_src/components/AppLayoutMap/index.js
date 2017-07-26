@@ -162,7 +162,7 @@ function getRenderedComponent(componentObject, resources, debug) {
     var asyncprops = componentObject.asyncprops && (0, _typeof3.default)(componentObject.asyncprops) === 'object' ? _util2.default.traverse(componentObject.asyncprops, resources) : {};
     var windowprops = componentObject.windowprops && (0, _typeof3.default)(componentObject.windowprops) === 'object' ? _util2.default.traverse(componentObject.windowprops, window) : {};
     var thisprops = componentObject.thisprops && (0, _typeof3.default)(componentObject.thisprops) === 'object' ? _util2.default.traverse(componentObject.thisprops, (0, _assign2.default)({
-      __reactadmin_manifest: {
+      __reactapp_manifest: {
         _component: componentObject,
         _resources: resources
       }

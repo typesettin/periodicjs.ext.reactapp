@@ -326,7 +326,7 @@ export function getFormMaskedInput(options) {
   let { formElement, i, /*formgroup, width,*/ onChange, } = options;
   let initialValue = getInitialValue(formElement, this.state);  
   let getPassablePropkeyevents = getPassablePropsKeyEvents.bind(this);
-  let fileClassname = `__reactadmin_file_${formElement.name}`;
+  let fileClassname = `__reactapp_file_${formElement.name}`;
   let hasError = getErrorStatus(this.state, formElement.name);
   let hasValue = (formElement.name && this.state[formElement.name])? true : false;
   let passableProps = Object.assign({
@@ -398,7 +398,7 @@ export function getFormTextInputArea(options) {
   let { formElement, i, /*formgroup, width,*/ onChange, } = options;
   let initialValue = getInitialValue(formElement, this.state); //formElement.value || this.state[ formElement.name ] || getPropertyAttribute({ element:formElement, property:this.state, });
   let getPassablePropkeyevents = getPassablePropsKeyEvents.bind(this);
-  let fileClassname = `__reactadmin_file_${formElement.name}`;
+  let fileClassname = `__reactapp_file_${formElement.name}`;
   let hasError = getErrorStatus(this.state, formElement.name);
   let hasValue = (formElement.name && this.state[formElement.name])? true : false;
   let passableProps = Object.assign({
@@ -630,10 +630,10 @@ export function getSliderInput(options) {
   let customCallbackfunction = () => { };
   if (formElement.handle) {
     passableProps.handle = ({ value, offset, }) => (
-      <div style={{ left: `${offset}%`, }} className="__reactadmin_slider__handle">
-        <span className="__reactadmin_arrow-left" />
+      <div style={{ left: `${offset}%`, }} className="__reactapp_slider__handle">
+        <span className="__reactapp_arrow-left" />
         {(formElement.numeralFormat) ? numeral(value).format(formElement.numeralFormat) : value}
-        <span className="__reactadmin_arrow-right" />
+        <span className="__reactapp_arrow-right" />
       </div>
     );
   }
@@ -663,11 +663,11 @@ export function getSliderInput(options) {
         onChange={onValueChange}
       >
         {(formElement.leftLabel)
-          ? (<span className="__reactadmin_slider__label __reactadmin_slider__label_left">{formElement.leftLabel}</span>)
+          ? (<span className="__reactapp_slider__label __reactapp_slider__label_left">{formElement.leftLabel}</span>)
           : null
         } 
         {(formElement.rightLabel)
-          ? (<span className="__reactadmin_slider__label __reactadmin_slider__label_right">{formElement.rightLabel}</span>)
+          ? (<span className="__reactapp_slider__label __reactapp_slider__label_right">{formElement.rightLabel}</span>)
           : null
         }  
       </Slider>  
