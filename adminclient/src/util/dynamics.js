@@ -102,6 +102,11 @@ export const fetchSuccessContent = function _fetchSuccessContent (pathname, hasP
     let state = getState();
     let containers = state.manifest.containers;
     let layout = Object.assign({}, containers[pathname].layout);
+
+    if (typeof window.customOnChangeLocation === 'function') {
+      window.customOnChangeLocation(window.location.pathname);
+    }
+    
     if (containers[pathname].dynamic && typeof containers[pathname].dynamic === 'object') {
       Object.keys(containers[pathname].dynamic).forEach(dynamicProp => {
         this.props.setDynamicData(dynamicProp, containers[pathname].dynamic[dynamicProp]);
