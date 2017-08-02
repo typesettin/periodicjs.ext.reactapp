@@ -6,11 +6,11 @@ import flatten from 'flat';
 
 var settleVersioning = function (original, update) {
   if (!original.versions) return true;
-  if (typeof original.versions.theme !== 'string' || typeof original.versions.reactadmin !== 'string') return true;
+  if (typeof original.versions.theme !== 'string' || typeof original.versions.reactapp !== 'string') return true;
   if (!update.versions) return true;
   let themeOutofDate = (typeof update.versions.theme === 'string') ? semver.lt(original.versions.theme, update.versions.theme) : false;
-  let reactadminOutofDate = (typeof update.versions.reactadmin === 'string') ? semver.lt(original.versions.reactadmin, update.versions.reactadmin) : false;
-  return (themeOutofDate || reactadminOutofDate);
+  let reactappOutofDate = (typeof update.versions.reactapp === 'string') ? semver.lt(original.versions.reactapp, update.versions.reactapp) : false;
+  return (themeOutofDate || reactappOutofDate);
 };
 
 var handleConfigurationAssigment = function (original, update) {

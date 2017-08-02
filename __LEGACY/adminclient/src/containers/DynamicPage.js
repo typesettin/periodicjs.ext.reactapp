@@ -113,7 +113,7 @@ class DynamicPage extends Component {
   }
   render() {
     // console.debug('this.props.getState()', this.props.getState(),'this.overlayUIWrapperStyle',this.overlayUIWrapperStyle);
-    return (<div id="__ra_dp" className={(this.state.ui_is_loaded)?'__reactadmin_dp_loaded':'__reactadmin_dp_loading'}>
+    return (<div id="__ra_dp" className={(this.state.ui_is_loaded)?'__reactapp_dp_loaded':'__reactapp_dp_loading'}>
       <AppSectionLoadingOverlay display={!this.state.ui_is_loaded}
         ui={this.state.ui}
         wrapperstyle={

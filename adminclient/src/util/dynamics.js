@@ -102,6 +102,11 @@ export const fetchSuccessContent = function _fetchSuccessContent (pathname, hasP
     let state = getState();
     let containers = state.manifest.containers;
     let layout = Object.assign({}, containers[pathname].layout);
+
+    if (typeof window.customOnChangeLocation === 'function') {
+      window.customOnChangeLocation(window.location.pathname);
+    }
+    
     if (containers[pathname].dynamic && typeof containers[pathname].dynamic === 'object') {
       Object.keys(containers[pathname].dynamic).forEach(dynamicProp => {
         this.props.setDynamicData(dynamicProp, containers[pathname].dynamic[dynamicProp]);
@@ -126,8 +131,8 @@ export const fetchSuccessContent = function _fetchSuccessContent (pathname, hasP
       if(window && window.scrollTo){
         window.scrollTo(0, 0);
       }
-      if (document && document.querySelector && document.querySelector('.reactadmin__app_div_content')){
-        document.querySelector('.reactadmin__app_div_content').scrollIntoView(true)
+      if (document && document.querySelector && document.querySelector('.reactapp__app_div_content')){
+        document.querySelector('.reactapp__app_div_content').scrollIntoView(true)
       }
     }
   } catch (e) {
@@ -137,8 +142,8 @@ export const fetchSuccessContent = function _fetchSuccessContent (pathname, hasP
     if(window && window.scrollTo){
       window.scrollTo(0, 0);
     }
-    if (document && document.querySelector && document.querySelector('.reactadmin__app_div_content')){
-      document.querySelector('.reactadmin__app_div_content').scrollIntoView(true)
+    if (document && document.querySelector && document.querySelector('.reactapp__app_div_content')){
+      document.querySelector('.reactapp__app_div_content').scrollIntoView(true)
     }
   }
 };

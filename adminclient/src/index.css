@@ -49,30 +49,30 @@ div[data-reactroot]{
 .CodeMirror.cm-s-default{
   height:100%;
 }
-.__reactadmin_icon_button .__re-bulma_icon:last-child{
+.__reactapp_icon_button .__re-bulma_icon:last-child{
   margin-left: 0;
 }
 .ssr-index{
   visibility: hidden;
 }
-.__reactadmin_slider__ctr {
+.__reactapp_slider__ctr {
   width: 100%;
   padding-top: 25px;
   padding-bottom: 10px;
 }
 
-.__reactadmin_slider__label {
+.__reactapp_slider__label {
   display: inline-block;
   padding-top: 10px;
   color: #999;
   font-size: 13px;
 }
 
-.__reactadmin_slider__label:last-child {
+.__reactapp_slider__label:last-child {
   float: right;
 }
 
-.__reactadmin_slider__handle {
+.__reactapp_slider__handle {
   position: absolute;
   transform: translate(-50%, -50%);
   cursor: pointer;
@@ -88,7 +88,7 @@ div[data-reactroot]{
   top: 10px;
 }
 
-.__reactadmin_arrow-right {
+.__reactapp_arrow-right {
   vertical-align: middle;
   display: inline-block;
   width: 0;
@@ -99,7 +99,7 @@ div[data-reactroot]{
   margin-left: 12px;
 }
 
-.__reactadmin_arrow-left {
+.__reactapp_arrow-left {
   vertical-align: middle;
   display: inline-block;
   width: 0;
@@ -127,27 +127,27 @@ div[data-reactroot]{
   height: 14px;
 }*/
 
-.__reactadmin_dp_loading,
-.__reactadmin_dp_loaded{
+.__reactapp_dp_loading,
+.__reactapp_dp_loaded{
   width: '100%';
   height: '100%';
 }
 @media only screen and (max-width: 480px) {
-  .__reactadmin_slider__handle {
+  .__reactapp_slider__handle {
     width: 120px;
     height: 50px;
     line-height: 50px;
     font-size: 16px;
   }
 
-  .__reactadmin_arrow-right {
+  .__reactapp_arrow-right {
     border-top: 10px solid transparent;
     border-bottom: 10px solid transparent;
     border-left: 10px solid #CCCCCC;
     margin-left: 12px;
   }
 
-  .__reactadmin_arrow-left {
+  .__reactapp_arrow-left {
     border-top: 10px solid transparent;
     border-bottom: 10px solid transparent;
     border-right:10px solid #CCCCCC;

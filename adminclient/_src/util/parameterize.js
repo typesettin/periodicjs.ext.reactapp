@@ -36,7 +36,7 @@ var parameterize = exports.parameterize = function parameterize(route, location)
   var params = regexp.re.exec(location);
   if (params.length > 1 && Array.isArray(regexp.keys)) {
     params = params.slice(1);
-    return regexp.keys.reduce(function(result, param, index) {
+    return regexp.keys.reduce(function (result, param, index) {
       param = param.name;
       result[param] = params[index];
       return result;
@@ -63,8 +63,7 @@ var setParameters = exports.setParameters = function setParameters() {
   for (var i = 0; i < pkeys.length; i++) {
     options.resource = options.resource.replace(new RegExp(':' + pkeys[i]), params[pkeys[i]]);
   }
-  if (options.query && (0, _typeof3.default)(options.query) === 'object') options.resource += '?' + _querystring2.default.stringify(options.query);
-  else if (typeof options.query === 'string') options.resource += '' + (/^\?/.test(options.query) ? '' : '?') + options.query;
+  if (options.query && (0, _typeof3.default)(options.query) === 'object') options.resource += '?' + _querystring2.default.stringify(options.query);else if (typeof options.query === 'string') options.resource += '' + (/^\?/.test(options.query) ? '' : '?') + options.query;
   return options.resource;
 };
 

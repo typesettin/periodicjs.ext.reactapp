@@ -10,8 +10,8 @@ let ensureApiAuthenticated = oauth2serverControllers.auth.ensureApiAuthenticated
 
 // const assetController = resources.app.controller.native.asset;
 const helperController = controllers.helper;
-// const transformController = resources.app.controller.extension.reactadmin.controller.transform;
-// const contentdataController = resources.app.controller.extension.reactadmin.controller.contentdata;
+// const transformController = resources.app.controller.extension.reactapp.controller.transform;
+// const contentdataController = resources.app.controller.extension.reactapp.controller.contentdata;
 
 // contentRouter.use(helperController.approveOptionsRequest, ensureApiAuthenticated, helperController.fixCodeMirrorSubmit, helperController.fixFlattenedSubmit);
 // contentRouter.get('/:dbname/secure-asset/:id/:filename', assetController.loadAsset, assetController.decryptAsset);

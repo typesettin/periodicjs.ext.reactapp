@@ -151,8 +151,8 @@ var fetchSuccessContent = exports.fetchSuccessContent = function _fetchSuccessCo
       if (window && window.scrollTo) {
         window.scrollTo(0, 0);
       }
-      if (document && document.querySelector && document.querySelector('.reactadmin__app_div_content')) {
-        document.querySelector('.reactadmin__app_div_content').scrollIntoView(true);
+      if (document && document.querySelector && document.querySelector('.reactapp__app_div_content')) {
+        document.querySelector('.reactapp__app_div_content').scrollIntoView(true);
       }
     }
   } catch (e) {
@@ -161,8 +161,8 @@ var fetchSuccessContent = exports.fetchSuccessContent = function _fetchSuccessCo
     if (window && window.scrollTo) {
       window.scrollTo(0, 0);
     }
-    if (document && document.querySelector && document.querySelector('.reactadmin__app_div_content')) {
-      document.querySelector('.reactadmin__app_div_content').scrollIntoView(true);
+    if (document && document.querySelector && document.querySelector('.reactapp__app_div_content')) {
+      document.querySelector('.reactapp__app_div_content').scrollIntoView(true);
     }
   }
 };
