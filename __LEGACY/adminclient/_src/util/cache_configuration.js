@@ -47,11 +47,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var settleVersioning = function settleVersioning(original, update) {
   if (!original.versions) return true;
-  if (typeof original.versions.theme !== 'string' || typeof original.versions.reactadmin !== 'string') return true;
+  if (typeof original.versions.theme !== 'string' || typeof original.versions.reactapp !== 'string') return true;
   if (!update.versions) return true;
   var themeOutofDate = typeof update.versions.theme === 'string' ? _semver2.default.lt(original.versions.theme, update.versions.theme) : false;
-  var reactadminOutofDate = typeof update.versions.reactadmin === 'string' ? _semver2.default.lt(original.versions.reactadmin, update.versions.reactadmin) : false;
-  return themeOutofDate || reactadminOutofDate;
+  var reactappOutofDate = typeof update.versions.reactapp === 'string' ? _semver2.default.lt(original.versions.reactapp, update.versions.reactapp) : false;
+  return themeOutofDate || reactappOutofDate;
 };
 
 var handleConfigurationAssigment = function handleConfigurationAssigment(original, update) {

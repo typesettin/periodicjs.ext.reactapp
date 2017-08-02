@@ -186,17 +186,20 @@ var mapStateToProps = function mapStateToProps(state) {
     user: state.user,
     manifest: state.manifest,
     notification: state.notification
+    // tabBarExtensions: state.tabBarExtensions,
+    // fetchData: state.fetchData,
+    // messageBar: state.messageBar,
   };
 };
-window.__reactadmin = (0, _assign2.default)({}, {
+window.__reactapp = (0, _assign2.default)({}, {
   __ra_helpers: {
     numeral: _numeral2.default,
     moment: _moment2.default,
     capitalize: _capitalize2.default,
     pluralize: _pluralize2.default
   }
-}, window.__reactadmin);
-window.__reactadmin.setDynamicData = function (prop, val) {
+}, window.__reactapp);
+window.__reactapp.setDynamicData = function (prop, val) {
   return _stores2.default.dispatch(_actions2.default.dynamic.setDynamicData(prop, val));
 };
 var reduxActions = {
@@ -362,12 +365,12 @@ var Main = function (_Component) {
     key: 'componentDidMount',
     value: function componentDidMount() {
       if (document && document.body && document.body.classList && document.body.classList.add) {
-        document.body.classList.add('__reactadmin_body_loaded');
+        document.body.classList.add('__reactapp_body_loaded');
       } else if (document && document.body && document.body.className) {
-        document.body.className = document.body.className += ' __reactadmin_body_loaded';
+        document.body.className = document.body.className += ' __reactapp_body_loaded';
       }
       if (document && document.querySelector && document.querySelector('html') && document.querySelector('html').add) {
-        document.querySelector('html').classList.add('__reactadmin_html_loaded');
+        document.querySelector('html').classList.add('__reactapp_html_loaded');
       }
     }
   }, {

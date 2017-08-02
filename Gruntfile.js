@@ -1,14 +1,14 @@
 'use strict';
 
 const path = require('path');
-const testPaths = ['./test/**/*.js',];
+const testPaths = ['./test/**/*.js', ];
 
-module.exports = function (grunt) {
+module.exports = function(grunt) {
   grunt.initConfig({
     mocha_istanbul: {
       coverage: {
         src: testPaths, // multiple folders also works
-        reportFormats: ['cobertura', 'lcovonly',],
+        reportFormats: ['cobertura', 'lcovonly', ],
       },
     },
     istanbul_check_coverage: {
@@ -24,8 +24,24 @@ module.exports = function (grunt) {
         },
       },
     },
+    copy: {
+      main: {
+        cwd: 'adminclient/build',
+        // cwd: 'public',
+        expand: true,
+        src: '**/*.*',
+        dest: '../../public/extensions/periodicjs.ext.reactapp',
+      },
+      ext: {
+        cwd: 'adminclient/build',
+        // cwd: 'public',
+        expand: true,
+        src: ['**/*.*'],
+        dest: 'public',
+      },
+    },
     coveralls: {
-    // Options relevant to all targets
+      // Options relevant to all targets
       options: {
         // When true, grunt-coveralls will only print a warning rather than
         // an error, to prevent CI builds from failing unnecessarily (e.g. if
@@ -42,7 +58,7 @@ module.exports = function (grunt) {
     },
     simplemocha: {
       options: {
-        globals: ['should', 'navigator', 'x',],
+        globals: ['should', 'navigator', 'x', ],
         timeout: 3000,
         ignoreLeaks: true,
         ui: 'bdd',
@@ -54,7 +70,7 @@ module.exports = function (grunt) {
     },
     jsdoc: {
       dist: {
-        src: ['lib/**/*.js', 'index.js',],
+        src: ['lib/**/*.js', 'index.js', ],
         options: {
           destination: 'doc/html',
           configure: 'jsdoc.json',
@@ -71,5 +87,5 @@ module.exports = function (grunt) {
   }
   grunt.registerTask('doc', 'jsdoc');
   grunt.registerTask('test', 'mocha_istanbul');
-  grunt.registerTask('default', [/*'lint',*/'test', /*'browserify',*/ 'doc', /*'uglify',*/ ]);
+  grunt.registerTask('default', [ /*'lint',*/ 'test', /*'browserify',*/ 'doc', /*'uglify',*/ ]);
 };

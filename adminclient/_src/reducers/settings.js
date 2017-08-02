@@ -190,7 +190,7 @@ var packageJSON = {
     eject: 'react-scripts eject'
   },
   proxy: 'http://localhost:8786',
-  homepage: '/extensions/periodicjs.ext.reactadmin'
+  homepage: '/extensions/periodicjs.ext.reactapp'
 };
 
 var windowState = typeof window !== 'undefined' && window.__padmin ? window.__padmin : {};

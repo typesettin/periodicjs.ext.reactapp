@@ -425,7 +425,7 @@ function getFormMaskedInput(options) {
 
   var initialValue = getInitialValue(formElement, this.state);
   var getPassablePropkeyevents = getPassablePropsKeyEvents.bind(this);
-  var fileClassname = '__reactadmin_file_' + formElement.name;
+  var fileClassname = '__reactapp_file_' + formElement.name;
   var hasError = getErrorStatus(this.state, formElement.name);
   var hasValue = formElement.name && this.state[formElement.name] ? true : false;
   var passableProps = (0, _assign2.default)({
@@ -502,7 +502,7 @@ function getFormTextInputArea(options) {
 
   var initialValue = getInitialValue(formElement, this.state); //formElement.value || this.state[ formElement.name ] || getPropertyAttribute({ element:formElement, property:this.state, });
   var getPassablePropkeyevents = getPassablePropsKeyEvents.bind(this);
-  var fileClassname = '__reactadmin_file_' + formElement.name;
+  var fileClassname = '__reactapp_file_' + formElement.name;
   var hasError = getErrorStatus(this.state, formElement.name);
   var hasValue = formElement.name && this.state[formElement.name] ? true : false;
   var passableProps = (0, _assign2.default)({
@@ -778,10 +778,10 @@ function getSliderInput(options) {
           offset = _ref2.offset;
       return _react2.default.createElement(
         'div',
-        { style: { left: offset + '%' }, className: '__reactadmin_slider__handle' },
-        _react2.default.createElement('span', { className: '__reactadmin_arrow-left' }),
+        { style: { left: offset + '%' }, className: '__reactapp_slider__handle' },
+        _react2.default.createElement('span', { className: '__reactapp_arrow-left' }),
         formElement.numeralFormat ? (0, _numeral2.default)(value).format(formElement.numeralFormat) : value,
-        _react2.default.createElement('span', { className: '__reactadmin_arrow-right' })
+        _react2.default.createElement('span', { className: '__reactapp_arrow-right' })
       );
     };
   }
@@ -817,12 +817,12 @@ function getSliderInput(options) {
         }),
         formElement.leftLabel ? _react2.default.createElement(
           'span',
-          { className: '__reactadmin_slider__label __reactadmin_slider__label_left' },
+          { className: '__reactapp_slider__label __reactapp_slider__label_left' },
           formElement.leftLabel
         ) : null,
         formElement.rightLabel ? _react2.default.createElement(
           'span',
-          { className: '__reactadmin_slider__label __reactadmin_slider__label_right' },
+          { className: '__reactapp_slider__label __reactapp_slider__label_right' },
           formElement.rightLabel
         ) : null
       ),

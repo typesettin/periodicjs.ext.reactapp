@@ -123,7 +123,7 @@ const tableOptions = function (schemas, label, options) {
             // color:'isDanger', 
             isIconRight:true,
             size:'isSmall',
-            className:'__reactadmin_icon_button',
+            className:'__reactapp_icon_button',
           },
           style:{
             marginRight:10,
@@ -156,7 +156,7 @@ const tableOptions = function (schemas, label, options) {
             color:'isDanger', 
             isIconRight:true,
             size:'isSmall',
-            className:'__reactadmin_icon_button',
+            className:'__reactapp_icon_button',
           },
         },
       },
