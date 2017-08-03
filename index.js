@@ -1,6 +1,7 @@
 'use strict';
 const periodic = require('periodicjs');
 const Promisie = require('promisie');
+const flatten = require('flat');
 const utilities = require('./utilities');
 const logger = periodic.logger;
 const extsettings = utilities.reactapp().settings;
@@ -44,6 +45,7 @@ module.exports = () => {
           ])
           .then(results => {
             const [dbReactAppConfig, dbReactAppClient] = results;
+            // console.log({ dbReactAppConfig, dbReactAppClient })
             initialReactAppConfig = dbReactAppConfig;
             intialReactAppClient = dbReactAppClient;
             if (!dbReactAppClient) {
@@ -56,12 +58,12 @@ module.exports = () => {
             if (!intialReactAppClient) {
               intialReactAppClient = (typeof createdClient.toJSON === 'function') ? createdClient.toJSON() : createdClient;
             }
-            if (initialReactAppConfig && initialReactAppConfig.config && initialReactAppConfig.config.login && initialReactAppConfig.config.login.url && initialReactAppConfig.config && initialReactAppConfig.config.login && initialReactAppConfig.config.login.options && initialReactAppConfig.config.login.options.headers && initialReactAppConfig.config.login.options.headers.clientid) {
+            if (initialReactAppConfig && initialReactAppConfig.config && initialReactAppConfig.config.settings && initialReactAppConfig.config.settings.login && initialReactAppConfig.config.settings.login.url && initialReactAppConfig.config.settings && initialReactAppConfig.config.settings.login && initialReactAppConfig.config.settings.login.options && initialReactAppConfig.config.settings.login.options.headers && initialReactAppConfig.config.settings.login.options.headers.clientid) {
               logger.silly('Already configured ReactApp');
             } else {
-              if (initialReactAppConfig.config && initialReactAppConfig.config.login && initialReactAppConfig.config.login.url) {
+              if (initialReactAppConfig && initialReactAppConfig.config && initialReactAppConfig.config.settings && initialReactAppConfig.config.settings.login && initialReactAppConfig.config.settings.login.url) {
                 reactAppConfig.login = {
-                  url: initialReactAppConfig.login.url,
+                  url: initialReactAppConfig.config.settings.login.url,
                 }
               } else {
                 reactAppConfig.login = {
@@ -72,18 +74,35 @@ module.exports = () => {
                     }
                   }
                 }
+                reactAppConfig.userprofile = reactAppConfig.login;
               }
+              reactAppConfig.basename = periodic.settings.application.protocol + periodic.settings.application.url;
+              reactAppConfig.name = periodic.settings.name;
+              reactAppConfig.title = periodic.settings.name;
+              reactAppConfig.application = {
+                environment: periodic.settings.application.environment,
+              };
               configurationDB.create({
                   newdoc: {
                     filepath: reactAppConfigFilepath,
                     environment: appEnvironment,
-                    config: reactAppConfig,
+                    config: {
+                      settings: reactAppConfig,
+                    },
                     container: periodic.settings.container.name,
                   },
-                }).then(createdReactAppConfig => {
-                  logger.silly('created initial react app config', createdReactAppConfig);
                 })
-                // console.log({ reactAppConfig });
+                .then(createdReactAppConfig => {
+                  logger.silly('created initial react app config');
+                  periodic.settings.extensions['periodicjs.ext.reactapp'] = flatten.unflatten(
+                    Object.assign({},
+                      flatten(periodic.settings.extensions['periodicjs.ext.reactapp'] || {}),
+                      flatten(reactAppConfig || {})
+                    )
+                  );
+                })
+                .catch(logger.error);
+              // console.log({ reactAppConfig });
             }
           })
           .catch(logger.error);
