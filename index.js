@@ -72,7 +72,7 @@ module.exports = () => {
                     },
                   },
                 };
-                reactAppConfig.userprofile = reactAppConfig.login;
+                reactAppConfig.userprofile = Object.assign({}, reactAppConfig.login);
                 reactAppConfig.userprofile.url = periodic.settings.application.protocol + periodic.settings.application.url + '/api/jwt/profile';
               }
               reactAppConfig.basename = periodic.settings.application.protocol + periodic.settings.application.url;
