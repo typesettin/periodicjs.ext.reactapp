@@ -29,27 +29,25 @@ module.exports = () => {
             },
             logger.silly.bind(logger, 'settings error'));
 
-
-
         Promise.all([
             configurationDB.load({
               query: {
                 filepath: reactAppConfigFilepath,
-              }
+              },
             }),
             periodic.datas.get('standard_client').load({
               query: {
                 name: 'reactapp',
-              }
-            })
+              },
+            }),
           ])
           .then(results => {
-            const [dbReactAppConfig, dbReactAppClient] = results;
+            const [dbReactAppConfig, dbReactAppClient, ] = results;
             // console.log({ dbReactAppConfig, dbReactAppClient })
             initialReactAppConfig = dbReactAppConfig;
             intialReactAppClient = dbReactAppClient;
             if (!dbReactAppClient) {
-              return oauth2ServerUtils.client.create({ name: 'reactapp' });
+              return oauth2ServerUtils.client.create({ name: 'reactapp', });
             } else {
               return true;
             }
@@ -64,17 +62,18 @@ module.exports = () => {
               if (initialReactAppConfig && initialReactAppConfig.config && initialReactAppConfig.config.settings && initialReactAppConfig.config.settings.login && initialReactAppConfig.config.settings.login.url) {
                 reactAppConfig.login = {
                   url: initialReactAppConfig.config.settings.login.url,
-                }
+                };
               } else {
                 reactAppConfig.login = {
-                  url: periodic.settings.application.protocol + periodic.settings.application.url,
+                  url: periodic.settings.application.protocol + periodic.settings.application.url + '/api/jwt/token',
                   options: {
                     headers: {
                       clientid: intialReactAppClient.client_id,
-                    }
-                  }
-                }
+                    },
+                  },
+                };
                 reactAppConfig.userprofile = reactAppConfig.login;
+                reactAppConfig.userprofile.url = periodic.settings.application.protocol + periodic.settings.application.url + '/api/jwt/profile';
               }
               reactAppConfig.basename = periodic.settings.application.protocol + periodic.settings.application.url;
               reactAppConfig.name = periodic.settings.name;
@@ -91,8 +90,7 @@ module.exports = () => {
                     },
                     container: periodic.settings.container.name,
                   },
-                })
-                .then(createdReactAppConfig => {
+                }).then(createdReactAppConfig => {
                   logger.silly('created initial react app config');
                   periodic.settings.extensions['periodicjs.ext.reactapp'] = flatten.unflatten(
                     Object.assign({},
@@ -102,15 +100,10 @@ module.exports = () => {
                   );
                 })
                 .catch(logger.error);
-              // console.log({ reactAppConfig });
             }
           })
           .catch(logger.error);
       });
-      // console.log('periodic.settings.application.environment', periodic.settings.application.environment);
-      // // configurations.findOne({ filepath: 'content/config/extensions/periodicjs.ext.oauth2server/development.json' }, { sort: { createdat: -1 }, fields: {} })
-      // // load reatapp config
-
 
       return resolve(true);
     } catch (e) {
