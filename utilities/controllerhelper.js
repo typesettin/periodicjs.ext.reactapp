@@ -8,6 +8,7 @@ const capitalize = require('capitalize');
 const parameterize = require('./find_matching_route');
 const reloader = require('./reloader');
 const settingsUtil = require('./settings');
+const manifestUtils = require('./manifest');
 const generateDetailManifests = settingsUtil.generateDetailManifests;
 const findMatchingRoute = parameterize.findMatchingRoutePath;
 // const getParameterized = parameterize.getParameterizedPath;
@@ -42,8 +43,8 @@ const appSettings = periodic.settings;
 // console.log('periodic', periodic);
 let components = {};
 let manifestSettings = {};
-let navigationSettings= {};
-let unauthenticatedManifestSettings= {};
+let navigationSettings = {};
+let unauthenticatedManifestSettings = {};
 appSettings.theme = periodic.settings.container.name;
 appSettings.themename = periodic.settings.container.name;
 
@@ -105,17 +106,17 @@ function pullManifestSettings(configuration, isUnauthenticated = false) {
 function pullComponentSettings(refresh) {
   if (Object.keys(components).length && !refresh) return Promisie.resolve(components);
   return readAndStoreConfigurations([
-    handleAmbiguousExtensionType.bind(null, path.join(__dirname, '../periodicjs.reactapp.json')),
-    handleAmbiguousExtensionType.bind(null, path.join(__dirname, `../../../content/container/${appSettings.theme || appSettings.themename}/periodicjs.reactapp.json`)),
-  ])
+      handleAmbiguousExtensionType.bind(null, path.join(__dirname, '../periodicjs.reactapp.json')),
+      handleAmbiguousExtensionType.bind(null, path.join(__dirname, `../../../content/container/${appSettings.theme || appSettings.themename}/periodicjs.reactapp.json`)),
+    ])
     .then(results => {
       switch (Object.keys(results).length.toString()) {
-      case '1':
-        return Object.assign({}, (results[0]['periodicjs_ext_reactapp']) ? results[0]['periodicjs_ext_reactapp'].components : {});
-      case '2':
-        return Object.assign({}, (results[0]['periodicjs_ext_reactapp']) ? results[0]['periodicjs_ext_reactapp'].components : {}, (results[1]['periodicjs_ext_reactapp']) ? results[1]['periodicjs_ext_reactapp'].components : {});
-      default:
-        return {};
+        case '1':
+          return Object.assign({}, (results[0]['periodicjs_ext_reactapp']) ? results[0]['periodicjs_ext_reactapp'].components : {});
+        case '2':
+          return Object.assign({}, (results[0]['periodicjs_ext_reactapp']) ? results[0]['periodicjs_ext_reactapp'].components : {}, (results[1]['periodicjs_ext_reactapp']) ? results[1]['periodicjs_ext_reactapp'].components : {});
+        default:
+          return {};
       }
     })
     .then(results => {
@@ -152,10 +153,10 @@ function handleConfigurationReload(type) {
 function pullConfigurationSettings(reload) {
   if (Object.keys(manifestSettings).length && Object.keys(navigationSettings).length && Object.keys(unauthenticatedManifestSettings).length && !reload) return Promisie.resolve({ manifest: manifestSettings, navigation: navigationSettings, unauthenticated: unauthenticatedManifestSettings, });
   return Promisie.all(
-    [
-      Promise.resolve(Array.from(periodic.extensions.values())), // fs.readJson(path.join(__dirname, '../../../content/config/extensions.json')),
-      handleAmbiguousExtensionType(path.join(__dirname, '../periodicjs.reactapp.json')),
-    ]
+      [
+        Promise.resolve(Array.from(periodic.extensions.values())), // fs.readJson(path.join(__dirname, '../../../content/config/extensions.json')),
+        handleAmbiguousExtensionType(path.join(__dirname, '../periodicjs.reactapp.json')),
+      ]
     )
     .then(configurationData => {
       let [configuration, adminExtSettings, ] = configurationData;
@@ -187,17 +188,17 @@ function pullConfigurationSettings(reload) {
     .then(result => {
       let { manifest, navigation, unauthenticated_manifest, } = result;
       manifestSettings = Object.assign(manifestSettings,
-        (reload === 'manifest' || reload === true || !Object.keys(manifestSettings).length)
-          ? manifest
-          : manifestSettings);
+        (reload === 'manifest' || reload === true || !Object.keys(manifestSettings).length) ?
+        manifest :
+        manifestSettings);
       navigationSettings = Object.assign(navigationSettings,
-        (reload === 'navigation' || reload === true || !Object.keys(navigationSettings).length)
-          ? navigation
-          : navigationSettings);
+        (reload === 'navigation' || reload === true || !Object.keys(navigationSettings).length) ?
+        navigation :
+        navigationSettings);
       unauthenticatedManifestSettings = Object.assign(unauthenticatedManifestSettings,
-        (reload === 'unauthenticated' || reload === true || !Object.keys(unauthenticatedManifestSettings).length)
-          ? unauthenticated_manifest
-          : unauthenticatedManifestSettings);
+        (reload === 'unauthenticated' || reload === true || !Object.keys(unauthenticatedManifestSettings).length) ?
+        unauthenticated_manifest :
+        unauthenticatedManifestSettings);
       return result;
     })
     .catch(e => Promisie.reject(e));
@@ -467,15 +468,16 @@ function setCoreDataConfigurations() {
   // console.log({ extsettings });
   if (!CORE_DATA_CONFIGURATIONS.manifest || !CORE_DATA_CONFIGURATIONS.navigation) {
     if (CORE_DATA_CONFIGURATIONS.manifest === null) {
-      let generated = generateDetailManifests(mongoose, {
-        dbname: 'standard',
-        extsettings,
-        prefix: (typeof periodic.app.locals.adminPath === 'string' && periodic.app.locals.adminPath !== '/' && periodic.app.locals.adminPath) ?
-          `${(periodic.app.locals.adminPath.charAt(0) === '/')
-            ? periodic.app.locals.adminPath.slice(1)
-            : periodic.app.locals.adminPath}/content` : '/content',
-      });
-      CORE_DATA_CONFIGURATIONS.manifest = generated;
+      // let generated = generateDetailManifests(mongoose, {
+      //   dbname: 'standard',
+      //   extsettings,
+      //   prefix: (typeof periodic.app.locals.adminPath === 'string' && periodic.app.locals.adminPath !== '/' && periodic.app.locals.adminPath) ?
+      //     `${(periodic.app.locals.adminPath.charAt(0) === '/')
+      //       ? periodic.app.locals.adminPath.slice(1)
+      //       : periodic.app.locals.adminPath}/content` : '/content',
+      // });
+      CORE_DATA_CONFIGURATIONS.manifest = manifestUtils.coreData.generateCoreDataManifests({}); //generated;
+      // console.log('CORE_DATA_CONFIGURATIONS.manifest', CORE_DATA_CONFIGURATIONS.manifest);
     }
     if (CORE_DATA_CONFIGURATIONS.navigation === null && CORE_DATA_CONFIGURATIONS.manifest) {
       CORE_DATA_CONFIGURATIONS.navigation = Object.keys(CORE_DATA_CONFIGURATIONS.manifest).reduce((result, key) => {

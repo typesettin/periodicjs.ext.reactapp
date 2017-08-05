@@ -98,7 +98,6 @@ function admin_index(req, res, next) {
   }
 }
 
-
 /**
  * Loads manifest configuration data and sends response with settings
  * @param  {Object}   req  express request

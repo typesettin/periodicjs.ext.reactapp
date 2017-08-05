@@ -121,62 +121,6 @@ const getDBStats = (req, res, next) => {
   let databaseCountData = [];
   let databaseFeedData = [];
   req.controllerData = (req.controllerData) ? req.controllerData : {};
-  // const DBModels = Object.keys(mongoose.models);
-  // Promisie.parallel({
-  //   databaseFeed: () => {
-  //     return Promise.all(DBModels.map(model => {
-  //       return new Promise((resolve, reject) => {
-  //         mongoose.model(model)
-  //           .find({})
-  //           .limit(5)
-  //           .sort({ updatedat: 'desc', })
-  //           .exec((err, results) => {
-  //             if (err) {
-  //               reject(err);
-  //             } else {
-  //               resolve((results && results.length) ?
-  //                 results.map(result => {
-  //                   databaseFeedData.push(result);
-  //                   return result;
-  //                 }) : []);
-  //             }
-  //           });
-  //       });
-  //     }));
-  //   },
-  //   databaseCount: () => {
-  //     return Promise.all(DBModels.map(model => {
-  //       return new Promise((resolve, reject) => {
-  //         mongoose.model(model)
-  //           .count({}, (err, count) => {
-  //             if (err) {
-  //               reject(err);
-  //             } else {
-  //               databaseCountData.push({
-  //                 collection: model,
-  //                 count: count,
-  //               });
-  //               resolve(count);
-  //             }
-  //           });
-  //       });
-  //     }));
-  //   },
-  //   extensions: () => {
-  //     return new Promise((resolve, reject) => {
-  //       CoreExtensions.getExtensions({
-  //           periodicsettings: appSettings,
-  //         },
-  //         function(err, extensions) {
-  //           if (err) {
-  //             reject(err);
-  //           } else {
-  //             resolve(extensions);
-  //           }
-  //         });
-  //     });
-  //   },
-  // })
 
   const datas = Array.from(periodic.datas.entries());
   const datasList = datas.map(utilities.data.getDatasFromMap);
