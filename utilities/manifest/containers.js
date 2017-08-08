@@ -5,114 +5,136 @@ const capitalize = require('capitalize');
 const pluralize = require('pluralize');
 const contenttabs = require('./components/contenttabs');
 const indextable = require('./components/indextable');
-// const buildDetail = require('./buildDetail');
-// const buildAdvancedDetail = require('./buildAdvancedDetail');
+const buildDetail = require('./components/build_detail');
+const buildAdvancedDetail = require('./components/build_advanced_detail');
 const helpers = require('./helpers');
 // pluralize.addIrregularRule('data', 'datas');
 
-// /**
-//  * This constructs a mongo schema detail page
-//  *
-//  * @param {*} schema 
-//  * @param {*} label 
-//  * @param {*} options 
-//  */
-// const constructDetail = function(schema, label, options = {}, newEntity) {
-//   let usablePrefix = helpers.getDataPrefix(options.prefix, options.dbname, schema, label, options);
-//   let customPageData = helpers.getExtensionOverride('customDetailPageData', schema, label, options);
-//   let customTabs = helpers.getExtensionOverride('customDetailTabs', schema, label, options);
-//   let customHeader = helpers.getExtensionOverride('customDetailHeader', schema, label, options);
-//   let customDetailEditor = helpers.getExtensionOverride('customDetailEditor', schema, label, options);
-//   let detailPageBasicEditor = {
-//     name: 'Basic Editor',
-//     layout: {
-//       component: 'div',
-//       children: buildDetail(schema, label, options, newEntity),
-//     },
-//   };
-//   let detailPageAdvancedEditor = {
-//     name: 'Advanced Editor',
-//     layout: {
-//       component: 'div',
-//       children: buildAdvancedDetail(schema, label, options, newEntity),
-//     },
-//   };
-//   let detailPageTabs = [];
-//   if (customDetailEditor) {
-//     if (customDetailEditor.base) {
-//       detailPageTabs.push(detailPageBasicEditor);
-//     }
-//     if (customDetailEditor.advanced) {
-//       detailPageTabs.push(detailPageAdvancedEditor);
-//     }
-//     if (customDetailEditor.customTabs) {
-//       detailPageTabs.push(...customDetailEditor.customTabs);
-//     }
-//     if (customDetailEditor.customTab) {
-//       detailPageTabs.push(customDetailEditor.customTabs);
-//     }
-//   } else {
-//     detailPageTabs.push(detailPageBasicEditor, detailPageAdvancedEditor);
-//   }
+/**
+ * This constructs a mongo schema detail page
+ *
+ * @param {*} schema 
+ * @param {*} label 
+ * @param {*} options 
+ */
+const constructDetail = function(options) {
+  const { newEntity, schemaName, } = options;
+  let dataRoutePrefix = helpers.getDataRoute(options);
+  let manifestPrefix = helpers.getManifestPathPrefix(options.adminRoute);
+  let customPageData = false;
+  // let customPageData = helpers.getExtensionOverride('customDetailPageData', schema, label, options);
+  let customTabs = false;
+  // let customTabs = helpers.getExtensionOverride('customDetailTabs', schema, label, options);
+  let customHeader = false;
+  // let customHeader = helpers.getExtensionOverride('customDetailHeader', schema, label, options);
+  let customDetailEditor = false;
+  // let customDetailEditor = helpers.getExtensionOverride('customDetailEditor', schema, label, options);
+  let detailPageBasicEditor = {
+    name: 'Basic Editor',
+    layout: {
+      component: 'div',
+      children: buildDetail(options),
+    },
+  };
+  let detailPageAdvancedEditor = {
+    name: 'Advanced Editor',
+    layout: {
+      component: 'div',
+      children: buildAdvancedDetail(options),
+    },
+  };
+  let detailPageTabs = [];
+  // if (customDetailEditor) {
+  //   if (customDetailEditor.base) {
+  //     detailPageTabs.push(detailPageBasicEditor);
+  //   }
+  //   if (customDetailEditor.advanced) {
+  //     detailPageTabs.push(detailPageAdvancedEditor);
+  //   }
+  //   if (customDetailEditor.customTabs) {
+  //     detailPageTabs.push(...customDetailEditor.customTabs);
+  //   }
+  //   if (customDetailEditor.customTab) {
+  //     detailPageTabs.push(customDetailEditor.customTabs);
+  //   }
+  // } else {
+  detailPageTabs.push(detailPageBasicEditor, detailPageAdvancedEditor);
+  // }
 
-//   return {
-//     resources: (newEntity) ?
-//       {} :
-//       {
-//         [helpers.getDetailLabel(label)]: `${usablePrefix}/${pluralize(label)}/:id?format=json`,
-//       },
-//     onFinish: 'render',
-//     pageData: (customPageData) ?
-//       customPageData :
-//       {
-//         title: `Content › ${pluralize(capitalize(label))}`,
-//         navLabel: `Content › ${pluralize(capitalize(label))}`,
-//       },
-//     layout: {
-//       component: 'div',
-//       props: {
-//         style: {
-//           marginTop: 80,
-//           marginBottom: 80,
-//           paddingBottom: 80,
-//         },
-//       },
-//       children: [
-//         customHeader,
-//         (customTabs) ? customTabs : contenttabs(schema, label, options),
-//         {
-//           component: 'Container',
-//           props: {},
-//           children: [{
-//             component: 'ResponsiveTabs',
-//             asyncprops: {
-//               formdata: [helpers.getDetailLabel(label), label, ],
-//             },
-//             props: {
-//               tabsType: 'navBar',
-//               tabsProps: {
-//                 style: {
-//                   border: 'none',
-//                   fontSize: 14,
-//                 },
-//               },
-//               tabgroupProps: {
-//                 style: {
-//                   border: 'none',
-//                   fontSize: 14,
-//                 },
-//                 className: '__ra_no_border',
-//               },
-//               tabs: detailPageTabs,
-//             },
-//             // children:'',
-//           }, ],
-//           // .concat(buildDetail(schema, label, options)),
-//         },
-//       ],
-//     },
-//   };
-// };
+  return {
+    resources: (newEntity) ? {} : {
+      [helpers.getDetailLabel(schemaName)]: `${dataRoutePrefix}/:id?format=json`,
+
+    },
+    onFinish: 'render',
+    pageData: (customPageData) ?
+      customPageData : {
+        title: `Content › ${pluralize(capitalize(schemaName))}`,
+        navLabel: `Content › ${pluralize(capitalize(schemaName))}`,
+      },
+    layout: {
+      component: 'div',
+      props: {
+        style: {
+          marginTop: 80,
+          marginBottom: 80,
+          paddingBottom: 80,
+        },
+      },
+      children: [
+        customHeader,
+        (customTabs) ? customTabs : contenttabs(options),
+
+        {
+          component: 'Container',
+          props: {},
+          children: [{
+            component: 'ResponsiveTabs',
+            asyncprops: {
+              formdata: [helpers.getDetailLabel(schemaName), 'data'],
+            },
+            props: {
+              tabsType: 'navBar',
+              tabsProps: {
+                style: {
+                  border: 'none',
+                  fontSize: 14,
+                },
+              },
+              tabgroupProps: {
+                style: {
+                  border: 'none',
+                  fontSize: 14,
+                },
+                className: '__ra_no_border',
+              },
+              tabs: detailPageTabs,
+            },
+            // children:'',
+          }, ],
+          // .concat(buildDetail(schema, label, options)),
+        },
+        // {
+        //   component: 'RawStateOutput',
+        //   // component: 'RawStateOutput',
+        //   props: {
+        //     select: 'SOMEFORMDATA',
+        //     style: {
+        //       padding: '10px',
+        //       margin: '10px',
+        //       border: '1px solid black',
+        //     },
+        //   },
+        //   asyncprops: {
+        //     'SOMEFORMDATA': [
+        //       helpers.getDetailLabel(schemaName), 'data'
+        //     ],
+        //   },
+        // },
+      ],
+    },
+  };
+};
 
 /**
  * constructs index page
@@ -204,6 +226,6 @@ const constructIndex = function(options = {}) {
 };
 
 module.exports = {
-  // constructDetail,
+  constructDetail,
   constructIndex,
 };

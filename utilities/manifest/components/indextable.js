@@ -137,8 +137,8 @@ function indextable(options) {
             limit: 20,
             'filterSearch': true,
             'tableSearch': true,
-            // flattenRowData: true,
-            // flattenRowDataOptions: { maxDepth: 1 },
+            flattenRowData: true,
+            flattenRowDataOptions: { maxDepth: 1 },
             baseUrl: dataRoutePrefix,
             dataMap: [{
               'key': 'rows',

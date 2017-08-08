@@ -28,6 +28,7 @@ const approveOptionsRequest = (req, res, next) => {
 };
 
 const fixCodeMirrorSubmit = (req, res, next) => {
+  // console.log('fixCodeMirrorSubmit')
   if (req.body.genericdocjson) {
     req.controllerData = req.controllerData || {};
     req.controllerData.skip_xss = true;
@@ -38,7 +39,7 @@ const fixCodeMirrorSubmit = (req, res, next) => {
     if (!req.body.docid && req.body._id) {
       req.body.docid = req.body._id;
     }
-    delete req.body._id;
+    // delete req.body._id;
     delete req.body.__v;
     // delete req.body.format;
     Object.keys(req.body).forEach(function(key) {
@@ -53,6 +54,7 @@ const fixCodeMirrorSubmit = (req, res, next) => {
     req.controllerData = Object.assign({},
       req.controllerData, { html_xss: true, });
   }
+  // console.log('fixCodeMirrorSubmit req.body', req.body)
   next();
 };
 
@@ -65,7 +67,8 @@ const fixFlattenedSubmit = function(req, res, next) {
     // if (req.body.latest_contact.phone_number_primary) {
     //   req.body.latest_contact.phone_number_primary = req.body.latest_contact.phone_number_primary.replace(/\D/gi, '');
     // }
-    delete req.body._id;
+    // console.log('fixFlattenedSubmit req.body', req.body)
+    // delete req.body._id;
     delete req.body._csrf;
     delete req.body.__v;
   }

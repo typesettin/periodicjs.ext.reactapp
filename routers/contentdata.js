@@ -17,6 +17,8 @@ const helperController = controllers.helper;
 // contentdataRouter.get('/:dbname/secure-asset/:id/:filename', assetController.loadAsset, assetController.decryptAsset);
 
 contentdataRouter.use(helperController.approveOptionsRequest, ensureApiAuthenticated);
+contentdataRouter.put('*', controllers.helper.fixCodeMirrorSubmit, controllers.helper.fixFlattenedSubmit);
+contentdataRouter.post('*', controllers.helper.fixCodeMirrorSubmit, controllers.helper.fixFlattenedSubmit);
 // console.log({ encryptionKey });
 Array.from(dataRouters.values()).forEach(drouter => {
   contentdataRouter.use(drouter.router);
