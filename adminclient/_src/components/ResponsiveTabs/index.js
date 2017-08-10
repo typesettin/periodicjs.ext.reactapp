@@ -100,10 +100,20 @@ var ResponsiveTabs = function (_Component) {
       }
       var currentLayout = tab.layout && (0, _keys2.default)(tab.layout).length >= 1 ? this.getRenderedComponent(tab.layout) : '';
       // window.location.hash = tab.name;
+      // console.log({tab})
       this.setState({
         currentTab: tab,
         currentLayout: currentLayout
       });
+      var onChangeFunc = function onChangeFunc() {};
+      if (typeof this.props.onChange === 'string' && this.props.onChange.indexOf('func:this.props') !== -1) {
+        onChangeFunc = this.props[this.props.onChange.replace('func:this.props.', '')];
+      } else if (typeof this.props.onChange === 'string' && this.props.onChange.indexOf('func:window') !== -1 && typeof window[this.props.onChange.replace('func:window.', '')] === 'function') {
+        onChangeFunc = window[this.props.onChange.replace('func:window.', '')].bind(this);
+      }
+      // console.log('this.props.onChange',this.props.onChange)
+      // console.log('onChangeFunc',onChangeFunc)
+      onChangeFunc(tab);
     }
   }, {
     key: 'componentWillMount',

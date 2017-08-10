@@ -522,7 +522,7 @@ var ResponsiveTable = function (_Component) {
           fq: this.state.filterRowData && this.state.filterRowData.length ? this.state.filterRowData.map(function (frd) {
             return frd.property + '|||' + frd.filter_value + '|||' + frd.value;
           }) : undefined,
-          search: options.search,
+          query: options.search,
           allowSpecialCharacters: true,
           pagenum: options.pagenum || 1
         });
@@ -533,6 +533,12 @@ var ResponsiveTable = function (_Component) {
         _util2.default.fetchComponent(fetchURL, { headers: headers })().then(function (response) {
           // let usingResponsePages = false;
           // console.debug('this.props.dataMap',this.props.dataMap)
+          // console.log({ response })
+          if (response.data && response.result && response.status) {
+            // console.log('USE DATA FROM RESPONSE', response.data)
+            // console.log('this.props.dataMap',this.props.dataMap)
+            response = response.data;
+          }
           _this5.props.dataMap.forEach(function (data) {
             if (data.key === 'rows') {
               var rows = response[data.value] || [];
@@ -557,7 +563,7 @@ var ResponsiveTable = function (_Component) {
             updatedState.sortOrder = newSortOptions.sortOrder;
             updatedState.sortProp = options.sort;
           }
-
+          // console.log({ updatedState });
           if (_this5.props.tableForm) {
             _this5.props.onChange(updatedState);
           }

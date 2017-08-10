@@ -152,7 +152,7 @@ var ResponsiveDatalist = function (_Component) {
           // sort: (newSortOptions.sortProp)
           //   ? `${newSortOptions.sortOrder}${newSortOptions.sortProp}`
           //   : undefined,
-          search: options.search,
+          query: options.search,
           allowSpecialCharacters: true
           // pagenum: options.pagenum || 1,
         });
@@ -160,10 +160,18 @@ var ResponsiveDatalist = function (_Component) {
           'x-access-token': stateProps.user.jwt_token
         }, stateProps.settings.userprofile.options.headers);
         _util2.default.fetchComponent(fetchURL, { headers: headers })().then(function (response) {
+          if (response.data && response.result && response.status) {
+            console.log('USE DATA FROM RESPONSE', response.data);
+            console.log('this.props.entity', _this3.props.entity);
+            console.log('this.props.field', _this3.props.field);
+            response = response.data;
+            console.log('pluralize(this.props.entity)', (0, _pluralize2.default)(_this3.props.entity));
+            console.log('response[pluralize(this.props.entity)]', response[(0, _pluralize2.default)(_this3.props.entity)]);
+          }
           var updatedState = {};
           updatedState.selectedData = response[(0, _pluralize2.default)(_this3.props.entity)];
           updatedState.isSearching = false;
-          // console.debug({updatedState,response});
+          console.debug({ updatedState: updatedState, response: response });
           _this3.setState(updatedState);
         }, function (e) {
           _this3.props.errorNotification(e);
@@ -313,15 +321,17 @@ var ResponsiveDatalist = function (_Component) {
               paddingRight: '0px'
             },
             onClick: function onClick() {
-              // console.debug('clicked onclick',this.props);
+              console.debug('clicked onclick', _this4.props);
               if (_this4.props.multi) {
                 var newValue = _this4.state.value && Array.isArray(_this4.state.value) && _this4.state.value.length ? _this4.state.value.concat([datum]) : [datum];
+                console.debug({ newValue: newValue });
                 _this4.setState({
                   value: newValue,
                   selectedData: false
                 });
                 _this4.props.onChange(newValue);
               } else {
+                console.debug({ datum: datum });
                 _this4.setState({
                   value: datum,
                   selectedData: false

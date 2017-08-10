@@ -14,9 +14,9 @@
     } else if(locals.reactapp.settings.name){
       %><%- locals.reactapp.settings.name %><%
     } else{%>'Welcome'<%}%></title>
-    <link href="/extensions/periodicjs.ext.reactapp/static/css/main.b5c94ad1.css" rel="stylesheet">
+    <link href="/extensions/periodicjs.ext.reactapp/static/css/main.b72c7c91.css" rel="stylesheet">
     <%- (locals.reactapp.settings.custom_css_stylesheet)?`<link href="${locals.reactapp.settings.custom_css_stylesheet}" rel="stylesheet">`:'' %>
-    <% if(locals.reactapp.settings.application.additional_header){ %><%- include(`../../../../content/themes/${locals.theme_name}/views/shared/reactapp/header`,{locals}) ;%><% } %>
+    <% if(locals.reactapp.settings.application.additional_header){ %><%- include(`../../../../content/container/${locals.theme_name}/views/shared/reactapp/header`,{locals}) ;%><% } %>
   </head>
 
   <body class="__ra_mc_loaded __reactapp_body_loaded" id="%2Fpub%2Fbrowsersupport">
@@ -66,7 +66,7 @@
     </div>
 
     <% if(locals.reactapp.settings.application.additional_footer){ %>
-      <%- include(`../../../../content/themes/${locals.theme_name}/views/shared/reactapp/footer`,{locals}) ;%>
+      <%- include(`../../../../content/container/${locals.theme_name}/views/shared/reactapp/footer`,{locals}) ;%>
     <% } %>
   </body>
 

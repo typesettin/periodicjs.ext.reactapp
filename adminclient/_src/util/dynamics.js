@@ -128,6 +128,11 @@ var fetchSuccessContent = exports.fetchSuccessContent = function _fetchSuccessCo
     var state = getState();
     var containers = state.manifest.containers;
     var layout = (0, _assign2.default)({}, containers[pathname].layout);
+
+    if (typeof window.customOnChangeLocation === 'function') {
+      window.customOnChangeLocation(window.location.pathname);
+    }
+
     if (containers[pathname].dynamic && (0, _typeof3.default)(containers[pathname].dynamic) === 'object') {
       (0, _keys2.default)(containers[pathname].dynamic).forEach(function (dynamicProp) {
         _this2.props.setDynamicData(dynamicProp, containers[pathname].dynamic[dynamicProp]);

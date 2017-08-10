@@ -143,7 +143,9 @@ var packageJSON = {
     capitalize: '^1.0.0',
     eslint: '^3.14.1',
     'font-awesome': '^4.7.0',
+    'google-map-react': '^0.24.0',
     moment: '^2.17.1',
+    numeral: '^2.0.6',
     pluralize: '^3.1.0',
     'react-addons-css-transition-group': '^15.4.1',
     'react-animate.css': '0.0.4',
@@ -157,6 +159,7 @@ var packageJSON = {
     redux: '^3.6.0',
     'redux-logger': '^2.7.4',
     'redux-thunk': '^2.1.0',
+    'string-to-json': '^0.1.0',
     'ua-parser-js': '^0.7.12',
     useragent: '^2.1.13'
   },
@@ -189,7 +192,7 @@ var packageJSON = {
     test: 'react-scripts test --env=jsdom',
     eject: 'react-scripts eject'
   },
-  proxy: 'http://localhost:8786',
+  proxy: 'https://dsa-dev.promisefinancial.net:8785',
   homepage: '/extensions/periodicjs.ext.reactapp'
 };
 

@@ -31,10 +31,6 @@ var _constants = require('../constants');
 
 var _constants2 = _interopRequireDefault(_constants);
 
-var _semver = require('semver');
-
-var _semver2 = _interopRequireDefault(_semver);
-
 var _stringToJson = require('string-to-json');
 
 var _stringToJson2 = _interopRequireDefault(_stringToJson);
@@ -45,12 +41,15 @@ var _flat2 = _interopRequireDefault(_flat);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+// import semver from 'semver';
 var settleVersioning = function settleVersioning(original, update) {
   if (!original.versions) return true;
   if (typeof original.versions.theme !== 'string' || typeof original.versions.reactapp !== 'string') return true;
   if (!update.versions) return true;
-  var themeOutofDate = typeof update.versions.theme === 'string' ? _semver2.default.lt(original.versions.theme, update.versions.theme) : false;
-  var reactappOutofDate = typeof update.versions.reactapp === 'string' ? _semver2.default.lt(original.versions.reactapp, update.versions.reactapp) : false;
+  // let themeOutofDate = (typeof update.versions.theme === 'string') ? semver.lt(original.versions.theme, update.versions.theme) : false;
+  var themeOutofDate = false;
+  // let reactappOutofDate = (typeof update.versions.reactapp === 'string') ? semver.lt(original.versions.reactapp, update.versions.reactapp) : false;
+  var reactappOutofDate = false;
   return themeOutofDate || reactappOutofDate;
 };
 
