@@ -5,12 +5,13 @@ const helpers = require('../helpers');
 
 const tableField = function(headingOptions) {
   let { title, field, link, } = headingOptions;
-  return function(schemas, label, options) {
+  return function(options) {
+    const { schemaName } = options;
     // let usablePrefix = helpers.getDataPrefix(options.prefix);
-    let manifestPrefix = helpers.getManifestPathPrefix(options.prefix);
+    // let manifestPrefix = helpers.getManifestPathPrefix(options.prefix);
     return {
-      label: title || capitalize(field || label),
-      sortid: field || label,
+      label: title || capitalize(field || schemaName),
+      sortid: field || schemaName,
       sortable: true,
       image: headingOptions.image,
       imageProps: {
@@ -19,14 +20,14 @@ const tableField = function(headingOptions) {
           maxWidth: '4rem',
           overflow: 'hidden',
         },
-        alt: title || capitalize(field || label),
+        alt: title || capitalize(field || schemaName),
       },
       icon: headingOptions.icon,
       iconProps: {
-        title: title || capitalize(field || label),
+        title: title || capitalize(field || schemaName),
       },
       'link': (link) ? {
-        'baseUrl': `${manifestPrefix}/${pluralize(label)}/:id`,
+        'baseUrl': `${helpers.getContainerPath(options)}/:id`,
         'params': [{ 'key': ':id', 'val': '_id', }, ],
       } : undefined,
       'linkProps': (link) ? {

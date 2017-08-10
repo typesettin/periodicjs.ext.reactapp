@@ -5,14 +5,15 @@ const helpers = require('./helpers');
 const containers = require('./containers');
 
 function generateManifestsFromCoreData(options) {
-  const reactappSettings = periodic.settings.extensions['periodicjs.ext.reactapp'];
-  const adminRoute = helpers.getManifestPathPrefix(reactappSettings.adminPath);
+  const extsettings = periodic.settings.extensions['periodicjs.ext.reactapp'];
+  const adminRoute = helpers.getManifestPathPrefix(extsettings.adminPath);
   const { indexOptions, newOptions, showOptions, schema, schemaName, allSchemas, detailOptions, } = options;
+  // options.extsettings = extsettings;
   options.adminRoute = adminRoute;
   return {
-    [helpers.getContainerPath(options)]: containers.constructIndex({ schema, schemaName, allSchemas, adminRoute, indexOptions }),
-    [`${helpers.getContainerPath(options)}/new`]: containers.constructDetail({ schema, schemaName, allSchemas, adminRoute, detailOptions, newEntity: true, }),
-    [`${helpers.getContainerPath(options)}/:id`]: containers.constructDetail({ schema, schemaName, allSchemas, adminRoute, detailOptions }),
+    [helpers.getContainerPath(options)]: containers.constructIndex({ schema, schemaName, allSchemas, adminRoute, indexOptions, extsettings }),
+    [`${helpers.getContainerPath(options)}/new`]: containers.constructDetail({ schema, schemaName, allSchemas, adminRoute, detailOptions, newEntity: true, extsettings, }),
+    [`${helpers.getContainerPath(options)}/:id`]: containers.constructDetail({ schema, schemaName, allSchemas, adminRoute, detailOptions, extsettings, }),
   };
 }
 

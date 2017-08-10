@@ -77,11 +77,12 @@ function getTableHeader(options) {
   //   let customheaders = customIndexHeader.map(header => header.call(null, schemas, label, options));
   //   // console.log({ customheaders });
   //   return customheaders;
-  // } else if (options.extsettings && options.extsettings.data_tables && options.extsettings.data_tables[options.dbname] && options.extsettings.data_tables[options.dbname][label]) {
-  //   return options.extsettings.data_tables[options.dbname][label].map(header => header.call(null, schemas, label, options));
-  // } else {
-  return getDefaultHeaders(options);
-  // }
+  // } else 
+  if (options.extsettings && options.extsettings.data_tables && options.extsettings.data_tables[schemaName]) {
+    return options.extsettings.data_tables[schemaName];
+  } else {
+    return getDefaultHeaders(options);
+  }
 }
 
 function getTableProps(schemas, label, options) {
@@ -111,23 +112,25 @@ function indextable(options) {
         cardTitle: `All ${capitalize(pluralize(schemaName))}`,
       }),
       children: [
-        // {
-        // component: 'RawStateOutput',
-        // // component: 'RawStateOutput',
-        // props: {
-        //   select: 'rows',
-        //   style: {
-        //     padding: '10px',
-        //     margin: '10px',
-        //     border: '1px solid black',
-        //   },
-        // },
-        // asyncprops: {
-        //   'rows': [
-        //     helpers.getIndexLabel(schemaName), 'data'
-        //   ],
-        // },
-        // },
+        /*
+          // {
+          // component: 'RawStateOutput',
+          // // component: 'RawStateOutput',
+          // props: {
+          //   select: 'rows',
+          //   style: {
+          //     padding: '10px',
+          //     margin: '10px',
+          //     border: '1px solid black',
+          //   },
+          // },
+          // asyncprops: {
+          //   'rows': [
+          //     helpers.getIndexLabel(schemaName), 'data'
+          //   ],
+          // },
+          // },
+        */
         {
           component: 'ResponsiveTable',
           props: Object.assign({
@@ -138,7 +141,7 @@ function indextable(options) {
             'filterSearch': true,
             'tableSearch': true,
             flattenRowData: true,
-            flattenRowDataOptions: { maxDepth: 1 },
+            flattenRowDataOptions: { maxDepth: 3 },
             baseUrl: dataRoutePrefix,
             dataMap: [{
               'key': 'rows',

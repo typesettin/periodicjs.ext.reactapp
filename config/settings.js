@@ -1,7 +1,7 @@
 'use strict';
 
 const index_data_tables = require('../utilities/index_data_tables.js');
-
+// console.log({ index_data_tables })
 module.exports = {
   settings: {
     'server_side_react': true,
@@ -90,7 +90,12 @@ module.exports = {
       },
     },
     data_tables: {
-      standard: index_data_tables,
+      // standard: index_data_tables,
+      /*
+        standard_user:{
+      custom header
+        }
+      */
     },
     auth: {
       logged_in_homepage: '/r-admin/dashboard',

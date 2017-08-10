@@ -479,31 +479,31 @@ function setCoreDataConfigurations() {
       CORE_DATA_CONFIGURATIONS.manifest = manifestUtils.coreData.generateCoreDataManifests({}); //generated;
       // console.log('CORE_DATA_CONFIGURATIONS.manifest', CORE_DATA_CONFIGURATIONS.manifest);
     }
-    if (CORE_DATA_CONFIGURATIONS.navigation === null && CORE_DATA_CONFIGURATIONS.manifest) {
-      CORE_DATA_CONFIGURATIONS.navigation = Object.keys(CORE_DATA_CONFIGURATIONS.manifest).reduce((result, key) => {
-        // console.log({result,key});
-        result.layout = result.layout || {};
-        result.layout.children = result.layout.children || [{
-          component: 'MenuLabel',
-          children: 'Standard Content',
-        }, {
-          component: 'MenuList',
-          children: [],
-        }, ];
-        if (key.indexOf('/:id') === -1 && key.indexOf('/new') === -1) {
-          // console.log({key})
-          result.layout.children[1].children.push({
-            component: 'MenuAppLink',
-            props: {
-              href: key,
-              label: capitalize(path.basename(key)),
-              id: path.basename(key),
-            },
-          });
-        }
-        return result;
-      }, {});
-    }
+    // if (CORE_DATA_CONFIGURATIONS.navigation === null && CORE_DATA_CONFIGURATIONS.manifest) {
+    //   CORE_DATA_CONFIGURATIONS.navigation = Object.keys(CORE_DATA_CONFIGURATIONS.manifest).reduce((result, key) => {
+    //     // console.log({result,key});
+    //     result.layout = result.layout || {};
+    //     result.layout.children = result.layout.children || [{
+    //       component: 'MenuLabel',
+    //       children: 'Data',
+    //     }, {
+    //       component: 'MenuList',
+    //       children: [],
+    //     }, ];
+    //     if (key.indexOf('/:id') === -1 && key.indexOf('/new') === -1) {
+    //       // console.log({key})
+    //       result.layout.children[1].children.push({
+    //         component: 'MenuAppLink',
+    //         props: {
+    //           href: key,
+    //           label: capitalize(path.basename(key)),
+    //           id: path.basename(key),
+    //         },
+    //       });
+    //     }
+    //     return result;
+    //   }, {});
+    // }
   }
 }
 
