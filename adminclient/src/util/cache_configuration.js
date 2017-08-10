@@ -1,19 +1,21 @@
 import { AsyncStorage, } from 'react-native';
 import constants from '../constants';
-import semver from 'semver';
+// import semver from 'semver';
 import str2json from 'string-to-json';
 import flatten from 'flat';
 
-var settleVersioning = function (original, update) {
+var settleVersioning = function(original, update) {
   if (!original.versions) return true;
   if (typeof original.versions.theme !== 'string' || typeof original.versions.reactapp !== 'string') return true;
   if (!update.versions) return true;
-  let themeOutofDate = (typeof update.versions.theme === 'string') ? semver.lt(original.versions.theme, update.versions.theme) : false;
-  let reactappOutofDate = (typeof update.versions.reactapp === 'string') ? semver.lt(original.versions.reactapp, update.versions.reactapp) : false;
+  // let themeOutofDate = (typeof update.versions.theme === 'string') ? semver.lt(original.versions.theme, update.versions.theme) : false;
+  let themeOutofDate = false;
+  // let reactappOutofDate = (typeof update.versions.reactapp === 'string') ? semver.lt(original.versions.reactapp, update.versions.reactapp) : false;
+  let reactappOutofDate = false;
   return (themeOutofDate || reactappOutofDate);
 };
 
-var handleConfigurationAssigment = function (original, update) {
+var handleConfigurationAssigment = function(original, update) {
   if (original && settleVersioning(original, update)) {
     original = Object.assign({}, update);
   } else if (!original) {
@@ -22,7 +24,7 @@ var handleConfigurationAssigment = function (original, update) {
   return original;
 };
 
-var handleConfigurationVersioning = function (data, type, options = {}) {
+var handleConfigurationVersioning = function(data, type, options = {}) {
   if (!type) throw new Error('Configurations must have a specified type');
   let configuration;
   try {
@@ -49,8 +51,8 @@ var handleConfigurationVersioning = function (data, type, options = {}) {
   return str2json.convert(configuration);
 };
 
-export const setCacheConfiguration = function (fn, type, options = {}) {
-  return function () {
+export const setCacheConfiguration = function(fn, type, options = {}) {
+  return function() {
     let invoked = fn(...arguments);
     if (invoked && typeof invoked.then === 'function' && typeof invoked.catch === 'function') {
       return invoked
@@ -75,7 +77,7 @@ export const setCacheConfiguration = function (fn, type, options = {}) {
   };
 };
 
-export const loadCacheConfigurations = function () {
+export const loadCacheConfigurations = function() {
   return AsyncStorage.getItem(constants.cache.CONFIGURATION_CACHE)
     .then(result => {
       try {
@@ -88,8 +90,8 @@ export const loadCacheConfigurations = function () {
 };
 
 
-export const getCacheConfiguration = function (actions = {}) {
-  return function (dispatch) {
+export const getCacheConfiguration = function(actions = {}) {
+  return function(dispatch) {
     return AsyncStorage.getItem(constants.cache.CONFIGURATION_CACHE)
       .then(result => {
         try {
@@ -101,7 +103,7 @@ export const getCacheConfiguration = function (actions = {}) {
       .then(result => {
         if (result.manifest) {
           if (result.manifest.authenticated && actions.manifest && actions.manifest.receivedManifestData) dispatch(actions.manifest.receivedManifestData(result.manifest.authenticated));
-          if (result.manifest.unauthenticated && actions.manifest && actions.manifest.unauthenticatedReceivedManifestData) dispatch(actions.manifest.unauthenticatedReceivedManifestData(result.manifest.unauthenticated)); 
+          if (result.manifest.unauthenticated && actions.manifest && actions.manifest.unauthenticatedReceivedManifestData) dispatch(actions.manifest.unauthenticatedReceivedManifestData(result.manifest.unauthenticated));
         }
         if (result.user) {
           if (result.user.preferences && actions.user && actions.user.preferenceSuccessResponse) {
@@ -147,7 +149,7 @@ export const getCacheConfiguration = function (actions = {}) {
   };
 };
 
-export const flushCacheConfiguration = function (toRemove) {
+export const flushCacheConfiguration = function(toRemove) {
   if (!toRemove) return AsyncStorage.removeItem(constants.cache.CONFIGURATION_CACHE);
   return AsyncStorage.getItem(constants.cache.CONFIGURATION_CACHE)
     .then(result => {

@@ -165,7 +165,8 @@ class ResponsiveTable extends Component {
     let updatedStateProp = {
       newRowData: Object.assign({},
         this.state.newRowData, {
-          [name]: text, }),
+          [name]: text,
+        }),
     };
     this.props.headers.forEach(header => {
       if (header.sortid !== name && header.formtype && header.defaultValue && !updatedStateProp.newRowData[header.sortid]) {
@@ -238,7 +239,8 @@ class ResponsiveTable extends Component {
     let updatedStateProp = {
       filterRowNewData: Object.assign({},
         this.state.filterRowNewData, {
-          [name]: text, }),
+          [name]: text,
+        }),
     };
     // console.debug({ updatedStateProp, options });
     this.setState(updatedStateProp);
@@ -386,7 +388,7 @@ class ResponsiveTable extends Component {
             return `${frd.property}|||${frd.filter_value}|||${frd.value}`;
           })
           : undefined,
-        search: options.search,
+        query: options.search,
         allowSpecialCharacters: true,
         pagenum: options.pagenum || 1,
       })}`;
@@ -398,6 +400,12 @@ class ResponsiveTable extends Component {
         .then(response => { 
           // let usingResponsePages = false;
           // console.debug('this.props.dataMap',this.props.dataMap)
+          // console.log({ response })
+          if (response.data && response.result && response.status) {
+            // console.log('USE DATA FROM RESPONSE', response.data)
+            // console.log('this.props.dataMap',this.props.dataMap)
+            response = response.data;
+          }
           this.props.dataMap.forEach(data => { 
             if (data.key === 'rows') {
               let rows = response[ data.value ] || [];
@@ -420,7 +428,7 @@ class ResponsiveTable extends Component {
             updatedState.sortOrder = newSortOptions.sortOrder;
             updatedState.sortProp = options.sort;
           }
-
+          // console.log({ updatedState });
           if (this.props.tableForm) {
             this.props.onChange(updatedState);
           }

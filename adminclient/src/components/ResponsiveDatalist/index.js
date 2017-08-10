@@ -31,17 +31,16 @@ const defaultProps = {
   data: false,
   selectedData: false,
   createable: false,
-  value:undefined,
-  flattenDataList:true,
+  value: undefined,
+  flattenDataList: true,
   flattenDataListOptions: {},
-  selector:'_id',
-  displayField:'title',
-  dbname:'periodic',
+  selector: '_id',
+  displayField: 'title',
+  dbname: 'periodic',
   limit: 10,
   datalistdata: [],
-  onChange:(data)=>{
-    console.debug('ResponsiveDatalist onChange', { data, })
-;
+  onChange: (data) => {
+    console.debug('ResponsiveDatalist onChange', { data, });
   },
 };
 
@@ -53,7 +52,7 @@ class ResponsiveDatalist extends Component {
       data: props.data,
       value: props.value,
       selectedData: props.selectedData,
-      isSearching:false,
+      isSearching: false,
     };
     this.inputProps = Object.assign({}, this.props.passableProps);
     this.searchFunction = debounce(this.updateDataList, 200);
@@ -66,20 +65,20 @@ class ResponsiveDatalist extends Component {
   }
 
   filterStaticData(options) {
-    return this.props.datalistdata.filter(item => (item[ this.props.field ].indexOf(options.search) > -1));
+    return this.props.datalistdata.filter(item => (item[this.props.field].indexOf(options.search) > -1));
   }
 
   updateDataList(options) {
-    // console.log('this.props.resourceUrl', this.props.resourceUrl);
-    if(this.props.resourceUrl){
-      this.setState({ isSearching: true, });
-      let stateProps = this.props.getState();
-      let fetchURL = `${this.props.resourceUrl}&${qs.stringify({
+      // console.log('this.props.resourceUrl', this.props.resourceUrl);
+      if (this.props.resourceUrl) {
+        this.setState({ isSearching: true, });
+        let stateProps = this.props.getState();
+        let fetchURL = `${this.props.resourceUrl}&${qs.stringify({
         limit: this.props.limit,
         // sort: (newSortOptions.sortProp)
         //   ? `${newSortOptions.sortOrder}${newSortOptions.sortProp}`
         //   : undefined,
-        search: options.search,
+        query: options.search,
         allowSpecialCharacters: true,
         // pagenum: options.pagenum || 1,
       })}`;
@@ -88,10 +87,18 @@ class ResponsiveDatalist extends Component {
       }, stateProps.settings.userprofile.options.headers);
       utilities.fetchComponent(fetchURL, { headers, })()
         .then(response => { 
+          if (response.data && response.result && response.status) {
+            console.log('USE DATA FROM RESPONSE', response.data)
+            console.log('this.props.entity',this.props.entity)
+            console.log('this.props.field',this.props.field)
+            response = response.data;
+            console.log('pluralize(this.props.entity)',pluralize(this.props.entity))
+            console.log('response[pluralize(this.props.entity)]',response[pluralize(this.props.entity)])
+          }
           let updatedState = {};
           updatedState.selectedData = response[pluralize(this.props.entity)];
           updatedState.isSearching = false;
-          // console.debug({updatedState,response});
+          console.debug({updatedState,response});
           this.setState(updatedState);
         }, e => {
           this.props.errorNotification(e);
@@ -229,17 +236,19 @@ class ResponsiveDatalist extends Component {
                 paddingRight: '0px',
               }}
               onClick={()=>{
-                // console.debug('clicked onclick',this.props);
+                console.debug('clicked onclick',this.props);
                 if(this.props.multi){
                   let newValue = (this.state.value && Array.isArray(this.state.value) && this.state.value.length)
                     ? this.state.value.concat([datum, ])
-                    : [datum, ];
+                    : [ datum, ];
+                  console.debug({newValue})
                   this.setState({
                     value:newValue,
                     selectedData: false,
                   });
                   this.props.onChange(newValue);
-                }                else{
+                } else {
+                  console.debug({datum})
                   this.setState({
                     value:datum,
                     selectedData: false,

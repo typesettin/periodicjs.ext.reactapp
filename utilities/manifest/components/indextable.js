@@ -145,13 +145,13 @@ function indextable(options) {
             baseUrl: dataRoutePrefix,
             dataMap: [{
               'key': 'rows',
-              'value': `${helpers.getIndexLabel(schemaName)}.data.${pluralize(schemaName)}`,
+              'value': `${pluralize(schemaName)}`,
             }, {
               'key': 'numItems',
-              'value': `${helpers.getIndexLabel(schemaName)}.data.${pluralize(schemaName)}count`,
+              'value': `${pluralize(schemaName)}count`,
             }, {
               'key': 'numPages',
-              'value': `${helpers.getIndexLabel(schemaName)}.data.${schemaName}pages`,
+              'value': `${schemaName}pages`,
             }, ],
             'headerLinkProps': {
               'style': {

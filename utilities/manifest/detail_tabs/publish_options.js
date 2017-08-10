@@ -25,17 +25,17 @@ function _id() {
 }
 exports.id = _id;
 
-function _dataList(schema, label, options, type) {
+function _dataList(schema, label, options, type, field) {
   let entity = helpers.getSchemaEntity({ schema, label, });
-  let dataRoutePrefix = helpers.getDataRoute(options);
-  let containerPrefixPath = helpers.getContainerPath(options);
+  let dataRoutePrefix = helpers.getDataRoute(Object.assign({}, options, { schemaName: label }));
+  let containerPrefixPath = helpers.getContainerPath(Object.assign({}, options, { schemaName: label }));
   // let usablePrefix = helpers.getDataPrefix(options.prefix, undefined, schema, label, options);
   // let manifestPrefix = helpers.getManifestPathPrefix(options.prefix);
 
   return {
     type: 'datalist',
     placeholder: `${capitalize(label)} › ${entity}`,
-    name: label,
+    name: field || label,
     label: `${capitalize(label)}`,
     labelProps: {
       style: {
@@ -47,7 +47,7 @@ function _dataList(schema, label, options, type) {
       selector: '_id',
       displayField: 'title',
       multi: (type === 'array') ? true : false,
-      field: label,
+      field: field || label,
       entity: entity.toLowerCase(),
       dbname: options.dbname || 'periodic',
       resourcePreview: `${containerPrefixPath}`,
@@ -421,19 +421,20 @@ function getContentOptions(schema, label, options) {
     contentItems.push(_content('description'));
   }
   if (schema.tags && customIgnoreFields.indexOf('tags') === -1) {
-    contentItems.push(_dataList(schema, 'tags', options, 'array', true));
+    //schema, label, options, type, field
+    contentItems.push(_dataList(schema, 'standard_tag', options, 'array', 'tags'));
   }
   if (schema.categories && customIgnoreFields.indexOf('categories') === -1) {
-    contentItems.push(_dataList(schema, 'categories', options, 'array', true));
+    contentItems.push(_dataList(schema, 'standard_category', options, 'array', 'categories'));
   }
   if (schema.contenttypes && customIgnoreFields.indexOf('contenttypes') === -1) {
-    contentItems.push(_dataList(schema, 'contenttypes', options, 'array', true));
+    contentItems.push(_dataList(schema, 'standard_contenttype', options, 'array', 'contenttypes'));
   }
   if (schema.primaryasset && customIgnoreFields.indexOf('primaryasset') === -1) {
-    contentItems.push(_dataList(schema, 'primaryasset', options, '_id', true));
+    contentItems.push(_dataList(schema, 'standard_asset', options, '_id', 'primaryasset'));
   }
   if (schema.assets && customIgnoreFields.indexOf('assets') === -1) {
-    contentItems.push(_dataList(schema, 'assets', options, 'array', true));
+    contentItems.push(_dataList(schema, 'standard_asset', options, 'array', 'assets'));
   }
   return contentItems;
 }
