@@ -1,8 +1,10 @@
 'use strict';
 const periodic = require('periodicjs');
+const flatten = require('flat');
 const controllerhelper = require('./controllerhelper');
 const helpers = require('./manifest/helpers');
 const data_tables = require('./manifest/table/data_tables');
+const oauth2ServerUtils = periodic.locals.extensions.get('periodicjs.ext.oauth2server');
 const logger = periodic.logger;
 let initialReactAppConfig = {};
 let intialReactAppClient;
@@ -175,17 +177,17 @@ function init() {
   const appEnvironment = periodic.settings.application.environment;
   const reactAppConfigFilepath = `content/config/extensions/periodicjs.ext.reactapp/${appEnvironment}.json`;
   Promise.all([
-      configurationDB.load({
-        query: {
-          filepath: reactAppConfigFilepath,
-        },
-      }),
-      periodic.datas.get('standard_client').load({
-        query: {
-          name: 'reactapp',
-        },
-      }),
-    ])
+    configurationDB.load({
+      query: {
+        filepath: reactAppConfigFilepath,
+      },
+    }),
+    periodic.datas.get('standard_client').load({
+      query: {
+        name: 'reactapp',
+      },
+    }),
+  ])
     .then(results => {
       const [dbReactAppConfig, dbReactAppClient, ] = results;
       // console.log({ dbReactAppConfig, dbReactAppClient })
@@ -228,25 +230,25 @@ function init() {
           environment: periodic.settings.application.environment,
         };
         configurationDB.create({
-            newdoc: {
-              filepath: reactAppConfigFilepath,
-              environment: appEnvironment,
-              config: {
-                settings: reactAppConfig,
-              },
-              container: periodic.settings.container.name,
+          newdoc: {
+            filepath: reactAppConfigFilepath,
+            environment: appEnvironment,
+            config: {
+              settings: reactAppConfig,
             },
-          }).then(createdReactAppConfig => {
-            logger.silly('created initial react app config');
-            periodic.settings.extensions['periodicjs.ext.reactapp'] = flatten.unflatten(
-              Object.assign({},
-                flatten(periodic.settings.extensions['periodicjs.ext.reactapp'] || {}),
-                flatten(reactAppConfig || {})
-              )
-            );
-            return true;
-          })
-          .catch(logger.error);
+            container: periodic.settings.container.name,
+          },
+        }).then(createdReactAppConfig => {
+          logger.silly('created initial react app config');
+          periodic.settings.extensions[ 'periodicjs.ext.reactapp' ] = flatten.unflatten(
+            Object.assign({},
+              flatten(periodic.settings.extensions[ 'periodicjs.ext.reactapp' ] || {}),
+              flatten(reactAppConfig || {})
+            )
+          );
+          return true;
+        })
+        .catch(logger.error);
       }
     })
     .then(configStatus => {
