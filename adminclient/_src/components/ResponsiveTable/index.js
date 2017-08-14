@@ -542,6 +542,8 @@ var ResponsiveTable = function (_Component) {
           _this5.props.dataMap.forEach(function (data) {
             if (data.key === 'rows') {
               var rows = response[data.value] || [];
+              rows = rows.documents ? rows.documents : rows;
+              // console.log({ rows });
               if (_this5.props.flattenRowData) {
                 updatedState[data.key] = rows.map(function (row) {
                   return (0, _flat.flatten)(row, _this5.props.flattenRowDataOptions);

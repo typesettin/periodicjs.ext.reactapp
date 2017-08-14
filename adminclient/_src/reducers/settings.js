@@ -192,7 +192,7 @@ var packageJSON = {
     test: 'react-scripts test --env=jsdom',
     eject: 'react-scripts eject'
   },
-  proxy: 'https://dsa-dev.promisefinancial.net:8785',
+  proxy: 'https://localhost:8787',
   homepage: '/extensions/periodicjs.ext.reactapp'
 };
 
