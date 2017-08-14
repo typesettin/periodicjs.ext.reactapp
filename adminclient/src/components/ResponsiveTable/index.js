@@ -409,6 +409,8 @@ class ResponsiveTable extends Component {
           this.props.dataMap.forEach(data => { 
             if (data.key === 'rows') {
               let rows = response[ data.value ] || [];
+              rows = (rows.documents) ? rows.documents : rows;
+              // console.log({ rows });
               if (this.props.flattenRowData) {
                 updatedState[ data.key ] = rows.map(row => flatten(row, this.props.flattenRowDataOptions));
               }
