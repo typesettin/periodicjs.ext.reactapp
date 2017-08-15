@@ -166,7 +166,8 @@ var ResponsiveTable = function (_Component) {
       newRowData: {},
       selectedRowData: {},
       selectedRowIndex: {},
-      showFilterSearch: props.showFilterSearch
+      showFilterSearch: props.showFilterSearch,
+      disableSort: props.disableSort
       // usingFiltersInSearch: props.usingFiltersInSearch,
     };
     _this.searchFunction = (0, _debounce2.default)(_this.updateTableData, 200);
@@ -388,7 +389,6 @@ var ResponsiveTable = function (_Component) {
     value: function updateTableData(options) {
       var _this5 = this;
 
-      // console.debug({ options, });
       var updatedState = {};
       var newSortOptions = {};
       if (options.clearNewRowData) {
@@ -404,7 +404,6 @@ var ResponsiveTable = function (_Component) {
         // console.debug({options})
         updatedState.rows = typeof options.rows !== 'undefined' ? options.rows : this.props.rows;
         // console.debug({ updatedState, });
-
         if (options.sort) {
           newSortOptions.sortProp = options.sort;
           if (this.state.sortProp === options.sort) {
@@ -415,7 +414,7 @@ var ResponsiveTable = function (_Component) {
           updatedState.rows = updatedState.rows.sort(_util2.default.sortObject(newSortOptions.sortOrder, options.sort));
           updatedState.sortOrder = newSortOptions.sortOrder;
           updatedState.sortProp = options.sort;
-        } else if (this.state.sortOrder || this.state.sortProp) {
+        } else if ((this.state.sortOrder || this.state.sortProp) && !this.state.disableSort) {
           newSortOptions.sortProp = this.state.sortProp;
           newSortOptions.sortOrder = this.state.sortOrder === 'desc' || this.state.sortOrder === '-' ? 'desc' : 'asc';
           updatedState.rows = updatedState.rows.sort(_util2.default.sortObject(newSortOptions.sortOrder, newSortOptions.sortProp));
