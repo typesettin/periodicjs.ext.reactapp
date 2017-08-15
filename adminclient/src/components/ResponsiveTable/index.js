@@ -67,6 +67,7 @@ class ResponsiveTable extends Component {
       selectedRowData: {},
       selectedRowIndex: {},
       showFilterSearch: props.showFilterSearch,
+      disableSort: props.disableSort,
       // usingFiltersInSearch: props.usingFiltersInSearch,
     };
     this.searchFunction = debounce(this.updateTableData, 200);
@@ -246,7 +247,6 @@ class ResponsiveTable extends Component {
     this.setState(updatedStateProp);
   }
   updateTableData(options) {
-      // console.debug({ options, });
       let updatedState = {};
       let newSortOptions = {};
       if (options.clearNewRowData) {
@@ -262,7 +262,6 @@ class ResponsiveTable extends Component {
         // console.debug({options})
         updatedState.rows = (typeof options.rows !== 'undefined') ? options.rows : this.props.rows;
         // console.debug({ updatedState, });
-
         if (options.sort) {
           newSortOptions.sortProp = options.sort;
           if (this.state.sortProp === options.sort) {
@@ -273,11 +272,10 @@ class ResponsiveTable extends Component {
           updatedState.rows = updatedState.rows.sort(utilities.sortObject(newSortOptions.sortOrder, options.sort));
           updatedState.sortOrder = newSortOptions.sortOrder;
           updatedState.sortProp = options.sort;
-        } else if (this.state.sortOrder || this.state.sortProp) {
+        } else if ((this.state.sortOrder || this.state.sortProp) && !this.state.disableSort) {
           newSortOptions.sortProp = this.state.sortProp;
           newSortOptions.sortOrder = (this.state.sortOrder === 'desc' || this.state.sortOrder === '-') ? 'desc' : 'asc';
           updatedState.rows = updatedState.rows.sort(utilities.sortObject(newSortOptions.sortOrder, newSortOptions.sortProp));
-
         }
         if (this.props.tableSearch && this.props.searchField && options.search) {
           updatedState.rows = this.props.rows.filter(row => row[this.props.searchField].indexOf(options.search) !== -1);
