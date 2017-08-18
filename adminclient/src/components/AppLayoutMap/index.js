@@ -25,13 +25,14 @@ import ResponsiveTabs from '../ResponsiveTabs';
 import ResponsiveBar from '../ResponsiveBar';
 import ResponsiveLink from '../ResponsiveLink';
 import ResponsiveButton from '../ResponsiveButton';
+import ResponsiveSteps from '../ResponsiveSteps';
 import FormItem from '../FormItem';
 import utilities from '../../util';
 let advancedBinding = getAdvancedBinding();
 let renderIndex = 0;
 
 export let AppLayoutMap = Object.assign({}, {
-  recharts, ResponsiveForm, DynamicLayout, DynamicForm, RawOutput, RawStateOutput, FormItem, MenuAppLink, SubMenuLinks, ResponsiveTable, ResponsiveCard, DynamicChart, ResponsiveBar, ResponsiveTabs, ResponsiveDatalist, CodeMirror, Range, Slider, GoogleMap, Carousel, PreviewEditor, /* Editor,*/
+  recharts, ResponsiveForm, DynamicLayout, DynamicForm, RawOutput, RawStateOutput, FormItem, MenuAppLink, SubMenuLinks, ResponsiveTable, ResponsiveCard, DynamicChart, ResponsiveBar, ResponsiveTabs, ResponsiveDatalist, CodeMirror, Range, Slider, GoogleMap, Carousel, PreviewEditor, ResponsiveSteps, /* Editor,*/
   ResponsiveLink,
   ResponsiveButton,
   MaskedInput,
