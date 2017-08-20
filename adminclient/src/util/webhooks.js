@@ -1,9 +1,5 @@
-
-const FUNCTION_NAME_REGEXP = /func:(?:this\.props|window)(?:\.reduxRouter)?\.(\D.+)*/;
-export const getDynamicFunctionName = function _getDynamicFunctionName (function_name) {
-  return function_name.replace(FUNCTION_NAME_REGEXP, '$1');
-};
-
+import { getDynamicFunctionName, } from './dynamics';
+  
 /**
  * Takes a single function name or an array of function name and fires them if they exist on window, this.props or this.props.reduxRouter
  * @param  {string|string[]} function_names A single function name or array of function names in a specific format ie. "func:this.props"
