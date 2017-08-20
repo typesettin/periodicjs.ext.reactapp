@@ -7,6 +7,7 @@ const reloader = require('./reloader');
 const initialization = require('./initialization');
 // const components = require('./components');
 const controllerhelper = require('./controllerhelper');
+const detail_views = require('./detail_views');
 
 module.exports = {
   settings,
@@ -17,7 +18,7 @@ module.exports = {
   ssr_manifest,
   reloader,
   initialization,
-  // components,
+  detail_views,
   getSettings: settings.getSettings,
   reactapp: settings.reactapp,
   controllerhelper,
