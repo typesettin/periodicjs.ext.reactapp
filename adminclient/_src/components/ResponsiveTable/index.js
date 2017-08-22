@@ -129,6 +129,8 @@ var ResponsiveTable = function (_Component) {
     var _this = (0, _possibleConstructorReturn3.default)(this, (ResponsiveTable.__proto__ || (0, _getPrototypeOf2.default)(ResponsiveTable)).call(this, props));
 
     var rows = props.rows || [];
+    rows = rows.documents ? rows.documents : rows;
+    // console.log({ rows })
     var headers = (!props.headers || !props.headers.length) && rows[0] ? (0, _TableHelpers.getHeadersFromRows)({
       rows: props.rows,
       sortable: props.sortable,
