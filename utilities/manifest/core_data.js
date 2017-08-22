@@ -6,7 +6,7 @@ const containers = require('./containers');
 
 function generateManifestsFromCoreData(options) {
   const extsettings = periodic.settings.extensions['periodicjs.ext.reactapp'];
-  const adminRoute = helpers.getManifestPathPrefix(extsettings.adminPath);
+  const adminRoute = options.customAdminRoute || helpers.getManifestPathPrefix(extsettings.adminPath);
   const { indexOptions, newOptions, showOptions, schema, schemaName, allSchemas, detailOptions, } = options;
   // options.extsettings = extsettings;
   options.adminRoute = adminRoute;

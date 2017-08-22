@@ -6,12 +6,14 @@ const ssr_manifest = require('./ssr_manifest');
 const reloader = require('./reloader');
 const initialization = require('./initialization');
 // const components = require('./components');
+const manifest = require('./manifest');
 const controllerhelper = require('./controllerhelper');
 const detail_views = require('./detail_views');
 
 module.exports = {
   settings,
   data,
+  manifest,
   generateDetailManifests: settings.generateDetailManifests,
   findMatchingRoute: settings.findMatchingRoute,
   getParameterized: settings.getParameterized,
