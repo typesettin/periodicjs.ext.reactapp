@@ -17,7 +17,7 @@ function getDataPrefix(options) {
 
 function getDataRoute(options) {
   const { adminRoute, schemaName, dataRoute = 'contentdata', } = options;
-  return `${(periodic.utilities.routing.route_prefix(path.join(adminRoute,dataRoute,pluralize(schemaName))))}`;
+  return `${(periodic.utilities.routing.route_prefix(path.join(adminRoute, dataRoute, pluralize(schemaName))))}`;
 }
 
 function getIndexLabel(schemaName) {
@@ -42,7 +42,7 @@ function getSchemaEntity(options) {
     entity = schema[label].ref;
   }
   return entity;
-};
+}
 
 module.exports = {
   getManifestPathPrefix,
