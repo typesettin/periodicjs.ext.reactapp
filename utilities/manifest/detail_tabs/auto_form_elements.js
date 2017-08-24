@@ -55,7 +55,9 @@ var buildInputComponent = function(label, type, schema, options) {
   // if (schema && schema.entitytype && schema.entitytype.default && schema.entitytype.default==='credit_engine'){
   //   console.log('buildInputComponent', 'schema.entitytype', schema.entitytype, { label, type, });
   // }
-
+  // console.log({ label, type, schema, });
+  // if (label === 'sor_applicantdata') {
+  // }
   let schema_entity_type = (schema && schema.entitytype && schema.entitytype.default) ?
     schema.entitytype.default :
     false;
@@ -139,8 +141,10 @@ var buildInputComponent = function(label, type, schema, options) {
 
 var handleFormElements = function(label, value, schema, options) {
   try {
-    value = (value && value.type && DICTIONARY[Symbol.for(value.type)]) ? value.type : value;
-    let type = DICTIONARY[Symbol.for(value)];
+    value = (value && value.type && (DICTIONARY[Symbol.for(value.type)] || DICTIONARY[value.type])) ? value.type : value;
+    let type = DICTIONARY[ Symbol.for(value) ] || DICTIONARY[ value ];
+    // let type = DICTIONARY[ Symbol.for(data) ] || DICTIONARY[ (data && Object.keys(data).length && data.type) ? data.type : data ];
+    
     if (!type) {
       if (Array.isArray(value)) {
         type = DICTIONARY[Symbol.for(value)] || '_id';

@@ -10,10 +10,10 @@ const publishOptions = require('../detail_tabs/publish_options');
 // pluralize.addIrregularRule('data', 'datas');
 
 const buildDetail = function(options) {
-  // if (label === 'creditengine') {
-  //   // console.log({ label, schema, });
-  // }
   const { schema, schemaName, newEntity } = options;
+    // if (schemaName === 'sor_applicantdata') {
+    //   console.log({ schemaName, schema, });
+    // }
   let customCardProps = {}; //helpers.getCustomCardProps(options);
   let customFormGroups = false; // helpers.getCustomFormGroups(schema, label, options);
   let customIgnoreFields = []; // helpers.getCustomEntityIgnoreFields(schema, label, options);
@@ -71,13 +71,21 @@ const buildDetail = function(options) {
   let result = [top, ];
   let index = 0;
   let flattenedSchema = flatten(schema, { maxDepth: 2, });
+  // if (schemaName === 'sor_applicantdata') {
+  //   // console.log({ key, data, type,  });
+  //   console.log({ schemaName, schema, });
+  // }
   for (let key in schema) {
     let data = (schema[key] && schema[key].type && DICTIONARY[Symbol.for(schema[key].type)]) ?
       schema[key].type :
       schema[key];
-    let type = DICTIONARY[Symbol.for(data)];
+    let type = DICTIONARY[Symbol.for(data)] || DICTIONARY[(data && Object.keys(data).length && data.type)? data.type: data];
     // if (label === 'creditengine') {
-    //   console.log({ key, data, type, });
+      //   console.log({ key, data, type, });
+      // }
+    // if (schemaName === 'sor_applicantdata') {
+    //   console.log({ key, data, type,  });
+    //   // console.log({ schemaName, schema, });
     // }
     elems.push({ key, schemaName, type, data, });
     if (['_id', 'id', 'content', 'title', 'name', 'authors', 'primaryauthor', 'status', 'description', 'changes', 'tags', 'categories', 'contenttypes', 'assets', 'primaryasset', ].concat(customIgnoreFields).indexOf(key) !== -1) {
