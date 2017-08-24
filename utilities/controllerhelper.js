@@ -86,11 +86,11 @@ function handleManifestCompilation(manifests) {
  * @return {Object}               Aggregated manifest configurations specified by periodic extensions configuration
  */
 function pullManifestSettings(configuration, isUnauthenticated = false) {
-  let extensions = configuration.extensions || [];
+  let extensions = (Array.isArray(configuration))? configuration: configuration.extensions || [];
   let filePaths = extensions.reduce((result, config) => {
-    if (config.enabled && config.periodicConfig && config.periodicConfig['periodicjs_ext_reactapp'] && config.periodicConfig['periodicjs_ext_reactapp'][(isUnauthenticated) ? 'unauthenticated_manifests' : 'manifests']) {
-      if (Array.isArray(config.periodicConfig['periodicjs_ext_reactapp'][(isUnauthenticated) ? 'unauthenticated_manifests' : 'manifests'])) return result.concat(config.periodicConfig['periodicjs_ext_reactapp'][(isUnauthenticated) ? 'unauthenticated_manifests' : 'manifests']);
-      result.push(config.periodicConfig['periodicjs_ext_reactapp'][(isUnauthenticated) ? 'unauthenticated_manifests' : 'manifests']);
+    if (config.enabled && config.periodic_config && config.periodic_config['periodicjs_ext_reactapp'] && config.periodic_config['periodicjs_ext_reactapp'][(isUnauthenticated) ? 'unauthenticated_manifests' : 'manifests']) {
+      if (Array.isArray(config.periodic_config['periodicjs_ext_reactapp'][(isUnauthenticated) ? 'unauthenticated_manifests' : 'manifests'])) return result.concat(config.periodic_config['periodicjs_ext_reactapp'][(isUnauthenticated) ? 'unauthenticated_manifests' : 'manifests']);
+      result.push(config.periodic_config['periodicjs_ext_reactapp'][(isUnauthenticated) ? 'unauthenticated_manifests' : 'manifests']);
     }
     return result;
   }, []);
