@@ -21,14 +21,10 @@ const constructDetail = function(options) {
   const { newEntity, schemaName, } = options;
   let dataRoutePrefix = helpers.getDataRoute(options);
   let manifestPrefix = helpers.getManifestPathPrefix(options.adminRoute);
-  let customPageData = false;
-  // let customPageData = helpers.getExtensionOverride('customDetailPageData', schema, label, options);
-  let customTabs = false;
-  // let customTabs = helpers.getExtensionOverride('customDetailTabs', schema, label, options);
-  let customHeader = false;
-  // let customHeader = helpers.getExtensionOverride('customDetailHeader', schema, label, options);
-  let customDetailEditor = false;
-  // let customDetailEditor = helpers.getExtensionOverride('customDetailEditor', schema, label, options);
+  let customPageData = helpers.getCustomSchemaOverrideProperty(Object.assign({ field: 'customDetailPageData', }, options)) || helpers.getCustomOverrideProperty(Object.assign({ field: 'customDetailPageData', }, options));
+  let customTabs = helpers.getCustomSchemaOverrideProperty(Object.assign({ field: 'customDetailTabs', }, options)) || helpers.getCustomOverrideProperty(Object.assign({ field: 'customDetailTabs', }, options));
+  let customHeader = helpers.getCustomSchemaOverrideProperty(Object.assign({ field: 'customDetailHeader', }, options)) || helpers.getCustomOverrideProperty(Object.assign({ field: 'customDetailHeader', }, options));
+  let customDetailEditor = helpers.getCustomSchemaOverrideProperty(Object.assign({ field: 'customDetailEditor', }, options)) || helpers.getCustomOverrideProperty(Object.assign({ field: 'customDetailEditor', }, options));
   let detailPageBasicEditor = {
     name: 'Basic Editor',
     layout: {
@@ -44,22 +40,22 @@ const constructDetail = function(options) {
     },
   };
   let detailPageTabs = [];
-  // if (customDetailEditor) {
-  //   if (customDetailEditor.base) {
-  //     detailPageTabs.push(detailPageBasicEditor);
-  //   }
-  //   if (customDetailEditor.advanced) {
-  //     detailPageTabs.push(detailPageAdvancedEditor);
-  //   }
-  //   if (customDetailEditor.customTabs) {
-  //     detailPageTabs.push(...customDetailEditor.customTabs);
-  //   }
-  //   if (customDetailEditor.customTab) {
-  //     detailPageTabs.push(customDetailEditor.customTabs);
-  //   }
-  // } else {
-  detailPageTabs.push(detailPageBasicEditor, detailPageAdvancedEditor);
-  // }
+  if (customDetailEditor) {
+    if (customDetailEditor.base) {
+      detailPageTabs.push(detailPageBasicEditor);
+    }
+    if (customDetailEditor.advanced) {
+      detailPageTabs.push(detailPageAdvancedEditor);
+    }
+    if (customDetailEditor.customTabs) {
+      detailPageTabs.push(...customDetailEditor.customTabs);
+    }
+    if (customDetailEditor.customTab) {
+      detailPageTabs.push(customDetailEditor.customTabs);
+    }
+  } else {
+    detailPageTabs.push(detailPageBasicEditor, detailPageAdvancedEditor);
+  }
 
   return {
     resources: (newEntity) ? {} : {
@@ -84,14 +80,13 @@ const constructDetail = function(options) {
       children: [
         customHeader,
         (customTabs) ? customTabs : contenttabs(options),
-
         {
           component: 'Container',
           props: {},
           children: [{
             component: 'ResponsiveTabs',
             asyncprops: {
-              formdata: [helpers.getDetailLabel(schemaName), 'data'],
+              formdata: [helpers.getDetailLabel(schemaName), 'data',],
             },
             props: {
               tabsType: 'navBar',
@@ -111,7 +106,7 @@ const constructDetail = function(options) {
               tabs: detailPageTabs,
             },
             // children:'',
-          }, ],
+          },],
           // .concat(buildDetail(schema, label, options)),
         },
         // {
@@ -144,15 +139,14 @@ const constructDetail = function(options) {
  * @param {*} options 
  */
 const constructIndex = function(options = {}) {
-  const { schema, schemaName, indexOptions } = options;
+  const { schema, schemaName, indexOptions, } = options;
 
   let dataRoutePrefix = helpers.getDataRoute(options);
   let manifestPrefix = helpers.getManifestPathPrefix(options.adminRoute);
-  // let customPageData = helpers.getExtensionOverride('customIndexPageData', schema, label, options);
-  // let customTabs = helpers.getExtensionOverride('customIndexTabs', schema, label, options);
-  // let customHeader = helpers.getExtensionOverride('customIndexHeader', schema, label, options);
-  // let customIndexButton = helpers.getSettingOverride('customIndexButton', schema, label, options);
-  let customPageData, customTabs, customHeader, customIndexButton;
+  let customPageData = helpers.getCustomSchemaOverrideProperty(Object.assign({ field: 'customIndexPageData', }, options)) || helpers.getCustomOverrideProperty(Object.assign({ field: 'customIndexPageData', }, options));
+  let customTabs =  helpers.getCustomSchemaOverrideProperty(Object.assign({ field: 'customIndexTabs', }, options)) || helpers.getCustomOverrideProperty(Object.assign({ field: 'customIndexTabs', }, options));
+  let customHeader =  helpers.getCustomSchemaOverrideProperty(Object.assign({ field: 'customIndexHeader', }, options)) || helpers.getCustomOverrideProperty(Object.assign({ field: 'customIndexHeader', }, options));
+  let customIndexButton =  helpers.getCustomSchemaOverrideProperty(Object.assign({ field: 'customIndexButton', }, options)) || helpers.getCustomOverrideProperty(Object.assign({ field: 'customIndexButton', }, options)); 
   return {
     resources: {
       [helpers.getIndexLabel(schemaName)]: `${dataRoutePrefix}?format=json`,
@@ -179,28 +173,28 @@ const constructIndex = function(options = {}) {
           component: 'Container',
           props: {},
           children: [{
-              component: 'div',
-              props: {
+            component: 'div',
+            props: {
                 style: {
                   display: 'flex',
                   flex: 1,
                 },
               },
-              children: [{
-                  component: 'Title',
-                  props: {
+            children: [{
+                component: 'Title',
+                props: {
                     style: {
                       marginTop: 30,
                       display: 'flex',
                       flex: 1,
                     },
                   },
-                  children: capitalize(schemaName),
-                },
-                {
-                  component: 'ResponsiveButton',
-                  children: `Create ${capitalize(schemaName)}`,
-                  props: {
+                children: capitalize(schemaName),
+              },
+              {
+                component: 'ResponsiveButton',
+                children: `Create ${capitalize(schemaName)}`,
+                props: {
                     onClick: (customIndexButton && customIndexButton.onClick) ?
                       customIndexButton.onClick : 'func:this.props.reduxRouter.push',
                     onclickProps: (customIndexButton && customIndexButton.onclickProps) ?
@@ -215,9 +209,9 @@ const constructIndex = function(options = {}) {
                       // padding: 0,
                     },
                   },
-                },
+              },
               ],
-            }, ]
+          },]
             .concat(indextable.indextable(options)),
         },
       ],

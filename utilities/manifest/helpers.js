@@ -12,7 +12,7 @@ function getManifestPathPrefix(prefix) {
 
 function getDataPrefix(options) {
   const { adminRoute, schemaName, dataRoute = 'contentdata', } = options;
-  return `${(periodic.utilities.routing.route_prefix(path.join(adminRoute,dataRoute,pluralize(schemaName))))}?format=json`;
+  return `${(periodic.utilities.routing.route_prefix(path.join(adminRoute, dataRoute, pluralize(schemaName))))}?format=json`;
 }
 
 function getDataRoute(options) {
@@ -44,6 +44,22 @@ function getSchemaEntity(options) {
   return entity;
 }
 
+function getCustomOverrideProperty(options) {
+  const { field, extsettings, defaultReturn = null, } = options;
+  const customOverrideProp = (extsettings && extsettings.extension_overrides && extsettings.extension_overrides[ field ])
+    ? extsettings.extension_overrides[ field ]
+    : defaultReturn;
+  return customOverrideProp;
+}
+
+function getCustomSchemaOverrideProperty(options) {
+  const { field, extsettings, schemaName, defaultReturn = null, } = options;
+  const customSchemaOverrideProp = (extsettings && extsettings.extension_overrides && extsettings.extension_overrides[ field ] && extsettings.extension_overrides[ field ][ schemaName ])
+  ? extsettings.extension_overrides[ field ][ schemaName ]
+  : defaultReturn;
+  return customSchemaOverrideProp;
+}
+
 module.exports = {
   getManifestPathPrefix,
   getDataPrefix,
@@ -52,4 +68,6 @@ module.exports = {
   getDetailLabel,
   getContainerPath,
   getSchemaEntity,
+  getCustomOverrideProperty,
+  getCustomSchemaOverrideProperty,
 };

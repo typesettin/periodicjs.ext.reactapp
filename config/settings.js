@@ -101,24 +101,45 @@ module.exports = {
       logged_in_homepage: '/r-admin/dashboard',
       logged_out_path: '/r-admin/login',
     },
-    customIndexButton: {
-      asset: {
-        onClick: 'func:this.props.createModal',
-        onclickProps: {
-          title: 'Upload new assets',
-          pathname: '/r-admin/standard/content/assets/newmodal',
+    extension_overrides: {
+      // customDataPrefix
+      // customDataRoute
+      customCardProps: {
+        // leftIcon: true, // you can set global overrides
+        standard_account: {
+          // leftIcon: true, // or overrides by core data
         },
       },
-    },
-    data_table_props: {
-      standard: {
-        asset: {
+      customIndexTableProps: {
+        standard_asset: {
           flattenRowDataOptions: {
             maxDepth: 2,
           },
         },
       },
-    },
+      // customIndexTableAsyncpropsRows
+      // customIndexTableAsyncpropsNumItems
+      // customIndexTableAsyncpropsNumPages
+      // customIndexTableDatamapRows
+      // customIndexTableDatamapNumItems
+      // customIndexTableDatamapNumPages
+      // customIndexPageData
+      // customIndexTabs
+      // customIndexHeader
+      customIndexButton: {
+        standard_asset: {
+          onClick: 'func:this.props.createModal',
+          onclickProps: {
+            title: 'Upload new assets',
+            pathname: '/r-admin/standard_assets/newmodal',
+          },
+        },
+      },
+      // customDetailPageData
+      // customDetailTabs
+      // customDetailHeader
+      // customDetailEditor
+    },      
   },
   databases: {},
 };

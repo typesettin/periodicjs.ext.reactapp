@@ -11,41 +11,41 @@ function getAllHeaders(schemas, label, options) {
   // let usablePrefix = helpers.getDataPrefix(options.prefix);
   let manifestPrefix = helpers.getManifestPathPrefix(options.prefix);
   return [{
-      label: 'ID',
-      sortid: '_id',
-      sortable: true,
-      'link': {
-        'baseUrl': `${manifestPrefix}/${pluralize(schemaName)}/:id`,
-        'params': [{ 'key': ':id', 'val': '_id', }, ],
-      },
-      'linkProps': {
-        'style': {
-          'textDecoration': 'none',
-          cursor: 'pointer',
-        },
+    label: 'ID',
+    sortid: '_id',
+    sortable: true,
+    'link': {
+      'baseUrl': `${manifestPrefix}/${pluralize(schemaName)}/:id`,
+      'params': [{ 'key': ':id', 'val': '_id', },],
+    },
+    'linkProps': {
+      'style': {
+        'textDecoration': 'none',
+        cursor: 'pointer',
       },
     },
-    {
-      label: 'Create Date',
-      sortid: 'createdat',
-      sortable: true,
-      momentFormat: 'llll',
-      headerColumnProps: {
-        style: {
-          minWidth: 160,
-        },
-      },
-      columnProps: {
-        style: {
-          minWidth: 160,
-        },
+  },
+  {
+    label: 'Create Date',
+    sortid: 'createdat',
+    sortable: true,
+    momentFormat: 'llll',
+    headerColumnProps: {
+      style: {
+        minWidth: 160,
       },
     },
-    {
-      label: 'Name',
-      sortid: 'name',
-      sortable: true,
+    columnProps: {
+      style: {
+        minWidth: 160,
+      },
     },
+  },
+  {
+    label: 'Name',
+    sortid: 'name',
+    sortable: true,
+  },
   ].concat(Object.keys(schemas)
     .filter(prop => prop !== 'id' && prop !== 'createdat' && prop !== 'name' && prop !== 'updatedat' && prop !== 'entitytype' && prop !== 'contenttypes' && prop !== 'changes' && prop !== 'attributes' && prop !== 'contenttypeattributes' && prop !== 'content' && prop !== 'extensionattributes')
     .map(key => {
@@ -58,7 +58,7 @@ function getAllHeaders(schemas, label, options) {
 }
 
 function getDefaultHeaders(options) {
-  const { adminRoute, schema, schemaName, indexOptions, allSchemas } = options;
+  const { adminRoute, schema, schemaName, indexOptions, allSchemas, } = options;
   // let usablePrefix = helpers.getDataPrefix(options.prefix);
   // let manifestPrefix = helpers.getManifestPathPrefix(options.prefix);
 
@@ -71,7 +71,7 @@ function getDefaultHeaders(options) {
 }
 
 function getTableHeader(options) {
-  const { adminRoute, schema, schemaName, indexOptions, allSchemas } = options;
+  const { adminRoute, schema, schemaName, indexOptions, allSchemas, } = options;
   // let customIndexHeader = helpers.getCustomIndexTableHeaders(schemas, label, options);
   // if (customIndexHeader) {
   //   let customheaders = customIndexHeader.map(header => header.call(null, schemas, label, options));
@@ -85,22 +85,15 @@ function getTableHeader(options) {
   }
 }
 
-function getTableProps(schemas, label, options) {
-  // let customIndexTableProps = helpers.getCustomIndexTableProps(schemas, label, options);
-  // if (customIndexTableProps) {
-  //   return customIndexTableProps;
-  // } else if (options.extsettings.data_table_props && options.extsettings.data_table_props[options.dbname] && options.extsettings.data_table_props[options.dbname][label]) {
-  //   return options.extsettings.data_table_props[options.dbname][label];
-  // } else {
-  return {};
-  // }
+function getTableProps(options) {
+  return helpers.getCustomSchemaOverrideProperty(Object.assign({ field: 'customIndexTableProps', }, options)) || helpers.getCustomOverrideProperty(Object.assign({ field: 'customIndexTableProps', }, options));
 }
 
 
 function indextable(options) {
-  const { adminRoute, schema, schemaName, indexOptions, allSchemas } = options;
+  const { adminRoute, schema, schemaName, indexOptions, allSchemas, } = options;
   const dataRoutePrefix = helpers.getDataPrefix(options);
-  let customCardProps = {}; //helpers.getCustomCardProps(options);
+  let customCardProps = helpers.getCustomSchemaOverrideProperty(Object.assign({ field: 'customCardProps', }, options)) || helpers.getCustomOverrideProperty(Object.assign({ field: 'customCardProps', }, options));
   return [
     // {
     //   component: 'pre',
@@ -141,18 +134,18 @@ function indextable(options) {
             'filterSearch': true,
             'tableSearch': true,
             flattenRowData: true,
-            flattenRowDataOptions: { maxDepth: 3 },
+            flattenRowDataOptions: { maxDepth: 3, },
             baseUrl: dataRoutePrefix,
             dataMap: [{
               'key': 'rows',
-              'value': `${pluralize(schemaName)}`,
+              'value': helpers.getCustomSchemaOverrideProperty(Object.assign({ field: 'customIndexTableDatamapRows', }, options)) || `${pluralize(schemaName)}`,
             }, {
               'key': 'numItems',
-              'value': `${pluralize(schemaName)}count`,
+              'value': helpers.getCustomSchemaOverrideProperty(Object.assign({ field: 'customIndexTableDatamapNumItems', }, options)) || `${pluralize(schemaName)}count`,
             }, {
               'key': 'numPages',
-              'value': `${schemaName}pages`,
-            }, ],
+              'value': helpers.getCustomSchemaOverrideProperty(Object.assign({ field: 'customIndexTableDatamapNumPages', }, options)) || `${schemaName}pages`,
+            },],
             'headerLinkProps': {
               'style': {
                 'textDecoration': 'none',
@@ -163,13 +156,13 @@ function indextable(options) {
             headers: getTableHeader(options),
           }, getTableProps(options)),
           asyncprops: {
-            'rows': [
+            'rows': helpers.getCustomSchemaOverrideProperty(Object.assign({ field: 'customIndexTableAsyncpropsRows', }, options)) || [
               helpers.getIndexLabel(schemaName), 'data', `${pluralize(schemaName)}`,
             ],
-            'numItems': [
+            'numItems': helpers.getCustomSchemaOverrideProperty(Object.assign({ field: 'customIndexTableAsyncpropsNumItems', }, options)) || [
               helpers.getIndexLabel(schemaName), 'data', `${pluralize(schemaName)}count`,
             ],
-            'numPages': [
+            'numPages': helpers.getCustomSchemaOverrideProperty(Object.assign({ field: 'customIndexTableAsyncpropsNumPages', }, options)) || [
               helpers.getIndexLabel(schemaName), 'data', `${schemaName}pages`,
             ],
           },
