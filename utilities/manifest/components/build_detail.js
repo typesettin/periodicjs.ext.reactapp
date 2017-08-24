@@ -14,9 +14,9 @@ const buildDetail = function(options) {
     // if (schemaName === 'sor_applicantdata') {
     //   console.log({ schemaName, schema, });
     // }
-  let customCardProps = {}; //helpers.getCustomCardProps(options);
-  let customFormGroups = false; // helpers.getCustomFormGroups(schema, label, options);
-  let customIgnoreFields = []; // helpers.getCustomEntityIgnoreFields(schema, label, options);
+  let customCardProps = helpers.getCustomSchemaOverrideProperty(Object.assign({ field: 'customCardProps', }, options)) || helpers.getCustomOverrideProperty(Object.assign({ field: 'customCardProps', }, options));
+  let customFormGroups = helpers.getCustomSchemaOverrideProperty(Object.assign({ field: 'customFormgroups', }, options)) || helpers.getCustomOverrideProperty(Object.assign({ field: 'customFormgroups', }, options));
+  let customIgnoreFields = helpers.getCustomSchemaOverrideProperty(Object.assign({ field: 'ignoreEntityFields', }, options)) || helpers.getCustomOverrideProperty(Object.assign({ field: 'ignoreEntityFields', }, options)) || [];
   let elems = [];
   // let usablePrefix = helpers.getDataPrefix(options.prefix);
   // let usablePrefix = helpers.getDataPrefix(options.prefix, undefined, schema, label, options);

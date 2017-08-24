@@ -110,6 +110,8 @@ module.exports = {
           // leftIcon: true, // or overrides by core data
         },
       },
+      // customFormgroups
+      // ignoreEntityFields
       customIndexTableProps: {
         standard_asset: {
           flattenRowDataOptions: {
@@ -139,6 +141,7 @@ module.exports = {
       // customDetailTabs
       // customDetailHeader
       // customDetailEditor
+      // customEntitytypeElements
     },      
   },
   databases: {},

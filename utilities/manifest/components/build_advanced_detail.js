@@ -2,14 +2,14 @@
 
 const capitalize = require('capitalize');
 const helpers = require('../helpers');
-const pluralize = require('pluralize');
+// // const pluralize = require('pluralize');
 // const DICTIONARY = require('../dictionary');
 const publishOptions = require('../detail_tabs/publish_options');
 // pluralize.addIrregularRule('data', 'datas');
 
 function buildAdvancedDetail(options) {
-  const { schema, schemaName, newEntity } = options;
-  let customCardProps = {}; //helpers.getCustomCardProps(options);
+  const { schemaName, newEntity, } = options;
+  let customCardProps = helpers.getCustomSchemaOverrideProperty(Object.assign({ field: 'customCardProps', }, options)) || helpers.getCustomOverrideProperty(Object.assign({ field: 'customCardProps', }, options));
   // let usablePrefix = helpers.getDataPrefix(options.prefix, undefined, schema, label, options);
   let dataRoutePrefix = helpers.getDataRoute(options);
 
@@ -17,7 +17,7 @@ function buildAdvancedDetail(options) {
   let top = {
     component: 'ResponsiveForm',
     thisprops: {
-      formdata: ['formdata'],
+      formdata: ['formdata',],
     },
     props: {
       stringyFormData: true,
@@ -38,7 +38,7 @@ function buildAdvancedDetail(options) {
       'hiddenFields': [{
         'form_name': '_id',
         'form_val': '_id',
-      }, ],
+      },],
       footergroups: [],
       formgroups: [{
         gridProps: {
@@ -63,15 +63,15 @@ function buildAdvancedDetail(options) {
           formGroupCardLeft: [{
             type: 'code',
             name: 'genericdocjson',
-          }, ],
+          },],
           formGroupCardRight: [
             publishOptions.id(),
             publishOptions.createdat(),
             publishOptions.updatedat(),
             publishOptions.publishButtons(options),
           ],
-        }, ],
-      }, ],
+        },],
+      },],
     },
   };
   // let formElements = top.props.formgroups[0].formElements;
@@ -79,6 +79,6 @@ function buildAdvancedDetail(options) {
     top,
   ];
   return result;
-};
+}
 
 module.exports = buildAdvancedDetail;

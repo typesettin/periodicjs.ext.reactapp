@@ -34,8 +34,8 @@ var generateTableElement = function(label, data) {
 };
 
 var handleTable = function(label, data, schema, options) {
-  let customCardProps = (options && options.extsettings && options.extsettings.extension_overrides && options.extsettings.extension_overrides.customCardProps) ?
-    options.extsettings.extension_overrides.customCardProps : {};
+  let customCardProps = helpers.getCustomSchemaOverrideProperty(Object.assign({ field: 'customCardProps', }, options)) || helpers.getCustomOverrideProperty(Object.assign({ field: 'customCardProps', }, options));
+  
   return {
     component: 'ResponsiveCard',
     props: Object.assign({}, customCardProps, {
@@ -58,13 +58,14 @@ var buildInputComponent = function(label, type, schema, options) {
   // console.log({ label, type, schema, });
   // if (label === 'sor_applicantdata') {
   // }
+  let customEntitytypeElementProp = helpers.getCustomSchemaOverrideProperty(Object.assign({ field: 'customEntitytypeElements', }, options)) || helpers.getCustomOverrideProperty(Object.assign({ field: 'customEntitytypeElements', }, options));
+  
   let schema_entity_type = (schema && schema.entitytype && schema.entitytype.default) ?
     schema.entitytype.default :
     false;
-  let customEntitytypeElement = (schema_entity_type && options && options.extsettings && options.extsettings.extension_overrides && options.extsettings.extension_overrides.customEntitytypeElements && options.extsettings.extension_overrides.customEntitytypeElements[schema_entity_type]) ?
-    options.extsettings.extension_overrides.customEntitytypeElements[schema_entity_type] :
-    false;
-
+  let customEntitytypeElement = (schema_entity_type && customEntitytypeElementProp && customEntitytypeElementProp[schema_entity_type]) ?
+    customEntitytypeElementProp[schema_entity_type] :
+    false;    
   let customInput = (schema_entity_type && customEntitytypeElement && customEntitytypeElement[label]) ?
     customEntitytypeElement[label] : {};
   // console.log({customInput})
@@ -169,8 +170,8 @@ var handleFormElements = function(label, value, schema, options) {
 };
 
 var buildFormGroup = function(label, data, isRoot = false, schema, options) {
-  let customCardProps = (options && options.extsettings && options.extsettings.extension_overrides && options.extsettings.extension_overrides.customCardProps) ?
-    options.extsettings.extension_overrides.customCardProps : {};
+  let customCardProps = helpers.getCustomSchemaOverrideProperty(Object.assign({ field: 'customCardProps', }, options)) || helpers.getCustomOverrideProperty(Object.assign({ field: 'customCardProps', }, options));
+
   return {
     card: {
       twoColumns: isRoot,

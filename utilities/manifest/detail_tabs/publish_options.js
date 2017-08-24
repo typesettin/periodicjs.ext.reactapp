@@ -27,8 +27,8 @@ exports.id = _id;
 
 function _dataList(schema, label, options, type, field) {
   let entity = helpers.getSchemaEntity({ schema, label, });
-  let dataRoutePrefix = helpers.getDataRoute(Object.assign({}, options, { schemaName: label, }));
-  let containerPrefixPath = helpers.getContainerPath(Object.assign({}, options, { schemaName: label, }));
+  let dataRoutePrefix = helpers.getDataRoute(Object.assign({}, options, { schemaName: label }));
+  let containerPrefixPath = helpers.getContainerPath(Object.assign({}, options, { schemaName: label }));
   // let usablePrefix = helpers.getDataPrefix(options.prefix, undefined, schema, label, options);
   // let manifestPrefix = helpers.getManifestPathPrefix(options.prefix);
 
@@ -185,25 +185,25 @@ function _status() {
     //   horizontalform: true,
     // },
     options: [{
-      'label': 'Draft',
-      'value': 'draft',
-    },
-    {
-      'label': 'Schedule in advance',
-      'value': 'schedule',
-    },
-    {
-      'label': 'Publish',
-      'value': 'publish',
-    },
-    {
-      'label': 'Review',
-      'value': 'review',
-    },
-    {
-      'label': 'Trash',
-      'value': 'trash',
-    },
+        'label': 'Draft',
+        'value': 'draft',
+      },
+      {
+        'label': 'Schedule in advance',
+        'value': 'schedule',
+      },
+      {
+        'label': 'Publish',
+        'value': 'publish',
+      },
+      {
+        'label': 'Review',
+        'value': 'review',
+      },
+      {
+        'label': 'Trash',
+        'value': 'trash',
+      },
     ],
   };
 }
@@ -297,11 +297,11 @@ function _assetpreview() {
 }
 
 function _publishButtons(options) {
-  const { schema, schemaName, newEntity, } = options;
+  const { schema, schemaName, newEntity } = options;
   try {
-    helpers.getContainerPath(options);
+    helpers.getContainerPath(options)
   } catch (e) {
-    console.log({ options, });
+    console.log({ options });
     throw e;
   }
   // let usablePrefix = helpers.getDataPrefix(options.prefix, undefined, schema, label, options);
@@ -315,31 +315,31 @@ function _publishButtons(options) {
       },
     },
     groupElements: [{
-      type: 'submit',
-      value: (newEntity) ? `Create ${capitalize(schemaName)}` : 'Save Changes',
-      passProps: {
+        type: 'submit',
+        value: (newEntity) ? `Create ${capitalize(schemaName)}` : 'Save Changes',
+        passProps: {
           color: 'isPrimary',
           // style: styles.buttons.primary,
         },
-      'layoutProps': {
+        'layoutProps': {
           'innerFormItem': true,
         },
-    },
-    {
-      type: 'layout',
-      'layoutProps': {
+      },
+      {
+        type: 'layout',
+        'layoutProps': {
           'innerFormItem': true,
 
           style: {
             padding: 0,
           },
         },
-      passProps: {
+        passProps: {
           style: {
             padding: 0,
           },
         },
-      value: {
+        value: {
           component: 'ResponsiveButton',
           children: 'Delete',
           props: {
@@ -348,7 +348,7 @@ function _publishButtons(options) {
             onclickLinkParams: [{
               'key': ':id',
               'val': '_id',
-            },],
+            }, ],
             onclickThisProp: 'formdata',
             fetchProps: {
               method: 'DELETE',
@@ -371,7 +371,7 @@ function _publishButtons(options) {
             confirmModal: {},
           },
         },
-    },
+      },
     ],
   };
 }
@@ -432,10 +432,10 @@ function getContentOptions(schema, label, options) {
     contentItems.push(_title());
   }
   if (schema.identification && schema.identification.guid && customIgnoreFields.indexOf('identification.guid') === -1) {
-    contentItems.push(_text_field(schema, 'identification.guid', Object.assign({ inputFieldLabel:'GUID', }, options)));
+    contentItems.push(_text_field(schema, 'identification.guid', Object.assign({inputFieldLabel:'GUID'},options)));
   }
   if (schema.guid && customIgnoreFields.indexOf('guid') === -1) {
-    contentItems.push(_text_field(schema, 'guid', Object.assign({ inputFieldLabel:'GUID' ,}, options)));
+    contentItems.push(_text_field(schema, 'guid', Object.assign({inputFieldLabel:'GUID'},options)));
   }
   if (schema.content && customIgnoreFields.indexOf('content') === -1) {
     contentItems.push(_content());
@@ -464,13 +464,13 @@ function getContentOptions(schema, label, options) {
 exports.getContentOptions = getContentOptions;
 
 exports.publishBasic = function _publishBasic(options) {
-  const { schema, schemaName, newEntity, } = options;
+  const { schema, schemaName, newEntity } = options;
   const label = schemaName;
   // console.log({ schema });
   let contentItems = getContentOptions(schema, schemaName, options);
   let pubOptions = getPublishOptions(schema, schemaName, options, newEntity);
-  let customCardProps = {}; // helpers.getCustomCardProps(options);
-
+  let customCardProps = helpers.getCustomSchemaOverrideProperty(Object.assign({ field: 'customCardProps', }, options)) || helpers.getCustomOverrideProperty(Object.assign({ field: 'customCardProps', }, options));
+  
   let publishBasic = {
     gridProps: {
       isMultiline: false,
@@ -509,13 +509,13 @@ exports.publishBasic = function _publishBasic(options) {
     formElements: [{
       formGroupCardLeft: contentItems,
       formGroupCardRight: pubOptions,
-    },],
+    }, ],
   };
 
   return publishBasic;
 };
 exports.publishAttributes = function _publishAtrributes(schema, label, options = {}) {
-  let customCardProps = {}; //helpers.getCustomCardProps(options);
+  let customCardProps = helpers.getCustomSchemaOverrideProperty(Object.assign({ field: 'customCardProps', }, options)) || helpers.getCustomOverrideProperty(Object.assign({ field: 'customCardProps', }, options));
   let publishAttributesBasic = {
     gridProps: {
       isMultiline: false,
@@ -557,14 +557,14 @@ exports.publishAttributes = function _publishAtrributes(schema, label, options =
         name: 'attributes',
         stringify: true,
         value: {},
-      },],
+      }, ],
       formGroupCardRight: [{
         type: 'code',
         name: 'extensionattributes',
         stringify: true,
         value: {},
-      },],
-    },],
+      }, ],
+    }, ],
   };
 
   return publishAttributesBasic;
