@@ -78,6 +78,8 @@ var buildInputComponent = function(label, type, schema, options) {
         flex: 3,
       },
     },
+    stringify: (type === 'code') ? true : undefined,
+    value: (type === 'code') ? {} : undefined,
     name: (type === '_id' && (label === 'id' || label === '_id')) ? '_id' : label.replace(/\s/g, '.'),
     layoutProps: {
       horizontalform: true,

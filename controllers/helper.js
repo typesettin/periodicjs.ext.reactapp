@@ -183,6 +183,21 @@ const getDBStats = (req, res, next) => {
     .catch(next);
 };
 
+function getAppSettings(req, res, next) {
+  req.controllerData = Object.assign({}, req.controllerData);
+  req.controllerData.appSettings = periodic.settings;
+  req.controllerData.editorProps = {
+    lineNumbers: true,
+    value: JSON.stringify(periodic.settings, null, 2),
+    options: {
+      readOnly: true,
+    },
+    lineWrapping:true,
+  };
+  next();
+}
+
+
 module.exports = {
   approveOptionsRequest,
   fixCodeMirrorSubmit,
@@ -192,4 +207,5 @@ module.exports = {
   handleControllerDataResponse,
   handleFileAssetsResponse,
   getDBStats,
+  getAppSettings,
 };

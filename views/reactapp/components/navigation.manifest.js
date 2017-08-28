@@ -11,7 +11,7 @@ const extsettings = periodic.settings.extensions['periodicjs.ext.reactapp'];
 let navlinks = [{
     'component': 'MenuAppLink',
     'props': {
-      'href': `${reactapp.manifest_prefix}configurations`,
+      'href': `${reactapp.manifest_prefix}data/configurations`,
       'label': 'Configurations',
       'id': 'system-configurations',
     },
@@ -27,19 +27,19 @@ let navlinks = [{
   {
     'component': 'MenuAppLink',
     'props': {
-      'href': `${reactapp.manifest_prefix}extensions`,
+      'href': `${reactapp.manifest_prefix}data/extensions`,
       'label': 'Extensions',
       'id': 'system-extensions',
     },
   },
-  {
-    'component': 'MenuAppLink',
-    'props': {
-      'href': `${reactapp.manifest_prefix}files`,
-      'label': 'Files',
-      'id': 'system-files',
-    },
-  },
+  // {
+  //   'component': 'MenuAppLink',
+  //   'props': {
+  //     'href': `${reactapp.manifest_prefix}files`,
+  //     'label': 'Files',
+  //     'id': 'system-files',
+  //   },
+  // },
   {
     'component': 'MenuAppLink',
     'props': {

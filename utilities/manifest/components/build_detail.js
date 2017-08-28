@@ -88,7 +88,7 @@ const buildDetail = function(options) {
     //   // console.log({ schemaName, schema, });
     // }
     elems.push({ key, schemaName, type, data, });
-    if (['_id', 'id', 'content', 'title', 'name', 'authors', 'primaryauthor', 'status', 'description', 'changes', 'tags', 'categories', 'contenttypes', 'assets', 'primaryasset', ].concat(customIgnoreFields).indexOf(key) !== -1) {
+    if (['_id', 'id', 'content', 'title', 'name', 'authors', 'primaryauthor', 'status', 'description', 'changes', 'tags', 'categories', 'contenttypes', 'assets', 'primaryasset','attributes' ].concat(customIgnoreFields).indexOf(key) !== -1) {
       // console.log({ key, schema });
     } else if (type || (data && Array.isArray(data)) && customIgnoreFields.indexOf(key) === -1) {
       if (data && Array.isArray(data)) {

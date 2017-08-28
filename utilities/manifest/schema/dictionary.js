@@ -1,6 +1,7 @@
 'use strict';
 
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 const DEFAULT_TYPES = [{
     schemaType: String,
     input: 'text',
@@ -24,6 +25,30 @@ const DEFAULT_TYPES = [{
   {
     schemaType: 'Date',
     input: 'text',
+  },
+  {
+    schemaType: Object,
+    input: 'code',
+  },
+  {
+    schemaType: 'Object',
+    input: 'code',
+  },
+  {
+    schemaType: mongoose.Schema.Types.Mixed,
+    input: 'code',
+  },
+  {
+    schemaType: 'mongoose.Schema.Types.Mixed',
+    input: 'code',
+  },
+  {
+    schemaType: Schema.Types.Mixed,
+    input: 'code',
+  },
+  {
+    schemaType: 'Schema.Types.Mixed',
+    input: 'code',
   },
   {
     schemaType: Boolean,

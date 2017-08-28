@@ -3,6 +3,7 @@ const periodic = require('periodicjs');
 const pluralize = require('pluralize');
 const helpers = require('./helpers');
 const containers = require('./containers');
+const mockSchemas = require('./schema/mock_schemas');
 
 function generateManifestsFromCoreData(options) {
   const extsettings = periodic.settings.extensions['periodicjs.ext.reactapp'];
@@ -22,10 +23,12 @@ function generateCoreDataManifests(options) {
     result[key] = periodic.models.get(key).scheme;
     return result;
   }, {});
-  const coreDataGeneratedContainers = Array.from(periodic.models.keys()).reduce((result, key) => {
+  allSchemas.configuration = mockSchemas.configuration;
+  allSchemas.extension = mockSchemas.extension;
+  const coreDataGeneratedContainers = Array.from(Object.keys(allSchemas)).reduce((result, key) => {
     return result = Object.assign(result, generateManifestsFromCoreData({
       schemaName: key,
-      schema: periodic.models.get(key).scheme,
+      schema: allSchemas[key],
       allSchemas,
     }));
   }, {});

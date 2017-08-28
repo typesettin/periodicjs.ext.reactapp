@@ -157,6 +157,67 @@ function getDefaultIndexTableFields() {
       })({ adminRoute, schemaName: 'standard_asset', }),
       data_tables.tableOptions({ adminRoute, schemaName: 'standard_asset', }),
     ],
+    configuration: [
+      data_tables.tableField({
+        field: 'filepath',
+        link: true,
+        headerStyle: {
+          maxWidth: 350,
+          // overflow: 'hidden',
+          // textOverflow: 'ellipsis',
+        },
+        columnStyle: {
+          maxWidth: 350,
+          // overflow: 'hidden',
+          // textOverflow: 'ellipsis',
+        },
+      })({ adminRoute, schemaName: 'configuration', }),
+      data_tables.tableField({
+        // title: 'Size',
+        field: 'environment',
+      })({ adminRoute, schemaName: 'configuration', }),
+      data_tables.tableField({
+        field: 'container',
+      })({ adminRoute, schemaName: 'configuration', }),
+      data_tables.tableCreatedDate({}),
+      data_tables.tableOptions({ adminRoute, schemaName: 'configuration', }),
+    ],
+    extension: [
+      data_tables.tableField({
+        field: 'name',
+        link: true,
+        headerStyle: {
+          maxWidth: 250,
+          // overflow: 'hidden',
+          // textOverflow: 'ellipsis',
+        },
+        columnStyle: {
+          maxWidth: 250,
+          // overflow: 'hidden',
+          // textOverflow: 'ellipsis',
+        },
+      })({ adminRoute, schemaName: 'extension', }),
+      data_tables.tableField({
+        field: 'source',
+      })({ adminRoute, schemaName: 'extension', }),
+      data_tables.tableField({
+        field: 'version',
+      })({ adminRoute, schemaName: 'extension', }),
+      data_tables.tableField({
+        title: 'Type',
+        field: 'periodic_type',
+      })({ adminRoute, schemaName: 'extension', }),
+      data_tables.tableField({
+        title: 'Priority',
+        field: 'periodic_priority',
+      })({ adminRoute, schemaName: 'extension', }),
+      data_tables.tableField({
+        title: 'Compatibility',
+        field: 'periodic_compatibility',
+      })({ adminRoute, schemaName: 'extension', }),
+      data_tables.tableCreatedDate({}),
+      data_tables.tableOptions({ adminRoute, schemaName: 'extension', }),
+    ],
   }
 }
 

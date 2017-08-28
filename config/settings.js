@@ -99,7 +99,15 @@ module.exports = {
     },
     auth: {
       logged_in_homepage: '/r-admin/dashboard',
-      logged_out_path: '/r-admin/login',
+      logged_out_path: '/r-admin/auth/account/login',
+    },
+    default_manifests: {
+      include_core_data:true,
+      include_settings: true,
+    },
+    default_navigation: {
+      include_settings: true,
+      // include_
     },
     extension_overrides: {
       // customDataPrefix
