@@ -139,13 +139,22 @@ var user = {
 
     console.debug('updatedUserProfile', { profile: profile });
     return function (dispatch /*, getState*/) {
-      _serverSideReactNative.AsyncStorage.setItem(_constants2.default.jwt_token.PROFILE_JSON, (0, _stringify2.default)(profile.userdata)).then(function (status) {
-        console.debug({ status: status });
-        dispatch(_this.updateUserProfileSuccess(profile));
-      }).catch(function (e) {
+      try {
+        if (!profile || !profile.userdata) {
+          dispatch(_notification2.default.errorNotification(new Error('Invalid profile data update, missing userdata')));
+        } else {
+          _serverSideReactNative.AsyncStorage.setItem(_constants2.default.jwt_token.PROFILE_JSON, (0, _stringify2.default)(profile.userdata)).then(function (status) {
+            console.debug({ status: status });
+            dispatch(_this.updateUserProfileSuccess(profile));
+          }).catch(function (e) {
+            console.error(e);
+            dispatch(_notification2.default.errorNotification(e));
+          });
+        }
+      } catch (e) {
         console.error(e);
         dispatch(_notification2.default.errorNotification(e));
-      });
+      }
     };
   },
 

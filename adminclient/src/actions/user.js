@@ -79,15 +79,24 @@ const user = {
   updateUserProfile(profile) {
     console.debug('updatedUserProfile', { profile, });
     return (dispatch/*, getState*/) => {
-      AsyncStorage.setItem(constants.jwt_token.PROFILE_JSON, JSON.stringify(profile.userdata))
-        .then((status) => {
-          console.debug({ status, });
-          dispatch(this.updateUserProfileSuccess(profile));
-        })
-        .catch(e => { 
-          console.error(e);
-          dispatch(notification.errorNotification(e));
-        });
+      try {
+        if (!profile || !profile.userdata) {
+          dispatch(notification.errorNotification(new Error('Invalid profile data update, missing userdata')));
+        } else {
+          AsyncStorage.setItem(constants.jwt_token.PROFILE_JSON, JSON.stringify(profile.userdata))
+            .then((status) => {
+              console.debug({ status, });
+              dispatch(this.updateUserProfileSuccess(profile));
+            })
+            .catch(e => {
+              console.error(e);
+              dispatch(notification.errorNotification(e));
+            });
+        }
+      } catch (e) {
+        console.error(e);
+        dispatch(notification.errorNotification(e));
+      }
     };
   },
   /**

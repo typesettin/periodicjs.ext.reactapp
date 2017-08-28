@@ -232,30 +232,40 @@ class ResponsiveForm extends Component{
       )
         .then(utilities.checkStatus)
         .then(res => {
-          if (fetchOptions.success) {
-            formSubmitNotification({ fetchOptions, __formStateUpdate, });
-          } 
-          if (fetchOptions.successCallback || fetchOptions.responseCallback) {
-            let successCallback = (fetchOptions.successCallback)
-              ? getCBFromString(fetchOptions.successCallback)
-              : false;
-            let responseCallback = (fetchOptions.responseCallback)
-              ? getCBFromString(fetchOptions.responseCallback)
-              : false;
-            
-            res.json()
-              .then(successData => {
-                if (successData && (typeof successData.successCallback === 'string' || (Array.isArray(successData.successCallback) && successData.successCallback.length))) {
-                  successCallback = getCBFromString(successData.successCallback);
-                }
-                if (successData && (typeof successData.responseCallback === 'string' || (Array.isArray(successData.responseCallback) && successData.responseCallback.length))) {
-                  responseCallback = getCBFromString(successData.responseCallback);
-                }
-                formSuccessCallbacks({ fetchOptions, submitFormData, successData, successCallback, responseCallback, });
-                __formStateUpdate();
-              });
-          } else {
-            return res.json();
+          try {
+            if (fetchOptions.success) {
+              formSubmitNotification({ fetchOptions, __formStateUpdate, });
+            } 
+            if (fetchOptions.successCallback || fetchOptions.responseCallback) {
+              let successCallback = (fetchOptions.successCallback)
+                ? getCBFromString(fetchOptions.successCallback)
+                : false;
+              let responseCallback = (fetchOptions.responseCallback)
+                ? getCBFromString(fetchOptions.responseCallback)
+                : false;
+              res.json()
+                .then(successData => {
+                  if (successData && (typeof successData.successCallback === 'string' || (Array.isArray(successData.successCallback) && successData.successCallback.length))) {
+                    successCallback = getCBFromString(successData.successCallback);
+                  }
+                  if (successData && (typeof successData.responseCallback === 'string' || (Array.isArray(successData.responseCallback) && successData.responseCallback.length))) {
+                    responseCallback = getCBFromString(successData.responseCallback);
+                  }
+                  formSuccessCallbacks({ fetchOptions, submitFormData, successData, successCallback, responseCallback, });
+                  __formStateUpdate();
+                })
+                .catch(e => {
+                  __formStateUpdate();
+                  // console.log('RES JSON FORM ERROR',e)
+                  throw e;
+                });
+            } else {
+              return res.json();
+            }
+          } catch (e) {
+            __formStateUpdate();
+            // console.log('WRRor in promiSE',e)
+            throw e;
           }
         })
         .catch(e => {

@@ -278,25 +278,34 @@ var ResponsiveForm = function (_Component) {
         fetchOptions = updatedFormBody.fetchOptions;
         // console.log({ headers }, 'fetchOptions.options', fetchOptions.options);
         fetch(this.getFormSumitUrl('' + fetchOptions.url + ((isGetRequest || this.props.stringifyBody) && fetchOptions.url.indexOf('?') !== -1 ? '&' : fetchOptions.url.indexOf('?') === -1 ? '?' : '') + (isGetRequest || this.props.stringifyBody ? _querystring2.default.stringify(submitFormData) : ''), fetchOptions.params, formdata), fetchOptions.options).then(_util2.default.checkStatus).then(function (res) {
-          if (fetchOptions.success) {
-            formSubmitNotification({ fetchOptions: fetchOptions, __formStateUpdate: __formStateUpdate });
-          }
-          if (fetchOptions.successCallback || fetchOptions.responseCallback) {
-            var successCallback = fetchOptions.successCallback ? getCBFromString(fetchOptions.successCallback) : false;
-            var responseCallback = fetchOptions.responseCallback ? getCBFromString(fetchOptions.responseCallback) : false;
-
-            res.json().then(function (successData) {
-              if (successData && (typeof successData.successCallback === 'string' || Array.isArray(successData.successCallback) && successData.successCallback.length)) {
-                successCallback = getCBFromString(successData.successCallback);
-              }
-              if (successData && (typeof successData.responseCallback === 'string' || Array.isArray(successData.responseCallback) && successData.responseCallback.length)) {
-                responseCallback = getCBFromString(successData.responseCallback);
-              }
-              formSuccessCallbacks({ fetchOptions: fetchOptions, submitFormData: submitFormData, successData: successData, successCallback: successCallback, responseCallback: responseCallback });
-              __formStateUpdate();
-            });
-          } else {
-            return res.json();
+          try {
+            if (fetchOptions.success) {
+              formSubmitNotification({ fetchOptions: fetchOptions, __formStateUpdate: __formStateUpdate });
+            }
+            if (fetchOptions.successCallback || fetchOptions.responseCallback) {
+              var successCallback = fetchOptions.successCallback ? getCBFromString(fetchOptions.successCallback) : false;
+              var responseCallback = fetchOptions.responseCallback ? getCBFromString(fetchOptions.responseCallback) : false;
+              res.json().then(function (successData) {
+                if (successData && (typeof successData.successCallback === 'string' || Array.isArray(successData.successCallback) && successData.successCallback.length)) {
+                  successCallback = getCBFromString(successData.successCallback);
+                }
+                if (successData && (typeof successData.responseCallback === 'string' || Array.isArray(successData.responseCallback) && successData.responseCallback.length)) {
+                  responseCallback = getCBFromString(successData.responseCallback);
+                }
+                formSuccessCallbacks({ fetchOptions: fetchOptions, submitFormData: submitFormData, successData: successData, successCallback: successCallback, responseCallback: responseCallback });
+                __formStateUpdate();
+              }).catch(function (e) {
+                __formStateUpdate();
+                // console.log('RES JSON FORM ERROR',e)
+                throw e;
+              });
+            } else {
+              return res.json();
+            }
+          } catch (e) {
+            __formStateUpdate();
+            // console.log('WRRor in promiSE',e)
+            throw e;
           }
         }).catch(function (e) {
           __formStateUpdate();

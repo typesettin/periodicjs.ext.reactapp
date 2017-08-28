@@ -129,7 +129,14 @@ var MainApp = function (_Component) {
             }
             var jwt_token = results[0];
             var jwt_token_data = JSON.parse(results[1]);
-            var jwt_user_profile = JSON.parse(results[2]);
+            var jwt_user_profile = {};
+            try {
+              jwt_user_profile = JSON.parse(results[2]);
+            } catch (e) {
+              _this2.props.getUserProfile(jwt_token);
+              _this2.props.initializeAuthenticatedUser(jwt_token, false);
+              _this2.props.errorNotification(new Error('Invalid User Profile'));
+            }
             if (jwt_token_data && jwt_user_profile) {
               var url = '/api/jwt/token';
               var response = {};
@@ -159,9 +166,11 @@ var MainApp = function (_Component) {
             _this2.props.setUILoadedState(true);
           } catch (e) {
             _this2.props.errorNotification(e);
+            // console.error(e)
             // console.log(e);
           }
         }).catch(function (error) {
+          // console.error(error)
           _this2.props.errorNotification(error);
           // console.error('MAIN componentDidMount: JWT USER Login Error.', error);
           _this2.props.logoutUser();

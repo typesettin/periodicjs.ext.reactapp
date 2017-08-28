@@ -25,7 +25,7 @@ module.exports = {
             'props': {
               blockPageUI: true,
               'onSubmit': {
-                'url': `${reactapp.manifest_prefix}contentdata/standard/:entitytype/:id?format=json&unflatten=true&updateprofile=true&updatecallback=true&handleupload=true`,
+                'url': `${reactapp.manifest_prefix}contentdata/standard_:entitytypes/:id?format=json&unflatten=true&updateprofile=true&updatecallback=true&handleupload=true`,
                 'options': {
                   'method': 'PUT',
                 },

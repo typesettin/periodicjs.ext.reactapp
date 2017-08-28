@@ -59,7 +59,7 @@ var MenuAppLink = function (_Component) {
         null,
         _react2.default.createElement(
           _reactRouter.Link,
-          { style: this.state.isActive ? _styles2.default.activeButton : undefined, to: this.props.href, onClick: function onClick() {
+          { style: this.state.isActive ? _styles2.default.activeButton : undefined, to: this.props.href !== this.props.location.pathname ? this.props.href : undefined, onClick: function onClick() {
               if (typeof _this2.props.onClick === 'string' && _this2.props.onClick.indexOf('func:this.props') !== -1) {
                 _this2.props[_this2.props.onClick.replace('func:this.props.', '')](_this2.props.onClickProps);
               }
