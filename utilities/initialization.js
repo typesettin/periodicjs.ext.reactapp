@@ -9,6 +9,242 @@ const logger = periodic.logger;
 let initialReactAppConfig = {};
 let intialReactAppClient;
 let reactAppConfig = {};
+const styles = require('./styles');
+
+const configurationHelperText = {
+  component: 'code',
+  props: {
+    style:styles.codeSample.code,
+  },
+  children: [
+    {
+      component: 'em',
+      props: {
+        style:styles.codeSample.codeEm,
+      },
+      children:'//creating configurations'
+    },
+    {
+      component:'br'
+    },
+    {
+      component: 'div',
+      children:'$ periodicjs cco [type] [name] [environment] [path/to/output/config/json]'
+    },
+    {
+      component: 'div',
+      children:'$ periodicjs createConfig [type] [name] [environment] [path/to/output/config/json]'
+    },
+    {
+      component:'br'
+    },
+    {
+      component: 'em',
+      props: {
+        style:styles.codeSample.codeEm,
+      },
+      children:'//types: app|application|ext|extension|ext-local|extension-local|con|container|con-local|container-local'
+    },
+    {
+      component:'br'
+    },
+    {
+      component: 'em',
+      props: {
+        style:styles.codeSample.codeEm,
+      },
+      children:'//example creating configuration'
+    },
+    {
+      component:'br'
+    },
+    {
+      component: 'div',
+      children:'$ periodicjs createConfig ext periodicjs.ext.dbseed development ~/Desktop/dev.dbseed-config.json'
+    },
+    {
+      component:'br'
+    },
+    {
+      component: 'em',
+      props: {
+        style:styles.codeSample.codeEm,
+      },
+      children:'//add configuration'
+    },
+    {
+      component:'br'
+    },
+    {
+      component: 'div',
+      children:'$ periodicjs aco [path/to/configuration/json]'
+    },
+    {
+      component: 'div',
+      children:'$ periodicjs addConfig [path/to/configuration/json]'
+    },
+    {
+      component: 'div',
+      children:'$ node index.js --cli --crud=ext --crud_op=create --crud_arg=[path/to/configuration/json]'
+    },
+    {
+      component:'br'
+    },
+    {
+      component: 'em',
+      props: {
+        style:styles.codeSample.codeEm,
+      },
+      children:'//example manually adding configuration'
+    },
+    {
+      component:'br'
+    },
+    {
+      component: 'div',
+      children:'$ periodicjs addConfig /home/myuser/documents/projects/appconfig-dev.json'
+    },
+    {
+      component:'br'
+    },
+    {
+      component: 'em',
+      props: {
+        style:styles.codeSample.codeEm,
+      },
+      children:'//remove configuration'      
+    },
+    {
+      component:'br'
+    },
+    {
+      component: 'div',
+      children:'$ periodicjs rco [id-of-configuration-doc]'
+    },
+    {
+      component: 'div',
+      children:'$ periodicjs removeConfig [id-of-configuration-doc]'
+    },
+    {
+      component: 'div',
+      children:'$ node index.js --cli --crud=ext --crud_op=remove --crud_arg=[id-of-configuration-doc]'
+    },
+    {
+      component:'br'
+    },
+    {
+      component: 'em',
+      props: {
+        style:styles.codeSample.codeEm,
+      },
+      children:'//example manually removing bdb7aa6485aebe8ac81992def07c6f96'      
+    },
+    {
+      component:'br'
+    },
+    {
+      component: 'div',
+      children:'$ periodicjs removeConfig bdb7aa6485aebe8ac81992def07c6f96'
+    },
+  ]
+};
+const extensionHelperText = {
+  component: 'code',
+  props: {
+    style:styles.codeSample.code,
+  },
+  children: [
+    {
+      component: 'em',
+      props: {
+        style:styles.codeSample.codeEm,
+      },
+      children:'//add extension'
+    },
+    {
+      component:'br'
+    },
+    {
+      component: 'div',
+      children:'$ periodicjs aex [name-of-extension]'
+    },
+    {
+      component: 'div',
+      children:'$ periodicjs addExtension [name-of-extension]'
+    },
+    {
+      component: 'div',
+      children:'$ node index.js --cli --crud=ext --crud_op=create --crud_arg=[name-of-extension]'
+    },
+    {
+      component:'br'
+    },
+    {
+      component: 'em',
+      props: {
+        style:styles.codeSample.codeEm,
+      },
+      children:'//example manually adding periodicjs.ext.passport'
+    },
+    {
+      component:'br'
+    },
+    {
+      component: 'div',
+      children:'$ npm i periodicjs.ext.passport'
+    },
+    {
+      component: 'div',
+      children:'$ periodicjs addExtension periodicjs.ext.passport'
+    },
+    {
+      component:'br'
+    },
+    {
+      component: 'em',
+      props: {
+        style:styles.codeSample.codeEm,
+      },
+      children:'//remove extension'
+    },
+    {
+      component:'br'
+    },
+    {
+      component: 'div',
+      children:'$ periodicjs rex [name-of-extension]'
+    },
+    {
+      component: 'div',
+      children:'$ periodicjs removeExtension [name-of-extension]'
+    },
+    {
+      component: 'div',
+      children:'$ node index.js --cli --crud=ext --crud_op=remove --crud_arg=[name-of-extension]'
+    },
+    {
+      component:'br'
+    },
+    {
+      component: 'em',
+      props: {
+        style:styles.codeSample.codeEm,
+      },
+      children:'//example manually removing periodicjs.ext.passport'
+    },
+    {
+      component:'br'
+    },
+    {
+      component: 'div',
+      children:'$ periodicjs removeExtension periodicjs.ext.passport'
+    },
+    {
+      component: 'div',
+      children:'$ npm rm periodicjs.ext.passport'
+    },
+  ]
+};
 
 function getDefaultIndexTableFields() {
   const reactAppConfig = periodic.settings.extensions['periodicjs.ext.reactapp'];
@@ -163,13 +399,13 @@ function getDefaultIndexTableFields() {
         link: true,
         headerStyle: {
           maxWidth: 350,
-          // overflow: 'hidden',
-          // textOverflow: 'ellipsis',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
         },
         columnStyle: {
           maxWidth: 350,
-          // overflow: 'hidden',
-          // textOverflow: 'ellipsis',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
         },
       })({ adminRoute, schemaName: 'configuration', }),
       data_tables.tableField({
@@ -223,7 +459,17 @@ function getDefaultIndexTableFields() {
 
 function setInitialIndexTable() {
   const reactAppConfig = periodic.settings.extensions['periodicjs.ext.reactapp'];
-  periodic.settings.extensions['periodicjs.ext.reactapp'].data_tables = Object.assign({}, getDefaultIndexTableFields(), periodic.settings.extensions['periodicjs.ext.reactapp'].data_tables);
+  periodic.settings.extensions[ 'periodicjs.ext.reactapp' ].data_tables = Object.assign({}, getDefaultIndexTableFields(), periodic.settings.extensions[ 'periodicjs.ext.reactapp' ].data_tables);
+  periodic.settings.extensions[ 'periodicjs.ext.reactapp' ].extension_overrides.customIndexPageComponents = Object.assign({},
+    periodic.settings.extensions[ 'periodicjs.ext.reactapp' ].extension_overrides.customIndexPageComponents, {
+      configuration: configurationHelperText,
+      extension: extensionHelperText,
+    });
+  periodic.settings.extensions[ 'periodicjs.ext.reactapp' ].extension_overrides.customDetailPageComponents = Object.assign({},
+    periodic.settings.extensions[ 'periodicjs.ext.reactapp' ].extension_overrides.customDetailPageComponents, {
+      configuration: configurationHelperText,
+      extension: extensionHelperText,
+    });
   // console.log('getDefaultIndexTableFields()', getDefaultIndexTableFields())
   if (reactAppConfig && reactAppConfig.includeCoreData && reactAppConfig.includeCoreData.manifest) {
     let task = setImmediate(() => {
@@ -320,6 +566,8 @@ function init() {
 }
 
 module.exports = {
+  configurationHelperText,
+  extensionHelperText,
   getDefaultIndexTableFields,
   setInitialIndexTable,
   init,

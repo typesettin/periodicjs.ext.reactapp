@@ -150,6 +150,8 @@ module.exports = {
       // customDetailHeader
       // customDetailEditor
       // customEntitytypeElements
+      // customIndexPageComponents
+      // customDetailPageComponents
     },      
   },
   databases: {},

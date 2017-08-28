@@ -77,13 +77,54 @@ module.exports = {
               },
               {
                 component: 'Subtitle',
-                children:'quick help'
+                props: {
+                  style: {
+                    padding:'1rem 0'
+                  },
+                },
+                children:'Quick help'
               },
               {
-                component: 'div',
+                component: 'code',
                 props: {
-                  // dangerouslySetInnerHTML:'<h1>code</h1>'
-                }
+                  style:utilities.styles.codeSample.code,
+                },
+                children: [
+                  {
+                    component: 'em',
+                    props: {
+                      style:utilities.styles.codeSample.codeEm,
+                    },
+                    children:'//example create new application [env(using development as an example)] configuration'
+                  },
+                  {
+                    component:'br'
+                  },
+                  {
+                    component: 'div',
+                    children:'$ periodicjs createConfig application **name-of-my-app** development ~/Desktop/appconfig-development-config.json'
+                  },
+                  {
+                    component:'br'
+                  },
+                  {
+                    component: 'em',
+                    props: {
+                      style:utilities.styles.codeSample.codeEm,
+                    },
+                    children:'//example manually add configuration '
+                  },
+                  {
+                    component:'br'
+                  },
+                  {
+                    component: 'div',
+                    children:'$ periodicjs addConfig ~/Desktop/appconfig-development-config.json '
+                  },
+                  {
+                    component:'br'
+                  }
+                ]
               }
             ]
             // children:'ok',

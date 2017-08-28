@@ -25,6 +25,10 @@ const constructDetail = function(options) {
   let customTabs = helpers.getCustomSchemaOverrideProperty(Object.assign({ field: 'customDetailTabs', }, options)) || helpers.getCustomOverrideProperty(Object.assign({ field: 'customDetailTabs', }, options));
   let customHeader = helpers.getCustomSchemaOverrideProperty(Object.assign({ field: 'customDetailHeader', }, options)) || helpers.getCustomOverrideProperty(Object.assign({ field: 'customDetailHeader', }, options));
   let customDetailEditor = helpers.getCustomSchemaOverrideProperty(Object.assign({ field: 'customDetailEditor', }, options)) || helpers.getCustomOverrideProperty(Object.assign({ field: 'customDetailEditor', }, options));
+  let customDetailPageComponents =  helpers.getCustomSchemaOverrideProperty(Object.assign({ field: 'customDetailPageComponents', }, options)) || helpers.getCustomOverrideProperty(Object.assign({ field: 'customDetailPageComponents', }, options)) || []; 
+  if (!customDetailPageComponents.component) {
+    customDetailPageComponents = [];
+  }
   let detailPageBasicEditor = {
     name: 'Basic Editor',
     layout: {
@@ -89,6 +93,9 @@ const constructDetail = function(options) {
               formdata: [helpers.getDetailLabel(schemaName), 'data',],
             },
             props: {
+              style: {
+                paddingBottom:'1.5rem',
+              },
               tabsType: 'navBar',
               tabsProps: {
                 style: {
@@ -106,7 +113,8 @@ const constructDetail = function(options) {
               tabs: detailPageTabs,
             },
             // children:'',
-          },],
+          }, ]
+            .concat(customDetailPageComponents),
           // .concat(buildDetail(schema, label, options)),
         },
         // {
@@ -147,6 +155,11 @@ const constructIndex = function(options = {}) {
   let customTabs =  helpers.getCustomSchemaOverrideProperty(Object.assign({ field: 'customIndexTabs', }, options)) || helpers.getCustomOverrideProperty(Object.assign({ field: 'customIndexTabs', }, options));
   let customHeader =  helpers.getCustomSchemaOverrideProperty(Object.assign({ field: 'customIndexHeader', }, options)) || helpers.getCustomOverrideProperty(Object.assign({ field: 'customIndexHeader', }, options));
   let customIndexButton =  helpers.getCustomSchemaOverrideProperty(Object.assign({ field: 'customIndexButton', }, options)) || helpers.getCustomOverrideProperty(Object.assign({ field: 'customIndexButton', }, options)); 
+  let customIndexPageComponents = helpers.getCustomSchemaOverrideProperty(Object.assign({ field: 'customIndexPageComponents', }, options)) || helpers.getCustomOverrideProperty(Object.assign({ field: 'customIndexPageComponents', }, options)) || []; 
+  if (!customIndexPageComponents.component) {
+    customIndexPageComponents = [];
+  }
+  // console.log({schemaName,customIndexPageComponents})
   return {
     resources: {
       [helpers.getIndexLabel(schemaName)]: `${dataRoutePrefix}?format=json`,
@@ -212,7 +225,9 @@ const constructIndex = function(options = {}) {
               },
               ],
           },]
-            .concat(indextable.indextable(options)),
+            .concat(indextable.indextable(options))
+            .concat(customIndexPageComponents),
+          
         },
       ],
     },

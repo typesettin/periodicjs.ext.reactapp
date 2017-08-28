@@ -7,6 +7,7 @@ const reloader = require('./reloader');
 const initialization = require('./initialization');
 // const components = require('./components');
 const manifest = require('./manifest');
+const styles = require('./styles');
 const controllerhelper = require('./controllerhelper');
 const detail_views = require('./detail_views');
 
@@ -14,6 +15,7 @@ module.exports = {
   settings,
   data,
   manifest,
+  styles,
   generateDetailManifests: settings.generateDetailManifests,
   findMatchingRoute: settings.findMatchingRoute,
   getParameterized: settings.getParameterized,
