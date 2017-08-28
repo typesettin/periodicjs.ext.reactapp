@@ -11,15 +11,7 @@ let __global__returnURL = false;
 // import { Platform, } from 'react-web';
 // import Immutable from 'immutable';
 
-const checkStatus = function (response) {
-  if (response.status >= 200 && response.status < 300) {
-    return response;
-  } else {
-    let error = new Error(response.statusText);
-    error.response = response;
-    throw error;
-  }
-};
+const checkStatus = utilities.checkStatus;
 
 var initializationThrottle;
 var initializationTimeout;

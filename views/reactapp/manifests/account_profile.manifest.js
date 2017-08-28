@@ -252,7 +252,7 @@ module.exports = {
                         type: 'text',
                         label: 'Username',
                         placeholder: 'Username',
-                        name: 'username',
+                        name: 'name',
                       },
                       {
                         type: 'text',

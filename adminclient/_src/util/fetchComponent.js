@@ -33,12 +33,15 @@ var checkStatus = exports.checkStatus = function checkStatus(response) {
       var error = new Error(response.statusText);
       error.response = response;
       try {
-        // console.debug({response})
         response.json().then(function (res) {
-          if (res.data.error) {
+          if (res.data && res.data.error) {
             reject(res.data.error);
           } else if (res.data) {
             reject((0, _stringify2.default)(res.data));
+          } else if (res.message) {
+            reject(res.message);
+          } else if (res.error && res.error.message) {
+            reject(res.error.message);
           } else {
             reject(error);
           }

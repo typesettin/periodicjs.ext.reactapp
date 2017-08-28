@@ -77,7 +77,7 @@ var AppConfigSettings = {
   },
   auth: {
     logged_in_homepage: '/r-admin/dashboard',
-    logged_out_path: '/login'
+    logged_out_path: '/r-admin/auth/account/login'
   },
   login: {
     url: 'http://localhost:8786/api/jwt/token',

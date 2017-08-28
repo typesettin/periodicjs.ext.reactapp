@@ -1,4 +1,3 @@
-
 import { _invokeWebhooks } from './webhooks';
 
 export const checkStatus = function (response) {
@@ -9,13 +8,16 @@ export const checkStatus = function (response) {
       let error = new Error(response.statusText);
       error.response = response;
       try{
-      // console.debug({response})
         response.json()
-          .then(res=>{
-            if(res.data.error){
+          .then(res => {
+            if(res.data && res.data.error){
               reject(res.data.error);
             } else if(res.data){
               reject(JSON.stringify(res.data));
+            } else if (res.message) {
+              reject(res.message);
+            } else if (res.error && res.error.message) {
+              reject(res.error.message);
             } else{
               reject(error);
             }
