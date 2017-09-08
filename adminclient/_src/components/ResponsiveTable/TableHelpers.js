@@ -59,6 +59,7 @@ var propTypes = exports.propTypes = {
   headers: _react.PropTypes.array,
   __tableOptions: _react.PropTypes.object,
   rows: _react.PropTypes.array,
+  turnOffTableSort: _react.PropTypes.bool,
   tableFooter: _react.PropTypes.bool,
   onChange: _react.PropTypes.func,
   tableForm: _react.PropTypes.bool,
@@ -96,6 +97,7 @@ var defaultProps = exports.defaultProps = {
   // searchTable:false,
   filterSearch: false,
   showFilterSearch: false,
+  turnOffTableSort: false,
   usingFiltersInSearch: false,
   tableForm: false,
   filterAddonProps: {

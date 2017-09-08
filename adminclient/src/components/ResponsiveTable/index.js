@@ -274,6 +274,8 @@ class ResponsiveTable extends Component {
           updatedState.rows = updatedState.rows.sort(utilities.sortObject(newSortOptions.sortOrder, options.sort));
           updatedState.sortOrder = newSortOptions.sortOrder;
           updatedState.sortProp = options.sort;
+        } else if (this.props.turnOffTableSort) {
+          updatedState.rows = updatedState.rows;
         } else if ((this.state.sortOrder || this.state.sortProp) && !this.state.disableSort) {
           newSortOptions.sortProp = this.state.sortProp;
           newSortOptions.sortOrder = (this.state.sortOrder === 'desc' || this.state.sortOrder === '-') ? 'desc' : 'asc';
@@ -369,6 +371,8 @@ class ResponsiveTable extends Component {
           } else {
             newSortOptions.sortOrder = '';
           }
+        } else if (this.props.turnOffTableSort) {
+          updatedState.rows = updatedState.rows;
         } else if (this.state.sortOrder || this.state.sortProp) {
           newSortOptions.sortProp = this.state.sortProp;
           newSortOptions.sortOrder = (this.state.sortOrder === 'desc' || this.state.sortOrder === '-') ? '-' : '';
