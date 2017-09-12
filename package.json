@@ -1,7 +1,7 @@
 {
   "name": "periodicjs.ext.reactapp",
   "description": "react based admin.",
-  "version": "10.3.71",
+  "version": "10.4.0",
   "main": "index.js",
   "engines": {
     "node": "^6.x"
@@ -42,6 +42,9 @@
     "promisie": "~1.6.1",
     "rc-slider": "^6.2.0",
     "rc-steps": "^2.5.1",
+    "rc-switch": "^1.5.3",
+    "rc-table": "^5.6.7",
+    "rc-tree": "^1.7.4",
     "re-bulma": "^0.4.3",
     "react": "15.3.2",
     "react-dom": "15.3.2",

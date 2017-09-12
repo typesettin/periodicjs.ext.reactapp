@@ -10,6 +10,7 @@ import capitalize from 'capitalize';
 // import ResponsiveButton from '../ResponsiveButton';
 // import { EditorState, } from 'draft-js';
 import Slider from 'rc-slider';
+import { default as RCSwitch } from 'rc-switch';
 import { ControlLabel, Label, Input, Button, CardFooterItem, Select, Textarea, Group, Image, } from 're-bulma';
 import MaskedInput from 'react-text-mask';
 import moment from 'moment';
@@ -566,6 +567,48 @@ export function getFormCheckbox(options) {
       onChange={onValueChange}
     >
     </input>
+    <span {...formElement.placeholderProps}>{this.state[ formElement.formdata_placeholder] || formElement.placeholder}</span>
+    {getCustomErrorLabel(hasError, this.state, formElement)}
+  </FormItem>);
+}
+
+export function getFormSwitch(options) {
+  let { formElement, i, onValueChange, } = options;
+  let hasError = getErrorStatus(this.state, formElement.name);
+  let hasValue = (formElement.name && this.state[formElement.name])? true : false;
+  let getFormDataLabel = getFormLabel.bind(this);
+  if (formElement.disableOnChange) {
+    onValueChange = () => {};
+  } else if (!onValueChange) {
+    onValueChange = (/*event*/) => {
+      // let text = event.target.value;
+      let updatedStateProp = {};
+      // console.debug('before', { updatedStateProp, formElement, }, event.target);
+      updatedStateProp[ this.state[ formElement.formdata_name] || formElement.name ] = (this.state[ this.state[ formElement.formdata_name] || formElement.name ] ) ? 0 : 'on';
+      
+      // console.debug('after', { updatedStateProp, formElement, }, event.target);
+      this.setState(updatedStateProp, () => {
+        if(formElement.validateOnChange){
+          this.validateFormElement({ formElement, });
+        }
+      });
+    };
+  }
+
+  return (<FormItem key={i} {...formElement.layoutProps} hasError={hasError} hasValue={hasValue} >
+    {getFormDataLabel(formElement)}  
+    <div>
+      <RCSwitch
+        {...formElement.passProps}
+    // type={formElement.type || 'checkbox'}
+    // name={this.state[ formElement.formdata_name] || formElement.name}
+    checked={this.state[ formElement.name ]}
+    // disabled={this.state.disabled}
+    // checkedChildren={'on'}
+    // unCheckedChildren={''}
+    onChange={onValueChange}
+    />
+    </div>
     <span {...formElement.placeholderProps}>{this.state[ formElement.formdata_placeholder] || formElement.placeholder}</span>
     {getCustomErrorLabel(hasError, this.state, formElement)}
   </FormItem>);

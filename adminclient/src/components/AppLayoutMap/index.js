@@ -4,6 +4,9 @@ import * as recharts from 'recharts';
 import MaskedInput from 'react-text-mask';
 import { Link, } from 'react-router';
 import Slider, { Range, } from 'rc-slider';
+import { default as RCTable } from 'rc-table';
+import { default as RCSwitch } from 'rc-switch';
+import { default as RCTree, TreeNode as RCTreeNode } from 'rc-tree';
 import { Carousel, } from 'react-responsive-carousel';
 import GoogleMap from 'google-map-react';
 import { getAdvancedBinding, } from './advancedBinding';
@@ -36,6 +39,10 @@ export let AppLayoutMap = Object.assign({}, {
   ResponsiveLink,
   ResponsiveButton,
   MaskedInput,
+  RCTable,
+  RCTree,
+  RCTreeNode,
+  RCSwitch,
 }, React.DOM, rebulma, window.__ra_custom_elements, { Link, });
 
 export function getRenderedComponent(componentObject, resources, debug) {

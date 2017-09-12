@@ -3,7 +3,7 @@ import { Columns, Card, CardHeader, CardHeaderTitle, CardContent, CardFooter, Ca
 import ResponsiveCard from '../ResponsiveCard';
 import { getRenderedComponent, } from '../AppLayoutMap';
 import utilities from '../../util';
-import { getFormTextInputArea, getFormMaskedInput, getFormCheckbox, getFormSubmit, getFormSelect, getCardFooterItem, getFormCode, getFormTextArea, getFormEditor, getFormLink, getHiddenInput, getFormGroup, getImage, getFormDatalist, getRawInput, getSliderInput, getFormDatatable, } from './FormElements';
+import { getFormTextInputArea, getFormMaskedInput, getFormCheckbox, getFormSubmit, getFormSelect, getCardFooterItem, getFormCode, getFormTextArea, getFormEditor, getFormLink, getHiddenInput, getFormGroup, getImage, getFormDatalist, getRawInput, getSliderInput, getFormDatatable, getFormSwitch, } from './FormElements';
 import { getCallbackFromString, setFormNameFields, assignHiddenFields, validateForm, assignFormBody, handleFormSubmitNotification, handleSuccessCallbacks, submitThisDotPropsFunc, submitWindowFunc, validateFormElement, } from './FormHelpers';
 import flatten from 'flat';
 import qs from 'querystring';
@@ -96,6 +96,7 @@ class ResponsiveForm extends Component{
     this.getFormSelect = getFormSelect.bind(this);
     this.getRawInput = getRawInput.bind(this);
     this.getSliderInput = getSliderInput.bind(this);
+    this.getFormSwitch = getFormSwitch.bind(this);
     this.getFormDatatable = getFormDatatable.bind(this);
     this.getHiddenInput = getHiddenInput.bind(this);
     this.getFormEditor = getFormEditor.bind(this);
@@ -361,6 +362,8 @@ class ResponsiveForm extends Component{
           }); 
         } else if (formElement.type === 'select') {
           return this.getFormSelect({ formElement,  i:j, formgroup, }); 
+        } else if (formElement.type === 'switch') {
+          return this.getFormSwitch({ formElement,  i:j, formgroup, }); 
         } else if (formElement.type === 'image') {
           return this.getImage({ formElement,  i:j, formgroup, }); 
         } else if (formElement.type === 'slider') {
@@ -422,6 +425,18 @@ class ResponsiveForm extends Component{
           </Columns>);
       }
 
+      if (formgroup.card && formgroup.card.singleCard) {
+        keyValue++;
+        keyValue += i;
+        let columnProps = gridProps.subColumnProps || {
+          isMultiline:true,
+        };//previously was size=isHalf
+        return (<ResponsiveCard {...formgroup.card.props} key={keyValue++}>
+          <Columns {...columnProps}>
+            {(formgroup.formElements && formgroup.formElements.length) ? formgroup.formElements.map(getFormElements) : null}
+          </Columns>  
+        </ResponsiveCard>);
+      }
       /** If a formgroup is a card, and is not a doubleCard or twoColumns, it will be a single card in a horizontal space in a half size column  */
       if (formgroup.card && !formgroup.card.twoColumns && !formgroup.card.doubleCard) {
         keyValue++;
