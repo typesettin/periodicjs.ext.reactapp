@@ -1,9 +1,10 @@
 'use strict';
-
-const index_data_tables = require('../utilities/index_data_tables.js');
+const periodic = require('periodicjs');
+// const index_data_tables = require('../utilities/index_data_tables.js');
 // console.log({ index_data_tables })
 module.exports = {
   settings: {
+    encryption_key_path: periodic.settings.application.server.https.ssl.private_key,
     'server_side_react': true,
     'hot_reload': true,
     'custom_css_stylesheet': false,

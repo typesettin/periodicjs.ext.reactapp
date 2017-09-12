@@ -211,7 +211,7 @@ const constructIndex = function(options = {}) {
                     onClick: (customIndexButton && customIndexButton.onClick) ?
                       customIndexButton.onClick : 'func:this.props.reduxRouter.push',
                     onclickProps: (customIndexButton && customIndexButton.onclickProps) ?
-                      customIndexButton.onclickProps : `${manifestPrefix}/${pluralize(schemaName)}/new`,
+                      customIndexButton.onclickProps : `${helpers.getContainerPath(options)}/new`,//`${manifestPrefix}/${pluralize(schemaName)}/new`,
                     buttonProps: {
                       size: 'isMedium',
                       color: 'isPrimary',

@@ -14,16 +14,20 @@ const helperController = controllers.helper;
 // const contentdataController = resources.app.controller.extension.reactapp.controller.contentdata;
 
 // contentdataRouter.use(helperController.approveOptionsRequest, ensureApiAuthenticated, helperController.fixCodeMirrorSubmit, helperController.fixFlattenedSubmit);
-// contentdataRouter.get('/:dbname/secure-asset/:id/:filename', assetController.loadAsset, assetController.decryptAsset);
 
 contentdataRouter.use(helperController.approveOptionsRequest, ensureApiAuthenticated);
-contentdataRouter.put('*', controllers.helper.fixCodeMirrorSubmit, controllers.helper.fixFlattenedSubmit);
-contentdataRouter.post('*', controllers.helper.fixCodeMirrorSubmit, controllers.helper.fixFlattenedSubmit);
+contentdataRouter.get('/secure-asset/:id/:filename', controllers.helper.decryptAsset);
+contentdataRouter.put('*',
+  controllers.helper.handleFileUpload,
+  controllers.helper.fixCodeMirrorSubmit,
+  controllers.helper.fixFlattenedSubmit);
+contentdataRouter.post('*',
+  controllers.helper.handleFileUpload,
+  controllers.helper.fixCodeMirrorSubmit,
+  controllers.helper.fixFlattenedSubmit);
 // console.log({ encryptionKey });
 Array.from(dataRouters.values()).forEach(drouter => {
   contentdataRouter.use(drouter.router);
 });
-
-
 
 module.exports = contentdataRouter;
