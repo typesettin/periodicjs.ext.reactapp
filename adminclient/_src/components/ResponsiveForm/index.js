@@ -155,6 +155,7 @@ var ResponsiveForm = function (_Component) {
     _this.getFormSelect = _FormElements.getFormSelect.bind(_this);
     _this.getRawInput = _FormElements.getRawInput.bind(_this);
     _this.getSliderInput = _FormElements.getSliderInput.bind(_this);
+    _this.getFormSwitch = _FormElements.getFormSwitch.bind(_this);
     _this.getFormDatatable = _FormElements.getFormDatatable.bind(_this);
     _this.getHiddenInput = _FormElements.getHiddenInput.bind(_this);
     _this.getFormEditor = _FormElements.getFormEditor.bind(_this);
@@ -414,6 +415,8 @@ var ResponsiveForm = function (_Component) {
             });
           } else if (formElement.type === 'select') {
             return _this3.getFormSelect({ formElement: formElement, i: j, formgroup: formgroup });
+          } else if (formElement.type === 'switch') {
+            return _this3.getFormSwitch({ formElement: formElement, i: j, formgroup: formgroup });
           } else if (formElement.type === 'image') {
             return _this3.getImage({ formElement: formElement, i: j, formgroup: formgroup });
           } else if (formElement.type === 'slider') {
@@ -495,17 +498,33 @@ var ResponsiveForm = function (_Component) {
           );
         }
 
+        if (formgroup.card && formgroup.card.singleCard) {
+          keyValue++;
+          keyValue += i;
+          var columnProps = gridProps.subColumnProps || {
+            isMultiline: true
+          }; //previously was size=isHalf
+          return _react2.default.createElement(
+            _ResponsiveCard2.default,
+            (0, _extends3.default)({}, formgroup.card.props, { key: keyValue++ }),
+            _react2.default.createElement(
+              _reBulma.Columns,
+              columnProps,
+              formgroup.formElements && formgroup.formElements.length ? formgroup.formElements.map(getFormElements) : null
+            )
+          );
+        }
         /** If a formgroup is a card, and is not a doubleCard or twoColumns, it will be a single card in a horizontal space in a half size column  */
         if (formgroup.card && !formgroup.card.twoColumns && !formgroup.card.doubleCard) {
           keyValue++;
           keyValue += i;
-          var columnProps = gridProps.subColumnProps || {}; //previously was size=isHalf
+          var _columnProps = gridProps.subColumnProps || {}; //previously was size=isHalf
           return _react2.default.createElement(
             _reBulma.Columns,
             gridProps,
             _react2.default.createElement(
               _reBulma.Column,
-              columnProps,
+              _columnProps,
               _react2.default.createElement(
                 _ResponsiveCard2.default,
                 (0, _extends3.default)({}, formgroup.card.props, { key: keyValue++ }),

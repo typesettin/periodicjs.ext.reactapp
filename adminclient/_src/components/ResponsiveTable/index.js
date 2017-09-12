@@ -846,6 +846,22 @@ var ResponsiveTable = function (_Component) {
       var startIndex = !this.props.baseUrl ? calcStartIndex : 0;
       var endIndex = !this.props.baseUrl ? this.state.limit * this.state.currentPage : this.state.limit;
       var displayRows = this.state.rows.slice(startIndex, endIndex);
+      var mergedCustomLayout = this.props.customLayout && displayRows && displayRows.length ? _react2.default.createElement(
+        'div',
+        { style: (0, _assign2.default)({
+            flexDirection: 'rows',
+            display: 'flex'
+          }, this.props.customLayoutStyle) },
+        displayRows.map(function (row) {
+          var mergedLayout = (0, _assign2.default)({}, _this8.props.customLayout, {
+            props: (0, _assign2.default)({}, _this8.props.customLayout.props, row, {
+              __ra_rt_link: _this8.props.customLayout.link ? _this8.getHeaderLinkURL(_this8.props.customLayout.link, row) : undefined
+            })
+          });
+          // console.debug({ mergedLayout });
+          return _this8.getRenderedComponent(mergedLayout);
+        })
+      ) : null;
       var _state = this.state,
           numPages = _state.numPages,
           currentPage = _state.currentPage;
@@ -1451,7 +1467,7 @@ var ResponsiveTable = function (_Component) {
               'Loading'
             )
           ) : null,
-          _react2.default.createElement(
+          this.props.customLayout && displayRows && displayRows.length ? mergedCustomLayout : _react2.default.createElement(
             rb.Table,
             this.props.tableProps,
             _react2.default.createElement(

@@ -41,6 +41,18 @@ var _rcSlider = require('rc-slider');
 
 var _rcSlider2 = _interopRequireDefault(_rcSlider);
 
+var _rcTable = require('rc-table');
+
+var _rcTable2 = _interopRequireDefault(_rcTable);
+
+var _rcSwitch = require('rc-switch');
+
+var _rcSwitch2 = _interopRequireDefault(_rcSwitch);
+
+var _rcTree = require('rc-tree');
+
+var _rcTree2 = _interopRequireDefault(_rcTree);
+
 var _reactResponsiveCarousel = require('react-responsive-carousel');
 
 var _googleMapReact = require('google-map-react');
@@ -141,7 +153,11 @@ var AppLayoutMap = exports.AppLayoutMap = (0, _assign2.default)({}, {
   recharts: recharts, ResponsiveForm: _ResponsiveForm2.default, DynamicLayout: _DynamicLayout2.default, DynamicForm: _DynamicForm2.default, RawOutput: _RawOutput2.default, RawStateOutput: _RawStateOutput2.default, FormItem: _FormItem2.default, MenuAppLink: _MenuAppLink2.default, SubMenuLinks: _SubMenuLinks2.default, ResponsiveTable: _ResponsiveTable2.default, ResponsiveCard: _ResponsiveCard2.default, DynamicChart: _DynamicChart2.default, ResponsiveBar: _ResponsiveBar2.default, ResponsiveTabs: _ResponsiveTabs2.default, ResponsiveDatalist: _ResponsiveDatalist2.default, CodeMirror: _RACodeMirror2.default, Range: _rcSlider.Range, Slider: _rcSlider2.default, GoogleMap: _googleMapReact2.default, Carousel: _reactResponsiveCarousel.Carousel, PreviewEditor: _PreviewEditor2.default, ResponsiveSteps: _ResponsiveSteps2.default, /* Editor,*/
   ResponsiveLink: _ResponsiveLink2.default,
   ResponsiveButton: _ResponsiveButton2.default,
-  MaskedInput: _reactTextMask2.default
+  MaskedInput: _reactTextMask2.default,
+  RCTable: _rcTable2.default,
+  RCTree: _rcTree2.default,
+  RCTreeNode: _rcTree.TreeNode,
+  RCSwitch: _rcSwitch2.default
 }, _react2.default.DOM, rebulma, window.__ra_custom_elements, { Link: _reactRouter.Link });
 
 function getRenderedComponent(componentObject, resources, debug) {
