@@ -77,7 +77,7 @@ class AppHeader extends Component {
                           borderRadius: '24px',
                           backgroundSize: 'cover',
                           backgroundRepeat:'no-repeat',
-                          backgroundImage:'url('+(this.props.user.profile_image_preview || '/favicon.png' )+')',
+                          backgroundImage:'url('+(this.props.user.profile_image_preview || this.props.settings.default_user_image || '/favicon.png' )+')',
                         },
                       },
                     })} 

@@ -9,6 +9,7 @@ module.exports = {
     'hot_reload': true,
     'custom_css_stylesheet': false,
     'basename': 'http://localhost:8786',
+    'default_user_image': '/favicon.png',
     'skip_catch_all_route': false,
     'adminPath': '/r-admin',
     'name': 'Admin Panel',
