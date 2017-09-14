@@ -52,11 +52,10 @@ export const _handleFetchPaths = function (layout, resources = {}, options = {})
   if (state.user && state.user.jwt_token) {
     headers[ 'x-access-token' ] = state.user.jwt_token;
   }
-
   return utilities.fetchPaths.call(this, state.settings.basename, resources, headers)
     .then((typeof options.onSuccess === 'function') ? options.onSuccess : _resources => {
       if (!_resources || (_resources && !_resources.__hasError)) {
-        this.uiLayout = this.getRenderedComponent(layout, _resources);
+        this.uiLayout = this.getRenderedComponent(layout, Object.assign({},_resources,this.uiResources));
         this.setState({ ui_is_loaded: true, async_data_is_loaded: true, });
         if (options.callbacks) _invokeWebhooks.call(this, options.callbacks);
       }
@@ -126,7 +125,7 @@ export const fetchSuccessContent = function _fetchSuccessContent (pathname, hasP
       });
     } else {
       if (containers[pathname].callbacks) _invokeWebhooks.call(this, containers[pathname].callbacks);
-      this.uiLayout = this.getRenderedComponent(containers[pathname].layout);
+      this.uiLayout = this.getRenderedComponent(containers[ pathname ].layout, this.uiResources);
       this.setState({ ui_is_loaded: true, async_data_is_loaded: true, });
       if(window && window.scrollTo){
         window.scrollTo(0, 0);

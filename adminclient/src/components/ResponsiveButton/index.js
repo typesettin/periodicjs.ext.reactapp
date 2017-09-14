@@ -45,7 +45,7 @@ class ResponsiveButton extends Component {
   }
   handleOnClick(options) {
     // console.debug({ options });
-    let { clickprop, thisDotProp, clickThisProp, clickPropObject, clickBaseUrl, clickLinkParams, clickPassProps, clickFetchProps, clickSuccessProps, } = options;
+    let { clickprop, thisDotProp, clickThisProp, clickPropObject, clickBaseUrl, clickAddPropObject, clickLinkParams, clickPassProps, clickFetchProps, clickSuccessProps, } = options;
     let onclickFunction = (data) => {
       console.debug('ResponsiveButton', { data, });
     };
@@ -55,6 +55,13 @@ class ResponsiveButton extends Component {
     let onclickProp = (clickBaseUrl)
       ? this.getButtonLink(clickBaseUrl, clickLinkParams, linkSelectionProp)
       : clickPassProps;
+    
+    if (clickAddPropObject && linkSelectionProp) {
+      linkSelectionProp[ clickAddPropObject ] = this.props[ clickAddPropObject ];
+    }
+    if (clickAddPropObject && onclickProp) {
+      onclickProp[ clickAddPropObject ] = this.props[ clickAddPropObject ];
+    }
     
     if (typeof clickprop === 'string' && clickprop.indexOf('func:this.props.reduxRouter') !== -1) { 
       onclickFunction = this.props.reduxRouter[ clickprop.replace('func:this.props.reduxRouter.', '') ];
@@ -138,6 +145,7 @@ class ResponsiveButton extends Component {
     this.handleOnClick.call(this, {
       clickprop: buttonProps.onClick,
       clickThisProp: buttonProps.onclickThisProp,
+      clickAddPropObject: buttonProps.onclickAddProp,
       clickPropObject: buttonProps.onclickPropObject,
       clickBaseUrl: buttonProps.onclickBaseUrl,
       clickLinkParams: buttonProps.onclickLinkParams,
@@ -153,6 +161,7 @@ class ResponsiveButton extends Component {
       return {
         clickprop: this.props.onClick,
         clickThisProp: this.props.onclickThisProp,
+        clickAddPropObject: this.props.onclickAddProp,
         clickPropObject: this.props.onclickPropObject,
         clickBaseUrl: this.props.onclickBaseUrl,
         clickLinkParams: this.props.onclickLinkParams,

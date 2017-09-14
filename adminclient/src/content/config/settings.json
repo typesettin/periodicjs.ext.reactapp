@@ -51,29 +51,29 @@
   },
   "auth":{
     "logged_in_homepage":"/r-admin/dashboard",
-    "logged_out_path":"/r-admin/auth/account/login"
+    "logged_out_path":"/"
   },
   "login":{
-    "url":"http://localhost:8786/api/jwt/token",
-    "devurl":"http://localhost:8786/api/jwt/token",
+    "url":"/api/jwt/token",
+    "devurl":"/api/jwt/token",
     "options":{
       "method":"POST",
       "headers":{
         "Accept":"application/json",
-        "clientid":"fbff80bd23de5b1699cb595167370a1a",
+        "clientid":"be65924f150f74d552652010ec08387d",
         "entitytype":"account"
       }
     }
   },
   "userprofile":{
-    "url":"http://localhost:8786/api/jwt/profile",
-    "devurl":"http://localhost:8786/api/jwt/profile",
+    "url":"/api/jwt/profile",
+    "devurl":"/api/jwt/profile",
     "options":{
       "method":"POST",
       "headers":{
         "Accept":"application/json",
         "Content-Type":"application/json",
-        "clientid":"fbff80bd23de5b1699cb595167370a1a",
+        "clientid":"be65924f150f74d552652010ec08387d",
         "clientid_default":"clientIDNEEDED",
         "entitytype":"account"
       }
