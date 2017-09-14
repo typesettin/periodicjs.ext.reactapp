@@ -116,7 +116,9 @@ function loadManifest(req, res, next) {
         if (utilities.controllerhelper.CORE_DATA_CONFIGURATIONS.manifest) manifest.containers = Object.assign({}, utilities.controllerhelper.CORE_DATA_CONFIGURATIONS.manifest, manifest.containers);
       }
       if (req.query && req.query.initial) manifest.containers = utilities.controllerhelper.filterInitialManifest(manifest.containers, req.query.location);
-      manifest.containers = utilities.controllerhelper.recursivePrivilegesFilter(Object.keys(req.session.userprivilegesdata), manifest.containers, true);
+      manifest.containers = utilities.controllerhelper.recursivePrivilegesFilter(Object.keys(
+        (req.session && req.session.userprivilegesdata)? req.session.userprivilegesdata : {}  
+      ), manifest.containers, true);
       if (res && typeof res.send === 'function') {
         res.status(200).send({
           result: 'success',
@@ -229,7 +231,7 @@ function loadNavigation(req, res, next) {
       navigation.wrapper = extsettings.navigationLayout.wrapper;
       navigation.container = extsettings.navigationLayout.container;
       // console.log({ navigation }, 'req.session.userprivilegesdata', req.session.userprivilegesdata);
-      navigation.layout = utilities.controllerhelper.recursivePrivilegesFilter(Object.keys(req.session.userprivilegesdata || {}), [navigation.layout, ])[0];
+      navigation.layout = utilities.controllerhelper.recursivePrivilegesFilter(Object.keys((req.session && req.session.userprivilegesdata)? req.session.userprivilegesdata : {}), [navigation.layout, ])[0];
       if (res && typeof res.send === 'function') {
         res.status(200).send({
           result: 'success',
