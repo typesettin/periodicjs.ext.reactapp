@@ -104,20 +104,39 @@ var ModalUI = function (_Component2) {
       async_data_is_loaded: false
     };
     _this2.uiLayout = {};
+    _this2.uiResources = {};
     _this2.title = '';
     _this2.footer = '';
     _this2.text = '';
     _this2.getState = _this2.props.getState;
     _this2.getRenderedComponent = _this2.props.dynamicRenderComponent.bind(_this2);
     _this2.fetchData = _util2.default.fetchDynamicContent.bind(_this2);
+    _this2.modalPathname = _this2.props.pathname;
     return _this2;
   }
 
   (0, _createClass3.default)(ModalUI, [{
     key: 'handleComponentLifecycle',
     value: function handleComponentLifecycle() {
+      var _this3 = this;
+
       this.uiLayout = {};
-      if (typeof this.props.pathname === 'string') this.fetchData(this.props.pathname);
+      this.uiResources = {
+        modalProps: {
+          formdata: this.props.formdata,
+          pathname: this.props.pathname,
+          modalPathname: this.modalPathname,
+          title: this.props.title
+        }
+      };
+      if (typeof this.props.pathname === 'string') {
+        if (this.props.pathnameParams && this.props.pathnameParams.length > 0) {
+          this.props.pathnameParams.forEach(function (param) {
+            _this3.modalPathname = _this3.modalPathname.replace(param.key, _this3.props.formdata[param.val]);
+          });
+        }
+        this.fetchData(this.modalPathname);
+      }
       this.title = this.props.title;
       this.footer = this.props.footer;
       this.text = this.props.text;
@@ -136,15 +155,28 @@ var ModalUI = function (_Component2) {
   }, {
     key: 'render',
     value: function render() {
-      var _this3 = this;
+      var _this4 = this;
 
       var initialize = function initialize(content) {
-        var modelContent = content ? content : typeof _this3.text !== 'string' ? _this3.props.dynamicRenderComponent(_this3.text) : _this3.text;
-        var footerContent = _this3.footer ? (0, _typeof3.default)(_this3.footer) === 'object' ? _this3.props.dynamicRenderComponent(_this3.footer) : _react2.default.createElement(
+        var passedProps = {
+          modalProps: {
+            formdata: _this4.props.formdata,
+            pathname: _this4.props.pathname,
+            modalPathname: _this4.modalPathname,
+            title: _this4.props.title
+          }
+        };
+
+        // if (typeof this.text === 'object' && this.text.layout) {
+        // }
+
+        var modelContent = content ? content : typeof _this4.text !== 'string' ? _this4.props.dynamicRenderComponent(_this4.text, passedProps, true) : _this4.text;
+        var footerContent = _this4.footer ? (0, _typeof3.default)(_this4.footer) === 'object' ? _this4.props.dynamicRenderComponent(_this4.footer) : _react2.default.createElement(
           'div',
           { style: { padding: '20px' } },
-          _this3.footer
+          _this4.footer
         ) : undefined;
+
         return _react2.default.createElement(
           'div',
           { style: (0, _assign2.default)({
@@ -156,21 +188,26 @@ var ModalUI = function (_Component2) {
               left: 0,
               right: 0,
               backgroundColor: 'rgba(17,17,17,.6)'
-            }, _this3.props.overlayProps) },
+            }, _this4.props.overlayProps) },
           _react2.default.createElement(
             _reBulma.Modal,
             {
               type: 'card',
-              headerContent: (0, _typeof3.default)(_this3.title) === 'object' ? _this3.props.dynamicRenderComponent(_this3.title) : _this3.title,
+              headerContent: (0, _typeof3.default)(_this4.title) === 'object' ? _this4.props.dynamicRenderComponent(_this4.title) : _this4.title,
               footerContent: footerContent,
               isActive: true,
-              onCloseRequest: _this3.props.hide,
-              className: 'animated ' + (_this3.props.animation ? _this3.props.animation : 'zoomIn') + ' Medium-Speed',
+              onCloseRequest: _this4.props.hide,
+              className: 'animated ' + (_this4.props.animation ? _this4.props.animation : 'zoomIn') + ' Medium-Speed',
               showOverlayCloseButton: false
             },
             _react2.default.createElement(
               _reBulma.Content,
-              null,
+              { passedProps: {
+                  formdata: _this4.props.formdata,
+                  pathname: _this4.props.pathname,
+                  modalPathname: _this4.modalPathname,
+                  title: _this4.props.title
+                } },
               modelContent
             )
           )
@@ -190,31 +227,31 @@ var Overlay = function (_Component3) {
   function Overlay(props) {
     (0, _classCallCheck3.default)(this, Overlay);
 
-    var _this4 = (0, _possibleConstructorReturn3.default)(this, (Overlay.__proto__ || (0, _getPrototypeOf2.default)(Overlay)).call(this, props));
+    var _this5 = (0, _possibleConstructorReturn3.default)(this, (Overlay.__proto__ || (0, _getPrototypeOf2.default)(Overlay)).call(this, props));
 
-    _this4.getRenderedComponent = _AppLayoutMap.getRenderedComponent.bind(_this4);
-    return _this4;
+    _this5.getRenderedComponent = _AppLayoutMap.getRenderedComponent.bind(_this5);
+    return _this5;
   }
 
   (0, _createClass3.default)(Overlay, [{
     key: 'render',
     value: function render() {
-      var _this5 = this;
+      var _this6 = this;
 
       // console.log('Overlay this.props.notification', this.props.notification);
       window.overlayProps = this.props;
       var overlayStyleOverrides = this.props.getState().settings.ui.overlayStyleProps;
       var notices = this.props.notification.notifications && this.props.notification.notifications.length > 0 ? this.props.notification.notifications.map(function (notice, key) {
-        return _react2.default.createElement(NotificationUI, (0, _extends3.default)({ dynamicRenderComponent: _this5.getRenderedComponent, hide: {
+        return _react2.default.createElement(NotificationUI, (0, _extends3.default)({ dynamicRenderComponent: _this6.getRenderedComponent, hide: {
             onClick: function onClick() {
-              _this5.props.hideNotification(notice.id);
+              _this6.props.hideNotification(notice.id);
             }
           }, key: key }, notice));
       }) : null;
       var modal = this.props.notification.modals && this.props.notification.modals.length > 0 ? _react2.default.createElement(ModalUI, (0, _extends3.default)({}, this.props.notification.modals[this.props.notification.modals.length - 1], {
         getState: this.props.getState,
         hide: function hide() {
-          _this5.props.hideModal(_this5.props.notification.modals[0].id);
+          _this6.props.hideModal(_this6.props.notification.modals[0].id);
         },
         dynamicRenderComponent: this.getRenderedComponent })) : null;
       return _react2.default.createElement(

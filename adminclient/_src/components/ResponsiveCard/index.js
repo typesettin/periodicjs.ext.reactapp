@@ -77,7 +77,7 @@ var ResponsiveCard = function (_Component) {
       headerColor: props.headerColor,
       headerTextColor: props.headerTextColor,
       display: props.display,
-      icon: props.icon,
+      icon: props.display ? props.iconDown : props.iconUp,
       iconDown: props.iconDown,
       iconUp: props.iconUp,
       cardTitle: props.cardTitle,

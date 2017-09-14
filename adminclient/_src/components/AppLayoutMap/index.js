@@ -163,6 +163,9 @@ var AppLayoutMap = exports.AppLayoutMap = (0, _assign2.default)({}, {
 function getRenderedComponent(componentObject, resources, debug) {
   var _this = this;
 
+  if (debug) {
+    console.debug({ resources: resources, componentObject: componentObject });
+  }
   try {
     if (advancedBinding) {
       AppLayoutMap.ResponsiveLink = _ResponsiveLink2.default.bind(this);

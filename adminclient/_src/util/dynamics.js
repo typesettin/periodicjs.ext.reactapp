@@ -79,10 +79,9 @@ var _handleFetchPaths = exports._handleFetchPaths = function _handleFetchPaths(l
   if (state.user && state.user.jwt_token) {
     headers['x-access-token'] = state.user.jwt_token;
   }
-
   return _index2.default.fetchPaths.call(this, state.settings.basename, resources, headers).then(typeof options.onSuccess === 'function' ? options.onSuccess : function (_resources) {
     if (!_resources || _resources && !_resources.__hasError) {
-      _this.uiLayout = _this.getRenderedComponent(layout, _resources);
+      _this.uiLayout = _this.getRenderedComponent(layout, (0, _assign2.default)({}, _resources, _this.uiResources));
       _this.setState({ ui_is_loaded: true, async_data_is_loaded: true });
       if (options.callbacks) _webhooks._invokeWebhooks.call(_this, options.callbacks);
     }
@@ -151,7 +150,7 @@ var fetchSuccessContent = exports.fetchSuccessContent = function _fetchSuccessCo
       });
     } else {
       if (containers[pathname].callbacks) _webhooks._invokeWebhooks.call(this, containers[pathname].callbacks);
-      this.uiLayout = this.getRenderedComponent(containers[pathname].layout);
+      this.uiLayout = this.getRenderedComponent(containers[pathname].layout, this.uiResources);
       this.setState({ ui_is_loaded: true, async_data_is_loaded: true });
       if (window && window.scrollTo) {
         window.scrollTo(0, 0);
