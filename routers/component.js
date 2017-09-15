@@ -11,7 +11,9 @@ let ensureApiAuthenticated = oauth2serverControllers.auth.ensureApiAuthenticated
 //   const accountController = resources.app.controller.native.account;
 const uacController = {
   loadUserRoles: (req, res, next) => {
-    req.session.userprivilegesdata = {};
+    if (req.session) {
+      req.session.userprivilegesdata = {};
+    }
     next();
   },
 }; //resources.app.controller.extension.user_access_control.uac;
