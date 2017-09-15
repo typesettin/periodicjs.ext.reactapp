@@ -208,6 +208,9 @@ function getRenderedComponent(componentObject, resources, debug) {
         }
       });
     }
+    if (renderedCompProps.children && !componentObject.children) {
+      componentObject.children = renderedCompProps.children;
+    }
     var comparisons = {};
     // if (thisprops) {
     //   console.debug({ thisprops, renderedCompProps });
