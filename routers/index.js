@@ -10,14 +10,6 @@ const contentdataRouter = require('./contentdata');
 const componentRouter = require('./component');
 const reactapp = utilities.reactapp();
 
-extensionRouter.get('/healthcheck', function(req, res) {
-  // console.log(req.params);
-  res.status(200).send({
-    status: 'ok',
-    // params: req.params,
-  });
-});
-
 extensionRouter.use(`${reactapp.manifest_prefix}securecontent`, securecontentRouter);
 extensionRouter.use(`${reactapp.manifest_prefix}contentdata`, contentRouter);
 extensionRouter.use(`${reactapp.manifest_prefix}contentdata`, contentdataRouter);
