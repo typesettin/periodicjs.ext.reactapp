@@ -65,7 +65,7 @@ var AppConfigSettings = {
       method: 'POST',
       headers: {
         Accept: 'application/json',
-        clientid: 'be65924f150f74d552652010ec08387d',
+        clientid: 'e2852fd35ef3c16ef206d4e34252e0e5',
         entitytype: 'account'
       }
     }
@@ -78,7 +78,7 @@ var AppConfigSettings = {
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
-        clientid: 'be65924f150f74d552652010ec08387d',
+        clientid: 'e2852fd35ef3c16ef206d4e34252e0e5',
         clientid_default: 'clientIDNEEDED',
         entitytype: 'account'
       }

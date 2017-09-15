@@ -1,8 +1,13 @@
 {
   "main.css": "static/css/main.147d69a5.css",
   "main.css.map": "static/css/main.147d69a5.css.map",
+<<<<<<< HEAD
   "main.js": "static/js/main.9bdbaee6.js",
   "main.js.map": "static/js/main.9bdbaee6.js.map",
+=======
+  "main.js": "static/js/main.3f2c1908.js",
+  "main.js.map": "static/js/main.3f2c1908.js.map",
+>>>>>>> fab1478d714eda770eaed8caade6bbb78d565da4
   "static/media/fontawesome-webfont.eot?v=4.7.0": "static/media/fontawesome-webfont.674f50d2.eot",
   "static/media/fontawesome-webfont.svg?v=4.7.0": "static/media/fontawesome-webfont.912ec66d.svg",
   "static/media/fontawesome-webfont.ttf?v=4.7.0": "static/media/fontawesome-webfont.b06871f2.ttf",

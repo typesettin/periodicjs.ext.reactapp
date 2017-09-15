@@ -1,7 +1,11 @@
 {
   "name": "periodicjs.ext.reactapp",
   "description": "react based admin.",
+<<<<<<< HEAD
   "version": "10.5.1",
+=======
+  "version": "10.5.0",
+>>>>>>> fab1478d714eda770eaed8caade6bbb78d565da4
   "main": "index.js",
   "engines": {
     "node": "^6.x"

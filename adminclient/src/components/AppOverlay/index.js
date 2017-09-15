@@ -112,12 +112,7 @@ class ModalUI extends Component {
             className={`animated ${(this.props.animation? this.props.animation: 'zoomIn')} Medium-Speed`}
             showOverlayCloseButton={false}
             >
-          <Content passedProps={{
-            formdata:this.props.formdata,
-            pathname: this.props.pathname,
-            modalPathname: this.modalPathname,
-            title: this.props.title,
-          }}>
+          <Content>
               {modelContent}
           </Content>
         </Modal>
