@@ -94,8 +94,8 @@ export function getRenderedComponent(componentObject, resources, debug) {
         }
       });
     }
-    if (renderedCompProps.children  && !componentObject.children) {
-      componentObject.children = renderedCompProps.children;
+    if (renderedCompProps._children  && !componentObject.children) {
+      componentObject.children = renderedCompProps._children;
     }
     let comparisons = {};
     // if (thisprops) {
