@@ -194,6 +194,9 @@ var ResponsiveButton = function (_Component) {
             }]
           }
         }, this.props.confirmModal));
+      } else if (typeof clickprop === 'string' && clickprop === 'func:this.props.createModal') {
+        var modalPathName = onclickProp.params ? this.getButtonLink(onclickProp.pathname, onclickProp.params, linkSelectionProp) : onclickProp.pathname;
+        return onclickFunction.call(this, (0, _assign2.default)({}, onclickProp, { pathname: modalPathName }), clickFetchProps, clickSuccessProps);
       } else {
         // console.debug('debugging this regular onclick', this);
         return onclickFunction.call(this, onclickProp, clickFetchProps, clickSuccessProps);

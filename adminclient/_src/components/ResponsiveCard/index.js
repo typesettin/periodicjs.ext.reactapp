@@ -38,6 +38,8 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reBulma = require('re-bulma');
 
+var _AppLayoutMap = require('../AppLayoutMap');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // import 'font-awesome/css/font-awesome.css';
@@ -46,7 +48,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var propTypes = {
   headerColor: _react.PropTypes.object,
   headerTextColor: _react.PropTypes.object,
-  cardTitle: _react.PropTypes.string,
+  cardTitle: _react.PropTypes.any,
   display: _react.PropTypes.bool,
   leftIcon: _react.PropTypes.bool,
   icon: _react.PropTypes.string
@@ -73,6 +75,7 @@ var ResponsiveCard = function (_Component) {
 
     var _this = (0, _possibleConstructorReturn3.default)(this, (ResponsiveCard.__proto__ || (0, _getPrototypeOf2.default)(ResponsiveCard)).call(this, props));
 
+    _this.getRenderedComponent = _AppLayoutMap.getRenderedComponent.bind(_this);
     _this.state = {
       headerColor: props.headerColor,
       headerTextColor: props.headerTextColor,
@@ -118,7 +121,7 @@ var ResponsiveCard = function (_Component) {
             { style: this.props.headerTitleStyle, onClick: function onClick() {
                 return _this2.expandCard();
               } },
-            this.state.cardTitle
+            !this.state.cardTitle || typeof this.state.cardTitle === 'string' ? this.state.cardTitle : this.getRenderedComponent(this.state.cardTitle)
           ),
           rightIcon
         ),

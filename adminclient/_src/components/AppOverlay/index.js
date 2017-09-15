@@ -202,12 +202,7 @@ var ModalUI = function (_Component2) {
             },
             _react2.default.createElement(
               _reBulma.Content,
-              { passedProps: {
-                  formdata: _this4.props.formdata,
-                  pathname: _this4.props.pathname,
-                  modalPathname: _this4.modalPathname,
-                  title: _this4.props.title
-                } },
+              null,
               modelContent
             )
           )
