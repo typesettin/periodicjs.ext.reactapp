@@ -77,14 +77,14 @@ class ResponsiveTabs extends Component {
   render() {
     let TabSelector = null;
     if (this.state.tabsType === 'pageToggle') { 
-      TabSelector = this.state.tabs.map((tab) => {
+      TabSelector = this.state.tabs.map((tab, i) => {
         let active = (tab.name === this.state.currentTab.name) ? true : false;
         let buttonStyle = (tab.name === this.state.currentTab.name) ? styles.activeButton : {};
         if (this.state.isButton) return (
-          <Tab {...tab.tabProps} isActive={active} onClick={() => this.changeTab(tab)}><Button style={buttonStyle}>{tab.name}</Button></Tab>
+          <Tab {...tab.tabProps} key={`${tab.name}-${i}`} isActive={active} onClick={() => this.changeTab(tab)}><Button style={buttonStyle}>{tab.name}</Button></Tab>
         );
         return (
-          <Tab {...tab.tabProps} isActive={active} onClick={() => this.changeTab(tab)}>{tab.name}</Tab>
+          <Tab {...tab.tabProps} key={`${tab.name}-${i}`} isActive={active} onClick={() => this.changeTab(tab)}>{tab.name}</Tab>
         );
       });
     }
