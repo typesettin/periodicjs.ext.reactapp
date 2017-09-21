@@ -45,12 +45,13 @@ function reactapp() {
   };
 
   if (!reactapp_file_paths.js_file_path) {
-    reactapp_file_paths.js_file_path = fs.readdirSync(path.resolve('../adminclient/build/static/js')).filter(file => file.indexOf('js.map') === -1)[ 0 ];
+    reactapp_file_paths.js_file_path = fs.readdirSync(path.resolve(__dirname, '../public/static/js')).filter(file => file.indexOf('js.map') === -1)[ 0 ];
   }
 
   if (!reactapp_file_paths.css_file_path) {
-    reactapp_file_paths.css_file_path = fs.readdirSync(path.resolve('../adminclient/build/static/css')).filter(file => file.indexOf('css.map') === -1)[ 0 ];
+    reactapp_file_paths.css_file_path = fs.readdirSync(path.resolve(__dirname, '../public/static/css')).filter(file => file.indexOf('css.map') === -1)[ 0 ];
   }
+  reactappConfig.reactapp_file_paths = reactapp_file_paths;
   periodic.app.locals.theme_name = periodic.settings.container.name;
   periodic.app.locals.adminPath = extensionConfig.adminPath;
   periodic.app.locals.reactapp_file_paths = reactapp_file_paths;
