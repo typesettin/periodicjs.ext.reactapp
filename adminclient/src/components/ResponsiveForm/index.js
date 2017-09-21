@@ -44,9 +44,25 @@ const defaultProps = {
   dynamicField: false,
   blockPageUI:false,
   cardForm: false,
+  useLoadingButtons: false,
+  includeFormDataOnLayout:false,
   onSubmit: 'func:this.props.debug',
   formgroups:[],
 };
+
+function getFunctionFromProps(options) {
+  const { propFunc } = options;
+
+  if (typeof propFunc === 'string' && propFunc.indexOf('func:this.props.reduxRouter') !== -1) {
+    return this.props.reduxRouter[ this.props.replace('func:this.props.reduxRouter.', '') ];
+  } else if (typeof propFunc === 'string' && propFunc.indexOf('func:this.props') !== -1) {
+    return this.props[ this.props.replace('func:this.props.', '') ];
+  } else if (typeof propFunc === 'string' && propFunc.indexOf('func:window') !== -1 && typeof window[propFunc.replace('func:window.', '')] ==='function') {
+    return window[ propFunc.replace('func:window.', '') ];
+  } else if(typeof this.props[propFunc] ==='function') {
+    return propFunc;
+  }
+}
 
 class ResponsiveForm extends Component{
   constructor(props) {
@@ -73,6 +89,7 @@ class ResponsiveForm extends Component{
     
     this.state = Object.assign(
       {
+        __formIsSubmitting:false,
         formDataError: null,
         formDataErrors: {},
         __formDataStatusDate: new Date().toString(),
@@ -82,6 +99,7 @@ class ResponsiveForm extends Component{
       },
       // customProps.formdata,
       customPropsFormdata);
+    
     this.datalists = {};
 
     this.getRenderedComponent = getRenderedComponent.bind(this);
@@ -106,7 +124,7 @@ class ResponsiveForm extends Component{
     this.validateFormElement = validateFormElement.bind(this);
   }
   componentWillReceiveProps(nextProps) {
-    // console.debug('componentWillReceiveProps', nextProps);
+    // console.warn('componentWillReceiveProps', nextProps);
     let formdata = (nextProps.flattenFormData)
       ? flatten(Object.assign({}, nextProps.formdata), nextProps.flattenDataOptions)
       : nextProps.formdata;
@@ -152,6 +170,7 @@ class ResponsiveForm extends Component{
     const formSuccessCallbacks = handleSuccessCallbacks.bind(this);
     const __formStateUpdate = () => {
       this.setState({
+        __formIsSubmitting: false,
         __formDataStatusDate: new Date().toString(),
       });
 
@@ -159,7 +178,9 @@ class ResponsiveForm extends Component{
         this.props.setUILoadedState(true);
       }
     };
-    
+    this.setState({
+      __formIsSubmitting: true,
+    });
     delete formdata.formDataLists;
     delete formdata.__formDataStatusDate;
     delete formdata.formDataTables;
@@ -293,7 +314,12 @@ class ResponsiveForm extends Component{
     }
   }
   componentWillUpdate (nextProps, nextState) {
+    if (this.props.filterFunction) {
+      const filterFunction = getFunctionFromProps.call(this,{ propFunc: this.props.filterFunction, });
+      nextState = filterFunction.call(this,nextState);
+    }
     if (this.props.onChange) {
+ 
       let formdata = Object.assign({}, nextState);
       let submitFormData = formdata;
       delete formdata.formDataFiles;
@@ -302,6 +328,8 @@ class ResponsiveForm extends Component{
       delete formdata.formDataStatusDate;
       delete formdata.formDataLists;
       delete formdata.formDataTables;
+      delete formdata.__formDataStatusDate;
+      delete formdata.__formOptions;
       // console.warn('TODO:this should eventually use the same logic as submitform');
       if (typeof this.props.onChange === 'string' && this.props.onChange.indexOf('func:this.props') !== -1) {
         if (this.props.onChange === 'func:this.props.setDynamicData') {
@@ -369,7 +397,11 @@ class ResponsiveForm extends Component{
         } else if (formElement.type === 'slider') {
           return this.getSliderInput({ formElement,  i:j, formgroup, }); 
         } else if (formElement.type === 'layout') {
-          return (<Column key={j} {...formElement.layoutProps}>{this.getRenderedComponent(formElement.value)}</Column>);
+          const layoutComponent = formElement.value;
+          if (this.props.includeFormDataOnLayout) {
+            layoutComponent.props = Object.assign({}, layoutComponent.props, { formdata: this.state });
+          }
+          return (<Column key={j} {...formElement.layoutProps}>{this.getRenderedComponent(formElement.value,this.state)}</Column>);
         } else if (formElement.type === 'submit') {
           return this.getFormSubmit({ formElement,  i:j, formgroup, }); 
         } else if (formElement.type === 'group') {
@@ -502,10 +534,39 @@ class ResponsiveForm extends Component{
       </div>);
     }
   }
-  componentDidUpdate() {
+  componentDidUpdate(prevProps, prevState) {
     // console.log('componentDidUpdate this.props.error', this.props.error);
     if (this.props.formerror) {
       this.props.onError(this.props.formerror);
+    }
+    if (this.props.filterFunction) {
+      const filterFunction = getFunctionFromProps.call(this,{ propFunc: this.props.filterFunction, });
+      prevState = filterFunction.call(this,prevState);
+    }
+    if (this.props.afterChange) {
+ 
+      let formdata = Object.assign({}, prevState);
+      let submitFormData = formdata;
+      delete formdata.formDataFiles;
+      delete formdata.formDataErrors;
+      delete formdata.formDataError;
+      delete formdata.formDataStatusDate;
+      delete formdata.formDataLists;
+      delete formdata.formDataTables;
+      delete formdata.__formDataStatusDate;
+      delete formdata.__formOptions;
+      // console.warn('TODO:this should eventually use the same logic as submitform');
+      if (typeof this.props.afterChange === 'string' && this.props.afterChange.indexOf('func:this.props') !== -1) {
+        if (this.props.afterChange === 'func:this.props.setDynamicData') {
+          this.props.setDynamicData(this.props.dynamicField, submitFormData);
+        } else {
+          this.props[this.props.afterChange.replace('func:this.props.', '')](submitFormData);
+        }
+      } else if (typeof this.props.afterChange === 'string' && this.props.afterChange.indexOf('func:window') !== -1 && typeof window[this.props.afterChange.replace('func:window.', '')] ==='function') {
+        window[this.props.afterChange.replace('func:window.', '')].call(this, submitFormData);
+      } else if(typeof this.props.afterChange ==='function') {
+        this.props.onChange(prevState);
+      }
     }
   }
 }

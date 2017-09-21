@@ -1048,7 +1048,7 @@ class ResponsiveTable extends Component {
             </rb.Message>
           </div>
           : null}
-        <div style={{ overflow:'hidden', height:'100%', }}>
+        <div style={Object.assign({ overflow:'hidden', height:'100%', },this.props.tableWrappingStyle)}>
           {(this.state.isLoading)
             ? (<div style={{
               textAlign: 'center',
@@ -1148,13 +1148,13 @@ class ResponsiveTable extends Component {
                         //http://htmlarrows.com/arrows/
                         return (
                           <rb.Td key={`row${rowIndex}col${colIndex}`} style={{ textAlign:'right', }} {...header.columnProps}>
-                            {(rowIndex !== 0)
+                            {(rowIndex !== 0 && this.props.useUpArrowButton)
                               ? <rb.Button {...this.props.formRowUpButton} onClick={() => {
                                 this.moveRowUp(rowIndex);
                               }}>{(this.props.formRowUputtonLabel)?this.props.formRowUputtonLabel:'⇧'}</rb.Button>
                               : null
                             }
-                            {(rowIndex < this.state.rows.length - 1)
+                            {(rowIndex < this.state.rows.length - 1 && this.props.useDownArrowButton)
                               ? <rb.Button  {...this.props.formRowDownButton} onClick={() => {
                                 this.moveRowDown(rowIndex);
                               }}>{(this.props.formRowDownButtonLabel)?this.props.formRowDownButtonLabel:'⇩'}</rb.Button>
