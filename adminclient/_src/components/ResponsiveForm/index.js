@@ -108,9 +108,26 @@ var defaultProps = {
   dynamicField: false,
   blockPageUI: false,
   cardForm: false,
+  useLoadingButtons: false,
+  includeFormDataOnLayout: false,
   onSubmit: 'func:this.props.debug',
   formgroups: []
 };
+
+function getFunctionFromProps(options) {
+  var propFunc = options.propFunc;
+
+
+  if (typeof propFunc === 'string' && propFunc.indexOf('func:this.props.reduxRouter') !== -1) {
+    return this.props.reduxRouter[this.props.replace('func:this.props.reduxRouter.', '')];
+  } else if (typeof propFunc === 'string' && propFunc.indexOf('func:this.props') !== -1) {
+    return this.props[this.props.replace('func:this.props.', '')];
+  } else if (typeof propFunc === 'string' && propFunc.indexOf('func:window') !== -1 && typeof window[propFunc.replace('func:window.', '')] === 'function') {
+    return window[propFunc.replace('func:window.', '')];
+  } else if (typeof this.props[propFunc] === 'function') {
+    return propFunc;
+  }
+}
 
 var ResponsiveForm = function (_Component) {
   (0, _inherits3.default)(ResponsiveForm, _Component);
@@ -132,6 +149,7 @@ var ResponsiveForm = function (_Component) {
     // console.debug({ formdata });
 
     _this.state = (0, _assign2.default)({
+      __formIsSubmitting: false,
       formDataError: null,
       formDataErrors: {},
       __formDataStatusDate: new Date().toString(),
@@ -141,6 +159,7 @@ var ResponsiveForm = function (_Component) {
     },
     // customProps.formdata,
     customPropsFormdata);
+
     _this.datalists = {};
 
     _this.getRenderedComponent = _AppLayoutMap.getRenderedComponent.bind(_this);
@@ -169,7 +188,7 @@ var ResponsiveForm = function (_Component) {
   (0, _createClass3.default)(ResponsiveForm, [{
     key: 'componentWillReceiveProps',
     value: function componentWillReceiveProps(nextProps) {
-      // console.debug('componentWillReceiveProps', nextProps);
+      // console.warn('componentWillReceiveProps', nextProps);
       var formdata = nextProps.flattenFormData ? (0, _flat2.default)((0, _assign2.default)({}, nextProps.formdata), nextProps.flattenDataOptions) : nextProps.formdata;
       formdata = (0, _assign2.default)({}, nextProps.useDynamicData ? this.props.getState().dynamic.formdata : {}, formdata);
       var __formOptions = nextProps.useFormOptions ? (0, _assign2.default)({}, nextProps.useDynamicData && nextProps.getState() ? nextProps.getState().dynamic.__formOptions : {}, nextProps.__formOptions) : undefined;
@@ -212,6 +231,7 @@ var ResponsiveForm = function (_Component) {
       var formSuccessCallbacks = _FormHelpers.handleSuccessCallbacks.bind(this);
       var __formStateUpdate = function __formStateUpdate() {
         _this2.setState({
+          __formIsSubmitting: false,
           __formDataStatusDate: new Date().toString()
         });
 
@@ -219,7 +239,9 @@ var ResponsiveForm = function (_Component) {
           _this2.props.setUILoadedState(true);
         }
       };
-
+      this.setState({
+        __formIsSubmitting: true
+      });
       delete formdata.formDataLists;
       delete formdata.__formDataStatusDate;
       delete formdata.formDataTables;
@@ -334,7 +356,12 @@ var ResponsiveForm = function (_Component) {
   }, {
     key: 'componentWillUpdate',
     value: function componentWillUpdate(nextProps, nextState) {
+      if (this.props.filterFunction) {
+        var filterFunction = getFunctionFromProps.call(this, { propFunc: this.props.filterFunction });
+        nextState = filterFunction.call(this, nextState);
+      }
       if (this.props.onChange) {
+
         var formdata = (0, _assign2.default)({}, nextState);
         var submitFormData = formdata;
         delete formdata.formDataFiles;
@@ -343,6 +370,8 @@ var ResponsiveForm = function (_Component) {
         delete formdata.formDataStatusDate;
         delete formdata.formDataLists;
         delete formdata.formDataTables;
+        delete formdata.__formDataStatusDate;
+        delete formdata.__formOptions;
         // console.warn('TODO:this should eventually use the same logic as submitform');
         if (typeof this.props.onChange === 'string' && this.props.onChange.indexOf('func:this.props') !== -1) {
           if (this.props.onChange === 'func:this.props.setDynamicData') {
@@ -422,10 +451,14 @@ var ResponsiveForm = function (_Component) {
           } else if (formElement.type === 'slider') {
             return _this3.getSliderInput({ formElement: formElement, i: j, formgroup: formgroup });
           } else if (formElement.type === 'layout') {
+            var layoutComponent = formElement.value;
+            if (_this3.props.includeFormDataOnLayout) {
+              layoutComponent.props = (0, _assign2.default)({}, layoutComponent.props, { formdata: _this3.state });
+            }
             return _react2.default.createElement(
               _reBulma.Column,
               (0, _extends3.default)({ key: j }, formElement.layoutProps),
-              _this3.getRenderedComponent(formElement.value)
+              _this3.getRenderedComponent(formElement.value, _this3.state)
             );
           } else if (formElement.type === 'submit') {
             return _this3.getFormSubmit({ formElement: formElement, i: j, formgroup: formgroup });
@@ -607,10 +640,39 @@ var ResponsiveForm = function (_Component) {
     }
   }, {
     key: 'componentDidUpdate',
-    value: function componentDidUpdate() {
+    value: function componentDidUpdate(prevProps, prevState) {
       // console.log('componentDidUpdate this.props.error', this.props.error);
       if (this.props.formerror) {
         this.props.onError(this.props.formerror);
+      }
+      if (this.props.filterFunction) {
+        var filterFunction = getFunctionFromProps.call(this, { propFunc: this.props.filterFunction });
+        prevState = filterFunction.call(this, prevState);
+      }
+      if (this.props.afterChange) {
+
+        var formdata = (0, _assign2.default)({}, prevState);
+        var submitFormData = formdata;
+        delete formdata.formDataFiles;
+        delete formdata.formDataErrors;
+        delete formdata.formDataError;
+        delete formdata.formDataStatusDate;
+        delete formdata.formDataLists;
+        delete formdata.formDataTables;
+        delete formdata.__formDataStatusDate;
+        delete formdata.__formOptions;
+        // console.warn('TODO:this should eventually use the same logic as submitform');
+        if (typeof this.props.afterChange === 'string' && this.props.afterChange.indexOf('func:this.props') !== -1) {
+          if (this.props.afterChange === 'func:this.props.setDynamicData') {
+            this.props.setDynamicData(this.props.dynamicField, submitFormData);
+          } else {
+            this.props[this.props.afterChange.replace('func:this.props.', '')](submitFormData);
+          }
+        } else if (typeof this.props.afterChange === 'string' && this.props.afterChange.indexOf('func:window') !== -1 && typeof window[this.props.afterChange.replace('func:window.', '')] === 'function') {
+          window[this.props.afterChange.replace('func:window.', '')].call(this, submitFormData);
+        } else if (typeof this.props.afterChange === 'function') {
+          this.props.onChange(prevState);
+        }
       }
     }
   }]);

@@ -1450,7 +1450,7 @@ var ResponsiveTable = function (_Component) {
         ) : null,
         _react2.default.createElement(
           'div',
-          { style: { overflow: 'hidden', height: '100%' } },
+          { style: (0, _assign2.default)({ overflow: 'hidden', height: '100%' }, this.props.tableWrappingStyle) },
           this.state.isLoading ? _react2.default.createElement(
             'div',
             { style: {
@@ -1575,14 +1575,14 @@ var ResponsiveTable = function (_Component) {
                       return _react2.default.createElement(
                         rb.Td,
                         (0, _extends3.default)({ key: 'row' + rowIndex + 'col' + colIndex, style: { textAlign: 'right' } }, header.columnProps),
-                        rowIndex !== 0 ? _react2.default.createElement(
+                        rowIndex !== 0 && _this8.props.useUpArrowButton ? _react2.default.createElement(
                           rb.Button,
                           (0, _extends3.default)({}, _this8.props.formRowUpButton, { onClick: function onClick() {
                               _this8.moveRowUp(rowIndex);
                             } }),
                           _this8.props.formRowUputtonLabel ? _this8.props.formRowUputtonLabel : '⇧'
                         ) : null,
-                        rowIndex < _this8.state.rows.length - 1 ? _react2.default.createElement(
+                        rowIndex < _this8.state.rows.length - 1 && _this8.props.useDownArrowButton ? _react2.default.createElement(
                           rb.Button,
                           (0, _extends3.default)({}, _this8.props.formRowDownButton, { onClick: function onClick() {
                               _this8.moveRowDown(rowIndex);

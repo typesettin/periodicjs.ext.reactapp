@@ -282,8 +282,9 @@ function getRenderedComponent(componentObject, resources, debug) {
       }) : typeof componentObject.children === 'undefined' ? renderedCompProps && renderedCompProps.children && typeof renderedCompProps.children === 'string' ? renderedCompProps.children : null : componentObject.children);
     }
   } catch (e) {
-    console.error(e, e.stack ? e.stack : 'no stack');
     console.error({ componentObject: componentObject, resources: resources }, 'this', this);
-    return (0, _react.createElement)('div', {}, e.toString());
+    console.error(e, e.stack ? e.stack : 'no stack');
+    throw e;
+    // return createElement('div', {}, e.toString());
   }
 }
