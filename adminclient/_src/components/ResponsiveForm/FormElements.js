@@ -293,6 +293,8 @@ function getFunctionFromProps(options) {
     return window[propFunc.replace('func:window.', '')];
   } else if (typeof this.props[propFunc] === 'function') {
     return propFunc;
+  } else {
+    return function () {};
   }
 }
 

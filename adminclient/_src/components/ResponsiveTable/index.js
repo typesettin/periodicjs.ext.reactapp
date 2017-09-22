@@ -423,11 +423,7 @@ var ResponsiveTable = function (_Component) {
           newSortOptions.sortOrder = this.state.sortOrder === 'desc' || this.state.sortOrder === '-' ? 'desc' : 'asc';
           updatedState.rows = updatedState.rows.sort(_util2.default.sortObject(newSortOptions.sortOrder, newSortOptions.sortProp));
         }
-        if (this.props.tableSearch && this.props.searchField && options.search) {
-          updatedState.rows = this.props.rows.filter(function (row) {
-            return row[_this5.props.searchField].indexOf(options.search) !== -1;
-          });
-        }
+
         if (this.props.tableSearch && this.state.filterRowData && this.state.filterRowData.length) {
           var filteredRows = [];
           updatedState.rows.forEach(function (row) {
@@ -489,6 +485,11 @@ var ResponsiveTable = function (_Component) {
           });
           updatedState.rows = filteredRows;
           // console.debug('updatedState.rows', updatedState.rows, { filteredRows, });
+        }
+        if (this.props.tableSearch && this.props.searchField && options.search) {
+          updatedState.rows = this.props.rows.filter(function (row) {
+            return row[_this5.props.searchField] && row[_this5.props.searchField].indexOf(options.search) !== -1;
+          });
         }
         updatedState.numPages = Math.ceil(updatedState.rows.length / this.state.limit);
         updatedState.limit = this.state.limit;
@@ -699,7 +700,9 @@ var ResponsiveTable = function (_Component) {
         if (typeof options.idx !== 'undefined' && typeof returnValue === 'string' && returnValue.indexOf('--idx-ctr--') !== -1) {
           returnValue = returnValue.replace('--idx-ctr--', options.idx + 1);
         }
-        if (options.momentFormat) {
+        if (options.momentFromNow) {
+          returnValue = (0, _moment2.default)(value).fromNow();
+        } else if (options.momentFormat) {
           returnValue = (0, _moment2.default)(value).format(options.momentFormat);
         } else if (options.numeralFormat) {
           returnValue = (0, _numeral2.default)(value).format(options.numeralFormat);
