@@ -487,7 +487,7 @@ var ResponsiveTable = function (_Component) {
           // console.debug('updatedState.rows', updatedState.rows, { filteredRows, });
         }
         if (this.props.tableSearch && this.props.searchField && options.search) {
-          updatedState.rows = this.props.rows.filter(function (row) {
+          updatedState.rows = (updatedState.rows || this.props.rows).filter(function (row) {
             return row[_this5.props.searchField] && row[_this5.props.searchField].indexOf(options.search) !== -1;
           });
         }
