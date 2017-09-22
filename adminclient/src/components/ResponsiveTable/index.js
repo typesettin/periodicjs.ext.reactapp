@@ -345,7 +345,7 @@ class ResponsiveTable extends Component {
           // console.debug('updatedState.rows', updatedState.rows, { filteredRows, });
         }
         if (this.props.tableSearch && this.props.searchField && options.search) {
-          updatedState.rows = this.props.rows.filter(row => {
+          updatedState.rows = (updatedState.rows||this.props.rows).filter(row => {
             return row[ this.props.searchField ] && row[ this.props.searchField ].indexOf(options.search) !== -1
           });
         }
