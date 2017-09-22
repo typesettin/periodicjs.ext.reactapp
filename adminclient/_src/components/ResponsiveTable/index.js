@@ -161,7 +161,7 @@ var ResponsiveTable = function (_Component) {
       numPages: Math.ceil(props.numItems / props.limit),
       numButtons: props.numButtons,
       isLoading: false,
-      sortProp: _this.props.searchField || 'createdat',
+      sortProp: _this.props.searchField || '_id',
       sortOrder: 'desc',
       filterRowData: [],
       filterRowNewData: _TableHelpers.defaultNewRowData,
@@ -205,7 +205,7 @@ var ResponsiveTable = function (_Component) {
         excludeEmptyHeaders: nextProps.excludeEmptyHeaders
       });
       if (nextProps.flattenRowData) {
-        rows = rows.map(function (row) {
+        rows = (rows || []).map(function (row) {
           return (0, _assign2.default)({}, row, (0, _flat.flatten)(row, nextProps.flattenRowDataOptions));
         });
       }
