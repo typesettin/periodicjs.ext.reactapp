@@ -281,9 +281,7 @@ class ResponsiveTable extends Component {
           newSortOptions.sortOrder = (this.state.sortOrder === 'desc' || this.state.sortOrder === '-') ? 'desc' : 'asc';
           updatedState.rows = updatedState.rows.sort(utilities.sortObject(newSortOptions.sortOrder, newSortOptions.sortProp));
         }
-        if (this.props.tableSearch && this.props.searchField && options.search) {
-          updatedState.rows = this.props.rows.filter(row => row[this.props.searchField].indexOf(options.search) !== -1);
-        }
+
         if (this.props.tableSearch && this.state.filterRowData && this.state.filterRowData.length) {
           let filteredRows = [];
           updatedState.rows.forEach(row => {
@@ -345,6 +343,11 @@ class ResponsiveTable extends Component {
           });
           updatedState.rows = filteredRows;
           // console.debug('updatedState.rows', updatedState.rows, { filteredRows, });
+        }
+        if (this.props.tableSearch && this.props.searchField && options.search) {
+          updatedState.rows = this.props.rows.filter(row => {
+            return row[ this.props.searchField ] && row[ this.props.searchField ].indexOf(options.search) !== -1
+          });
         }
         updatedState.numPages = Math.ceil(updatedState.rows.length / this.state.limit);
         updatedState.limit = this.state.limit;
@@ -553,7 +556,9 @@ class ResponsiveTable extends Component {
       if (typeof options.idx !=='undefined' && typeof returnValue==='string' && returnValue.indexOf('--idx-ctr--')!==-1) {
         returnValue = returnValue.replace('--idx-ctr--', (options.idx+1));
       }
-      if (options.momentFormat) {
+      if (options.momentFromNow) {
+        returnValue = moment(value).fromNow();
+      } else if (options.momentFormat) {
         returnValue = moment(value).format(options.momentFormat);
       } else if (options.numeralFormat) {
         returnValue = numeral(value).format(options.numeralFormat);
