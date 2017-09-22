@@ -44,17 +44,16 @@ const constructDetail = function(options) {
     },
   };
   let detailPageTabs = [];
-  if (customDetailEditor) {
+  if (customDetailEditor && (customDetailEditor.base || customDetailEditor.advanced || customDetailEditor.advanced || customDetailEditor.customTabs)) {
     if (customDetailEditor.base) {
       detailPageTabs.push(detailPageBasicEditor);
     }
     if (customDetailEditor.advanced) {
       detailPageTabs.push(detailPageAdvancedEditor);
     }
-    if (customDetailEditor.customTabs) {
+    if (customDetailEditor.customTabs && Array.isArray(customDetailEditor.customTabs)) {
       detailPageTabs.push(...customDetailEditor.customTabs);
-    }
-    if (customDetailEditor.customTab) {
+    } else if (customDetailEditor.customTab) {
       detailPageTabs.push(customDetailEditor.customTabs);
     }
   } else {

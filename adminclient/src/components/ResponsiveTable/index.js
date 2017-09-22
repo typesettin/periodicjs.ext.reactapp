@@ -61,7 +61,7 @@ class ResponsiveTable extends Component {
       numPages: Math.ceil(props.numItems / props.limit),
       numButtons: props.numButtons,
       isLoading: false,
-      sortProp: this.props.searchField || 'createdat',
+      sortProp: this.props.searchField || '_id',
       sortOrder: 'desc',
       filterRowData: [],
       filterRowNewData: defaultNewRowData,
@@ -103,7 +103,7 @@ class ResponsiveTable extends Component {
       excludeEmptyHeaders: nextProps.excludeEmptyHeaders,
     });
     if (nextProps.flattenRowData) {
-      rows = rows.map(row => Object.assign({}, row, flatten(row, nextProps.flattenRowDataOptions)));
+      rows = (rows||[]).map(row => Object.assign({}, row, flatten(row, nextProps.flattenRowDataOptions)));
     }
     // console.debug('nextProps.limit', nextProps.limit);
     // console.debug('this.state.limit', this.state.limit);
