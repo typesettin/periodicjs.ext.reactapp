@@ -64,6 +64,8 @@ export const propTypes = {
   uploadAddButton: PropTypes.bool,
   uploadAddButtonProps: PropTypes.any,
   uploadAddButtonLabel: PropTypes.string,
+  useUpArrowButton: PropTypes.bool,
+  useDownArrowButton: PropTypes.bool,
 };
 
 export const defaultProps = {
@@ -150,6 +152,11 @@ export const defaultProps = {
   },
   includeAllLimits:true,
   numOfLimits: [ 1, 5, 10, 20, 50, 100, 500, 1000, ],
+  useUpArrowButton: true,
+  useDownArrowButton: true,
+  containerProps: {
+    className:'__ra_rtable'
+  },
 };
 
 export function getOptionsHeaders(props, propHeaders) {
@@ -189,7 +196,7 @@ export function excludeEmptyHeaders(options) {
   if (excludeEmptyHeaders) {
     headers.forEach((header, i) => {
       // console.debug('headers[ i ]', headers[ i ], { header, });
-      if (!headers[ i ].sortid && !headers[ i ].label) {
+      if (!headers[ i ].sortid && !headers[ i ].label && !headers[ i ].formRowButtons) {
         delete headers[ i ];
       }
     });

@@ -51,17 +51,23 @@ class RACodeMirror extends Component {
   render() {
     let options = Object.assign({},
       this.props.codeMirrorProps,
+      (this.props.useCMDynamicProps && this.props.dynamicCMProp)
+        ? { value: this.props.dynamic[ this.props.dynamicCMProp ] }
+        : {},
+      (this.props.value)
+        ? { value: (typeof this.props.value !=='string') ? this.props.value.toString():this.props.value }
+        : {},
       {
         options: Object.assign({}, {
           lineNumbers: true,
-          mode:'javascript',
+          mode: 'javascript',
           lineWrapping: true,
           foldGutter: true,
-          gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter', ],
+          gutters: [ 'CodeMirror-linenumbers', 'CodeMirror-foldgutter', ],
         },
           this.props.codeMirrorPropsOptions, this.props.codeMirrorProps.options),
       });
-      // console.debug('RACodeMirror',{ options, });
+      // console.warn('RACodeMirror',{ options, });
     if (this.props.editorType === 'editor') {
       options.options.mode = 'application/x-ejs';
       return (<div {...this.props.wrapperProps}>

@@ -202,74 +202,53 @@ module.exports = (options) => {
     }),
     children: [
       {
-        component: 'DynamicLayout',
+        component: 'ResponsiveTable',
         props: {
-          isColumns: true,
-          columnsProps: {
-            isMultiline: true,
-          },
-          layout: {
-            component: 'Column',
-            props: {
-              size: 'isOneThird',
+          headers: [
+            {
+              label:'Created',
+              sortid:'createdfrom',
+              sortable: true,
+              // momentFromNow: true,
+              // momentFormat:'llll',
             },
-            bindprops: true,
-            children: [
-              {
-                component: 'Message',
-                thisprops: {
-                  header: [ 'title', ],
-                  children: [ 'description', ],
-                },
-                bindprops: true,
-                children: [
-                  {
-                    component: 'DynamicForm',
-                    thisprops: {
-                      initialData: [],
-                    },
-                    props: {
-                      formgroups: [
-                        {
-                          name: 'entitytype',
-                          label: 'Entity',
-                        },
-                        {
-                          name: 'updatedat',
-                          label: 'Updated',
-                          momentFormat: 'lll',
-                        },
-                        {
-                          name: 'description',
-                          label: 'Description',
-                        },
-                      ].map(formelm => {
-                        return {
-                          formElements: [
-                            {
-                              type: 'text',
-                              name: formelm.name,
-                              label: formelm.label,
-                              momentFormat: formelm.momentFormat,
-                              passProps: {
-                                state: 'isDisabled',
-                                style: {
-                                  background: 'white',
-                                },
-                              },
-                            },
-                          ],
-                        };
-                      }),
-                    },
-                  },
-                ],
-              },
-            ],
+            {
+              label:'Updated',
+              sortid:'updatedfrom',
+              sortable: true,
+              // momentFromNow: true,
+              // momentFormat:'llll',
+            },
+            {
+              label:'Entity Type',
+              sortid:'entitytype',
+              sortable:true,
+            },
+            {
+              label:'Title',
+              sortid:'title',
+              sortable:true,
+            },
+            {
+              label:'Name',
+              sortid:'name',
+              sortable:true,
+            },
+            {
+              label:'ID',
+              sortid:'_id',
+              sortable:true,
+            },
+          ],
+          tableProps: {
+            isBordered: true,
           },
+          filterSearch: true,
+          tableSearch: true,
+          searchField:'title',
         },
         asyncprops: {
-          items: [ 'contentstats', 'contentcounts', 'databaseFeedData', ],
+          rows: [ 'contentstats', 'contentcounts', 'databaseFeedData', ],
         },
       },
     ],

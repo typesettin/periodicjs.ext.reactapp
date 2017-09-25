@@ -73,7 +73,9 @@ var propTypes = exports.propTypes = {
   replaceButtonLabel: _react.PropTypes.string,
   uploadAddButton: _react.PropTypes.bool,
   uploadAddButtonProps: _react.PropTypes.any,
-  uploadAddButtonLabel: _react.PropTypes.string
+  uploadAddButtonLabel: _react.PropTypes.string,
+  useUpArrowButton: _react.PropTypes.bool,
+  useDownArrowButton: _react.PropTypes.bool
 };
 
 var defaultProps = exports.defaultProps = {
@@ -157,7 +159,12 @@ var defaultProps = exports.defaultProps = {
     trimFieldValues: true
   },
   includeAllLimits: true,
-  numOfLimits: [1, 5, 10, 20, 50, 100, 500, 1000]
+  numOfLimits: [1, 5, 10, 20, 50, 100, 500, 1000],
+  useUpArrowButton: true,
+  useDownArrowButton: true,
+  containerProps: {
+    className: '__ra_rtable'
+  }
 };
 
 function getOptionsHeaders(props, propHeaders) {
@@ -201,7 +208,7 @@ function excludeEmptyHeaders(options) {
   if (excludeEmptyHeaders) {
     headers.forEach(function (header, i) {
       // console.debug('headers[ i ]', headers[ i ], { header, });
-      if (!headers[i].sortid && !headers[i].label) {
+      if (!headers[i].sortid && !headers[i].label && !headers[i].formRowButtons) {
         delete headers[i];
       }
     });

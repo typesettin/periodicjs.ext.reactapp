@@ -161,7 +161,7 @@ var ResponsiveTable = function (_Component) {
       numPages: Math.ceil(props.numItems / props.limit),
       numButtons: props.numButtons,
       isLoading: false,
-      sortProp: _this.props.searchField || 'createdat',
+      sortProp: _this.props.searchField || '_id',
       sortOrder: 'desc',
       filterRowData: [],
       filterRowNewData: _TableHelpers.defaultNewRowData,
@@ -205,7 +205,7 @@ var ResponsiveTable = function (_Component) {
         excludeEmptyHeaders: nextProps.excludeEmptyHeaders
       });
       if (nextProps.flattenRowData) {
-        rows = rows.map(function (row) {
+        rows = (rows || []).map(function (row) {
           return (0, _assign2.default)({}, row, (0, _flat.flatten)(row, nextProps.flattenRowDataOptions));
         });
       }
@@ -423,11 +423,7 @@ var ResponsiveTable = function (_Component) {
           newSortOptions.sortOrder = this.state.sortOrder === 'desc' || this.state.sortOrder === '-' ? 'desc' : 'asc';
           updatedState.rows = updatedState.rows.sort(_util2.default.sortObject(newSortOptions.sortOrder, newSortOptions.sortProp));
         }
-        if (this.props.tableSearch && this.props.searchField && options.search) {
-          updatedState.rows = this.props.rows.filter(function (row) {
-            return row[_this5.props.searchField].indexOf(options.search) !== -1;
-          });
-        }
+
         if (this.props.tableSearch && this.state.filterRowData && this.state.filterRowData.length) {
           var filteredRows = [];
           updatedState.rows.forEach(function (row) {
@@ -489,6 +485,11 @@ var ResponsiveTable = function (_Component) {
           });
           updatedState.rows = filteredRows;
           // console.debug('updatedState.rows', updatedState.rows, { filteredRows, });
+        }
+        if (this.props.tableSearch && this.props.searchField && options.search) {
+          updatedState.rows = (updatedState.rows || this.props.rows).filter(function (row) {
+            return row[_this5.props.searchField] && row[_this5.props.searchField].indexOf(options.search) !== -1;
+          });
         }
         updatedState.numPages = Math.ceil(updatedState.rows.length / this.state.limit);
         updatedState.limit = this.state.limit;
@@ -699,7 +700,9 @@ var ResponsiveTable = function (_Component) {
         if (typeof options.idx !== 'undefined' && typeof returnValue === 'string' && returnValue.indexOf('--idx-ctr--') !== -1) {
           returnValue = returnValue.replace('--idx-ctr--', options.idx + 1);
         }
-        if (options.momentFormat) {
+        if (options.momentFromNow) {
+          returnValue = (0, _moment2.default)(value).fromNow();
+        } else if (options.momentFormat) {
           returnValue = (0, _moment2.default)(value).format(options.momentFormat);
         } else if (options.numeralFormat) {
           returnValue = (0, _numeral2.default)(value).format(options.numeralFormat);
@@ -1450,7 +1453,7 @@ var ResponsiveTable = function (_Component) {
         ) : null,
         _react2.default.createElement(
           'div',
-          { style: { overflow: 'hidden', height: '100%' } },
+          { style: (0, _assign2.default)({ overflow: 'hidden', height: '100%' }, this.props.tableWrappingStyle) },
           this.state.isLoading ? _react2.default.createElement(
             'div',
             { style: {
@@ -1575,14 +1578,14 @@ var ResponsiveTable = function (_Component) {
                       return _react2.default.createElement(
                         rb.Td,
                         (0, _extends3.default)({ key: 'row' + rowIndex + 'col' + colIndex, style: { textAlign: 'right' } }, header.columnProps),
-                        rowIndex !== 0 ? _react2.default.createElement(
+                        rowIndex !== 0 && _this8.props.useUpArrowButton ? _react2.default.createElement(
                           rb.Button,
                           (0, _extends3.default)({}, _this8.props.formRowUpButton, { onClick: function onClick() {
                               _this8.moveRowUp(rowIndex);
                             } }),
                           _this8.props.formRowUputtonLabel ? _this8.props.formRowUputtonLabel : '⇧'
                         ) : null,
-                        rowIndex < _this8.state.rows.length - 1 ? _react2.default.createElement(
+                        rowIndex < _this8.state.rows.length - 1 && _this8.props.useDownArrowButton ? _react2.default.createElement(
                           rb.Button,
                           (0, _extends3.default)({}, _this8.props.formRowDownButton, { onClick: function onClick() {
                               _this8.moveRowDown(rowIndex);

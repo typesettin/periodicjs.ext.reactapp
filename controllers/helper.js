@@ -7,7 +7,7 @@ const periodic = require('periodicjs');
 const pluralize = require('pluralize');
 const capitalize = require('capitalize');
 const numeral = require('numeral');
-// const mongoose = require('mongoose');
+const moment = require('moment');
 const str2json = require('string-to-json');
 const Promisie = require('promisie');
 const colors = require('../utilities/detail_views/colors');
@@ -163,7 +163,7 @@ const getDBStats = (req, res, next) => {
 
   const datas = Array.from(periodic.datas.entries());
   const datasList = datas.map(utilities.data.getDatasFromMap);
-  const dataDocs = [];
+  let dataDocs = [];
   const countData = [];
   req.controllerData = Object.assign({}, req.controllerData);
 
@@ -174,14 +174,33 @@ const getDBStats = (req, res, next) => {
         dataDocs.push(...recentData.docs);
         countData.push(recentData.modelData);
       });
-      dataDocs.map(dataDoc => {
-        if (dataDoc.source && dataDoc.periodic_compatibility && dataDoc.periodic_config && !dataDoc.entitytype) {
+      dataDocs = dataDocs.map(dataDocFromDB => {
+        const dataDoc = (dataDocFromDB.toJSON) ? dataDocFromDB.toJSON() : dataDocFromDB;
+        if (!dataDoc.entitytype && dataDoc.source && dataDoc.periodic_compatibility && dataDoc.periodic_config) {
           dataDoc.entitytype = 'extension';
         }
-        if (dataDoc.filepath && dataDoc.config && !dataDoc.entitytype) {
+        if (!dataDoc.entitytype && dataDoc.filepath && dataDoc.config) {
           dataDoc.entitytype = 'configuration';
           dataDoc.name = dataDoc.filepath;
         }
+
+        if (! dataDoc.name && dataDoc.identification && dataDoc.identification.guid ) {
+          dataDoc.name = dataDoc.identification.guid;
+        }
+        if (!dataDoc.name ) {
+          dataDoc.name = dataDoc._id;
+        }
+        if (!dataDoc.title && dataDoc.name ) {
+          dataDoc.title = dataDoc.name;
+        }
+        if (!dataDoc.description ) {
+          dataDoc.description = dataDoc.msg || dataDoc.title || dataDoc.name;
+        }
+        // if (dataDoc.createdat && dataDoc.updatedat) {
+        // }
+
+        dataDoc.createdfrom = moment(dataDoc.createdat).fromNow();
+        dataDoc.updatedfrom = moment(dataDoc.updatedat).fromNow();
         return dataDoc;
       });
       databaseFeedData = dataDocs.sort(periodic.core.utilities.sortObject('desc', 'updatedat'));

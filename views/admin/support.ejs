@@ -14,7 +14,7 @@
     } else if(locals.reactapp.settings.name){
       %><%- locals.reactapp.settings.name %><%
     } else{%>'Welcome'<%}%></title>
-    <link href="/extensions/periodicjs.ext.reactapp/static/css/main.fad69ced.css" rel="stylesheet">
+    <link href="/extensions/periodicjs.ext.reactapp/static/css/<%- locals.reactapp.reactapp_file_paths.css_file_path %>" rel="stylesheet">
     <%- (locals.reactapp.settings.custom_css_stylesheet)?`<link href="${locals.reactapp.settings.custom_css_stylesheet}" rel="stylesheet">`:'' %>
     <% if(locals.reactapp.settings.application.additional_header){ %><%- include(`../../../../content/container/${locals.theme_name}/views/shared/reactapp/header`,{locals}) ;%><% } %>
   </head>

@@ -109,12 +109,16 @@ class ModalUI extends Component {
             footerContent={footerContent}
             isActive={true}
             onCloseRequest={this.props.hide}
-            className={`animated ${(this.props.animation? this.props.animation: 'zoomIn')} Medium-Speed`}
+            className={`animated ${this.props.modalClassName} ${(this.props.animation? this.props.animation: 'zoomIn')} Medium-Speed`}
             showOverlayCloseButton={false}
-            >
-          <Content>
+        >
+          {(this.props.noContentWrapper)
+            ? (<div  {...this.props.modalContentProps}>{modelContent}</div>)
+            : (<Content {...this.props.modalContentProps}>
               {modelContent}
-          </Content>
+          </Content>)
+          }
+          
         </Modal>
       </div>);
     };

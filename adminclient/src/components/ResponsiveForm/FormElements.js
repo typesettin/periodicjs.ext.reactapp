@@ -166,6 +166,22 @@ function getPassablePropsKeyEvents(passableProps, formElement) {
   return passableProps;
 }
 
+function getFunctionFromProps(options) {
+  const { propFunc } = options;
+
+  if (typeof propFunc === 'string' && propFunc.indexOf('func:this.props.reduxRouter') !== -1) {
+    return this.props.reduxRouter[ this.props.replace('func:this.props.reduxRouter.', '') ];
+  } else if (typeof propFunc === 'string' && propFunc.indexOf('func:this.props') !== -1) {
+    return this.props[ this.props.replace('func:this.props.', '') ];
+  } else if (typeof propFunc === 'string' && propFunc.indexOf('func:window') !== -1 && typeof window[propFunc.replace('func:window.', '')] ==='function') {
+    return window[ propFunc.replace('func:window.', '') ];
+  } else if(typeof this.props[propFunc] ==='function') {
+    return propFunc;
+  } else {
+    return function () { }
+  }
+}
+
 export function getFormDatatable(options){
   let { formElement, i, } = options;
   let initialValue = getInitialValue(formElement,
@@ -177,10 +193,12 @@ export function getFormDatatable(options){
       let selectOptions = (this.state.__formOptions && this.state.__formOptions[ rowkey ])
         ? this.state.__formOptions[ rowkey ]
         : [];
+      // console.log({ selectOptions });
+
       return {
         label: capitalize(rowkey),
         sortid: rowkey,
-        sortable: (formElement.sortable)
+        sortable: (typeof formElement.sortable !=='undefined')
           ? formElement.sortable
           : true,
         formtype: (formElement.tableHeaderType && formElement.tableHeaderType[rowkey])
@@ -240,6 +258,7 @@ export function getFormDatatable(options){
     },
     formElement.passProps
   );// formElement.datalist,
+  // console.log({ tableHeaders, useRowButtons,passedProps });
   // console.debug({tableHeaders})
   // let shape ={};// this is the header of of the footer which has elements for new insert
   // let inlineshape ={};// if true, should look like a regular form row, else form below
@@ -263,7 +282,11 @@ export function getFormDatatable(options){
           formDataTables: Object.assign({}, this.state.formDataTables, { [ formElement.name ]: newvalue.rows, }),
           [ formElement.name ]: newvalue.rows,
         }, flattenedData, selectedRowData);
-        // console.debug({ flattenedData,updatedStateProp });
+        if (formElement.onChangeFilter) {
+          const onChangeFunc = getFunctionFromProps.call(this, { propFunc: formElement.onChangeFilter });
+          updatedStateProp = onChangeFunc.call(this, Object.assign({},this.state,updatedStateProp), updatedStateProp);
+        }
+        // console.debug('DATATABLE',updatedStateProp);
         this.setState(updatedStateProp);
       }}
       value={initialValue} />
@@ -587,6 +610,10 @@ export function getFormSwitch(options) {
       updatedStateProp[ this.state[ formElement.formdata_name] || formElement.name ] = (this.state[ this.state[ formElement.formdata_name] || formElement.name ] ) ? 0 : 'on';
       
       // console.debug('after', { updatedStateProp, formElement, }, event.target);
+      if (formElement.onChange) {
+        const onChangeFunc = getFunctionFromProps.call(this, { propFunc: formElement.onChange });
+        onChangeFunc.call(this, Object.assign({},this.state,updatedStateProp), updatedStateProp);
+      }
       this.setState(updatedStateProp, () => {
         if(formElement.validateOnChange){
           this.validateFormElement({ formElement, });
@@ -869,7 +896,12 @@ export function getFormSubmit(options) {
     state: (formElement.confirmModal && Object.keys(this.state.formDataErrors).length>0)
       ? 'isDisabled'
       : undefined,
-  }, formElement.passProps);
+  }, (this.props.useLoadingButtons && this.state.__formIsSubmitting)
+      ? {
+        state:'isLoading'
+      }
+      : {},
+    formElement.passProps);
   return (<FormItem key={i} {...formElement.layoutProps} >
     {getFormLabel(formElement)}  
     <Button {...passableProps}

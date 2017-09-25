@@ -130,12 +130,12 @@ var ResponsiveTabs = function (_Component) {
 
       var TabSelector = null;
       if (this.state.tabsType === 'pageToggle') {
-        TabSelector = this.state.tabs.map(function (tab) {
+        TabSelector = this.state.tabs.map(function (tab, i) {
           var active = tab.name === _this2.state.currentTab.name ? true : false;
           var buttonStyle = tab.name === _this2.state.currentTab.name ? _styles2.default.activeButton : {};
           if (_this2.state.isButton) return _react2.default.createElement(
             _reBulma.Tab,
-            (0, _extends3.default)({}, tab.tabProps, { isActive: active, onClick: function onClick() {
+            (0, _extends3.default)({}, tab.tabProps, { key: tab.name + '-' + i, isActive: active, onClick: function onClick() {
                 return _this2.changeTab(tab);
               } }),
             _react2.default.createElement(
@@ -146,7 +146,7 @@ var ResponsiveTabs = function (_Component) {
           );
           return _react2.default.createElement(
             _reBulma.Tab,
-            (0, _extends3.default)({}, tab.tabProps, { isActive: active, onClick: function onClick() {
+            (0, _extends3.default)({}, tab.tabProps, { key: tab.name + '-' + i, isActive: active, onClick: function onClick() {
                 return _this2.changeTab(tab);
               } }),
             tab.name

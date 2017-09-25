@@ -281,6 +281,23 @@ function getPassablePropsKeyEvents(passableProps, formElement) {
   return passableProps;
 }
 
+function getFunctionFromProps(options) {
+  var propFunc = options.propFunc;
+
+
+  if (typeof propFunc === 'string' && propFunc.indexOf('func:this.props.reduxRouter') !== -1) {
+    return this.props.reduxRouter[this.props.replace('func:this.props.reduxRouter.', '')];
+  } else if (typeof propFunc === 'string' && propFunc.indexOf('func:this.props') !== -1) {
+    return this.props[this.props.replace('func:this.props.', '')];
+  } else if (typeof propFunc === 'string' && propFunc.indexOf('func:window') !== -1 && typeof window[propFunc.replace('func:window.', '')] === 'function') {
+    return window[propFunc.replace('func:window.', '')];
+  } else if (typeof this.props[propFunc] === 'function') {
+    return propFunc;
+  } else {
+    return function () {};
+  }
+}
+
 function getFormDatatable(options) {
   var _this3 = this;
 
@@ -293,10 +310,12 @@ function getFormDatatable(options) {
   var getTableHeaders = function getTableHeaders(row) {
     return row.map(function (rowkey) {
       var selectOptions = _this3.state.__formOptions && _this3.state.__formOptions[rowkey] ? _this3.state.__formOptions[rowkey] : [];
+      // console.log({ selectOptions });
+
       return {
         label: (0, _capitalize2.default)(rowkey),
         sortid: rowkey,
-        sortable: formElement.sortable ? formElement.sortable : true,
+        sortable: typeof formElement.sortable !== 'undefined' ? formElement.sortable : true,
         formtype: formElement.tableHeaderType && formElement.tableHeaderType[rowkey] ? formElement.tableHeaderType[rowkey] : 'text',
         defaultValue: formElement.tableHeaderDefaultValue && formElement.tableHeaderDefaultValue[rowkey] ? formElement.tableHeaderDefaultValue[rowkey] : selectOptions.length ? selectOptions[0].value : undefined,
         formoptions: selectOptions,
@@ -339,6 +358,7 @@ function getFormDatatable(options) {
     hasPagination: false,
     tableForm: true
   }, formElement.passProps); // formElement.datalist,
+  // console.log({ tableHeaders, useRowButtons,passedProps });
   // console.debug({tableHeaders})
   // let shape ={};// this is the header of of the footer which has elements for new insert
   // let inlineshape ={};// if true, should look like a regular form row, else form below
@@ -357,7 +377,11 @@ function getFormDatatable(options) {
         var updatedStateProp = (0, _assign2.default)((0, _defineProperty3.default)({
           formDataTables: (0, _assign2.default)({}, _this3.state.formDataTables, (0, _defineProperty3.default)({}, formElement.name, newvalue.rows))
         }, formElement.name, newvalue.rows), flattenedData, selectedRowData);
-        // console.debug({ flattenedData,updatedStateProp });
+        if (formElement.onChangeFilter) {
+          var onChangeFunc = getFunctionFromProps.call(_this3, { propFunc: formElement.onChangeFilter });
+          updatedStateProp = onChangeFunc.call(_this3, (0, _assign2.default)({}, _this3.state, updatedStateProp), updatedStateProp);
+        }
+        // console.debug('DATATABLE',updatedStateProp);
         _this3.setState(updatedStateProp);
       },
       value: initialValue })),
@@ -726,6 +750,10 @@ function getFormSwitch(options) {
       updatedStateProp[_this8.state[formElement.formdata_name] || formElement.name] = _this8.state[_this8.state[formElement.formdata_name] || formElement.name] ? 0 : 'on';
 
       // console.debug('after', { updatedStateProp, formElement, }, event.target);
+      if (formElement.onChange) {
+        var onChangeFunc = getFunctionFromProps.call(_this8, { propFunc: formElement.onChange });
+        onChangeFunc.call(_this8, (0, _assign2.default)({}, _this8.state, updatedStateProp), updatedStateProp);
+      }
       _this8.setState(updatedStateProp, function () {
         if (formElement.validateOnChange) {
           _this8.validateFormElement({ formElement: formElement });
@@ -1073,7 +1101,9 @@ function getFormSubmit(options) {
 
   var passableProps = (0, _assign2.default)({
     state: formElement.confirmModal && (0, _keys2.default)(this.state.formDataErrors).length > 0 ? 'isDisabled' : undefined
-  }, formElement.passProps);
+  }, this.props.useLoadingButtons && this.state.__formIsSubmitting ? {
+    state: 'isLoading'
+  } : {}, formElement.passProps);
   return _react2.default.createElement(
     _FormItem2.default,
     (0, _extends3.default)({ key: i }, formElement.layoutProps),
