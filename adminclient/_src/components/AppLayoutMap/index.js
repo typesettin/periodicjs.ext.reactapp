@@ -41,6 +41,10 @@ var _rcSlider = require('rc-slider');
 
 var _rcSlider2 = _interopRequireDefault(_rcSlider);
 
+var _reactSlick = require('react-slick');
+
+var _reactSlick2 = _interopRequireDefault(_reactSlick);
+
 var _rcTable = require('rc-table');
 
 var _rcTable2 = _interopRequireDefault(_rcTable);
@@ -157,7 +161,8 @@ var AppLayoutMap = exports.AppLayoutMap = (0, _assign2.default)({}, {
   RCTable: _rcTable2.default,
   RCTree: _rcTree2.default,
   RCTreeNode: _rcTree.TreeNode,
-  RCSwitch: _rcSwitch2.default
+  RCSwitch: _rcSwitch2.default,
+  Slick: _reactSlick2.default
 }, _react2.default.DOM, rebulma, window.__ra_custom_elements, { Link: _reactRouter.Link });
 
 function getRenderedComponent(componentObject, resources, debug) {

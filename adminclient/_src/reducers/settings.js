@@ -185,6 +185,7 @@ var packageJSON = {
     'react-draft-wysiwyg': '^1.7.6',
     'react-file-reader-input': '^1.1.0',
     'react-responsive-carousel': '^3.1.3',
+    'react-slick': '^0.15.4',
     'react-text-mask': '^5.0.2',
     'text-mask-addons': '^3.6.0',
     'validate.js': '^0.11.1',
