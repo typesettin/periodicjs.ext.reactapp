@@ -246,11 +246,6 @@ class PreviewEditor extends Component {
               onChange: (value) => {
                 ReactDOM.findDOMNode(this).children[ this.contentIndex ].innerHTML = value;
               },
-              onFocusChange: (value) => {
-                if (!value) {
-                  this.emitChange.bind(this)();
-                }
-              }
             }}
           ></RACodeMirror>
           : null
