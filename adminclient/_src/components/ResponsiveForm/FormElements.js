@@ -185,6 +185,10 @@ function valueChangeHandler(formElement) {
     // console.debug({ text, formElement, });
     var updatedStateProp = {};
     updatedStateProp[formElement.name] = text;
+    if (formElement.onChangeFilter) {
+      var onChangeFunc = getFunctionFromProps.call(_this, { propFunc: formElement.onChangeFilter });
+      updatedStateProp = onChangeFunc.call(_this, (0, _assign2.default)({}, _this.state, updatedStateProp), updatedStateProp);
+    }
     _this.setState(updatedStateProp, function () {
       if (formElement.validateOnChange) {
         _this.validateFormElement({ formElement: formElement });
@@ -556,6 +560,10 @@ function getFormTextInputArea(options) {
         updatedStateProp.formDataFiles = (0, _assign2.default)({}, _this6.state.formDataFiles, (0, _defineProperty3.default)({}, formElement.name, document.querySelector('.' + fileClassname + ' input')));
       } else {
         updatedStateProp[formElement.name] = passableProps.maxLength ? text.substring(0, passableProps.maxLength) : text;
+      }
+      if (formElement.onChangeFilter) {
+        var onChangeFunc = getFunctionFromProps.call(_this6, { propFunc: formElement.onChangeFilter });
+        updatedStateProp = onChangeFunc.call(_this6, (0, _assign2.default)({}, _this6.state, updatedStateProp), updatedStateProp);
       }
       _this6.setState(updatedStateProp);
     };
