@@ -13,6 +13,8 @@ import 'rc-table/assets/index.css';
 import 'rc-tree/assets/index.css';
 import 'rc-switch/assets/index.css';
 import 'rc-steps/assets/iconfont.css';
+import './vendor/slick/slick.css';
+import './vendor/slick/slick-theme.css';
 import './index.css';
 import insertCss from 'insert-css';
 import css from 're-bulma/build/css';
