@@ -4,7 +4,6 @@ import * as recharts from 'recharts';
 import MaskedInput from 'react-text-mask';
 import { Link, } from 'react-router';
 import Slider, { Range, } from 'rc-slider';
-import { default as Slick } from 'react-slick';
 import { default as RCTable } from 'rc-table';
 import { default as RCSwitch } from 'rc-switch';
 import { default as RCTree, TreeNode as RCTreeNode } from 'rc-tree';
@@ -44,7 +43,6 @@ export let AppLayoutMap = Object.assign({}, {
   RCTree,
   RCTreeNode,
   RCSwitch,
-  Slick,
 }, React.DOM, rebulma, window.__ra_custom_elements, { Link, });
 
 export function getRenderedComponent(componentObject, resources, debug) {
