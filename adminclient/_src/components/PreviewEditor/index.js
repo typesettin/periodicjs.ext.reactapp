@@ -308,6 +308,11 @@ var PreviewEditor = function (_Component) {
             value: this.state.value,
             onChange: function onChange(value) {
               _reactDom2.default.findDOMNode(_this2).children[_this2.contentIndex].innerHTML = value;
+            },
+            onFocusChange: function onFocusChange(value) {
+              if (!value) {
+                _this2.emitChange.bind(_this2)();
+              }
             }
           }
         }) : null

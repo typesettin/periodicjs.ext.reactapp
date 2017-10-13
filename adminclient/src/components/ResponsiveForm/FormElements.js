@@ -70,6 +70,10 @@ function valueChangeHandler(formElement) {
     // console.debug({ text, formElement, });
     let updatedStateProp = {};
     updatedStateProp[ formElement.name ] = text;
+    if (formElement.onChangeFilter) {
+      const onChangeFunc = getFunctionFromProps.call(this, { propFunc: formElement.onChangeFilter });
+      updatedStateProp = onChangeFunc.call(this, Object.assign({},this.state,updatedStateProp), updatedStateProp);
+    }
     this.setState(updatedStateProp, () => {
       if(formElement.validateOnChange){
       this.validateFormElement({ formElement, });
@@ -450,6 +454,10 @@ export function getFormTextInputArea(options) {
         });
       } else {
         updatedStateProp[ formElement.name ] =(passableProps.maxLength)? text.substring(0, passableProps.maxLength): text;
+      }
+      if (formElement.onChangeFilter) {
+        const onChangeFunc = getFunctionFromProps.call(this, { propFunc: formElement.onChangeFilter });
+        updatedStateProp = onChangeFunc.call(this, Object.assign({},this.state,updatedStateProp), updatedStateProp);
       }
       this.setState(updatedStateProp);
     };
