@@ -20,6 +20,7 @@ var appDefaultSettings = {
   adminPath: '/r-admin',
   routerHistory: 'browserHistory',
   hot_reload: false,
+  disableLogger: false,
   includeCoreData: {
     manifest: true,
     navigation: true
