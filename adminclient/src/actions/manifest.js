@@ -74,14 +74,17 @@ const manifest = {
       let state = getState();
       let hasCached;
       let isInitial = state.manifest.unauthenticated.isInitial;
-      let basename = (typeof state.settings.adminPath ==='string' && state.settings.adminPath !=='/') ? state.settings.basename+state.settings.adminPath : state.settings.basename;
+      let basename = (typeof state.settings.adminPath === 'string' && state.settings.adminPath !== '/') ? state.settings.basename + state.settings.adminPath : state.settings.basename;
+      let headers = (state.settings && state.settings.userprofile && state.settings.userprofile.options && state.settings.userprofile.options.headers)
+      ? state.settings.userprofile.options.headers
+      : {};
       //add ?refresh=true to below route to reload manifest configuration
       return utilities.loadCacheConfigurations()
         .then(result => {
           hasCached = (result.manifest && result.manifest.unauthenticated);
           if (hasCached && !options.skip_cache) dispatch(this.unauthenticatedReceivedManifestData(result.manifest.unauthenticated));
           let pathname = (typeof window!== 'undefined' && window.location.pathname) ? window.location.pathname : this.props.location.pathname;
-          return utilities.fetchComponent(`${basename}/load/public_manifest${ (isInitial) ? '?initial=true&location=' + pathname : '' }`)();
+          return utilities.fetchComponent(`${basename}/load/public_manifest${ (isInitial) ? '?initial=true&location=' + pathname : '' }`,{headers})();
         })
         .then(response => {
           dispatch(this.unauthenticatedReceivedManifestData(response.data.settings));

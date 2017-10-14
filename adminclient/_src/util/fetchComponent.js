@@ -58,8 +58,9 @@ var checkStatus = exports.checkStatus = function checkStatus(response) {
 var fetchComponent = exports.fetchComponent = function fetchComponent(url) {
   var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
+  // console.log('fetchComponent this', this,{url,options});
   return function () {
-    // console.debug({ url, options });
+    // console.debug('fetchComponent',{ url, options });
     return fetch(url, (0, _assign2.default)({}, options)).then(checkStatus).then(function (res) {
       return res.json();
     }).catch(function (e) {

@@ -1,11 +1,13 @@
 {
-  "name": "periodicjs.ext.reactapp",
-  "description": "react based admin.",
-  "version": "10.6.52",
-  "main": "index.js",
-  "engines": {
-    "node": "^6.x"
+  "author": {
+    "name": "Yaw Joseph Etse",
+    "email": "yaw.etse@gmail.com",
+    "url": "http://about.me/yawjosephetse"
   },
+  "bugs": {
+    "url": "https://github.com/typesettin/periodicjs.ext.reactapp/issues"
+  },
+  "bundleDependencies": false,
   "config": {
     "blanket": {
       "pattern": [
@@ -13,17 +15,21 @@
       ]
     }
   },
-  "license": "MIT",
-  "scripts": {
-    "test": "mocha -R spec --recursive",
-    "postinstall": "cd ../../ && periodicjs aex periodicjs.ext.reactapp",
-    "postuninstall": "cd ../../ && periodicjs rex periodicjs.ext.reactapp",
-    "build_ie": "node_modules/.bin/webpack --config adminclient/config/webpack.config.ie.js --debug --progress",
-    "build_ie_full": "node_modules/.bin/webpack --config adminclient/config/webpack.config.ie.js && cp -r public/ ../../../public/themes/periodicjs.theme.cis/",
-    "ssr_build": "babel adminclient/src -d adminclient/_src --ignore adminclient/src/components/RACodeMirror/",
-    "ssr": "babel utilities/ssr_manifest_es6.js > utilities/ssr_manifest.js && babel adminclient/src -d adminclient/_src --ignore adminclient/src/components/RACodeMirror/,adminclient/src/index.js",
-    "package": "cd adminclient && npm run build && cd .. && rm -rf public/static/* && npm run ssr && grunt copy"
-  },
+  "contributors": [
+    {
+      "name": "Jan Bialostok",
+      "email": "janbialostok@gmail.com",
+      "url": "https://github.com/janbialostok"
+    },
+    {
+      "name": "Iris Dan",
+      "email": "yoojungdan@gmail.com"
+    },
+    {
+      "name": "Mark Waldron",
+      "email": "markewaldron@gmail.com"
+    }
+  ],
   "dependencies": {
     "babel-polyfill": "^6.23.0",
     "capitalize": "^1.0.0",
@@ -63,6 +69,8 @@
     "validate.js": "^0.11.1",
     "whatwg-fetch": "^2.0.3"
   },
+  "deprecated": false,
+  "description": "react based admin.",
   "devDependencies": {
     "babel-cli": "^6.23.0",
     "babel-core": "^6.24.1",
@@ -115,36 +123,35 @@
     "string-to-json": "^0.1.0",
     "webpack": "^2.4.1"
   },
+  "directories": {},
+  "engines": {
+    "node": "^6.x"
+  },
+  "homepage": "https://github.com/typesettin/periodicjs.ext.reactapp#readme",
   "keywords": [
     "server-side-react",
     "cms",
     "admin",
     "periodicjs"
   ],
+  "license": "MIT",
+  "main": "index.js",
   "maintainers": [],
-  "contributors": [
-    {
-      "email": "janbialostok@gmail.com",
-      "name": "Jan Bialostok",
-      "url": "https://github.com/janbialostok"
-    },
-    {
-      "email": "yoojungdan@gmail.com",
-      "name": "Iris Dan"
-    }
-  ],
-  "author": {
-    "email": "yaw.etse@gmail.com",
-    "name": "Yaw Joseph Etse",
-    "url": "http://about.me/yawjosephetse"
-  },
-  "bugs": {
-    "url": "https://github.com/typesettin/periodicjs.ext.reactapp/issues"
-  },
+  "name": "periodicjs.ext.reactapp",
+  "optionalDependencies": {},
   "repository": {
     "type": "git",
     "url": "git://github.com/typesettin/periodicjs.ext.reactapp.git"
   },
-  "directories": {},
-  "optionalDependencies": {}
+  "scripts": {
+    "build_ie": "webpack --config adminclient/config/webpack.config.ie.js --debug --progress",
+    "build_ie_full": "webpack --config adminclient/config/webpack.config.ie.js && cp -r public/ ../../../public/themes/periodicjs.theme.cis/",
+    "package": "cd adminclient && npm run build && cd .. && rm -rf public/static/* && npm run ssr && grunt copy",
+    "postinstall": "cd ../../ && periodicjs aex periodicjs.ext.reactapp",
+    "postuninstall": "cd ../../ && periodicjs rex periodicjs.ext.reactapp",
+    "ssr": "babel utilities/ssr_manifest_es6.js > utilities/ssr_manifest.js && babel adminclient/src -d adminclient/_src --ignore adminclient/src/components/RACodeMirror/,adminclient/src/index.js",
+    "ssr_build": "babel adminclient/src -d adminclient/_src --ignore adminclient/src/components/RACodeMirror/",
+    "test": "mocha -R spec --recursive"
+  },
+  "version": "10.6.7"
 }

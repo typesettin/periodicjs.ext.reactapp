@@ -185,6 +185,10 @@ function valueChangeHandler(formElement) {
     // console.debug({ text, formElement, });
     var updatedStateProp = {};
     updatedStateProp[formElement.name] = text;
+    if (formElement.onChangeFilter) {
+      var onChangeFunc = getFunctionFromProps.call(_this, { propFunc: formElement.onChangeFilter });
+      updatedStateProp = onChangeFunc.call(_this, (0, _assign2.default)({}, _this.state, updatedStateProp), updatedStateProp);
+    }
     _this.setState(updatedStateProp, function () {
       if (formElement.validateOnChange) {
         _this.validateFormElement({ formElement: formElement });
@@ -557,6 +561,10 @@ function getFormTextInputArea(options) {
       } else {
         updatedStateProp[formElement.name] = passableProps.maxLength ? text.substring(0, passableProps.maxLength) : text;
       }
+      if (formElement.onChangeFilter) {
+        var onChangeFunc = getFunctionFromProps.call(_this6, { propFunc: formElement.onChangeFilter });
+        updatedStateProp = onChangeFunc.call(_this6, (0, _assign2.default)({}, _this6.state, updatedStateProp), updatedStateProp);
+      }
       _this6.setState(updatedStateProp);
     };
   }
@@ -703,6 +711,10 @@ function getFormCheckbox(options) {
         updatedStateProp[_this7.state[formElement.formdata_name] || formElement.name] = _this7.state[_this7.state[formElement.formdata_name] || formElement.name] ? 0 : 'on';
       }
       // console.debug('after', { updatedStateProp, formElement, }, event.target);
+      if (formElement.onChangeFilter) {
+        var onChangeFunc = getFunctionFromProps.call(_this7, { propFunc: formElement.onChangeFilter });
+        updatedStateProp = onChangeFunc.call(_this7, (0, _assign2.default)({}, _this7.state, updatedStateProp), updatedStateProp);
+      }
       _this7.setState(updatedStateProp, function () {
         if (formElement.validateOnChange) {
           _this7.validateFormElement({ formElement: formElement });
@@ -753,6 +765,10 @@ function getFormSwitch(options) {
       if (formElement.onChange) {
         var onChangeFunc = getFunctionFromProps.call(_this8, { propFunc: formElement.onChange });
         onChangeFunc.call(_this8, (0, _assign2.default)({}, _this8.state, updatedStateProp), updatedStateProp);
+      }
+      if (formElement.onChangeFilter) {
+        var _onChangeFunc = getFunctionFromProps.call(_this8, { propFunc: formElement.onChangeFilter });
+        updatedStateProp = _onChangeFunc.call(_this8, (0, _assign2.default)({}, _this8.state, updatedStateProp), updatedStateProp);
       }
       _this8.setState(updatedStateProp, function () {
         if (formElement.validateOnChange) {
@@ -815,6 +831,10 @@ function getRawInput(options) {
       var updatedStateProp = {};
       updatedStateProp[formElement.name] = _this9.state[formElement.name] ? false : 'on';
       // console.log({ updatedStateProp });
+      if (formElement.onChangeFilter) {
+        var onChangeFunc = getFunctionFromProps.call(_this9, { propFunc: formElement.onChangeFilter });
+        updatedStateProp = onChangeFunc.call(_this9, (0, _assign2.default)({}, _this9.state, updatedStateProp), updatedStateProp);
+      }
       _this9.setState(updatedStateProp);
     };
   }
@@ -884,6 +904,10 @@ function getSliderInput(options) {
       var updatedStateProp = {};
       updatedStateProp[formElement.name] = val;
       // console.log({ updatedStateProp });
+      if (formElement.onChangeFilter) {
+        var onChangeFunc = getFunctionFromProps.call(_this10, { propFunc: formElement.onChangeFilter });
+        updatedStateProp = onChangeFunc.call(_this10, (0, _assign2.default)({}, _this10.state, updatedStateProp), updatedStateProp);
+      }
       _this10.setState(updatedStateProp);
       customCallbackfunction(val);
     };
@@ -1021,6 +1045,10 @@ function getFormCode(options) {
         newvalue = formElement.stringify ? JSON.parse(newvalue) : newvalue;
         var updatedStateProp = {};
         updatedStateProp[formElement.name] = newvalue;
+        if (formElement.onChangeFilter) {
+          var onChangeFunc = getFunctionFromProps.call(this, { propFunc: formElement.onChangeFilter });
+          updatedStateProp = onChangeFunc.call(this, (0, _assign2.default)({}, this.state, updatedStateProp), updatedStateProp);
+        }
         this.setState(updatedStateProp);
       }.bind(this) : onValueChange
     }, formElement.codeMirrorProps),
@@ -1058,6 +1086,10 @@ function getFormEditor(options) {
       // console.debug({ newvalue, });
       var updatedStateProp = {};
       updatedStateProp[formElement.name] = newvalue.target.value;
+      if (formElement.onChangeFilter) {
+        var onChangeFunc = getFunctionFromProps.call(_this11, { propFunc: formElement.onChangeFilter });
+        updatedStateProp = onChangeFunc.call(_this11, (0, _assign2.default)({}, _this11.state, updatedStateProp), updatedStateProp);
+      }
       _this11.setState(updatedStateProp);
     };
   }
