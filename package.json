@@ -24,6 +24,10 @@
     {
       "name": "Iris Dan",
       "email": "yoojungdan@gmail.com"
+    },
+    {
+      "name": "Mark Waldron",
+      "email": "markewaldron@gmail.com"
     }
   ],
   "dependencies": {
@@ -149,5 +153,5 @@
     "ssr_build": "babel adminclient/src -d adminclient/_src --ignore adminclient/src/components/RACodeMirror/",
     "test": "mocha -R spec --recursive"
   },
-  "version": "10.6.6"
+  "version": "10.6.7"
 }

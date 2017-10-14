@@ -579,6 +579,10 @@ export function getFormCheckbox(options) {
         updatedStateProp[ this.state[ formElement.formdata_name] || formElement.name ] = (this.state[ this.state[ formElement.formdata_name] || formElement.name ] ) ? 0 : 'on';
       }
       // console.debug('after', { updatedStateProp, formElement, }, event.target);
+      if (formElement.onChangeFilter) {
+        const onChangeFunc = getFunctionFromProps.call(this, { propFunc: formElement.onChangeFilter });
+        updatedStateProp = onChangeFunc.call(this, Object.assign({},this.state,updatedStateProp), updatedStateProp);
+      }
       this.setState(updatedStateProp, () => {
         if(formElement.validateOnChange){
           this.validateFormElement({ formElement, });
@@ -621,6 +625,10 @@ export function getFormSwitch(options) {
       if (formElement.onChange) {
         const onChangeFunc = getFunctionFromProps.call(this, { propFunc: formElement.onChange });
         onChangeFunc.call(this, Object.assign({},this.state,updatedStateProp), updatedStateProp);
+      }
+      if (formElement.onChangeFilter) {
+        const onChangeFunc = getFunctionFromProps.call(this, { propFunc: formElement.onChangeFilter });
+        updatedStateProp = onChangeFunc.call(this, Object.assign({},this.state,updatedStateProp), updatedStateProp);
       }
       this.setState(updatedStateProp, () => {
         if(formElement.validateOnChange){
@@ -671,6 +679,10 @@ export function getRawInput(options) {
       let updatedStateProp = {};
       updatedStateProp[ formElement.name ] = (this.state[ formElement.name ] ) ? false : 'on';
       // console.log({ updatedStateProp });
+      if (formElement.onChangeFilter) {
+        const onChangeFunc = getFunctionFromProps.call(this, { propFunc: formElement.onChangeFilter });
+        updatedStateProp = onChangeFunc.call(this, Object.assign({},this.state,updatedStateProp), updatedStateProp);
+      }
       this.setState(updatedStateProp);
     };
   }
@@ -728,6 +740,10 @@ export function getSliderInput(options) {
       let updatedStateProp = {};
       updatedStateProp[ formElement.name ] = val;
       // console.log({ updatedStateProp });
+      if (formElement.onChangeFilter) {
+        const onChangeFunc = getFunctionFromProps.call(this, { propFunc: formElement.onChangeFilter });
+        updatedStateProp = onChangeFunc.call(this, Object.assign({},this.state,updatedStateProp), updatedStateProp);
+      }
       this.setState(updatedStateProp);
       customCallbackfunction(val);
     };
@@ -833,6 +849,10 @@ export function getFormCode(options) {
         newvalue = (formElement.stringify) ? JSON.parse(newvalue) : newvalue;
         let updatedStateProp = {};
         updatedStateProp[ formElement.name ] = newvalue;
+        if (formElement.onChangeFilter) {
+          const onChangeFunc = getFunctionFromProps.call(this, { propFunc: formElement.onChangeFilter });
+          updatedStateProp = onChangeFunc.call(this, Object.assign({},this.state,updatedStateProp), updatedStateProp);
+        }
         this.setState(updatedStateProp);
       }.bind(this) : onValueChange,
     }, formElement.codeMirrorProps),
@@ -864,6 +884,10 @@ export function getFormEditor(options) {
       // console.debug({ newvalue, });
       let updatedStateProp = {};
       updatedStateProp[ formElement.name ] = newvalue.target.value;
+      if (formElement.onChangeFilter) {
+        const onChangeFunc = getFunctionFromProps.call(this, { propFunc: formElement.onChangeFilter });
+        updatedStateProp = onChangeFunc.call(this, Object.assign({},this.state,updatedStateProp), updatedStateProp);
+      }
       this.setState(updatedStateProp);
     };
   }

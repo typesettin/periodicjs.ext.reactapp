@@ -33,8 +33,9 @@ export const checkStatus = function (response) {
 };
 
 export const fetchComponent = function (url, options = {}) {  
+  // console.log('fetchComponent this', this,{url,options});
   return function () {
-    // console.debug({ url, options });
+    // console.debug('fetchComponent',{ url, options });
     return fetch(url, Object.assign({}, options))
       .then(checkStatus)
       .then(res => res.json())

@@ -75,23 +75,27 @@ const ui = {
 
     return function (dispatch, getState) {
       let state = getState();
+      let headers = (state.settings && state.settings.userprofile && state.settings.userprofile.options && state.settings.userprofile.options.headers)
+      ? state.settings.userprofile.options.headers
+      : {};
+      // console.log('fetchComponent',{type,state})
       switch (type) {
       case constants.ui.LOGIN_COMPONENT:
         component = constants.ui.LOGIN_COMPONENT;
         if (!COMPONENTS[ component ]) COMPONENTS[ component ] = function (basename) {
-          return fetchComponentUtil(`${basename}/load/components/login${(state.settings.ui.initialization.refresh_components)?'?refresh=true':''}`);
+          return fetchComponentUtil(`${basename}/load/components/login${(state.settings.ui.initialization.refresh_components)?'?refresh=true':''}`,{headers});
         };
         break;
       case constants.ui.MAIN_COMPONENT:
         component = constants.ui.MAIN_COMPONENT;
         if (!COMPONENTS[ component ]) COMPONENTS[ component ] = function (basename) {
-          return fetchComponentUtil(`${basename}/load/components/main${(state.settings.ui.initialization.refresh_components)?'?refresh=true':''}`);
+          return fetchComponentUtil(`${basename}/load/components/main${(state.settings.ui.initialization.refresh_components)?'?refresh=true':''}`,{headers});
         };
         break;
       case constants.ui.ERROR_COMPONENTS:
         component = constants.ui.ERROR_COMPONENTS;
         if (!COMPONENTS[ component ]) COMPONENTS[ component ] = function (basename) {
-          return fetchComponentUtil(`${basename}/load/components/error${(state.settings.ui.initialization.refresh_components)?'?refresh=true':''}`);
+          return fetchComponentUtil(`${basename}/load/components/error${(state.settings.ui.initialization.refresh_components)?'?refresh=true':''}`,{headers});
         };
         break;
       default:
