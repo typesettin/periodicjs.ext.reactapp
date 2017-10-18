@@ -10,12 +10,14 @@ const manifest = require('./manifest');
 const styles = require('./styles');
 const controllerhelper = require('./controllerhelper');
 const detail_views = require('./detail_views');
+const server_manifest = require('./server_manifest');
 
 module.exports = {
   settings,
   data,
   manifest,
   styles,
+  server_manifest,
   generateDetailManifests: settings.generateDetailManifests,
   findMatchingRoute: settings.findMatchingRoute,
   getParameterized: settings.getParameterized,
