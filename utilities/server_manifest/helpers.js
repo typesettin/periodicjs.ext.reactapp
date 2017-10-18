@@ -48,9 +48,9 @@ function getModalPopUp(options) {
 }
 
 function getPageTitle(options) {
-  const { styles, title, tooltip, action, asynctitle, titleprefix, } = options;
+  const { styles = {}, title, tooltip, action, asynctitle, titleprefix, } = options;
   const actionType = {
-    link: [
+    link: (action && action.type === 'action')? [
       {
         component: 'ResponsiveButton',
         props: {
@@ -65,7 +65,7 @@ function getPageTitle(options) {
         },
         children: action.title,
       },
-    ],
+    ]:null,
     action: (action && action.type === 'action')
       ? [
         {
@@ -101,9 +101,9 @@ function getPageTitle(options) {
           modalPathname: action.pathname,
           confirmAction: action.confirm,
           type:'button',
-          button: {
+          button: Object.assign({
             title: action.title,
-          },
+          },action.buttonProps),
         }),
       ]
       : null,
@@ -117,7 +117,7 @@ function getPageTitle(options) {
           {
             component: 'Title',
             props: {
-              style: styles.ui.topContainerMargin,
+              style: styles && styles.ui && styles.ui.topContainerMargin,
             },
             children: [
               (titleprefix)

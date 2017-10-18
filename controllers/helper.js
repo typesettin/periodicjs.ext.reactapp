@@ -113,14 +113,14 @@ const handleFileUpload = function (req, res, next) {
         periodic,
         encrypted_client_side: true,
         encryption_key,
-        save_file_to_asset: true,
-        send_response: false,
+        save_file_to_asset: (typeof req.save_file_to_asset==='boolean')? req.save_file_to_asset: true,
+        send_response: (typeof req.send_response ==='boolean') ? req.send_response : false,
       })(req, res, next);
     } else {
       return periodic.core.files.uploadMiddlewareHandler({
         periodic,
-        save_file_to_asset: true,
-        send_response: false,
+        save_file_to_asset: (typeof req.save_file_to_asset==='boolean')? req.save_file_to_asset: true,
+        send_response: (typeof req.send_response ==='boolean') ? req.send_response : false,
       })(req, res, next);
     }
     // return assetController.multiupload(req, res, next);
