@@ -394,6 +394,10 @@ export function getFormMaskedInput(options) {
     mask = createNumberMask(numberMaskConfig);
   } else if (passableProps.mask.indexOf('func:window') !== -1 && typeof window[ passableProps.mask.replace('func:window.', '') ] === 'function') {
     mask = window[ passableProps.mask.replace('func:window.', '') ].bind(this, formElement);
+  } else if (formElement.numberMask) {
+    mask = createNumberMask(()=>formElement.numberMask)
+  } else if (formElement.mask) {
+    mask = () => formElement.mask;
   }
 
   let wrapperProps = Object.assign({

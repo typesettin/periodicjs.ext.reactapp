@@ -497,6 +497,14 @@ function getFormMaskedInput(options) {
     mask = (0, _createNumberMask2.default)(numberMaskConfig);
   } else if (passableProps.mask.indexOf('func:window') !== -1 && typeof window[passableProps.mask.replace('func:window.', '')] === 'function') {
     mask = window[passableProps.mask.replace('func:window.', '')].bind(this, formElement);
+  } else if (formElement.numberMask) {
+    mask = (0, _createNumberMask2.default)(function () {
+      return formElement.numberMask;
+    });
+  } else if (formElement.mask) {
+    mask = function mask() {
+      return formElement.mask;
+    };
   }
 
   var wrapperProps = (0, _assign2.default)({

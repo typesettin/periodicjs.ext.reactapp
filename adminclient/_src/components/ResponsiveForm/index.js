@@ -211,7 +211,6 @@ var ResponsiveForm = function (_Component) {
     value: function submitForm() {
       var _this2 = this;
 
-      // console.log('this.props.blockPageUI', this.props.blockPageUI);
       if (this.props.blockPageUI) {
         this.props.setUILoadedState(false, this.props.blockPageUILayout);
       }
@@ -270,10 +269,16 @@ var ResponsiveForm = function (_Component) {
       }
       // console.debug({ submitFormData, formdata, validationErrors });
       if (validationErrors && (0, _keys2.default)(validationErrors).length < 1) {
-        this.setState({ formDataErrors: {} });
+        this.setState({
+          formDataErrors: {},
+          __formIsSubmitting: false
+        });
       }
       if (validationErrors && (0, _keys2.default)(validationErrors).length > 0) {
-        this.setState({ formDataErrors: validationErrors });
+        this.setState({
+          formDataErrors: validationErrors,
+          __formIsSubmitting: false
+        });
         console.debug('has errors', validationErrors, { submitFormData: submitFormData });
         if (this.props.blockPageUI) {
           this.props.setDebugUILoadedState(true);
