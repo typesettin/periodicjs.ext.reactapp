@@ -54,7 +54,7 @@ class ResponsiveButton extends Component {
       : clickPropObject;
     let onclickProp = (clickBaseUrl)
       ? this.getButtonLink(clickBaseUrl, clickLinkParams, linkSelectionProp)
-      : clickPassProps;
+      : clickPassProps || clickPropObject;
     
     if (clickAddPropObject && linkSelectionProp) {
       linkSelectionProp[ clickAddPropObject ] = this.props[ clickAddPropObject ];
