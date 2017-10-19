@@ -153,6 +153,23 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var advancedBinding = (0, _advancedBinding.getAdvancedBinding)();
 var renderIndex = 0;
 
+function getFunctionFromProps(options) {
+  var propFunc = options.propFunc;
+
+
+  if (typeof propFunc === 'string' && propFunc.indexOf('func:this.props.reduxRouter') !== -1) {
+    return this.props.reduxRouter[this.props.replace('func:this.props.reduxRouter.', '')];
+  } else if (typeof propFunc === 'string' && propFunc.indexOf('func:this.props') !== -1) {
+    return this.props[this.props.replace('func:this.props.', '')].bind(this);
+  } else if (typeof propFunc === 'string' && propFunc.indexOf('func:window') !== -1 && typeof window[propFunc.replace('func:window.', '')] === 'function') {
+    return window[propFunc.replace('func:window.', '')].bind(this);
+  } else if (typeof this.props[propFunc] === 'function') {
+    return propFunc.bind(this);
+  } else {
+    return function () {};
+  }
+}
+
 var AppLayoutMap = exports.AppLayoutMap = (0, _assign2.default)({}, {
   recharts: recharts, ResponsiveForm: _ResponsiveForm2.default, DynamicLayout: _DynamicLayout2.default, DynamicForm: _DynamicForm2.default, RawOutput: _RawOutput2.default, RawStateOutput: _RawStateOutput2.default, FormItem: _FormItem2.default, MenuAppLink: _MenuAppLink2.default, SubMenuLinks: _SubMenuLinks2.default, ResponsiveTable: _ResponsiveTable2.default, ResponsiveCard: _ResponsiveCard2.default, DynamicChart: _DynamicChart2.default, ResponsiveBar: _ResponsiveBar2.default, ResponsiveTabs: _ResponsiveTabs2.default, ResponsiveDatalist: _ResponsiveDatalist2.default, CodeMirror: _RACodeMirror2.default, Range: _rcSlider.Range, Slider: _rcSlider2.default, GoogleMap: _googleMapReact2.default, Carousel: _reactResponsiveCarousel.Carousel, PreviewEditor: _PreviewEditor2.default, ResponsiveSteps: _ResponsiveSteps2.default, /* Editor,*/
   ResponsiveLink: _ResponsiveLink2.default,
@@ -186,6 +203,7 @@ function getRenderedComponent(componentObject, resources, debug) {
     return (0, _react.createElement)('span', {}, debug ? 'Error: Missing Component Object' : '');
   }
   try {
+    var getFunction = getFunctionFromProps.bind(this);
     var asyncprops = componentObject.asyncprops && (0, _typeof3.default)(componentObject.asyncprops) === 'object' ? _util2.default.traverse(componentObject.asyncprops, resources) : {};
     var windowprops = componentObject.windowprops && (0, _typeof3.default)(componentObject.windowprops) === 'object' ? _util2.default.traverse(componentObject.windowprops, window) : {};
     var thisprops = componentObject.thisprops && (0, _typeof3.default)(componentObject.thisprops) === 'object' ? _util2.default.traverse(componentObject.thisprops, (0, _assign2.default)({
@@ -199,10 +217,15 @@ function getRenderedComponent(componentObject, resources, debug) {
       key: renderIndex
     }, thisDotProps, thisprops, componentObject.props, asyncprops, windowprops);
     //Allowing for window functions
-    if (componentObject.hasWindowFunc) {
+    if (componentObject.hasWindowFunc || componentObject.hasPropFunc) {
       (0, _keys2.default)(renderedCompProps).forEach(function (key) {
-        if (typeof renderedCompProps[key] === 'string' && renderedCompProps[key].indexOf('func:window') !== -1 && typeof window[renderedCompProps[key].replace('func:window.', '')] === 'function') {
-          renderedCompProps[key] = window[renderedCompProps[key].replace('func:window.', '')].bind(_this);
+        // if (typeof renderedCompProps[key] ==='string' && renderedCompProps[key].indexOf('func:window') !== -1 && typeof window[ renderedCompProps[key].replace('func:window.', '') ] ==='function'){
+        //   renderedCompProps[key]= window[ renderedCompProps[key].replace('func:window.', '') ].bind(this);
+        // } 
+
+
+        if (typeof renderedCompProps[key] === 'string' && renderedCompProps[key].indexOf('func:') !== -1) {
+          renderedCompProps[key] = getFunction({ propFunc: renderedCompProps[key] });
         }
       });
     }

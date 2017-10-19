@@ -27,6 +27,7 @@ const propTypes = {
   validations: PropTypes.array,
   hiddenFields: PropTypes.array,
   footergroups: PropTypes.array,
+  onlyUpdateStateOnSubmit: PropTypes.bool,
   formgroups: PropTypes.oneOfType([
     PropTypes.bool,
     PropTypes.object,
@@ -47,7 +48,8 @@ const defaultProps = {
   useLoadingButtons: false,
   includeFormDataOnLayout:false,
   onSubmit: 'func:this.props.debug',
-  formgroups:[],
+  formgroups: [],
+  updateStateOnSubmit: false,
 };
 
 function getFunctionFromProps(options) {
@@ -122,6 +124,13 @@ class ResponsiveForm extends Component{
     this.getFormGroup = getFormGroup.bind(this);
     this.getImage = getImage.bind(this);
     this.validateFormElement = validateFormElement.bind(this);
+  }
+  shouldComponentUpdate(nextProps, nextState){
+    if (this.props.onlyUpdateStateOnSubmit) {
+      return this.state.__formDataStatusDate !== nextState.__formDataStatusDate;
+    } else {
+      return true;
+    }
   }
   componentWillReceiveProps(nextProps) {
     // console.warn('componentWillReceiveProps', nextProps);
