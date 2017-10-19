@@ -94,6 +94,7 @@ var propTypes = {
   validations: _react.PropTypes.array,
   hiddenFields: _react.PropTypes.array,
   footergroups: _react.PropTypes.array,
+  onlyUpdateStateOnSubmit: _react.PropTypes.bool,
   formgroups: _react.PropTypes.oneOfType([_react.PropTypes.bool, _react.PropTypes.object])
 };
 
@@ -111,7 +112,8 @@ var defaultProps = {
   useLoadingButtons: false,
   includeFormDataOnLayout: false,
   onSubmit: 'func:this.props.debug',
-  formgroups: []
+  formgroups: [],
+  updateStateOnSubmit: false
 };
 
 function getFunctionFromProps(options) {
@@ -186,6 +188,15 @@ var ResponsiveForm = function (_Component) {
   }
 
   (0, _createClass3.default)(ResponsiveForm, [{
+    key: 'shouldComponentUpdate',
+    value: function shouldComponentUpdate(nextProps, nextState) {
+      if (this.props.onlyUpdateStateOnSubmit) {
+        return this.state.__formDataStatusDate !== nextState.__formDataStatusDate;
+      } else {
+        return true;
+      }
+    }
+  }, {
     key: 'componentWillReceiveProps',
     value: function componentWillReceiveProps(nextProps) {
       // console.warn('componentWillReceiveProps', nextProps);
