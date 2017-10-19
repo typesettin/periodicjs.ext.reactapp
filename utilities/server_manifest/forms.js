@@ -4,7 +4,7 @@ const capitalize = require('capitalize');
 function getFormElement(formElement) {
   const formElementTypes = {
     input: formElement,
-    submit: Object.assign({},{
+    submit: Object.assign({}, {
       passProps: {
         color: 'isSuccess',
         buttonStyle: 'isOutlined',
@@ -38,7 +38,7 @@ function getFormElement(formElement) {
 
 function getFormgroups(options) {
   const randomKey = Math.random;  
-  return options.rows.map(row => (Object.assign({},row, {
+  return options.rows.map(row => (Object.assign({}, row, {
     gridProps: {
       key: randomKey(),
       // style: {
@@ -81,9 +81,32 @@ function getFormOnSubmitCallbacks(type, options) {
   };
 }
 
+function getFormNotification(options) {
+  if (options.successNotification) {
+    return { notification: options.successNotification, };
+  } else if (options.successModal) {
+    return { modal:options.successModal, };
+  } else {
+    return true;
+  }
+}
+
+function getFormValidations(options) {
+  const { validations = [], } = options;
+  return validations.reduce((validationArray, key) => {
+    const returnValidationObject = {};
+    returnValidationObject.name = key.field;
+    returnValidationObject.constraints = {
+      [ key.field ]: key.constraints,
+    };
+    validationArray.push(returnValidationObject);
+    return validationArray;
+  }, []);
+}
+
 function createForm(options) {
   const formSubmission = Object.assign({
-    success:true,
+    success:getFormNotification(options),
     url: options.action, //'/tranforms',
     options: {
       method: (options.method) ? options.method.toUpperCase() : 'POST',
@@ -94,6 +117,7 @@ function createForm(options) {
     (options.onSubmit) ? getFormOnSubmitCallbacks('onSubmit', options) : {},
     (options.onComplete) ? getFormOnSubmitCallbacks('onComplete', options) : {}
   );
+  const validations = getFormValidations(options);
   const formProps = {
     flattenFormData: true,
     footergroups: false,
@@ -102,10 +126,11 @@ function createForm(options) {
     blockPageUILayout: options.loadingScreenLayout,
     hiddenFields: options.hiddenFields,
     onSubmit: formSubmission,
+    validations,
     formgroups: getFormgroups(options),
     style: Object.assign({
       paddingBottom:'1rem',
-    },options.style),
+    }, options.style),
   };
   return {
     component: 'ResponsiveForm',
@@ -120,5 +145,6 @@ module.exports = {
   getFormElement,
   getFormgroups,
   getFormOnSubmitCallbacks,
+  getFormNotification,
   createForm,
 };

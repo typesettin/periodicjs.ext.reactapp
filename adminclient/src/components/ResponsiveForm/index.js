@@ -150,7 +150,6 @@ class ResponsiveForm extends Component{
     return returnLink;
   }
   submitForm() {
-    // console.log('this.props.blockPageUI', this.props.blockPageUI);
     if (this.props.blockPageUI) {
       this.props.setUILoadedState(false, this.props.blockPageUILayout);
     }
@@ -209,10 +208,16 @@ class ResponsiveForm extends Component{
     }
     // console.debug({ submitFormData, formdata, validationErrors });
     if (validationErrors && Object.keys(validationErrors).length < 1) {
-      this.setState({ formDataErrors: {}, });
+      this.setState({
+        formDataErrors: {},
+        __formIsSubmitting: false,
+      });
     }
     if (validationErrors && Object.keys(validationErrors).length > 0) {
-      this.setState({ formDataErrors: validationErrors, });
+      this.setState({
+        formDataErrors: validationErrors,
+        __formIsSubmitting: false,
+      });
       console.debug('has errors', validationErrors, { submitFormData, });
       if (this.props.blockPageUI) {
         this.props.setDebugUILoadedState(true);
