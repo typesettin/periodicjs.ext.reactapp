@@ -126,6 +126,9 @@ div[data-reactroot]{
 /*.rc-slider-rail {
   height: 14px;
 }*/
+.__ra_sb_w .__re-bulma_card-content {
+  padding: 0px;
+}
 
 .__reactapp_dp_loading,
 .__reactapp_dp_loaded{
