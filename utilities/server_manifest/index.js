@@ -4,6 +4,7 @@ const forms = require('./forms');
 const table = require('./table');
 const tabs = require('./tabs');
 const card = require('./card');
+const core_navigation = require('./core_navigation');
 
 module.exports = {
   helpers,
@@ -11,4 +12,5 @@ module.exports = {
   table,
   tabs,
   card,
+  core_navigation,
 };
