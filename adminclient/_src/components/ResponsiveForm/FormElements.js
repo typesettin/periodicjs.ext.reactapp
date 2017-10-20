@@ -492,21 +492,39 @@ function getFormMaskedInput(options) {
   formElement.customErrorProps = formElement.customErrorProps ? (0, _assign2.default)({}, { marginTop: '6px' }, formElement.customErrorProps) : { marginTop: '6px' };
 
   var mask = [];
-  if (formElement.createNumberMask && passableProps.mask.indexOf('func:window') !== -1 && typeof window[passableProps.mask.replace('func:window.', '')] === 'function') {
-    var numberMaskConfig = (0, _typeof3.default)(window[passableProps.mask.replace('func:window.', '')].call(this, formElement)) === 'object' ? window[passableProps.mask.replace('func:window.', '')].call(this, formElement) : {};
-    mask = (0, _createNumberMask2.default)(numberMaskConfig);
-  } else if (passableProps.mask.indexOf('func:window') !== -1 && typeof window[passableProps.mask.replace('func:window.', '')] === 'function') {
-    mask = window[passableProps.mask.replace('func:window.', '')].bind(this, formElement);
-  } else if (formElement.numberMask) {
-    mask = (0, _createNumberMask2.default)(function () {
-      return formElement.numberMask;
-    });
-  } else if (formElement.mask) {
-    mask = function mask() {
-      return formElement.mask;
+  function maskFunction(maskProp) {
+    return function () {
+      // return [ '(', /[1-9]/, /\d/, /\d/, ')', '\u2000', /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/ ];
+      if (Array.isArray(maskProp)) {
+        var maskArray = maskProp.map(function (maskItem) {
+          if (maskItem.charAt(0) === '/' && maskItem.charAt(maskItem.length - 1) === '/') {
+            if (maskItem.charAt(1) === '[') {
+              return new RegExp(maskItem.slice(1, maskItem.length - 1));
+            } else {
+              return new RegExp('\\' + maskItem.slice(1, maskItem.length - 1));
+            }
+          } else {
+            return maskItem;
+          }
+        });
+        return maskArray;
+      } else {
+        return maskProp;
+      }
     };
   }
-
+  if (formElement.createNumberMask && typeof passableProps.mask === 'string' && passableProps.mask.indexOf('func:window') !== -1 && typeof window[passableProps.mask.replace('func:window.', '')] === 'function') {
+    var numberMaskConfig = (0, _typeof3.default)(window[passableProps.mask.replace('func:window.', '')].call(this, formElement)) === 'object' ? window[passableProps.mask.replace('func:window.', '')].call(this, formElement) : {};
+    mask = (0, _createNumberMask2.default)(numberMaskConfig);
+  } else if (typeof passableProps.mask === 'string' && passableProps.mask.indexOf('func:window') !== -1 && typeof window[passableProps.mask.replace('func:window.', '')] === 'function') {
+    mask = window[passableProps.mask.replace('func:window.', '')].bind(this, formElement);
+  } else if (formElement.createNumberMask) {
+    // console.log('passableProps.numberMask',passableProps.numberMask)
+    mask = (0, _createNumberMask2.default)(maskFunction(passableProps.mask));
+  } else if (passableProps.mask) {
+    mask = maskFunction(passableProps.mask);
+  }
+  // console.log({mask})
   var wrapperProps = (0, _assign2.default)({
     className: '__re-bulma_control'
   }, formElement.wrapperProps);

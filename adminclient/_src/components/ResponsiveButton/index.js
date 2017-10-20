@@ -121,7 +121,7 @@ var ResponsiveButton = function (_Component) {
         console.debug('ResponsiveButton', { data: data });
       };
       var linkSelectionProp = clickThisProp ? thisDotProp[clickThisProp] : clickPropObject;
-      var onclickProp = clickBaseUrl ? this.getButtonLink(clickBaseUrl, clickLinkParams, linkSelectionProp) : clickPassProps;
+      var onclickProp = clickBaseUrl ? this.getButtonLink(clickBaseUrl, clickLinkParams, linkSelectionProp) : clickPassProps || clickPropObject;
 
       if (clickAddPropObject && linkSelectionProp) {
         linkSelectionProp[clickAddPropObject] = this.props[clickAddPropObject];
