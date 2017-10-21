@@ -461,7 +461,17 @@ class ResponsiveTable extends Component {
         value = value.toString();
         returnValue = value.toString();
       }
-      if (header && header.selectedOptionRowHeader) {
+      if (header && header.customCellLayout) {
+        header.customCellLayout.props = Object.assign({}, header.customCellLayout.props, {row:value});
+        return this.getRenderedComponent(header.customCellLayout);
+      }
+      if (header && header.tagifyArray) {
+        return value.map((val, kv) => (
+          <rb.Tag {...header.tagProps} key={kv}>{
+            (header.tagifyValue) ? val[ header.tagifyValue ].toString() : val.toString()}
+          </rb.Tag>))
+      }
+      else if (header && header.selectedOptionRowHeader) {
         return <input type="radio" checked={(options.rowIndex===this.state.selectedRowIndex)?true:false} />;
       } else if (this.props.useInputRows && header && header.formtype && header.formtype==='code') {
         let CodeMirrorProps = Object.assign({}, {

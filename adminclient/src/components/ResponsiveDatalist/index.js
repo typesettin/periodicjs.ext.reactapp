@@ -88,17 +88,19 @@ class ResponsiveDatalist extends Component {
       utilities.fetchComponent(fetchURL, { headers, })()
         .then(response => { 
           if (response.data && response.result && response.status) {
-            console.log('USE DATA FROM RESPONSE', response.data)
-            console.log('this.props.entity',this.props.entity)
-            console.log('this.props.field',this.props.field)
+            // console.log('USE DATA FROM RESPONSE', response.data)
+            // console.log('this.props.entity',this.props.entity)
+            // console.log('this.props.field',this.props.field)
             response = response.data;
-            console.log('pluralize(this.props.entity)',pluralize(this.props.entity))
-            console.log('response[pluralize(this.props.entity)]',response[pluralize(this.props.entity)])
+            // console.log('pluralize(this.props.entity)',pluralize(this.props.entity))
+            // console.log('response[pluralize(this.props.entity)]',response[pluralize(this.props.entity)])
           }
+          // console.debug('this.state.value',this.state.value);
+          
           let updatedState = {};
           updatedState.selectedData = response[pluralize(this.props.entity)];
           updatedState.isSearching = false;
-          console.debug({updatedState,response});
+          // console.debug({updatedState,response});
           this.setState(updatedState);
         }, e => {
           this.props.errorNotification(e);
@@ -151,17 +153,22 @@ class ResponsiveDatalist extends Component {
   removeDatalistItem(index) {
     // console.debug('clicked datalist',{index});
     // console.debug('clicked onclick',this.props);
-    if(this.props.multi){
-      let newValue = [].concat(this.state.value);
+    // console.debug('this.state.value',this.state.value);
+    if (this.props.multi) {
+      let newValue = Object.assign([], [].concat(this.state.value));
       newValue.splice(index, 1);
-      // let oldValue = this.state.value;
-      // console.debug({ oldValue, newValue });
+      let oldValue = this.state.value;
+      console.debug({ oldValue, newValue });
       this.setState({
-        value:newValue,
+        // value: [],
+        value: newValue,
         selectedData: false,
+        update: new Date()
+      }, () => {
+        // this.props.onChange([]);
+        this.props.onChange(newValue);
       });
-      this.props.onChange(newValue);
-    }    else {
+    } else {
       let datum = undefined;
       this.setState({
         value:datum,
@@ -236,19 +243,19 @@ class ResponsiveDatalist extends Component {
                 paddingRight: '0px',
               }}
               onClick={()=>{
-                console.debug('clicked onclick',this.props);
+                // console.debug('clicked onclick',this.props);
                 if(this.props.multi){
                   let newValue = (this.state.value && Array.isArray(this.state.value) && this.state.value.length)
                     ? this.state.value.concat([datum, ])
                     : [ datum, ];
-                  console.debug({newValue})
+                  // console.debug({newValue})
                   this.setState({
                     value:newValue,
                     selectedData: false,
                   });
                   this.props.onChange(newValue);
                 } else {
-                  console.debug({datum})
+                  // console.debug({datum})
                   this.setState({
                     value:datum,
                     selectedData: false,

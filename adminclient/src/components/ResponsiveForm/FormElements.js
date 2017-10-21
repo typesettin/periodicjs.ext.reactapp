@@ -341,7 +341,6 @@ export function getFormDatalist(options){
   {getFormLabel(formElement)}  
     <ResponsiveDatalist {...passedProps}
       onChange={(newvalue)=>{
-        // console.debug({ newvalue });
         let updatedStateProp = {};
         updatedStateProp[ formElement.name ] = newvalue;
         this.setState(updatedStateProp);
