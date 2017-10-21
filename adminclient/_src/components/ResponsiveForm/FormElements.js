@@ -439,7 +439,6 @@ function getFormDatalist(options) {
     getFormLabel(formElement),
     _react2.default.createElement(_ResponsiveDatalist2.default, (0, _extends3.default)({}, passedProps, {
       onChange: function onChange(newvalue) {
-        // console.debug({ newvalue });
         var updatedStateProp = {};
         updatedStateProp[formElement.name] = newvalue;
         _this4.setState(updatedStateProp);
