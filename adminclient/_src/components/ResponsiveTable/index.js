@@ -598,7 +598,19 @@ var ResponsiveTable = function (_Component) {
           value = value.toString();
           returnValue = value.toString();
         }
-        if (header && header.selectedOptionRowHeader) {
+        if (header && header.customCellLayout) {
+          header.customCellLayout.props = (0, _assign2.default)({}, header.customCellLayout.props, { row: value });
+          return this.getRenderedComponent(header.customCellLayout);
+        }
+        if (header && header.tagifyArray) {
+          return value.map(function (val, kv) {
+            return _react2.default.createElement(
+              rb.Tag,
+              (0, _extends3.default)({}, header.tagProps, { key: kv }),
+              header.tagifyValue ? val[header.tagifyValue].toString() : val.toString()
+            );
+          });
+        } else if (header && header.selectedOptionRowHeader) {
           return _react2.default.createElement('input', { type: 'radio', checked: options.rowIndex === this.state.selectedRowIndex ? true : false });
         } else if (this.props.useInputRows && header && header.formtype && header.formtype === 'code') {
           var CodeMirrorProps = (0, _assign2.default)({}, {

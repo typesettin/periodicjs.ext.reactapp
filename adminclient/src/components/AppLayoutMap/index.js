@@ -35,6 +35,22 @@ import utilities from '../../util';
 let advancedBinding = getAdvancedBinding();
 let renderIndex = 0;
 
+function getFunctionFromProps(options) {
+  const { propFunc } = options;
+
+  if (typeof propFunc === 'string' && propFunc.indexOf('func:this.props.reduxRouter') !== -1) {
+    return this.props.reduxRouter[ this.props.replace('func:this.props.reduxRouter.', '') ];
+  } else if (typeof propFunc === 'string' && propFunc.indexOf('func:this.props') !== -1) {
+    return this.props[ this.props.replace('func:this.props.', '') ].bind(this);
+  } else if (typeof propFunc === 'string' && propFunc.indexOf('func:window') !== -1 && typeof window[propFunc.replace('func:window.', '')] ==='function') {
+    return window[ propFunc.replace('func:window.', '') ].bind(this);
+  } else if(typeof this.props[propFunc] ==='function') {
+    return propFunc.bind(this);
+  } else {
+    return function () { }
+  }
+}
+
 export let AppLayoutMap = Object.assign({}, {
   recharts, ResponsiveForm, DynamicLayout, DynamicForm, RawOutput, RawStateOutput, FormItem, MenuAppLink, SubMenuLinks, ResponsiveTable, ResponsiveCard, DynamicChart, ResponsiveBar, ResponsiveTabs, ResponsiveDatalist, CodeMirror, Range, Slider, GoogleMap, Carousel, PreviewEditor, ResponsiveSteps, /* Editor,*/
   ResponsiveLink,
@@ -66,6 +82,7 @@ export function getRenderedComponent(componentObject, resources, debug) {
     return createElement('span', {}, debug ? 'Error: Missing Component Object' : '');
   }
   try {
+    const getFunction = getFunctionFromProps.bind(this);
     let asyncprops = (componentObject.asyncprops && typeof componentObject.asyncprops === 'object') ? utilities.traverse(componentObject.asyncprops, resources) : {};
     let windowprops = (componentObject.windowprops && typeof componentObject.windowprops === 'object') ? utilities.traverse(componentObject.windowprops, window) : {};
     let thisprops = (componentObject.thisprops && typeof componentObject.thisprops === 'object') ? utilities.traverse(componentObject.thisprops, Object.assign({
@@ -81,10 +98,15 @@ export function getRenderedComponent(componentObject, resources, debug) {
       thisprops,
       componentObject.props, asyncprops, windowprops);
       //Allowing for window functions
-    if(componentObject.hasWindowFunc){
+    if(componentObject.hasWindowFunc || componentObject.hasPropFunc){
       Object.keys(renderedCompProps).forEach(key => {
-        if (typeof renderedCompProps[key] ==='string' && renderedCompProps[key].indexOf('func:window') !== -1 && typeof window[ renderedCompProps[key].replace('func:window.', '') ] ==='function'){
-          renderedCompProps[key]= window[ renderedCompProps[key].replace('func:window.', '') ].bind(this);
+        // if (typeof renderedCompProps[key] ==='string' && renderedCompProps[key].indexOf('func:window') !== -1 && typeof window[ renderedCompProps[key].replace('func:window.', '') ] ==='function'){
+        //   renderedCompProps[key]= window[ renderedCompProps[key].replace('func:window.', '') ].bind(this);
+        // } 
+
+
+        if (typeof renderedCompProps[key] ==='string' && renderedCompProps[key].indexOf('func:') !== -1 ){
+          renderedCompProps[ key ] = getFunction({ propFunc: renderedCompProps[ key ] });
         } 
       });
     }

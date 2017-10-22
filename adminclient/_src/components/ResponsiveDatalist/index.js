@@ -161,17 +161,19 @@ var ResponsiveDatalist = function (_Component) {
         }, stateProps.settings.userprofile.options.headers);
         _util2.default.fetchComponent(fetchURL, { headers: headers })().then(function (response) {
           if (response.data && response.result && response.status) {
-            console.log('USE DATA FROM RESPONSE', response.data);
-            console.log('this.props.entity', _this3.props.entity);
-            console.log('this.props.field', _this3.props.field);
+            // console.log('USE DATA FROM RESPONSE', response.data)
+            // console.log('this.props.entity',this.props.entity)
+            // console.log('this.props.field',this.props.field)
             response = response.data;
-            console.log('pluralize(this.props.entity)', (0, _pluralize2.default)(_this3.props.entity));
-            console.log('response[pluralize(this.props.entity)]', response[(0, _pluralize2.default)(_this3.props.entity)]);
+            // console.log('pluralize(this.props.entity)',pluralize(this.props.entity))
+            // console.log('response[pluralize(this.props.entity)]',response[pluralize(this.props.entity)])
           }
+          // console.debug('this.state.value',this.state.value);
+
           var updatedState = {};
           updatedState.selectedData = response[(0, _pluralize2.default)(_this3.props.entity)];
           updatedState.isSearching = false;
-          console.debug({ updatedState: updatedState, response: response });
+          // console.debug({updatedState,response});
           _this3.setState(updatedState);
         }, function (e) {
           _this3.props.errorNotification(e);
@@ -233,18 +235,25 @@ var ResponsiveDatalist = function (_Component) {
   }, {
     key: 'removeDatalistItem',
     value: function removeDatalistItem(index) {
+      var _this4 = this;
+
       // console.debug('clicked datalist',{index});
       // console.debug('clicked onclick',this.props);
+      // console.debug('this.state.value',this.state.value);
       if (this.props.multi) {
-        var newValue = [].concat(this.state.value);
+        var newValue = (0, _assign2.default)([], [].concat(this.state.value));
         newValue.splice(index, 1);
-        // let oldValue = this.state.value;
-        // console.debug({ oldValue, newValue });
+        var oldValue = this.state.value;
+        console.debug({ oldValue: oldValue, newValue: newValue });
         this.setState({
+          // value: [],
           value: newValue,
-          selectedData: false
+          selectedData: false,
+          update: new Date()
+        }, function () {
+          // this.props.onChange([]);
+          _this4.props.onChange(newValue);
         });
-        this.props.onChange(newValue);
       } else {
         var datum = undefined;
         this.setState({
@@ -258,7 +267,7 @@ var ResponsiveDatalist = function (_Component) {
   }, {
     key: 'render',
     value: function render() {
-      var _this4 = this;
+      var _this5 = this;
 
       var notificationStyle = {
         marginBottom: '5px',
@@ -276,15 +285,15 @@ var ResponsiveDatalist = function (_Component) {
             key: k,
             enableCloseButton: true,
             closeButtonProps: {
-              onClick: _this4.removeDatalistItem.bind(_this4, k),
+              onClick: _this5.removeDatalistItem.bind(_this5, k),
               style: notificationCloseStyle
             },
             style: notificationStyle
           },
-          _this4.getDatalistDisplay({
+          _this5.getDatalistDisplay({
             datum: selected,
-            displayField: _this4.props.displayField,
-            selector: _this4.props.selector
+            displayField: _this5.props.displayField,
+            selector: _this5.props.selector
           })
         );
       }) : null : this.state.value ? _react2.default.createElement(
@@ -321,28 +330,28 @@ var ResponsiveDatalist = function (_Component) {
               paddingRight: '0px'
             },
             onClick: function onClick() {
-              console.debug('clicked onclick', _this4.props);
-              if (_this4.props.multi) {
-                var newValue = _this4.state.value && Array.isArray(_this4.state.value) && _this4.state.value.length ? _this4.state.value.concat([datum]) : [datum];
-                console.debug({ newValue: newValue });
-                _this4.setState({
+              // console.debug('clicked onclick',this.props);
+              if (_this5.props.multi) {
+                var newValue = _this5.state.value && Array.isArray(_this5.state.value) && _this5.state.value.length ? _this5.state.value.concat([datum]) : [datum];
+                // console.debug({newValue})
+                _this5.setState({
                   value: newValue,
                   selectedData: false
                 });
-                _this4.props.onChange(newValue);
+                _this5.props.onChange(newValue);
               } else {
-                console.debug({ datum: datum });
-                _this4.setState({
+                // console.debug({datum})
+                _this5.setState({
                   value: datum,
                   selectedData: false
                 });
-                _this4.props.onChange(datum);
+                _this5.props.onChange(datum);
               }
             } }),
-          _this4.getDatalistDisplay({
+          _this5.getDatalistDisplay({
             datum: datum,
-            displayField: _this4.props.displayField,
-            selector: _this4.props.selector
+            displayField: _this5.props.displayField,
+            selector: _this5.props.selector
           })
         );
       }) : null;
@@ -356,7 +365,7 @@ var ResponsiveDatalist = function (_Component) {
             state: this.state.isSearching || undefined,
             onChange: this.onChangeHandler.bind(this),
             ref: function ref(input) {
-              _this4.textInput = input;
+              _this5.textInput = input;
             }
           }))
         ),

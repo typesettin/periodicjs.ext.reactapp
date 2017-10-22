@@ -101,6 +101,8 @@ class ResponsiveDatalist extends Component {
           if (response.data && response.result && response.status) {
             response = response.data;
           }
+          // console.debug('this.state.value',this.state.value);
+          
           let updatedState = {};
           updatedState.selectedData = response[pluralize(this.props.entity)];
           updatedState.isSearching = false;
@@ -154,15 +156,23 @@ class ResponsiveDatalist extends Component {
     </span>);
   }
   removeDatalistItem(index) {
-    if(this.props.multi){
-      let newValue = [].concat(this.state.value);
+    // console.debug('clicked datalist',{index});
+    // console.debug('clicked onclick',this.props);
+    // console.debug('this.state.value',this.state.value);
+    if (this.props.multi) {
+      let newValue = Object.assign([], [].concat(this.state.value));
       newValue.splice(index, 1);
+      let oldValue = this.state.value;
       this.setState({
-        value:newValue,
+        // value: [],
+        value: newValue,
         selectedData: false,
+        update: new Date()
+      }, () => {
+        // this.props.onChange([]);
+        this.props.onChange(newValue);
       });
-      this.props.onChange(newValue);
-    }    else {
+    } else {
       let datum = undefined;
       this.setState({
         value:datum,
@@ -236,19 +246,17 @@ class ResponsiveDatalist extends Component {
                 paddingRight: '0px',
               }}
               onClick={()=>{
-                console.debug('clicked onclick',this.props);
+                // console.debug('clicked onclick',this.props);
                 if(this.props.multi){
                   let newValue = (this.state.value && Array.isArray(this.state.value) && this.state.value.length)
                     ? this.state.value.concat([ this.getDatum(datum), ])
                     : [ this.getDatum(datum), ];
-                  console.debug({newValue})
                   this.setState({
                     value:newValue,
                     selectedData: false,
                   });
                   this.props.onChange(newValue);
                 } else {
-                  console.debug({datum},'this.getDatum(datum)',this.getDatum(datum))
                   this.setState({
                     value:this.getDatum(datum),
                     selectedData: false,

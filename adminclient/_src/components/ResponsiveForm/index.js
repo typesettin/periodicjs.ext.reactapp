@@ -94,6 +94,7 @@ var propTypes = {
   validations: _react.PropTypes.array,
   hiddenFields: _react.PropTypes.array,
   footergroups: _react.PropTypes.array,
+  onlyUpdateStateOnSubmit: _react.PropTypes.bool,
   formgroups: _react.PropTypes.oneOfType([_react.PropTypes.bool, _react.PropTypes.object])
 };
 
@@ -111,7 +112,8 @@ var defaultProps = {
   useLoadingButtons: false,
   includeFormDataOnLayout: false,
   onSubmit: 'func:this.props.debug',
-  formgroups: []
+  formgroups: [],
+  updateStateOnSubmit: false
 };
 
 function getFunctionFromProps(options) {
@@ -186,6 +188,15 @@ var ResponsiveForm = function (_Component) {
   }
 
   (0, _createClass3.default)(ResponsiveForm, [{
+    key: 'shouldComponentUpdate',
+    value: function shouldComponentUpdate(nextProps, nextState) {
+      if (this.props.onlyUpdateStateOnSubmit) {
+        return this.state.__formDataStatusDate !== nextState.__formDataStatusDate;
+      } else {
+        return true;
+      }
+    }
+  }, {
     key: 'componentWillReceiveProps',
     value: function componentWillReceiveProps(nextProps) {
       // console.warn('componentWillReceiveProps', nextProps);
@@ -211,7 +222,6 @@ var ResponsiveForm = function (_Component) {
     value: function submitForm() {
       var _this2 = this;
 
-      // console.log('this.props.blockPageUI', this.props.blockPageUI);
       if (this.props.blockPageUI) {
         this.props.setUILoadedState(false, this.props.blockPageUILayout);
       }
@@ -270,10 +280,16 @@ var ResponsiveForm = function (_Component) {
       }
       // console.debug({ submitFormData, formdata, validationErrors });
       if (validationErrors && (0, _keys2.default)(validationErrors).length < 1) {
-        this.setState({ formDataErrors: {} });
+        this.setState({
+          formDataErrors: {},
+          __formIsSubmitting: false
+        });
       }
       if (validationErrors && (0, _keys2.default)(validationErrors).length > 0) {
-        this.setState({ formDataErrors: validationErrors });
+        this.setState({
+          formDataErrors: validationErrors,
+          __formIsSubmitting: false
+        });
         console.debug('has errors', validationErrors, { submitFormData: submitFormData });
         if (this.props.blockPageUI) {
           this.props.setDebugUILoadedState(true);

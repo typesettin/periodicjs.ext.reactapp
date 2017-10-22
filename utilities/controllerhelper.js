@@ -47,7 +47,7 @@ let navigationSettings = {};
 let unauthenticatedManifestSettings = {};
 appSettings.theme = periodic.settings.container.name;
 appSettings.themename = periodic.settings.container.name;
-
+const util = require('util');
 
 /**
  * Used for reading the periodicjs.reactapp.json configuration as it can be either a json or js file
@@ -105,18 +105,20 @@ function pullManifestSettings(configuration, isUnauthenticated = false) {
  */
 function pullComponentSettings(refresh) {
   if (Object.keys(components).length && !refresh) return Promisie.resolve(components);
+  // console.log({components})
   return readAndStoreConfigurations([
-      handleAmbiguousExtensionType.bind(null, path.join(__dirname, '../periodicjs.reactapp.json')),
-      handleAmbiguousExtensionType.bind(null, path.join(__dirname, `../../../content/container/${appSettings.theme || appSettings.themename}/periodicjs.reactapp.json`)),
-    ])
+    handleAmbiguousExtensionType.bind(null, path.join(__dirname, '../periodicjs.reactapp.json')),
+    handleAmbiguousExtensionType.bind(null, path.join(__dirname, `../../../content/container/${appSettings.theme || appSettings.themename}/periodicjs.reactapp.json`)),
+  ])
     .then(results => {
+      // console.log('util.inspect(results,{depth:20})', util.inspect(results, { depth: 20 }));
       switch (Object.keys(results).length.toString()) {
-        case '1':
-          return Object.assign({}, (results[0]['periodicjs_ext_reactapp']) ? results[0]['periodicjs_ext_reactapp'].components : {});
-        case '2':
-          return Object.assign({}, (results[0]['periodicjs_ext_reactapp']) ? results[0]['periodicjs_ext_reactapp'].components : {}, (results[1]['periodicjs_ext_reactapp']) ? results[1]['periodicjs_ext_reactapp'].components : {});
-        default:
-          return {};
+      case '1':
+        return Object.assign({}, (results[0]['periodicjs_ext_reactapp']) ? results[0]['periodicjs_ext_reactapp'].components : {});
+      case '2':
+        return Object.assign({}, (results[0]['periodicjs_ext_reactapp']) ? results[0]['periodicjs_ext_reactapp'].components : {}, (results[1]['periodicjs_ext_reactapp']) ? results[1]['periodicjs_ext_reactapp'].components : {});
+      default:
+        return {};
       }
     })
     .then(results => {
@@ -153,15 +155,14 @@ function handleConfigurationReload(type) {
 function pullConfigurationSettings(reload) {
   if (Object.keys(manifestSettings).length && Object.keys(navigationSettings).length && Object.keys(unauthenticatedManifestSettings).length && !reload) return Promisie.resolve({ manifest: manifestSettings, navigation: navigationSettings, unauthenticated: unauthenticatedManifestSettings, });
   return Promisie.all(
-      [
-        Promise.resolve(Array.from(periodic.extensions.values())), // fs.readJson(path.join(__dirname, '../../../content/config/extensions.json')),
-        handleAmbiguousExtensionType(path.join(__dirname, '../periodicjs.reactapp.json')),
-      ]
+    [
+      Promise.resolve({ extensions:Array.from(periodic.extensions.values()).filter(ext => ext.periodic_config && ext.periodic_config.periodicjs_ext_reactapp), }), // fs.readJson(path.join(__dirname, '../../../content/config/extensions.json')),
+      handleAmbiguousExtensionType(path.join(__dirname, '../periodicjs.reactapp.json')),
+    ]
     )
     .then(configurationData => {
-      let [configuration, adminExtSettings, ] = configurationData;
+      let [configuration, adminExtSettings,] = configurationData;
       adminExtSettings = adminExtSettings['periodicjs_ext_reactapp'];
-      // console.log({ adminExtSettings })
       let operations = {};
       if (reload === 'manifest' || reload === true || !Object.keys(manifestSettings).length) {
         operations = Object.assign(operations, {
@@ -187,6 +188,8 @@ function pullConfigurationSettings(reload) {
     .then(finalizeSettingsWithTheme)
     .then(result => {
       let { manifest, navigation, unauthenticated_manifest, } = result;
+      // const util = require('util');
+      // console.log(util.inspect(navigation,{depth:20 }));
       manifestSettings = Object.assign(manifestSettings,
         (reload === 'manifest' || reload === true || !Object.keys(manifestSettings).length) ?
         manifest :
@@ -255,7 +258,8 @@ function readConfigurations(originalFilePath, configurationType) {
  * @return {Object[]}       An array of configuration objects for any successfully resolved file reads
  */
 function readAndStoreConfigurations(paths, type) {
-  paths = (Array.isArray(paths)) ? paths : [paths, ];
+  paths = (Array.isArray(paths)) ? paths : [paths,];
+  // console.log({ paths });
   let reads = paths.map(_path => {
     if (typeof _path === 'string') return readConfigurations.bind(null, _path, type);
     if (typeof _path === 'function') return _path;
@@ -286,7 +290,7 @@ function generateComponentOperations(data, defaults) {
   return Object.keys(data).reduce((result, key) => {
     if (typeof data[key] === 'string') {
       result[key] = function() {
-        return readAndStoreConfigurations([data[key], ], 'components')
+        return readAndStoreConfigurations([data[key],], 'components')
           .then(result => {
             if (result.length) return result[0];
             return Promisie.reject('unable to read property resetting to default value');
@@ -323,13 +327,16 @@ function assignComponentStatus(component) {
  * @return {Object}            Fully merged navigation object
  */
 function handleNavigationCompilation(navigation, isExtension) {
+  //  const util = require('util');
+  //     console.log(util.inspect(navigation,{depth:20 }));
+  // console.log({ isExtension})
   let extensionsNav = [{
     component: 'MenuLabel',
     children: 'Extensions',
   }, {
     component: 'MenuList',
     children: [],
-  }, ];
+  },];
   let subLinks = extensionsNav[1];
   let compiled = navigation.reduce((result, nav) => {
     result.wrapper = Object.assign(result.wrapper || {}, nav.wrapper);
@@ -352,7 +359,7 @@ function handleNavigationCompilation(navigation, isExtension) {
 function pullNavigationSettings(configuration) {
   let extensions = configuration.extensions || [];
   let filePaths = extensions.reduce((result, config) => {
-    if (config.enabled && config.periodicConfig && config.periodicConfig['periodicjs_ext_reactapp'] && config.periodicConfig['periodicjs_ext_reactapp'].navigation) result.push(config.periodicConfig['periodicjs_ext_reactapp'].navigation);
+    if (config.enabled && config.periodic_config && config.periodic_config['periodicjs_ext_reactapp'] && config.periodic_config['periodicjs_ext_reactapp'].navigation) result.push(config.periodic_config['periodicjs_ext_reactapp'].navigation);
     return result;
   }, []);
   return readAndStoreConfigurations(filePaths || [], 'navigation')

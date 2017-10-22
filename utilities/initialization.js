@@ -22,131 +22,131 @@ const configurationHelperText = {
       props: {
         style:styles.codeSample.codeEm,
       },
-      children:'//creating configurations'
+      children:'//creating configurations',
     },
     {
-      component:'br'
-    },
-    {
-      component: 'div',
-      children:'$ periodicjs cco [type] [name] [environment] [path/to/output/config/json]'
+      component:'br',
     },
     {
       component: 'div',
-      children:'$ periodicjs createConfig [type] [name] [environment] [path/to/output/config/json]'
+      children:'$ periodicjs cco [type] [name] [environment] [path/to/output/config/json]',
     },
     {
-      component:'br'
+      component: 'div',
+      children:'$ periodicjs createConfig [type] [name] [environment] [path/to/output/config/json]',
+    },
+    {
+      component:'br',
     },
     {
       component: 'em',
       props: {
         style:styles.codeSample.codeEm,
       },
-      children:'//types: app|application|ext|extension|ext-local|extension-local|con|container|con-local|container-local'
+      children:'//types: app|application|ext|extension|ext-local|extension-local|con|container|con-local|container-local',
     },
     {
-      component:'br'
-    },
-    {
-      component: 'em',
-      props: {
-        style:styles.codeSample.codeEm,
-      },
-      children:'//example creating configuration'
-    },
-    {
-      component:'br'
-    },
-    {
-      component: 'div',
-      children:'$ periodicjs createConfig ext periodicjs.ext.dbseed development ~/Desktop/dev.dbseed-config.json'
-    },
-    {
-      component:'br'
+      component:'br',
     },
     {
       component: 'em',
       props: {
         style:styles.codeSample.codeEm,
       },
-      children:'//add configuration'
+      children:'//example creating configuration',
     },
     {
-      component:'br'
-    },
-    {
-      component: 'div',
-      children:'$ periodicjs aco [path/to/configuration/json]'
+      component:'br',
     },
     {
       component: 'div',
-      children:'$ periodicjs addConfig [path/to/configuration/json]'
+      children:'$ periodicjs createConfig ext periodicjs.ext.dbseed development ~/Desktop/dev.dbseed-config.json',
     },
     {
-      component: 'div',
-      children:'$ node index.js --cli --crud=ext --crud_op=create --crud_arg=[path/to/configuration/json]'
-    },
-    {
-      component:'br'
+      component:'br',
     },
     {
       component: 'em',
       props: {
         style:styles.codeSample.codeEm,
       },
-      children:'//example manually adding configuration'
+      children:'//add configuration',
     },
     {
-      component:'br'
+      component:'br',
     },
     {
       component: 'div',
-      children:'$ periodicjs addConfig /home/myuser/documents/projects/appconfig-dev.json'
+      children:'$ periodicjs aco [path/to/configuration/json]',
     },
     {
-      component:'br'
+      component: 'div',
+      children:'$ periodicjs addConfig [path/to/configuration/json]',
+    },
+    {
+      component: 'div',
+      children:'$ node index.js --cli --crud=ext --crud_op=create --crud_arg=[path/to/configuration/json]',
+    },
+    {
+      component:'br',
     },
     {
       component: 'em',
       props: {
         style:styles.codeSample.codeEm,
       },
-      children:'//remove configuration'      
+      children:'//example manually adding configuration',
     },
     {
-      component:'br'
-    },
-    {
-      component: 'div',
-      children:'$ periodicjs rco [id-of-configuration-doc]'
+      component:'br',
     },
     {
       component: 'div',
-      children:'$ periodicjs removeConfig [id-of-configuration-doc]'
+      children:'$ periodicjs addConfig /home/myuser/documents/projects/appconfig-dev.json',
     },
     {
-      component: 'div',
-      children:'$ node index.js --cli --crud=ext --crud_op=remove --crud_arg=[id-of-configuration-doc]'
-    },
-    {
-      component:'br'
+      component:'br',
     },
     {
       component: 'em',
       props: {
         style:styles.codeSample.codeEm,
       },
-      children:'//example manually removing bdb7aa6485aebe8ac81992def07c6f96'      
+      children:'//remove configuration',      
     },
     {
-      component:'br'
+      component:'br',
     },
     {
       component: 'div',
-      children:'$ periodicjs removeConfig bdb7aa6485aebe8ac81992def07c6f96'
+      children:'$ periodicjs rco [id-of-configuration-doc]',
     },
-  ]
+    {
+      component: 'div',
+      children:'$ periodicjs removeConfig [id-of-configuration-doc]',
+    },
+    {
+      component: 'div',
+      children:'$ node index.js --cli --crud=ext --crud_op=remove --crud_arg=[id-of-configuration-doc]',
+    },
+    {
+      component:'br',
+    },
+    {
+      component: 'em',
+      props: {
+        style:styles.codeSample.codeEm,
+      },
+      children:'//example manually removing bdb7aa6485aebe8ac81992def07c6f96',      
+    },
+    {
+      component:'br',
+    },
+    {
+      component: 'div',
+      children:'$ periodicjs removeConfig bdb7aa6485aebe8ac81992def07c6f96',
+    },
+  ],
 };
 const extensionHelperText = {
   component: 'code',
@@ -159,91 +159,91 @@ const extensionHelperText = {
       props: {
         style:styles.codeSample.codeEm,
       },
-      children:'//add extension'
+      children:'//add extension',
     },
     {
-      component:'br'
-    },
-    {
-      component: 'div',
-      children:'$ periodicjs aex [name-of-extension]'
+      component:'br',
     },
     {
       component: 'div',
-      children:'$ periodicjs addExtension [name-of-extension]'
+      children:'$ periodicjs aex [name-of-extension]',
     },
     {
       component: 'div',
-      children:'$ node index.js --cli --crud=ext --crud_op=create --crud_arg=[name-of-extension]'
+      children:'$ periodicjs addExtension [name-of-extension]',
     },
     {
-      component:'br'
+      component: 'div',
+      children:'$ node index.js --cli --crud=ext --crud_op=create --crud_arg=[name-of-extension]',
+    },
+    {
+      component:'br',
     },
     {
       component: 'em',
       props: {
         style:styles.codeSample.codeEm,
       },
-      children:'//example manually adding periodicjs.ext.passport'
+      children:'//example manually adding periodicjs.ext.passport',
     },
     {
-      component:'br'
-    },
-    {
-      component: 'div',
-      children:'$ npm i periodicjs.ext.passport'
+      component:'br',
     },
     {
       component: 'div',
-      children:'$ periodicjs addExtension periodicjs.ext.passport'
+      children:'$ npm i periodicjs.ext.passport',
     },
     {
-      component:'br'
+      component: 'div',
+      children:'$ periodicjs addExtension periodicjs.ext.passport',
+    },
+    {
+      component:'br',
     },
     {
       component: 'em',
       props: {
         style:styles.codeSample.codeEm,
       },
-      children:'//remove extension'
+      children:'//remove extension',
     },
     {
-      component:'br'
-    },
-    {
-      component: 'div',
-      children:'$ periodicjs rex [name-of-extension]'
+      component:'br',
     },
     {
       component: 'div',
-      children:'$ periodicjs removeExtension [name-of-extension]'
+      children:'$ periodicjs rex [name-of-extension]',
     },
     {
       component: 'div',
-      children:'$ node index.js --cli --crud=ext --crud_op=remove --crud_arg=[name-of-extension]'
+      children:'$ periodicjs removeExtension [name-of-extension]',
     },
     {
-      component:'br'
+      component: 'div',
+      children:'$ node index.js --cli --crud=ext --crud_op=remove --crud_arg=[name-of-extension]',
+    },
+    {
+      component:'br',
     },
     {
       component: 'em',
       props: {
         style:styles.codeSample.codeEm,
       },
-      children:'//example manually removing periodicjs.ext.passport'
+      children:'//example manually removing periodicjs.ext.passport',
     },
     {
-      component:'br'
-    },
-    {
-      component: 'div',
-      children:'$ periodicjs removeExtension periodicjs.ext.passport'
+      component:'br',
     },
     {
       component: 'div',
-      children:'$ npm rm periodicjs.ext.passport'
+      children:'$ periodicjs removeExtension periodicjs.ext.passport',
     },
-  ]
+    {
+      component: 'div',
+      children:'$ npm rm periodicjs.ext.passport',
+    },
+  ],
 };
 
 function getDefaultIndexTableFields() {
@@ -454,7 +454,25 @@ function getDefaultIndexTableFields() {
       data_tables.tableCreatedDate({}),
       data_tables.tableOptions({ adminRoute, schemaName: 'extension', }),
     ],
-  }
+  };
+}
+
+function getAdditionalJSFiles() {
+  const extensions = Array.from(periodic.extensions.values());
+  const additional_files = extensions.reduce((result, ext) => { 
+    if (ext.periodic_config && ext.periodic_config.additional_footer_js && Array.isArray(ext.periodic_config.additional_footer_js)) {
+      result.footer.push(...ext.periodic_config.additional_footer_js);
+    }
+    if (ext.periodic_config && ext.periodic_config.additional_header_js && Array.isArray(ext.periodic_config.additional_header_js)) {
+      result.header.push(...ext.periodic_config.additional_header_js);
+    }
+    return result;
+  },
+    {
+      header: [],
+      footer: [],
+    });
+  return additional_files;
 }
 
 function setInitialIndexTable() {
@@ -471,6 +489,7 @@ function setInitialIndexTable() {
       extension: extensionHelperText,
     });
   // console.log('getDefaultIndexTableFields()', getDefaultIndexTableFields())
+  periodic.settings.extensions[ 'periodicjs.ext.reactapp' ].additional_js_files = Object.assign({}, periodic.settings.extensions[ 'periodicjs.ext.reactapp' ].additional_js_files, getAdditionalJSFiles());
   if (reactAppConfig && reactAppConfig.includeCoreData && reactAppConfig.includeCoreData.manifest) {
     let task = setImmediate(() => {
       controllerhelper.setCoreDataConfigurations();
@@ -496,7 +515,7 @@ function init() {
     }),
   ])
     .then(results => {
-      const [dbReactAppConfig, dbReactAppClient, ] = results;
+      const [dbReactAppConfig, dbReactAppClient,] = results;
       // console.log({ dbReactAppConfig, dbReactAppClient })
       initialReactAppConfig = dbReactAppConfig;
       intialReactAppClient = dbReactAppClient;
@@ -560,7 +579,7 @@ function init() {
     })
     .then(configStatus => {
       setInitialIndexTable();
-      logger.silly({ configStatus });
+      logger.silly({ configStatus, });
     })
     .catch(logger.error);
 }
@@ -570,5 +589,6 @@ module.exports = {
   extensionHelperText,
   getDefaultIndexTableFields,
   setInitialIndexTable,
+  getAdditionalJSFiles,
   init,
 };

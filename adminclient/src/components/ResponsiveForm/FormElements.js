@@ -341,7 +341,6 @@ export function getFormDatalist(options){
   {getFormLabel(formElement)}  
     <ResponsiveDatalist {...passedProps}
       onChange={(newvalue)=>{
-        // console.debug({ newvalue });
         let updatedStateProp = {};
         updatedStateProp[ formElement.name ] = newvalue;
         this.setState(updatedStateProp);
@@ -389,13 +388,39 @@ export function getFormMaskedInput(options) {
   formElement.customErrorProps = (formElement.customErrorProps) ? Object.assign({}, { marginTop: '6px' }, formElement.customErrorProps) : {marginTop: '6px'};
 
   let mask = [];
-  if (formElement.createNumberMask && passableProps.mask.indexOf('func:window') !== -1 && typeof window[ passableProps.mask.replace('func:window.', '') ] === 'function') {
+  function maskFunction(maskProp) {
+    return function () {
+      // return [ '(', /[1-9]/, /\d/, /\d/, ')', '\u2000', /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/ ];
+      if (Array.isArray(maskProp)) {
+        const maskArray = maskProp.map(maskItem => {
+          if (maskItem.charAt(0) === '/' && maskItem.charAt(maskItem.length - 1) === '/') {
+            if (maskItem.charAt(1) === '[') {
+              return new RegExp(maskItem.slice(1, maskItem.length - 1));
+            } else {
+              return new RegExp(`\\${maskItem.slice(1, maskItem.length - 1)}`);
+            }
+          } else {
+            return maskItem;
+          }
+        });
+        return maskArray;
+      } else {
+        return maskProp;
+      }
+    }
+  }
+  if (formElement.createNumberMask && typeof passableProps.mask ==='string' && passableProps.mask.indexOf('func:window') !== -1 && typeof window[ passableProps.mask.replace('func:window.', '') ] === 'function') {
     let numberMaskConfig = (typeof window[ passableProps.mask.replace('func:window.', '') ].call(this, formElement) === 'object') ? window[ passableProps.mask.replace('func:window.', '') ].call(this, formElement) : {};
     mask = createNumberMask(numberMaskConfig);
-  } else if (passableProps.mask.indexOf('func:window') !== -1 && typeof window[ passableProps.mask.replace('func:window.', '') ] === 'function') {
+  } else if (typeof passableProps.mask ==='string' && passableProps.mask.indexOf('func:window') !== -1 && typeof window[ passableProps.mask.replace('func:window.', '') ] === 'function') {
     mask = window[ passableProps.mask.replace('func:window.', '') ].bind(this, formElement);
+  } else if (formElement.createNumberMask) {
+    // console.log('passableProps.numberMask',passableProps.numberMask)
+    mask = createNumberMask(maskFunction(passableProps.mask));
+  } else if (passableProps.mask) {
+    mask = maskFunction(passableProps.mask);
   }
-
+  // console.log({mask})
   let wrapperProps = Object.assign({
     className: '__re-bulma_control',
   }, formElement.wrapperProps);
