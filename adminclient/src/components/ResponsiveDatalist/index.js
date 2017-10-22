@@ -76,7 +76,7 @@ class ResponsiveDatalist extends Component {
   }
 
   filterStaticData(options) {
-    return (this.props.returnFormOptionsValue)? this.props.datalistdata.filter(item => (item.value.indexOf(options.search) > -1)) : this.props.datalistdata.filter(item => (item[this.props.field].indexOf(options.search) > -1));
+    return (this.props.returnFormOptionsValue)? this.props.datalistdata.filter(item => (item.label.indexOf(options.search) > -1)) : this.props.datalistdata.filter(item => (item[this.props.field].indexOf(options.search) > -1));
   }
 
   updateDataList(options) {
