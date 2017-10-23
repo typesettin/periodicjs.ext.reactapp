@@ -406,6 +406,7 @@ var user = {
       // console.log('state.manifest.containers[/mfa]', state.manifest.containers[ '/mfa' ]);
       // console.log('state.manifest.containers[${state.settings.adminPath}/mfa]', state.manifest.containers[ `${state.settings.adminPath}/mfa` ]);
       if (state.settings.auth.enforce_mfa || extensionattributes && extensionattributes.login_mfa) {
+        //passport_mfa
         if (state.user.isMFAAuthenticated) {
           if (!noRedirect) {
             if (state.user.isLoggedIn && returnUrl) dispatch((0, _reactRouterRedux.push)(returnUrl));else dispatch((0, _reactRouterRedux.push)(state.settings.auth.logged_in_homepage));
