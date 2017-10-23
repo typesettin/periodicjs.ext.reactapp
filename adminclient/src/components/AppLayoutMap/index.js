@@ -39,9 +39,9 @@ function getFunctionFromProps(options) {
   const { propFunc } = options;
 
   if (typeof propFunc === 'string' && propFunc.indexOf('func:this.props.reduxRouter') !== -1) {
-    return this.props.reduxRouter[ this.props.replace('func:this.props.reduxRouter.', '') ];
+    return this.props.reduxRouter[ propFunc.replace('func:this.props.reduxRouter.', '') ];
   } else if (typeof propFunc === 'string' && propFunc.indexOf('func:this.props') !== -1) {
-    return this.props[ this.props.replace('func:this.props.', '') ].bind(this);
+    return this.props[ propFunc.replace('func:this.props.', '') ].bind(this);
   } else if (typeof propFunc === 'string' && propFunc.indexOf('func:window') !== -1 && typeof window[propFunc.replace('func:window.', '')] ==='function') {
     return window[ propFunc.replace('func:window.', '') ].bind(this);
   } else if(typeof this.props[propFunc] ==='function') {
