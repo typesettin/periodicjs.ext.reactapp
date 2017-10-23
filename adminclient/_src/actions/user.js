@@ -405,7 +405,7 @@ var user = {
       // console.log('state.user.isMFAAuthenticated', state.user.isMFAAuthenticated);
       // console.log('state.manifest.containers[/mfa]', state.manifest.containers[ '/mfa' ]);
       // console.log('state.manifest.containers[${state.settings.adminPath}/mfa]', state.manifest.containers[ `${state.settings.adminPath}/mfa` ]);
-      if (state.settings.auth.enforce_mfa || extensionattributes && extensionattributes.login_mfa) {
+      if (state.settings.auth.enforce_mfa || extensionattributes && extensionattributes.passport_mfa) {
         //passport_mfa
         if (state.user.isMFAAuthenticated) {
           if (!noRedirect) {
