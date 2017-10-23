@@ -325,14 +325,59 @@ module.exports = {
           },
         },
         // props: { size: 'isFullheight', },
-        children: [ {
+        children: [{
           component: 'HeroBody',
           props:{},
           children: [
             {
               component: 'Container',
               props:{},
-              children:[
+              children: [
+                {
+                  component: 'ResponsiveTabs',
+                  props: {
+                    customTabLayout: {
+                      component:'a',
+                      thisprops: {
+                        _children:['tab','name']
+                      },
+                    },
+                    tabs: [
+                      {
+                        name: 'Customers',
+                        layout: {
+                          component: 'Hero',
+                          props: {
+                            color: 'isWhite',
+                            isBold:true,
+                          },
+                          children: [
+                            {
+                              component: 'HeroBody',
+                              children:'These are customers',
+                            },
+                          ],
+                        },
+                      },
+                      {
+                        name: 'Applications',
+                        layout: {
+                          component: 'Hero',
+                          props: {
+                            color: 'isLight',
+                            isBold:true,
+                          },
+                          children: [
+                            {
+                              component: 'HeroBody',
+                              children:'These are Applications',
+                            },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
                 { 
                   component: 'ResponsiveForm',
                   // thisprops: {
@@ -407,7 +452,7 @@ module.exports = {
                             value:{
                               component:'div',
                               thisprops:{
-                                children:['formdata', 'questions', 'question', '0', 'text', 'statement',],
+                                children:['formdata', 'questions', 'question', '0', 'text', 'statement', ],
                               },
                             },
                           },
@@ -495,7 +540,7 @@ module.exports = {
                             value:{
                               component:'div',
                               thisprops:{
-                                children:['formdata', 'questions', 'question', '1', 'text', 'statement',],
+                                children:['formdata', 'questions', 'question', '1', 'text', 'statement', ],
                               },
                             },
                           },
@@ -582,7 +627,7 @@ module.exports = {
                             value:{
                               component:'div',
                               thisprops:{
-                                children:['formdata', 'questions', 'question', '2', 'text', 'statement',],
+                                children:['formdata', 'questions', 'question', '2', 'text', 'statement', ],
                               },
                             },
                           },
@@ -668,7 +713,7 @@ module.exports = {
                             value:{
                               component:'div',
                               thisprops:{
-                                children:['formdata', 'questions', 'question', '3', 'text', 'statement',],
+                                children:['formdata', 'questions', 'question', '3', 'text', 'statement', ],
                               },
                             },
                           },
@@ -754,7 +799,7 @@ module.exports = {
                             value:{
                               component:'div',
                               thisprops:{
-                                children:['formdata', 'questions', 'question', '4', 'text', 'statement',],
+                                children:['formdata', 'questions', 'question', '4', 'text', 'statement', ],
                               },
                             },
                           },
@@ -876,7 +921,7 @@ module.exports = {
                                 },
                               },
                               thisprops: {
-                                formdata:['formdata', ],
+                                formdata:['formdata',],
                               },
                             },
                           },

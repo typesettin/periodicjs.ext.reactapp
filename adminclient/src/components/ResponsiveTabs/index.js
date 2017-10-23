@@ -1,5 +1,5 @@
 import React, { Component, PropTypes, } from 'react';
-import { Tabs, TabGroup, Tab, Button, Select, Label, } from 're-bulma';
+import { Tabs, TabGroup, Tab, Button, Select, Label, Columns, Column } from 're-bulma';
 import styles from '../../styles';
 import { getRenderedComponent, } from '../AppLayoutMap';
 
@@ -7,6 +7,7 @@ const propTypes = {
   tabsType: PropTypes.string,
   isFullwidth: PropTypes.bool.isRequired,
   isButton: PropTypes.bool,
+  vertical: PropTypes.bool,
   tabgroupProps: PropTypes.object,
   tabsProps: PropTypes.shape({
     tabStyle: PropTypes.oneOf(['isToggle', 'isBoxed', ]),
@@ -19,11 +20,31 @@ const defaultProps = {
   tabsType: 'pageToggle',
   isFullwidth: true,
   isButton: true,
+  vertical: false,
   tabgroupProps: {},
   tabsProps: {
     alignment: 'isCentered',
     size: 'isMedium',
   },  
+  tabContainer: {
+    isGapless: true,
+    style: {
+      height:'100%'
+    }
+  },
+  verticalTabTabsContainer: {
+    size: 'is2',
+    style: {
+      // height:'100%',
+      flexDirection:'row',
+    }
+  },
+  verticalTabContentContainer: {
+    size: 'is10',
+    style: {
+      height:'100%',
+    }
+  }
 };
 
 class ResponsiveTabs extends Component {
@@ -42,7 +63,6 @@ class ResponsiveTabs extends Component {
 
     this.getRenderedComponent = getRenderedComponent.bind(this);
   }
-
   changeTab(tab) {
     if(this.state.tabsType === 'select'){
       tab = this.state.tabs[Number(tab)];
@@ -64,19 +84,31 @@ class ResponsiveTabs extends Component {
     // console.log('onChangeFunc',onChangeFunc)
     onChangeFunc(tab);
 
-  }
-  
+  } 
   componentWillMount() {
     let defaultLayout = (this.state.currentTab.layout && (Object.keys(this.state.currentTab.layout).length >= 1)) ? this.getRenderedComponent(this.state.currentTab.layout) : '';
     this.setState({
       currentLayout: defaultLayout,
     });
   }
-  
-
   render() {
     let TabSelector = null;
-    if (this.state.tabsType === 'pageToggle') { 
+    if (this.props.customTabLayout) {
+      TabSelector = this.state.tabs.map((tab, i) => { 
+        let active = (tab.name === this.state.currentTab.name) ? true : false;
+        let buttonStyle = (tab.name === this.state.currentTab.name) ? styles.activeButton : {};
+        let customTab = Object.assign({}, this.props.customTabLayout);
+        customTab.props = Object.assign({
+          style:buttonStyle
+        }, customTab.props, {
+          onClick: () => this.changeTab(tab),
+          isActive: { active },
+          key: `${tab.name}-${i}`,
+          tab,
+        });
+        return this.getRenderedComponent(customTab);
+      });
+    } else if (this.state.tabsType === 'pageToggle') { 
       TabSelector = this.state.tabs.map((tab, i) => {
         let active = (tab.name === this.state.currentTab.name) ? true : false;
         let buttonStyle = (tab.name === this.state.currentTab.name) ? styles.activeButton : {};
@@ -87,8 +119,7 @@ class ResponsiveTabs extends Component {
           <Tab {...tab.tabProps} key={`${tab.name}-${i}`} isActive={active} onClick={() => this.changeTab(tab)}>{tab.name}</Tab>
         );
       });
-    }
-    if (this.state.tabsType === 'select') { 
+    } else if (this.state.tabsType === 'select') { 
       TabSelector = (<Select { ...this.state.tabgroupProps }
         onChange={(e) => { this.changeTab(e.target.value) }}>
         {this.props.tabs.map((tab, idx) => {
@@ -97,8 +128,7 @@ class ResponsiveTabs extends Component {
           </option>
         })}
       </Select>);
-    }
-    if (this.state.tabsType === 'navBar') {
+    } else if (this.state.tabsType === 'navBar') {
       TabSelector = this.state.tabs.map((tab, idx) => {
         let active = (tab.name === this.state.currentTab.name) ? true : false;
         return (
@@ -106,20 +136,59 @@ class ResponsiveTabs extends Component {
         );
       });
     }
-
-    return (
-      <div {...this.props.tabContainer}>
-        <Tabs {...this.state.tabsProps}>
-          <TabGroup { ...this.state.tabgroupProps }>
-            {(this.props.tabLabel)
-              ? <Label {...this.props.tabLabelProps}>{this.props.tabLabel}</Label>
-              : null}  
-            {TabSelector}
-          </TabGroup>
-        </Tabs>
-        {this.state.currentLayout}
-      </div>
-    );
+    
+    return (this.props.vertical)
+      ? (
+        <Columns {...this.props.tabContainer}>
+          <Column {...this.props.verticalTabTabsContainer}>
+            <Tabs {...this.state.tabsProps} style={{
+              height: '100%',
+              flexWrap:'wrap',
+            }}>
+              {
+                (this.props.customTabLayout)
+                ? (<div  { ...this.state.tabgroupProps }  style={{
+                  flexWrap: 'wrap',
+                  flexDirection:'row',
+                  flex:1,
+                }}>
+                  {(this.props.tabLabel)
+                    ? <Label {...this.props.tabLabelProps}>{this.props.tabLabel}</Label>
+                    : null}  
+                  {TabSelector}
+                </div>)
+                : (<ul  { ...this.state.tabgroupProps }  style={{
+                  flexWrap: 'wrap',
+                  flexDirection:'row',
+                  flex:1,
+                }}>
+                  {(this.props.tabLabel)
+                    ? <Label {...this.props.tabLabelProps}>{this.props.tabLabel}</Label>
+                    : null}  
+                  {TabSelector}
+                </ul>)
+              }  
+              
+            </Tabs>
+          </Column>  
+          <Column {...this.props.verticalTabContentContainer}>
+            {this.state.currentLayout}
+          </Column>  
+        </Columns>
+      )
+      : (
+        <div {...this.props.tabContainer}>
+          <Tabs {...this.state.tabsProps}>
+            <TabGroup { ...this.state.tabgroupProps }>
+              {(this.props.tabLabel)
+                ? <Label {...this.props.tabLabelProps}>{this.props.tabLabel}</Label>
+                : null}  
+              {TabSelector}
+            </TabGroup>
+          </Tabs>
+          {this.state.currentLayout}
+        </div>
+      );
   }
 }
 
