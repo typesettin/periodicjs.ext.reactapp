@@ -347,19 +347,25 @@ const user = {
       console.debug({ formReturnURL, returnUrl, });
       // console.log('state.settings.auth', state.settings.auth);
       // console.log('state.user.isMFAAuthenticated', state.user.isMFAAuthenticated);
+      // console.log({ extensionattributes });
+      // console.log('state.manifest.containers[`${state.settings.adminPath}/mfa`]',state.manifest.containers[`${state.settings.adminPath}/mfa`])
       // console.log('state.manifest.containers[/mfa]', state.manifest.containers[ '/mfa' ]);
       // console.log('state.manifest.containers[${state.settings.adminPath}/mfa]', state.manifest.containers[ `${state.settings.adminPath}/mfa` ]);
       if (state.settings.auth.enforce_mfa || (extensionattributes && extensionattributes.passport_mfa)) { //passport_mfa
+       
         if (state.user.isMFAAuthenticated) {
           if (!noRedirect) {
             if (state.user.isLoggedIn && returnUrl) dispatch(push(returnUrl));
             else dispatch(push(state.settings.auth.logged_in_homepage));
           }
           return true;
-        } else {
+        }  else {
           if (!state.manifest.containers || (state.manifest.containers && !state.manifest.containers['/mfa']  && !state.manifest.containers[`${state.settings.adminPath}/mfa`])) {
             dispatch(notification.errorNotification(new Error('Multi-Factor Authentication not Properly Configured')));
-            this.logoutUser()(dispatch, getState);
+            let t = setTimeout(() => { 
+              this.logoutUser()(dispatch, getState);
+              clearTimeout(t);
+            },2000)
           } else {
             // console.log('utilities.getMFAPath(state)')
             let mfapath = utilities.getMFAPath(state);
@@ -372,7 +378,7 @@ const user = {
             
             dispatch(push(`${mfapath}${(returnUrl) ? '?return_url=' + returnUrl : ''}`));
           }
-          return false;
+          return false;         
         }
       } else {
         if (!noRedirect) {
