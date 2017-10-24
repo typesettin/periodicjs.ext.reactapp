@@ -191,6 +191,70 @@ function getTitleArrow() {
   ];
 }
 
+function getButton(options = {}) {
+  const { action, props, content, button, onclickProps, style, onclickAddProp, } = options;
+
+  const actionType = {
+    link: (action && action.type==='link')
+      ? {
+        onClick: 'func:this.props.reduxRouter.push',
+        onclickProps: action.link,
+        // style: {
+        //   marginLeft: '10px',
+        // },
+        buttonProps: {
+          color: 'isPrimary',
+        },
+      }
+      : undefined,
+    fetch: (action && action.type === 'fetch')
+      ? {
+        buttonProps: {
+          color: (action.method==='DELETE')?'isDanger':'isPrimary',
+          buttonStyle:'isOutlined',              
+        },
+        onClick: 'func:this.props.fetchAction',
+        onclickBaseUrl: action.pathname,
+        onclickLinkParams: action.pathParams,
+        fetchProps: {
+          method: action.method,
+        },
+        'successProps':{
+          success:true,
+          successCallback: 'func:this.props.reduxRouter.push',
+          successProps: action.callbackRedirect,
+        },
+        confirmModal: action.confirm,
+      }
+      : undefined,
+    modal: (action && action.type === 'modal')
+      ? {
+        onClick: 'func:this.props.createModal',
+        onclickProps: Object.assign({}, {
+          title: options.modalTitle,
+          pathname: action.pathname,
+          // animation:'fadeInDown',
+        }, onclickProps),
+        style,
+        onclickAddProp,
+        buttonProps: (button)
+          ? Object.assign({}, {
+            color: 'isPrimary',
+            buttonStyle:'isOutlined',
+          }, button.props)
+          : undefined,
+        // aProps: {},
+      }
+      : undefined,
+  }
+  const returnButton = Object.assign({
+    component: 'ResponsiveButton',
+    props: Object.assign({}, actionType[ action.type ], props),
+    children: content,
+  }, options.responsiveButton);
+  // console.log({ returnButton });
+  return returnButton;
+}
 
 module.exports = {
   idActionParams,
@@ -198,4 +262,5 @@ module.exports = {
   getPageTitle,
   getTitlePrefix,
   getTitleArrow,
+  getButton,
 };

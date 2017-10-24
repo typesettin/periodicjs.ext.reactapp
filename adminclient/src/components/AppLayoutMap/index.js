@@ -166,10 +166,10 @@ export function getRenderedComponent(componentObject, resources, debug) {
       // console.debug({ comparisons });
       // console.debug(comparisons.filter(comp => comp === true).length);
     }
-    if (componentObject.comparisonprops && comparisons.filter(comp => comp === true).length!==comparisons.length) { 
+    if (componentObject.comparisonprops && comparisons.filter(comp => comp === true).length!==comparisons.length && (!componentObject.comparisonorprops || (componentObject.comparisonorprops && comparisons.filter(comp => comp === true).length===0))) { 
       return null;
     } else if (typeof componentObject.conditionalprops !== 'undefined'
-      && !Object.keys(utilities.traverse(componentObject.conditionalprops, renderedCompProps)).filter(key => utilities.traverse(componentObject.conditionalprops, renderedCompProps)[ key ]).length) {
+      && !Object.keys(utilities.traverse(componentObject.conditionalprops, renderedCompProps)).filter(key => utilities.traverse(componentObject.conditionalprops, renderedCompProps)[ key ]).length && (!componentObject.comparisonorprops || (componentObject.comparisonorprops && comparisons.filter(comp => comp === true).length===0))) {
       return null;
     } else {
       return createElement(

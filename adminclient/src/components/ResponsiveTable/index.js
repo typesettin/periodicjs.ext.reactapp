@@ -462,7 +462,7 @@ class ResponsiveTable extends Component {
         returnValue = value.toString();
       }
       if (header && header.customCellLayout) {
-        header.customCellLayout.props = Object.assign({}, header.customCellLayout.props, {row:value});
+        header.customCellLayout.props = Object.assign({}, header.customCellLayout.props, {cell:value,row});
         return this.getRenderedComponent(header.customCellLayout);
       }
       if (header && header.tagifyArray) {
