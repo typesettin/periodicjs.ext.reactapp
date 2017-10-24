@@ -488,6 +488,9 @@ function setInitialIndexTable() {
       configuration: configurationHelperText,
       extension: extensionHelperText,
     });
+  
+    // settings.auth.enforce_mfa
+  // console.log("periodic.settings.extensions[ 'periodicjs.ext.reactapp' ].auth", periodic.settings.extensions[ 'periodicjs.ext.reactapp' ].auth);
   // console.log('getDefaultIndexTableFields()', getDefaultIndexTableFields())
   periodic.settings.extensions[ 'periodicjs.ext.reactapp' ].additional_js_files = Object.assign({}, periodic.settings.extensions[ 'periodicjs.ext.reactapp' ].additional_js_files, getAdditionalJSFiles());
   if (reactAppConfig && reactAppConfig.includeCoreData && reactAppConfig.includeCoreData.manifest) {
