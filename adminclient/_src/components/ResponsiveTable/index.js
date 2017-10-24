@@ -599,7 +599,7 @@ var ResponsiveTable = function (_Component) {
           returnValue = value.toString();
         }
         if (header && header.customCellLayout) {
-          header.customCellLayout.props = (0, _assign2.default)({}, header.customCellLayout.props, { row: value });
+          header.customCellLayout.props = (0, _assign2.default)({}, header.customCellLayout.props, { cell: value, row: row });
           return this.getRenderedComponent(header.customCellLayout);
         }
         if (header && header.tagifyArray) {

@@ -287,11 +287,15 @@ function getRenderedComponent(componentObject, resources, debug) {
     }
     if (componentObject.comparisonprops && comparisons.filter(function (comp) {
       return comp === true;
-    }).length !== comparisons.length) {
+    }).length !== comparisons.length && (!componentObject.comparisonorprops || componentObject.comparisonorprops && comparisons.filter(function (comp) {
+      return comp === true;
+    }).length === 0)) {
       return null;
     } else if (typeof componentObject.conditionalprops !== 'undefined' && !(0, _keys2.default)(_util2.default.traverse(componentObject.conditionalprops, renderedCompProps)).filter(function (key) {
       return _util2.default.traverse(componentObject.conditionalprops, renderedCompProps)[key];
-    }).length) {
+    }).length && (!componentObject.comparisonorprops || componentObject.comparisonorprops && comparisons.filter(function (comp) {
+      return comp === true;
+    }).length === 0)) {
       return null;
     } else {
       return (0, _react.createElement)(

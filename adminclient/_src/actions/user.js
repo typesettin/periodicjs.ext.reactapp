@@ -403,10 +403,13 @@ var user = {
       console.debug({ formReturnURL: formReturnURL, returnUrl: returnUrl });
       // console.log('state.settings.auth', state.settings.auth);
       // console.log('state.user.isMFAAuthenticated', state.user.isMFAAuthenticated);
+      // console.log({ extensionattributes });
+      // console.log('state.manifest.containers[`${state.settings.adminPath}/mfa`]',state.manifest.containers[`${state.settings.adminPath}/mfa`])
       // console.log('state.manifest.containers[/mfa]', state.manifest.containers[ '/mfa' ]);
       // console.log('state.manifest.containers[${state.settings.adminPath}/mfa]', state.manifest.containers[ `${state.settings.adminPath}/mfa` ]);
       if (state.settings.auth.enforce_mfa || extensionattributes && extensionattributes.passport_mfa) {
         //passport_mfa
+
         if (state.user.isMFAAuthenticated) {
           if (!noRedirect) {
             if (state.user.isLoggedIn && returnUrl) dispatch((0, _reactRouterRedux.push)(returnUrl));else dispatch((0, _reactRouterRedux.push)(state.settings.auth.logged_in_homepage));
@@ -415,7 +418,10 @@ var user = {
         } else {
           if (!state.manifest.containers || state.manifest.containers && !state.manifest.containers['/mfa'] && !state.manifest.containers[state.settings.adminPath + '/mfa']) {
             dispatch(_notification2.default.errorNotification(new Error('Multi-Factor Authentication not Properly Configured')));
-            _this6.logoutUser()(dispatch, getState);
+            var t = setTimeout(function () {
+              _this6.logoutUser()(dispatch, getState);
+              clearTimeout(t);
+            }, 2000);
           } else {
             // console.log('utilities.getMFAPath(state)')
             var mfapath = _util2.default.getMFAPath(state);
