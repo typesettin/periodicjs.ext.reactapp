@@ -43,10 +43,20 @@ const buildDetail = function(options) {
         successCallback: (newEntity) ? 'func:this.props.reduxRouter.push' : undefined,
         successProps: (newEntity) ? `${schemaNameIndex}` : undefined,
       },
-      'hiddenFields': [{
-        'form_name': '_id',
-        'form_val': '_id',
-      }, ],
+      'hiddenFields': [
+        {
+          'form_name': '_id',
+          'form_val': '_id',
+        },
+        {
+          form_val: '$loki',
+          form_name: '$loki',
+        },
+        {
+          form_val: 'meta',
+          form_name: 'meta',
+        },
+      ],
       flattenFormData: true,
       flattenDataOptions: {
         maxDepth: 2,

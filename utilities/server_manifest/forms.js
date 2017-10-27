@@ -124,7 +124,16 @@ function createForm(options) {
     useLoadingButtons:true,
     blockPageUI: options.loadingScreen,
     blockPageUILayout: options.loadingScreenLayout,
-    hiddenFields: options.hiddenFields,
+    hiddenFields: [
+      {
+        form_val: '$loki',
+        form_name: '$loki',
+      },
+      {
+        form_val: 'meta',
+        form_name: 'meta',
+      },
+    ].concat(options.hiddenFields||[]),
     onSubmit: formSubmission,
     validations,
     formgroups: getFormgroups(options),

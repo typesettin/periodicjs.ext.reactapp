@@ -35,10 +35,20 @@ function buildAdvancedDetail(options) {
         },
         success: true,
       },
-      'hiddenFields': [{
-        'form_name': '_id',
-        'form_val': '_id',
-      },],
+      'hiddenFields': [
+        {
+          'form_name': '_id',
+          'form_val': '_id',
+        },
+        {
+          form_val: '$loki',
+          form_name: '$loki',
+        },
+        {
+          form_val: 'meta',
+          form_name: 'meta',
+        },
+      ],
       footergroups: [],
       formgroups: [{
         gridProps: {
