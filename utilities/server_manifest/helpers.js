@@ -49,65 +49,69 @@ function getModalPopUp(options) {
 
 function getPageTitle(options) {
   const { styles = {}, title, tooltip, action, asynctitle, titleprefix, } = options;
-  const actionType = {
-    link: (action && action.type === 'action')? [
-      {
-        component: 'ResponsiveButton',
-        props: {
-          onClick: 'func:this.props.reduxRouter.push',
-          onclickProps: action.link,
-          // style: {
-          //   marginLeft: '10px',
-          // },
-          buttonProps: {
-            color: 'isPrimary',
-          },
-        },
-        children: action.title,
-      },
-    ]:null,
-    action: (action && action.type === 'action')
-      ? [
+  function getAction(action) {
+    const actionType = {
+      link: (action && action.type === 'action')? [
         {
           component: 'ResponsiveButton',
           props: {
+            onClick: 'func:this.props.reduxRouter.push',
+            onclickProps: action.link,
+            // style: {
+            //   marginLeft: '10px',
+            // },
             buttonProps: {
-              color: (action.method==='DELETE')?'isDanger':'isPrimary',
-              buttonStyle:'isOutlined',              
+              color: 'isPrimary',
             },
-            onClick: 'func:this.props.fetchAction',
-            onclickBaseUrl: action.pathname,
-            onclickLinkParams: action.pathParams,
-            fetchProps: {
-              method: action.method,
-            },
-            'successProps':{
-              success:true,
-              successCallback: 'func:this.props.reduxRouter.push',
-              successProps: action.callbackRedirect,
-            },
-            confirmModal: action.confirm,
           },
-          children: action.title,     
-          thisprops: action.thisprops,
-          asyncprops: action.asyncprops,
+          children: action.title,
         },
-      ]
-      : null,
-    modal: (action && action.type==='modal')
-      ? [
-        getModalPopUp({
-          modalTitle: action.title,
-          modalPathname: action.pathname,
-          confirmAction: action.confirm,
-          type:'button',
-          button: Object.assign({
-            title: action.title,
-          },action.buttonProps),
-        }),
-      ]
-      : null,
-  };
+      ]:null,
+      action: (action && action.type === 'action')
+        ? [
+          {
+            component: 'ResponsiveButton',
+            props: {
+              buttonProps: {
+                color: (action.method==='DELETE')?'isDanger':'isPrimary',
+                buttonStyle:'isOutlined',              
+              },
+              onClick: 'func:this.props.fetchAction',
+              onclickBaseUrl: action.pathname,
+              onclickLinkParams: action.pathParams,
+              fetchProps: {
+                method: action.method,
+              },
+              'successProps':{
+                success:true,
+                successCallback: 'func:this.props.reduxRouter.push',
+                successProps: action.callbackRedirect,
+              },
+              confirmModal: action.confirm,
+            },
+            children: action.title,     
+            thisprops: action.thisprops,
+            asyncprops: action.asyncprops,
+          },
+        ]
+        : null,
+      modal: (action && action.type==='modal')
+        ? [
+          getModalPopUp({
+            modalTitle: action.title,
+            modalPathname: action.pathname,
+            confirmAction: action.confirm,
+            type:'button',
+            button: Object.assign({
+              title: action.title,
+            }, action.buttonProps),
+          }),
+        ]
+        : null,
+    };
+    return actionType[ action.type ];
+  }
+
   return {
     component: 'Columns',
     children: [
@@ -160,7 +164,9 @@ function getPageTitle(options) {
           },
         },
         children: (action)
-          ? actionType[action.type] || null
+          ? (Array.isArray(action))
+            ? action.map(act=>getAction(act)[0])
+            : getAction(action) || null
           : null,
       },
     ],
@@ -178,7 +184,7 @@ function getTitlePrefix(options) {
       },
     },
     children: title,
-  }];
+  },];
 }
 
 function getTitleArrow() {
@@ -246,7 +252,7 @@ function getButton(options = {}) {
         // aProps: {},
       }
       : undefined,
-  }
+  };
   const returnButton = Object.assign({
     component: 'ResponsiveButton',
     props: Object.assign({}, actionType[ action.type ], props),
