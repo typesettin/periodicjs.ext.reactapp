@@ -1,78 +1,106 @@
 'use strict';
-
+const Sequelize = require('sequelize');
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
-const DEFAULT_TYPES = [{
+const DEFAULT_TYPES = [
+  {
+    schemaType: Sequelize.STRING,
+    input: 'String',
+  },
+  {
+    schemaType: Sequelize.TEXT,
+    input: 'String',
+  },
+  {
     schemaType: String,
-    input: 'text',
+    input: 'String',
   },
   {
     schemaType: 'String',
-    input: 'text',
+    input: 'String',
+  },
+  {
+    schemaType: Sequelize.INTEGER,
+    input: 'Number',
+  },
+  {
+    schemaType: Sequelize.BIGINT,
+    input: 'Number',
+  },
+  {
+    schemaType: Sequelize.FLOAT,
+    input: 'Number',
+  },
+  {
+    schemaType: Sequelize.REAL,
+    input: 'Number',
+  },
+  {
+    schemaType: Sequelize.DOUBLE,
+    input: 'Number',
   },
   {
     schemaType: Number,
-    input: 'number',
+    input: 'Number',
   },
   {
     schemaType: 'Number',
-    input: 'number',
+    input: 'Number',
+  },
+  {
+    schemaType: Sequelize.DATE,
+    input: 'Number',
+  },
+  {
+    schemaType: Sequelize.DATEONLY,
+    input: 'Number',
   },
   {
     schemaType: Date,
-    input: 'text',
+    input: 'Date',
   },
   {
     schemaType: 'Date',
-    input: 'text',
-  },
-  {
-    schemaType: Object,
-    input: 'code',
-  },
-  {
-    schemaType: 'Object',
-    input: 'code',
-  },
-  {
-    schemaType: mongoose.Schema.Types.Mixed,
-    input: 'code',
-  },
-  {
-    schemaType: 'mongoose.Schema.Types.Mixed',
-    input: 'code',
-  },
-  {
-    schemaType: Schema.Types.Mixed,
-    input: 'code',
-  },
-  {
-    schemaType: 'Schema.Types.Mixed',
-    input: 'code',
+    input: 'Date',
   },
   {
     schemaType: Boolean,
-    input: 'boolean',
+    input: 'Boolean',
   },
   {
     schemaType: 'Boolean',
-    input: 'boolean',
+    input: 'Boolean',
   },
   {
     schemaType: mongoose.Schema.ObjectId,
-    input: '_id',
+    input: 'ObjectId',
+  },
+  {
+    schemaType: Sequelize.UUID,
+    input: 'ObjectId',
   },
   {
     schemaType: 'ObjectId',
-    input: '_id',
+    input: 'ObjectId',
+  },
+  {
+    schemaType: Sequelize.ARRAY,
+    input: 'Array',
   },
   {
     schemaType: Array,
-    input: 'array',
+    input: 'Array',
   },
   {
     schemaType: 'Array',
-    input: 'array',
+    input: 'Array',
+  },
+  {
+    schemaType: 'undefined',
+    input: 'String',
+  },
+  {
+    schemaType: undefined,
+    input: 'String',
   },
 ];
 
@@ -86,8 +114,8 @@ module.exports = (function() {
         value: type.input,
         writable: false,
         configurable: false,
+        // enumerable:true,
       });
   });
-  // console.log({ dictionary });
   return dictionary;
 })();
