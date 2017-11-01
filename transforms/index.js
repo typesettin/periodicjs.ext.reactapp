@@ -1,24 +1,25 @@
 'use strict';
 const periodic = require('periodicjs');
 const asset = require('./asset');
-
+const reactappLocals = periodic.locals.extensions.get('periodicjs.ext.reactapp');
+const reactapp = reactappLocals.reactapp();
 module.exports = {
   pre: {
     GET: {
       // '/some/route/path/:id': [testPreTransform],
     },
-    PUT: {}
+    PUT: {},
   },
   post: {
     GET: {
-      [`/r-admin/contentdata/standard_assets/:id`]: [
+      [`${reactapp.manifest_prefix}contentdata/standard_assets/:id`]: [
         asset.formatAssetItem,
         // asset.getFileMetaInfo(periodic),
       ],
-      [`/r-admin/contentdata/standard_assets`]: [
+      [`${reactapp.manifest_prefix}contentdata/standard_assets`]: [
         asset.formatAssetIndex,
       ],
     },
-    PUT: {}
-  }
-}
+    PUT: {},
+  },
+};
