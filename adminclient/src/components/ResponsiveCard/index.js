@@ -64,7 +64,7 @@ class ResponsiveCard extends Component {
           {rightIcon}
         </CardHeader>
         {(this.state.display) ? (
-          <CardContent>{this.props.children}</CardContent>
+          <CardContent {...this.props.cardContentProps}>{this.props.children}</CardContent>
         ) : null}
       </Card>);
     return fullCard;

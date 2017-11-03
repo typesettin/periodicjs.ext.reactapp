@@ -717,6 +717,7 @@ class ResponsiveTable extends Component {
           props: Object.assign({},
             this.props.customLayout.props,
             row,
+            {row},
             {
               __ra_rt_link: (this.props.customLayout.link) ? this.getHeaderLinkURL(this.props.customLayout.link, row) : undefined,
             }),

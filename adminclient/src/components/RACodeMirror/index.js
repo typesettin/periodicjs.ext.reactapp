@@ -55,7 +55,11 @@ class RACodeMirror extends Component {
         ? { value: this.props.dynamic[ this.props.dynamicCMProp ] }
         : {},
       (this.props.value)
-        ? { value: (typeof this.props.value !=='string') ? this.props.value.toString():this.props.value }
+        ? {
+          value: (typeof this.props.value !== 'string')
+            ? (this.props.stringify)?JSON.stringify(this.props.value,null,2):this.props.value.toString()
+            : this.props.value
+        }
         : {},
       {
         options: Object.assign({}, {

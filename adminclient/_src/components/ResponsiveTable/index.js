@@ -873,7 +873,7 @@ var ResponsiveTable = function (_Component) {
           }, this.props.customLayoutStyle) },
         displayRows.map(function (row) {
           var mergedLayout = (0, _assign2.default)({}, _this8.props.customLayout, {
-            props: (0, _assign2.default)({}, _this8.props.customLayout.props, row, {
+            props: (0, _assign2.default)({}, _this8.props.customLayout.props, row, { row: row }, {
               __ra_rt_link: _this8.props.customLayout.link ? _this8.getHeaderLinkURL(_this8.props.customLayout.link, row) : undefined
             })
           });

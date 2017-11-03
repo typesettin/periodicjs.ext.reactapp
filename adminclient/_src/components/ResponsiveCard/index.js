@@ -127,7 +127,7 @@ var ResponsiveCard = function (_Component) {
         ),
         this.state.display ? _react2.default.createElement(
           _reBulma.CardContent,
-          null,
+          this.props.cardContentProps,
           this.props.children
         ) : null
       );
