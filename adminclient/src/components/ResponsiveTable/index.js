@@ -419,7 +419,7 @@ class ResponsiveTable extends Component {
               rows = (rows.documents) ? rows.documents : rows;
               // console.log({ rows });
               if (this.props.flattenRowData) {
-                updatedState[ data.key ] = rows.map(row => flatten(row, this.props.flattenRowDataOptions));
+                updatedState[ data.key ] = rows.map(row => Object.assign({},row,flatten(row, this.props.flattenRowDataOptions)));
               }
             } else {
               // if (data.key === 'numPages') {

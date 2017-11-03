@@ -552,7 +552,7 @@ var ResponsiveTable = function (_Component) {
               // console.log({ rows });
               if (_this5.props.flattenRowData) {
                 updatedState[data.key] = rows.map(function (row) {
-                  return (0, _flat.flatten)(row, _this5.props.flattenRowDataOptions);
+                  return (0, _assign2.default)({}, row, (0, _flat.flatten)(row, _this5.props.flattenRowDataOptions));
                 });
               }
             } else {
