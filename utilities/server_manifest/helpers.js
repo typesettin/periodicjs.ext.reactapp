@@ -8,7 +8,7 @@ const idActionParams = [
 ];
 
 function getModalPopUp(options) {
-  const { onclickProps, style, tooltip, button, type, onclickAddProp, } = options;
+  const { onclickProps, style, tooltip, button, type, onclickAddProp, responsiveButton, } = options;
   const modalType = {
     tooltip: [
       {
@@ -24,7 +24,7 @@ function getModalPopUp(options) {
       ? button.title
       : undefined,
   };
-  return {
+  return Object.assign({
     component: 'ResponsiveButton',
     props: {
       onClick: 'func:this.props.createModal',
@@ -44,14 +44,14 @@ function getModalPopUp(options) {
       // aProps: {},
     },
     children: modalType[ type ] || {},
-  };
+  }, responsiveButton);
 }
 
 function getPageTitle(options) {
   const { styles = {}, title, tooltip, action, asynctitle, titleprefix, } = options;
   function getAction(action) {
     const actionType = {
-      link: (action && action.type === 'action')? [
+      link: (action && action.type === 'link')? [
         {
           component: 'ResponsiveButton',
           props: {
@@ -60,9 +60,10 @@ function getPageTitle(options) {
             // style: {
             //   marginLeft: '10px',
             // },
-            buttonProps: {
+            buttonProps: Object.assign({
               color: 'isPrimary',
-            },
+              buttonStyle:'isOutlined',
+            }, action.buttonProps),
           },
           children: action.title,
         },
@@ -105,6 +106,7 @@ function getPageTitle(options) {
             button: Object.assign({
               title: action.title,
             }, action.buttonProps),
+            responsiveButton:action.responsiveButton,
           }),
         ]
         : null,
@@ -138,7 +140,7 @@ function getPageTitle(options) {
                 ? {
                   component: 'span',
                   asyncprops: {
-                    children: asynctitle,
+                    _children: asynctitle,
                   },
                 }
                 : null,
@@ -165,7 +167,10 @@ function getPageTitle(options) {
         },
         children: (action)
           ? (Array.isArray(action))
-            ? action.map(act=>getAction(act)[0])
+            ? [{
+              component:'Addons',
+              children:action.map(act => getAction(act)[ 0 ]),
+            },]
             : getAction(action) || null
           : null,
       },
@@ -184,7 +189,7 @@ function getTitlePrefix(options) {
       },
     },
     children: title,
-  },];
+  }, ];
 }
 
 function getTitleArrow() {
