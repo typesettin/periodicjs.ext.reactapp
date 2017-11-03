@@ -102,6 +102,7 @@ function getPageTitle(options) {
             modalTitle: action.title,
             modalPathname: action.pathname,
             confirmAction: action.confirm,
+            onclickProps: action.onclickProps,
             type:'button',
             button: Object.assign({
               title: action.title,
@@ -170,7 +171,7 @@ function getPageTitle(options) {
             ? [{
               component:'Addons',
               children:action.map(act => getAction(act)[ 0 ]),
-            },]
+            }, ]
             : getAction(action) || null
           : null,
       },
@@ -189,7 +190,7 @@ function getTitlePrefix(options) {
       },
     },
     children: title,
-  }, ];
+  },];
 }
 
 function getTitleArrow() {
@@ -230,11 +231,16 @@ function getButton(options = {}) {
         fetchProps: {
           method: action.method,
         },
-        'successProps':{
-          success:true,
-          successCallback: 'func:this.props.reduxRouter.push',
-          successProps: action.callbackRedirect,
-        },
+        'successProps': (action.refresh)
+          ? {
+            success:true,
+            successCallback: 'func:this.props.refresh',
+          }
+          : {
+            success:true,
+            successCallback: 'func:this.props.reduxRouter.push',
+            successProps: action.callbackRedirect,
+          },
         confirmModal: action.confirm,
       }
       : undefined,
