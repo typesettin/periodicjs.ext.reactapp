@@ -67,6 +67,7 @@
     "ua-parser-js": "^0.7.12",
     "useragent": "^2.1.13",
     "validate.js": "^0.11.1",
+    "victory": "^0.24.0",
     "whatwg-fetch": "^2.0.3"
   },
   "deprecated": false,
@@ -153,5 +154,5 @@
     "ssr_build": "babel adminclient/src -d adminclient/_src --ignore adminclient/src/components/RACodeMirror/",
     "test": "mocha -R spec --recursive"
   },
-  "version": "10.8.69"
+  "version": "10.9.0"
 }

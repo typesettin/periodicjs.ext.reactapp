@@ -1,6 +1,7 @@
 import React, { createElement, } from 'react';
 import * as rebulma from 're-bulma';
 import * as recharts from 'recharts';
+import * as victory from 'victory';
 import MaskedInput from 'react-text-mask';
 import { Link, } from 'react-router';
 import Slider, { Range, } from 'rc-slider';
@@ -35,7 +36,7 @@ import utilities from '../../util';
 let advancedBinding = getAdvancedBinding();
 let renderIndex = 0;
 
-function getFunctionFromProps(options) {
+export function getFunctionFromProps(options) {
   const { propFunc } = options;
 
   if (typeof propFunc === 'string' && propFunc.indexOf('func:this.props.reduxRouter') !== -1) {
@@ -51,7 +52,7 @@ function getFunctionFromProps(options) {
   }
 }
 
-export let AppLayoutMap = Object.assign({}, {
+export let AppLayoutMap = Object.assign({}, { victory,
   recharts, ResponsiveForm, DynamicLayout, DynamicForm, RawOutput, RawStateOutput, FormItem, MenuAppLink, SubMenuLinks, ResponsiveTable, ResponsiveCard, DynamicChart, ResponsiveBar, ResponsiveTabs, ResponsiveDatalist, CodeMirror, Range, Slider, GoogleMap, Carousel, PreviewEditor, ResponsiveSteps, /* Editor,*/
   ResponsiveLink,
   ResponsiveButton,
@@ -62,6 +63,28 @@ export let AppLayoutMap = Object.assign({}, {
   RCSwitch,
   Slick,
 }, React.DOM, rebulma, window.__ra_custom_elements, { Link, });
+
+export function getComponentFromMap(options = {}) {
+  const { componentObject, AppLayoutMap } = options;
+  // let reactComponent = null;
+  try {
+    if (typeof componentObject.component !== 'string') {
+      return componentObject.component;
+    } else if (React.DOM[ componentObject.component ]) {
+      return componentObject.component;
+    } else if (recharts[ componentObject.component.replace('recharts.', '') ]) {
+      return recharts[ componentObject.component.replace('recharts.', '') ];
+    } else if (victory[ componentObject.component.replace('victory.', '') ]) {
+      return victory[ componentObject.component.replace('victory.', '') ];
+    } else {
+      return AppLayoutMap[ componentObject.component ];
+    }
+  } catch (e) {
+    console.error(e, (e.stack) ? e.stack:'no stack');
+    // throw e;
+    return null;
+  }
+}
 
 export function getRenderedComponent(componentObject, resources, debug) {
   if (debug) {
@@ -83,20 +106,37 @@ export function getRenderedComponent(componentObject, resources, debug) {
   }
   try {
     const getFunction = getFunctionFromProps.bind(this);
-    let asyncprops = (componentObject.asyncprops && typeof componentObject.asyncprops === 'object') ? utilities.traverse(componentObject.asyncprops, resources) : {};
-    let windowprops = (componentObject.windowprops && typeof componentObject.windowprops === 'object') ? utilities.traverse(componentObject.windowprops, window) : {};
-    let thisprops = (componentObject.thisprops && typeof componentObject.thisprops === 'object') ? utilities.traverse(componentObject.thisprops, Object.assign({
-      __reactapp_manifest: {
-        _component: componentObject,
-        _resources: resources,
-      },
-    }, this.props, componentObject.props, this.props.getState())) : {};
-    let thisDotProps = (!React.DOM[ componentObject.component ] && !rebulma[ componentObject.component ] && !componentObject.ignoreReduxProps) ? this.props : null;
+    let asyncprops = (componentObject.asyncprops && typeof componentObject.asyncprops === 'object')
+      ? utilities.traverse(componentObject.asyncprops, resources)
+      : {};
+    let windowprops = (componentObject.windowprops && typeof componentObject.windowprops === 'object')
+      ? utilities.traverse(componentObject.windowprops, window)
+      : {};
+    let thisprops = (componentObject.thisprops && typeof componentObject.thisprops === 'object')
+      ? utilities.traverse(componentObject.thisprops, Object.assign({
+        __reactapp_manifest: {
+          _component: componentObject,
+          _resources: resources,
+        },
+      }, this.props, componentObject.props, this.props.getState()))
+      : {};
+    let thisDotProps = (!React.DOM[ componentObject.component ] && !rebulma[ componentObject.component ] && !componentObject.ignoreReduxProps)
+      ? this.props
+      : null;
+    //allowing javascript injections
+    let evalProps = (componentObject.__dangerouslyEvalProps)
+      ? Object.keys(componentObject.__dangerouslyEvalProps).reduce((eprops, epropName) => { 
+        // eslint-disable-next-line
+        eprops[ epropName ] = eval(componentObject.__dangerouslyEvalProps[ epropName ]);
+        return eprops;
+      }, {})
+      : {};
     let renderedCompProps = Object.assign({
       key: renderIndex,
     }, thisDotProps,
       thisprops,
-      componentObject.props, asyncprops, windowprops);
+      componentObject.props, asyncprops, windowprops, evalProps);
+    
       //Allowing for window functions
     if(componentObject.hasWindowFunc || componentObject.hasPropFunc){
       Object.keys(renderedCompProps).forEach(key => {
@@ -172,15 +212,18 @@ export function getRenderedComponent(componentObject, resources, debug) {
       && !Object.keys(utilities.traverse(componentObject.conditionalprops, renderedCompProps)).filter(key => utilities.traverse(componentObject.conditionalprops, renderedCompProps)[ key ]).length && (!componentObject.comparisonorprops || (componentObject.comparisonorprops && comparisons.filter(comp => comp === true).length===0))) {
       return null;
     } else {
+
+
       return createElement(
         //element component
-        (typeof componentObject.component === 'string')
-          ? (React.DOM[ componentObject.component ])
-            ? componentObject.component
-            : (recharts[ componentObject.component.replace('recharts.', '') ])
-              ? recharts[ componentObject.component.replace('recharts.', '') ]
-              : AppLayoutMap[ componentObject.component ]
-          : componentObject.component,
+        getComponentFromMap({ componentObject, AppLayoutMap }),
+        // (typeof componentObject.component === 'string')
+        //   ? (React.DOM[ componentObject.component ])
+        //     ? componentObject.component
+        //     : (recharts[ componentObject.component.replace('recharts.', '') ])
+        //       ? recharts[ componentObject.component.replace('recharts.', '') ]
+        //       : AppLayoutMap[ componentObject.component ]
+        //   : componentObject.component,
         //element props
         renderedCompProps,
         //props children
