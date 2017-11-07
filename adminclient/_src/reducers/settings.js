@@ -190,6 +190,7 @@ var packageJSON = {
     'react-text-mask': '^5.0.2',
     'text-mask-addons': '^3.6.0',
     'validate.js': '^0.11.1',
+    victory: '^0.24.0',
     'whatwg-fetch': '^2.0.3'
   },
   scripts: {
