@@ -8,7 +8,9 @@ import utilities from '../../util';
 import pluralize from 'pluralize';
 
 const propTypes = {
+  returnProperty: PropTypes.any, //false or string property value
   disabled: PropTypes.bool,
+  returnFormOptionsValue: PropTypes.bool,
   selector: PropTypes.string,
   displayfield: PropTypes.string,
   dbname: PropTypes.string,
@@ -28,6 +30,8 @@ const propTypes = {
 
 const defaultProps = {
   disabled: false,
+  returnProperty: false,
+  returnFormOptionsValue: false,
   data: false,
   selectedData: false,
   createable: false,
@@ -44,6 +48,12 @@ const defaultProps = {
   },
 };
 
+function getDatumValue(datum) {
+  const returnProperty = (this.props.returnFormOptionsValue || (Object.keys(datum).length === 2 && typeof datum.label !== 'undefined' && typeof datum.value !== 'undefined')) ? 'value' : this.props.returnProperty;
+
+  return (returnProperty) ? datum[ returnProperty ] : datum;
+}
+
 class ResponsiveDatalist extends Component {
   constructor(props) {
     super(props);
@@ -57,6 +67,7 @@ class ResponsiveDatalist extends Component {
     this.inputProps = Object.assign({}, this.props.passableProps);
     this.searchFunction = debounce(this.updateDataList, 200);
     this.filterStaticData = this.filterStaticData.bind(this);
+    this.getDatum = getDatumValue.bind(this);
   }
   componentWillReceiveProps(nextProps) {
     // console.debug({ nextProps });
@@ -65,7 +76,7 @@ class ResponsiveDatalist extends Component {
   }
 
   filterStaticData(options) {
-    return this.props.datalistdata.filter(item => (item[this.props.field].indexOf(options.search) > -1));
+    return (this.props.returnFormOptionsValue)? this.props.datalistdata.filter(item => (item.label.indexOf(options.search) > -1)) : this.props.datalistdata.filter(item => (item[this.props.field].indexOf(options.search) > -1));
   }
 
   updateDataList(options) {
@@ -88,19 +99,13 @@ class ResponsiveDatalist extends Component {
       utilities.fetchComponent(fetchURL, { headers, })()
         .then(response => { 
           if (response.data && response.result && response.status) {
-            // console.log('USE DATA FROM RESPONSE', response.data)
-            // console.log('this.props.entity',this.props.entity)
-            // console.log('this.props.field',this.props.field)
             response = response.data;
-            // console.log('pluralize(this.props.entity)',pluralize(this.props.entity))
-            // console.log('response[pluralize(this.props.entity)]',response[pluralize(this.props.entity)])
           }
           // console.debug('this.state.value',this.state.value);
           
           let updatedState = {};
           updatedState.selectedData = response[pluralize(this.props.entity)];
           updatedState.isSearching = false;
-          // console.debug({updatedState,response});
           this.setState(updatedState);
         }, e => {
           this.props.errorNotification(e);
@@ -159,7 +164,6 @@ class ResponsiveDatalist extends Component {
       let newValue = Object.assign([], [].concat(this.state.value));
       newValue.splice(index, 1);
       let oldValue = this.state.value;
-      console.debug({ oldValue, newValue });
       this.setState({
         // value: [],
         value: newValue,
@@ -175,7 +179,6 @@ class ResponsiveDatalist extends Component {
         value:datum,
         selectedData: false,
       });
-      // console.debug({ datum });
       this.props.onChange(datum);
     }
   }
@@ -247,21 +250,19 @@ class ResponsiveDatalist extends Component {
                 // console.debug('clicked onclick',this.props);
                 if(this.props.multi){
                   let newValue = (this.state.value && Array.isArray(this.state.value) && this.state.value.length)
-                    ? this.state.value.concat([datum, ])
-                    : [ datum, ];
-                  // console.debug({newValue})
+                    ? this.state.value.concat([ this.getDatum(datum), ])
+                    : [ this.getDatum(datum), ];
                   this.setState({
                     value:newValue,
                     selectedData: false,
                   });
                   this.props.onChange(newValue);
                 } else {
-                  // console.debug({datum})
                   this.setState({
-                    value:datum,
+                    value:this.getDatum(datum),
                     selectedData: false,
                   });
-                  this.props.onChange(datum);
+                  this.props.onChange(this.getDatum(datum));
                 }
               }}/>
             {this.getDatalistDisplay({
