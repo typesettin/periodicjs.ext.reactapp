@@ -250,9 +250,15 @@ function getRenderedComponent(componentObject, resources, debug) {
       eprops[epropName] = eval(componentObject.__dangerouslyEvalProps[epropName]);
       return eprops;
     }, {}) : {};
+    var insertedComponents = componentObject.__dangerouslyInsertComponents ? (0, _keys2.default)(componentObject.__dangerouslyInsertComponents).reduce(function (cprops, cpropName) {
+      // eslint-disable-next-line
+      cprops[cpropName] = getRenderedComponent.call(_this, componentObject.__dangerouslyInsertComponents[cpropName], resources, debug);
+      return cprops;
+    }, {}) : {};
+    // if (componentObject.__dangerouslyInsertComponents){ console.log({ insertedComponents });}
     var renderedCompProps = (0, _assign2.default)({
       key: renderIndex
-    }, thisDotProps, thisprops, componentObject.props, asyncprops, windowprops, evalProps);
+    }, thisDotProps, thisprops, componentObject.props, asyncprops, windowprops, evalProps, insertedComponents);
 
     //Allowing for window functions
     if (componentObject.hasWindowFunc || componentObject.hasPropFunc) {
@@ -260,8 +266,6 @@ function getRenderedComponent(componentObject, resources, debug) {
         // if (typeof renderedCompProps[key] ==='string' && renderedCompProps[key].indexOf('func:window') !== -1 && typeof window[ renderedCompProps[key].replace('func:window.', '') ] ==='function'){
         //   renderedCompProps[key]= window[ renderedCompProps[key].replace('func:window.', '') ].bind(this);
         // } 
-
-
         if (typeof renderedCompProps[key] === 'string' && renderedCompProps[key].indexOf('func:') !== -1) {
           renderedCompProps[key] = getFunction({ propFunc: renderedCompProps[key] });
         }

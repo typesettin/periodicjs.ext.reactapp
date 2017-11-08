@@ -195,7 +195,8 @@ var ResponsiveDatalist = function (_Component) {
   }, {
     key: 'onChangeHandler',
     value: function onChangeHandler(event) {
-      this.searchFunction({ search: event.target.value });
+      var search = event && event.target && event.target.value ? event.target.value : '';
+      this.searchFunction({ search: search });
     }
   }, {
     key: 'getDatalistDisplay',
@@ -205,7 +206,7 @@ var ResponsiveDatalist = function (_Component) {
           datum = options.datum;
       // console.debug('getDatalistDisplay', { options });
 
-      var displayText = datum[displayField] || datum.title || datum.name || datum.username || datum.email || datum[selector] || datum;
+      var displayText = datum[displayField] || datum.title || datum.name || datum.username || datum.email || datum[selector] || '';
       return _react2.default.createElement(
         'span',
         { style: {
@@ -364,6 +365,7 @@ var ResponsiveDatalist = function (_Component) {
           _react2.default.createElement(rb.Input, (0, _extends3.default)({}, this.inputProps, {
             state: this.state.isSearching || undefined,
             onChange: this.onChangeHandler.bind(this),
+            onBlur: this.onChangeHandler.bind(this),
             ref: function ref(input) {
               _this5.textInput = input;
             }
