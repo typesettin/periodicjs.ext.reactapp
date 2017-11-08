@@ -156,7 +156,7 @@ var packageJSON = {
     'react-router': '^3.0.0',
     'react-router-redux': '^4.0.7',
     'react-scripts': '0.8.4',
-    recharts: '0.20.5',
+    recharts: '^1.0.0-beta.1',
     redux: '^3.6.0',
     'redux-logger': '^2.7.4',
     'redux-thunk': '^2.1.0',
