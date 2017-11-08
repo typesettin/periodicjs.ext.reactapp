@@ -119,13 +119,14 @@ class ResponsiveDatalist extends Component {
       console.debug({ options,  });
     }
   }
-  onChangeHandler(event){
-    this.searchFunction({ search: event.target.value, });
+  onChangeHandler(event) {
+    const search = (event && event.target && event.target.value) ? event.target.value : '';
+    this.searchFunction({ search, });
   }
   getDatalistDisplay(options){
     let { displayField, selector, datum, } = options;
     // console.debug('getDatalistDisplay', { options });
-    let displayText = datum[ displayField ] || datum.title || datum.name || datum.username || datum.email || datum[ selector ] || datum;
+    let displayText = datum[ displayField ] || datum.title || datum.name || datum.username || datum.email || datum[ selector ] || '';
     return (<span style={{
       wordBreak: 'break-all',
       textOverflow: 'ellipsis',
@@ -276,6 +277,7 @@ class ResponsiveDatalist extends Component {
         <rb.Input {...this.inputProps}
           state={this.state.isSearching||undefined}
           onChange={this.onChangeHandler.bind(this)}
+          onBlur={this.onChangeHandler.bind(this)}
           ref={(input)=>{
             this.textInput = input; 
           }}
