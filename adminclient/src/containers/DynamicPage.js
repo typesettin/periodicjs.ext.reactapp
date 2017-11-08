@@ -1,6 +1,7 @@
 import React, { Component, } from 'react';
 // import AppSectionLoading from '../components/AppSectionLoading';
 import AppSectionLoadingOverlay from '../components/AppSectionLoading/overlay';
+// import AppOverlay from '../components/AppOverlay';
 import { getRenderedComponent, } from '../components/AppLayoutMap';
 import constants from '../constants';
 import utilities from '../util';
@@ -94,6 +95,7 @@ class DynamicPage extends Component {
     this.state = {
       ui_is_loaded: false,
       async_data_is_loaded: false,
+      ui: this.props.getState().ui,
     };
     this.overlayUIWrapperStyle = this.props.getState().ui.customOverlayWrapperStyle;
     this.uiLayout = null;
@@ -126,7 +128,7 @@ class DynamicPage extends Component {
           left: 0,
           right: 0,
           // opacity:0.8,
-          backgroundColor: 'rgba(255,255,255,0.8)',
+          backgroundColor: '#fff',
           zIndex:100,
         }, this.overlayUIWrapperStyle)} /> 
       {
