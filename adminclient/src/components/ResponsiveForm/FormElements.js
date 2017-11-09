@@ -61,7 +61,7 @@ function getCustomErrorLabel(hasError, state, formelement) {
 }
 
 function getCustomErrorIcon(hasError, state, formelement) {
-  return (hasError && (formelement.errorIconRight || formelement.errorIconLeft)) ? (<i className={'__re-bulma_fa fa fa-warning'}></i>): null;
+  return (hasError && (formelement.errorIconRight || formelement.errorIconLeft)) ? (<i className={`__re-bulma_fa fa ${formelement.errorIcon||'fa-warning'}`}></i>): null;
 }
 
 function valueChangeHandler(formElement) {
@@ -501,7 +501,7 @@ export function getFormTextInputArea(options) {
     <Input {...passableProps}
       help={getFormElementHelp(hasError, this.state, formElement.name)}
       color={(hasError)?'isDanger':undefined}
-      icon={(hasError) ? formElement.errorIcon || 'fa fa-warning' : undefined}
+      icon={(hasError) ? formElement.errorIcon || 'fa fa-warning' : (!hasError && hasValue) ? 'fa fa-check' : undefined}
       hasIconRight={formElement.errorIconRight}
       onChange={onChange}
       placeholder={formElement.placeholder}
