@@ -1,5 +1,6 @@
 'use strict';
 const pluralize = require('pluralize');
+const capitalize = require('capitalize');
 
 function getTableHeader(options = {}) { 
   const { headers, headerProps, } = options;
@@ -11,7 +12,7 @@ function getTableHeader(options = {}) {
         component: 'Tr',
         children: headers.map(header => ({
           component: 'Th',
-          children: header,  
+          children: (options.capitalizeHeaders) ? capitalize(header) : header, 
         })),
       },
     ],
@@ -65,6 +66,7 @@ function getBasicTable(options = {}) {
     props,
     tableRowProps,
     tableColProps,
+    capitalizeHeaders,
   } = options;
   const headers = header || Object.keys(data[ 0 ]);
   const footers = footer || headers;
@@ -73,7 +75,7 @@ function getBasicTable(options = {}) {
     component: 'Table',
     props: tableProps,
     children: [
-      hasHeader ? getTableHeader({ data, headers, headerProps, }) : null,
+      hasHeader ? getTableHeader({ data, headers, headerProps, capitalizeHeaders, }) : null,
       getTableBody({ data, bodyProps, tableRowProps, tableColProps, }),
       hasFooter ? getTableFooter({ data, footers, footerProps, }) : null,
     ],
