@@ -61,7 +61,7 @@ function getCustomErrorLabel(hasError, state, formelement) {
 }
 
 function getCustomErrorIcon(hasError, state, formelement) {
-  return (hasError && (formelement.errorIconRight || formelement.errorIconLeft)) ? (<i className={'__re-bulma_fa fa fa-warning'}></i>): null;
+  return (hasError && (formelement.errorIconRight || formelement.errorIconLeft)) ? (<i className={`__re-bulma_fa fa ${formelement.customErrorIcon||'fa-warning'}`}></i>): null;
 }
 
 function valueChangeHandler(formElement) {
