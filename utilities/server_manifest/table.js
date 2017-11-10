@@ -20,16 +20,16 @@ function getTableHeader(options = {}) {
 }
 
 function getTableBody(options = {}) {
-  const { data, bodyProps, tableRowProps, tableColProps, } = options;
+  const { data, bodyProps, tableRowProps, tableColProps, customRowProps = {}, } = options;
   return {
     component: 'Tbody',
     props:bodyProps,
-    children: data.map(row => ({
+    children: data.map((row, i) => ({
       component: 'Tr',
-      props: tableRowProps,
+      props: Object.assign({}, tableRowProps, customRowProps[i]),
       children: Object.keys(row).map(col => ({
         component: 'Td',
-        props: tableColProps,
+        props: Object.assign({}, tableColProps, row[col].columnProps),
         children:row[col],
       })),  
     })),
@@ -83,10 +83,10 @@ function getBasicTable(options = {}) {
 }
 
 function getTable(options) {
-  const { schemaName, baseUrl, headers, tableProps, asyncdataprops, customLayout, customLayoutStyle, asyncprops, thisprops, dataMap, limit=100,} = options;
+  const { schemaName, baseUrl, headers, tableProps, asyncdataprops, customLayout, customLayoutStyle, asyncprops, thisprops, dataMap, limit=100,  } = options;
   return {
     component: 'ResponsiveTable',
-    props: Object.assign({},{
+    props: Object.assign({}, {
       style: {
         wordWrap: 'break-word',
       },
@@ -96,7 +96,7 @@ function getTable(options) {
       flattenRowData: true,
       flattenRowDataOptions: { maxDepth: 3, },
       baseUrl,
-      dataMap: (dataMap) ? dataMap : [ {
+      dataMap: (dataMap) ? dataMap : [{
         'key': 'rows',
         'value': `${pluralize(schemaName)}`,
       }, {
@@ -105,7 +105,7 @@ function getTable(options) {
       }, {
         'key': 'numPages',
         'value': `${schemaName}pages`,
-      }, ],
+      },],
       'headerLinkProps': {
         'style': {
           'textDecoration': 'none',
@@ -114,7 +114,7 @@ function getTable(options) {
       headers,
       customLayout,
       customLayoutStyle,
-    },tableProps),
+    }, tableProps),
     thisprops,
     asyncprops: (asyncprops) ? asyncprops : {
       'rows': [
@@ -133,7 +133,7 @@ function getTable(options) {
 function getSheet(options) {
   const { data = [], } = options;
   const headers = Object.keys(data[ 0 ]);
-  const columns = headers.map((column,i) => ({
+  const columns = headers.map((column, i) => ({
     title: column,
     dataIndex: column,
     key: column,
@@ -156,8 +156,8 @@ function getSheet(options) {
         // x: '150%',
         // y: 350,
         // y:true,
-      }
-    }
+      },
+    },
   };
 }
 

@@ -30,7 +30,6 @@ class ResponsiveTable extends Component {
     // console.debug('this.props.getState()',this.props.getState());
     let rows = props.rows || [];
     rows = (rows.documents) ? rows.documents : rows;
-    // console.log({ rows })
     let headers = ((!props.headers || !props.headers.length) && rows[0]) ?
       getHeadersFromRows({
         rows: props.rows,
@@ -57,7 +56,7 @@ class ResponsiveTable extends Component {
       hasFooter: props.hasFooter,
       limit: props.limit,
       currentPage: props.currentPage,
-      numItems: props.numItems,
+      numItems: props.numItems || rows.length,
       numPages: Math.ceil(props.numItems / props.limit),
       numButtons: props.numButtons,
       isLoading: false,

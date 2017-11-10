@@ -163,7 +163,7 @@ class ResponsiveDatalist extends Component {
     if (this.props.multi) {
       let newValue = Object.assign([], [].concat(this.state.value));
       newValue.splice(index, 1);
-      let oldValue = this.state.value;
+      // let oldValue = this.state.value;
       this.setState({
         // value: [],
         value: newValue,
