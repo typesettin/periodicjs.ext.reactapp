@@ -72,11 +72,11 @@ function getCustomErrorIcon(hasError, isValid, state, formelement, iconStyle) {
       ? formelement.validIcon || 'fa fa-check'
       : (formelement.initialIcon)
         ? formelement.initialIcon
-        : undefined;
+        : '';
   
   return (formelement.errorIconRight || formelement.errorIconLeft)
     ? <i className={`__re-bulma_fa ${iconVar}`} style={iconStyle}></i>
-    : undefined;
+    : null;
 }
 
 function valueChangeHandler(formElement) {
