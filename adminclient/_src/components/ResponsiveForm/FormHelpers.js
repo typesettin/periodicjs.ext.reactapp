@@ -58,7 +58,7 @@ function validateFormElement(options) {
         validationErrors[validation.name] = validationerror[validation.name];
       } else {
         validationErrors = (0, _assign2.default)({}, this.state.formDataErrors);
-        delete validationErrors[validation.name];
+        validationErrors[validation.name] = [];
       }
       this.setState({ formDataErrors: validationErrors });
       // console.debug('has errors', validationErrors, 'this.state[formElement.name]', this.state[ formElement.name ]);
@@ -79,6 +79,8 @@ function validateForm(options) {
       // console.debug(formdata[ validation.name ], { validation, validationerror, });
       if (validationerror) {
         validationErrors[validation.name] = validationerror[validation.name];
+      } else {
+        validationErrors[validation.name] = [];
       }
     });
   } else {
