@@ -441,12 +441,12 @@ export function getFormMaskedInput(options) {
     className: '__re-bulma_control',
   }, formElement.wrapperProps);
  
-  wrapperProps.className = ((hasError || isValid) && (formElement.errorIconRight || formElement.errorIconLeft)) ? (formElement.errorIconRight) ? 
+  wrapperProps.className = ((hasError || isValid || formElement.initialIcon) && (formElement.errorIconRight || formElement.errorIconLeft)) ? (formElement.errorIconRight) ? 
     wrapperProps.className + ' __re-bulma_has-icon __re-bulma_has-icon-right'
     : wrapperProps.className + ' __re-bulma_has-icon __re-bulma_has-icon-left'
     : wrapperProps.className;
   
-  return (<FormItem key={i} {...formElement.layoutProps} isValid={isValid} hasError={hasError} hasValue={hasValue} >
+  return (<FormItem key={i} {...formElement.layoutProps} initialIcon={formElement.initialIcon} isValid={isValid} hasError={hasError} hasValue={hasValue} >
     {getFormLabel(formElement)}
     <span {...wrapperProps}>
       <MaskedInput
@@ -513,7 +513,7 @@ export function getFormTextInputArea(options) {
       clearImmediate(t);
     });
   }
-  return (<FormItem key={i} {...formElement.layoutProps} isValid={isValid} hasError={hasError} hasValue={hasValue} >
+  return (<FormItem key={i} {...formElement.layoutProps} initialIcon={formElement.initialIcon} isValid={isValid} hasError={hasError} hasValue={hasValue} >
     {getFormLabel(formElement)}  
     <Input {...passableProps}
       help={getFormElementHelp(hasError, this.state, formElement.name)}
@@ -546,7 +546,7 @@ export function getFormTextArea(options) {
     onChange = valueChangeHandler.bind(this, formElement);
   }
 
-  return (<FormItem key={i} {...formElement.layoutProps} isValid={isValid} hasError={hasError} hasValue={hasValue} >
+  return (<FormItem key={i} {...formElement.layoutProps} initialIcon={formElement.initialIcon} isValid={isValid} hasError={hasError} hasValue={hasValue} >
     {getFormLabel(formElement)}  
     <Textarea {...passableProps}
       onChange={(event)=>onChange()(event)}
@@ -601,7 +601,7 @@ export function getFormSelect(options) {
     } 
   }
 
-  return (<FormItem key={i} {...formElement.layoutProps} isValid={isValid} hasError={hasError} hasValue={hasValue} >
+  return (<FormItem key={i} {...formElement.layoutProps} initialIcon={formElement.initialIcon} isValid={isValid} hasError={hasError} hasValue={hasValue} >
     {getFormLabel(formElement)}  
     <Select {...formElement.passProps}
       help={getFormElementHelp(hasError, this.state, formElement.name)}
