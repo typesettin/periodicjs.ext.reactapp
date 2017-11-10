@@ -41,8 +41,13 @@ export function getPropertyAttribute(options) {
 }
 
 function getErrorStatus(state, name) {
-  return (state.formDataErrors && state.formDataErrors[ name ]);
+  return (state.formDataErrors && state.formDataErrors[ name ] && state.formDataErrors[ name ].length > 0);
 }
+
+function getValidStatus(state, name) {
+  return (state.formDataErrors && state.formDataErrors[ name ] && state.formDataErrors[ name ].length === 0);
+}
+
 
 function getFormElementHelp(hasError, state, name) {
   return (hasError) ? {
@@ -60,8 +65,18 @@ function getCustomErrorLabel(hasError, state, formelement) {
   ): null;
 }
 
-function getCustomErrorIcon(hasError, state, formelement) {
-  return (hasError && (formelement.errorIconRight || formelement.errorIconLeft)) ? (<i className={`__re-bulma_fa fa ${formelement.customErrorIcon||'fa-warning'}`}></i>): null;
+function getCustomErrorIcon(hasError, isValid, state, formelement, iconStyle) {
+  let iconVar = (hasError)
+    ? formelement.errorIcon || 'fa fa-warning'
+    : (isValid)
+      ? formelement.validIcon || 'fa fa-check'
+      : (formelement.initialIcon)
+        ? formelement.initialIcon
+        : undefined;
+  
+  return (formelement.errorIconRight || formelement.errorIconLeft)
+    ? <i className={`__re-bulma_fa ${iconVar}`} style={iconStyle}></i>
+    : undefined;
 }
 
 function valueChangeHandler(formElement) {
@@ -355,6 +370,7 @@ export function getFormMaskedInput(options) {
   let getPassablePropkeyevents = getPassablePropsKeyEvents.bind(this);
   let fileClassname = `__reactapp_file_${formElement.name}`;
   let hasError = getErrorStatus(this.state, formElement.name);
+  let isValid = getValidStatus(this.state, formElement.name);
   let hasValue = (formElement.name && this.state[formElement.name])? true : false;
   let passableProps = Object.assign({
     type: 'text',
@@ -425,12 +441,12 @@ export function getFormMaskedInput(options) {
     className: '__re-bulma_control',
   }, formElement.wrapperProps);
  
-  wrapperProps.className = (hasError && (formElement.errorIconRight || formElement.errorIconLeft)) ? (formElement.errorIconRight) ? 
+  wrapperProps.className = ((hasError || isValid || formElement.initialIcon) && (formElement.errorIconRight || formElement.errorIconLeft)) ? (formElement.errorIconRight) ? 
     wrapperProps.className + ' __re-bulma_has-icon __re-bulma_has-icon-right'
     : wrapperProps.className + ' __re-bulma_has-icon __re-bulma_has-icon-left'
     : wrapperProps.className;
   
-  return (<FormItem key={i} {...formElement.layoutProps} hasError={hasError} hasValue={hasValue} >
+  return (<FormItem key={i} {...formElement.layoutProps} initialIcon={formElement.initialIcon} isValid={isValid} hasError={hasError} hasValue={hasValue} >
     {getFormLabel(formElement)}
     <span {...wrapperProps}>
       <MaskedInput
@@ -441,7 +457,7 @@ export function getFormMaskedInput(options) {
       onChange={onChange}
       placeholder={formElement.placeholder}
       value={initialValue} />
-      {getCustomErrorIcon(hasError, this.state, formElement)}  
+      {getCustomErrorIcon(hasError, isValid, this.state, formElement)}  
       {getCustomErrorLabel(hasError, this.state, formElement)}
     </span>
   </FormItem>);
@@ -453,6 +469,7 @@ export function getFormTextInputArea(options) {
   let getPassablePropkeyevents = getPassablePropsKeyEvents.bind(this);
   let fileClassname = `__reactapp_file_${formElement.name}`;
   let hasError = getErrorStatus(this.state, formElement.name);
+  let isValid = getValidStatus(this.state, formElement.name);
   let hasValue = (formElement.name && this.state[formElement.name])? true : false;
   let passableProps = Object.assign({
     type: formElement.type || 'text',
@@ -496,12 +513,12 @@ export function getFormTextInputArea(options) {
       clearImmediate(t);
     });
   }
-  return (<FormItem key={i} {...formElement.layoutProps} hasError={hasError} hasValue={hasValue} >
+  return (<FormItem key={i} {...formElement.layoutProps} initialIcon={formElement.initialIcon} isValid={isValid} hasError={hasError} hasValue={hasValue} >
     {getFormLabel(formElement)}  
     <Input {...passableProps}
       help={getFormElementHelp(hasError, this.state, formElement.name)}
       color={(hasError)?'isDanger':undefined}
-      icon={(hasError) ? formElement.errorIcon || 'fa fa-warning' : undefined}
+      icon={(hasError) ? formElement.errorIcon || 'fa fa-warning' : (isValid) ? formElement.validIcon || 'fa fa-check' : (formElement.initialIcon) ? formElement.initialIcon : undefined}
       hasIconRight={formElement.errorIconRight}
       onChange={onChange}
       placeholder={formElement.placeholder}
@@ -513,6 +530,7 @@ export function getFormTextArea(options) {
   let { formElement, i, /*formgroup, width,*/ onChange, } = options;
   let initialValue = getInitialValue(formElement, this.state); //formElement.value || this.state[ formElement.name ] || getPropertyAttribute({ element:formElement, property:this.state, });
   let hasError = getErrorStatus(this.state, formElement.name);
+  let isValid = getValidStatus(this.state, formElement.name);
   let hasValue = (formElement.name && this.state[formElement.name])? true : false;
   let passableProps = Object.assign({
   }, formElement.passProps);
@@ -528,12 +546,12 @@ export function getFormTextArea(options) {
     onChange = valueChangeHandler.bind(this, formElement);
   }
 
-  return (<FormItem key={i} {...formElement.layoutProps} hasError={hasError} hasValue={hasValue} >
+  return (<FormItem key={i} {...formElement.layoutProps} initialIcon={formElement.initialIcon} isValid={isValid} hasError={hasError} hasValue={hasValue} >
     {getFormLabel(formElement)}  
     <Textarea {...passableProps}
       onChange={(event)=>onChange()(event)}
       help={getFormElementHelp(hasError, this.state, formElement.name)}
-      icon={(hasError)?formElement.errorIcon || 'fa fa-warning':undefined}
+      icon={(hasError) ? formElement.errorIcon || 'fa fa-warning' : (isValid) ? formElement.validIcon || 'fa fa-check' : (formElement.initialIcon) ? formElement.initialIcon : undefined}
       color={(hasError)?'isDanger':undefined}
       hasIconRight={formElement.errorIconRight}
       placeholder={formElement.placeholder||formElement.label}
@@ -545,10 +563,26 @@ export function getFormSelect(options) {
   let { formElement, i, /*formgroup, width,*/ onChange, } = options;
   let initialValue = getInitialValue(formElement, this.state); //formElement.value || this.state[ formElement.name ] || getPropertyAttribute({ element:formElement, property:this.state, });
   let hasError = getErrorStatus(this.state, formElement.name);
+  let isValid = getValidStatus(this.state, formElement.name);
   let hasValue = (formElement.name && this.state[formElement.name])? true : false;
   let selectOptions = (this.state.__formOptions && this.state.__formOptions[ formElement.name ])
     ? this.state.__formOptions[ formElement.name ]
     : formElement.options || [];
+  let iconStyle = {
+    display: 'inline-block',
+    fontSize: '1rem',
+    height: '24px',
+    lineHeight: '24px',
+    textAlign: 'center',
+    verticalAlign: 'top',
+    width: '24px',
+    color: '#aeb1b5',
+    pointerEvents: 'none',
+    position: 'absolute',
+    top: '4px',
+    zIndex: '4',
+    right: '30px'
+  };
   
   if (typeof initialValue !== 'string') {
     initialValue = JSON.stringify(initialValue, null, 2);
@@ -567,7 +601,7 @@ export function getFormSelect(options) {
     } 
   }
 
-  return (<FormItem key={i} {...formElement.layoutProps} hasError={hasError} hasValue={hasValue} >
+  return (<FormItem key={i} {...formElement.layoutProps} initialIcon={formElement.initialIcon} isValid={isValid} hasError={hasError} hasValue={hasValue} >
     {getFormLabel(formElement)}  
     <Select {...formElement.passProps}
       help={getFormElementHelp(hasError, this.state, formElement.name)}
@@ -582,6 +616,7 @@ export function getFormSelect(options) {
         return <option key={k} disabled={opt.disabled} value={opt.value}>{opt.label || opt.value}</option>;
       })}
     </Select>
+    {(!formElement.errorIconLeft) ? getCustomErrorIcon(hasError, isValid, this.state, formElement, iconStyle) : null}  
   </FormItem>);
 }
 

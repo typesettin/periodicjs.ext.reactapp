@@ -15,7 +15,7 @@ export function validateFormElement(options) {
         validationErrors[validation.name] = validationerror[validation.name];
       } else {
         validationErrors = Object.assign({}, this.state.formDataErrors);
-        delete validationErrors[validation.name];
+        validationErrors[validation.name] = [];
       }
       this.setState({ formDataErrors: validationErrors, });
       // console.debug('has errors', validationErrors, 'this.state[formElement.name]', this.state[ formElement.name ]);
@@ -35,6 +35,8 @@ export function validateForm(options) {
       // console.debug(formdata[ validation.name ], { validation, validationerror, });
       if (validationerror) {
         validationErrors[validation.name] = validationerror[validation.name];
+      } else {
+        validationErrors[validation.name] = [];
       }
     });
   } else {
