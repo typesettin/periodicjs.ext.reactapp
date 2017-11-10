@@ -65,14 +65,18 @@ function getCustomErrorLabel(hasError, state, formelement) {
   ): null;
 }
 
-function getCustomErrorIcon(hasError, isValid, state, formelement) {
-  return (hasError && (formelement.errorIconRight || formelement.errorIconLeft))
-    ? (<i className={`__re-bulma_fa fa ${formelement.errorIcon || 'fa-warning'}`}></i>)
-    : (isValid && (formelement.errorIconRight || formelement.errorIconLeft))
-      ? (<i className={`__re-bulma_fa fa ${formelement.validIcon || 'fa-check'}`}></i>)
+function getCustomErrorIcon(hasError, isValid, state, formelement, iconStyle) {
+  let iconVar = (hasError)
+    ? formelement.errorIcon || 'fa fa-warning'
+    : (isValid)
+      ? formelement.validIcon || 'fa fa-check'
       : (formelement.initialIcon)
-        ? (<i className={`__re-bulma_fa ${formelement.initialIcon}`}></i>)
+        ? formelement.initialIcon
         : undefined;
+  
+  return (formelement.errorIconRight || formelement.errorIconLeft)
+    ? <i className={`__re-bulma_fa ${iconVar}`} style={iconStyle}></i>
+    : undefined;
 }
 
 function valueChangeHandler(formElement) {
@@ -442,7 +446,7 @@ export function getFormMaskedInput(options) {
     : wrapperProps.className + ' __re-bulma_has-icon __re-bulma_has-icon-left'
     : wrapperProps.className;
   
-  return (<FormItem key={i} {...formElement.layoutProps} hasError={hasError} hasValue={hasValue} >
+  return (<FormItem key={i} {...formElement.layoutProps} isValid={isValid} hasError={hasError} hasValue={hasValue} >
     {getFormLabel(formElement)}
     <span {...wrapperProps}>
       <MaskedInput
@@ -509,7 +513,7 @@ export function getFormTextInputArea(options) {
       clearImmediate(t);
     });
   }
-  return (<FormItem key={i} {...formElement.layoutProps} hasError={hasError} hasValue={hasValue} >
+  return (<FormItem key={i} {...formElement.layoutProps} isValid={isValid} hasError={hasError} hasValue={hasValue} >
     {getFormLabel(formElement)}  
     <Input {...passableProps}
       help={getFormElementHelp(hasError, this.state, formElement.name)}
@@ -542,7 +546,7 @@ export function getFormTextArea(options) {
     onChange = valueChangeHandler.bind(this, formElement);
   }
 
-  return (<FormItem key={i} {...formElement.layoutProps} hasError={hasError} hasValue={hasValue} >
+  return (<FormItem key={i} {...formElement.layoutProps} isValid={isValid} hasError={hasError} hasValue={hasValue} >
     {getFormLabel(formElement)}  
     <Textarea {...passableProps}
       onChange={(event)=>onChange()(event)}
@@ -559,10 +563,26 @@ export function getFormSelect(options) {
   let { formElement, i, /*formgroup, width,*/ onChange, } = options;
   let initialValue = getInitialValue(formElement, this.state); //formElement.value || this.state[ formElement.name ] || getPropertyAttribute({ element:formElement, property:this.state, });
   let hasError = getErrorStatus(this.state, formElement.name);
+  let isValid = getValidStatus(this.state, formElement.name);
   let hasValue = (formElement.name && this.state[formElement.name])? true : false;
   let selectOptions = (this.state.__formOptions && this.state.__formOptions[ formElement.name ])
     ? this.state.__formOptions[ formElement.name ]
     : formElement.options || [];
+  let iconStyle = {
+    display: 'inline-block',
+    fontSize: '1rem',
+    height: '24px',
+    lineHeight: '24px',
+    textAlign: 'center',
+    verticalAlign: 'top',
+    width: '24px',
+    color: '#aeb1b5',
+    pointerEvents: 'none',
+    position: 'absolute',
+    top: '4px',
+    zIndex: '4',
+    right: '30px'
+  };
   
   if (typeof initialValue !== 'string') {
     initialValue = JSON.stringify(initialValue, null, 2);
@@ -581,7 +601,7 @@ export function getFormSelect(options) {
     } 
   }
 
-  return (<FormItem key={i} {...formElement.layoutProps} hasError={hasError} hasValue={hasValue} >
+  return (<FormItem key={i} {...formElement.layoutProps} isValid={isValid} hasError={hasError} hasValue={hasValue} >
     {getFormLabel(formElement)}  
     <Select {...formElement.passProps}
       help={getFormElementHelp(hasError, this.state, formElement.name)}
@@ -596,6 +616,7 @@ export function getFormSelect(options) {
         return <option key={k} disabled={opt.disabled} value={opt.value}>{opt.label || opt.value}</option>;
       })}
     </Select>
+    {(!formElement.errorIconLeft) ? getCustomErrorIcon(hasError, isValid, this.state, formElement, iconStyle) : null}  
   </FormItem>);
 }
 
