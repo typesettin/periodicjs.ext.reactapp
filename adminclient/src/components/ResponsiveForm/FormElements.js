@@ -581,7 +581,7 @@ export function getFormSelect(options) {
     position: 'absolute',
     top: '4px',
     zIndex: '4',
-    right: '21px'
+    right: '24px'
   };
   
   if (typeof initialValue !== 'string') {
@@ -603,8 +603,9 @@ export function getFormSelect(options) {
 
   return (<FormItem key={i} {...formElement.layoutProps} initialIcon={formElement.initialIcon} isValid={isValid} hasError={hasError} hasValue={hasValue} >
     {getFormLabel(formElement)}  
-    <div style={{position:"relative"}}>
+    <div className="__re-bulma_control" style={{ position: 'relative'}}>
       <Select {...formElement.passProps}
+        style={Object.assign({}, { flex: 5 }, (formElement.passProps && formElement.passProps.style) ? formElement.passProps.style : {})}  
         help={getFormElementHelp(hasError, this.state, formElement.name)}
         color={(hasError)?'isDanger':undefined}
         onChange={(event)=>{
