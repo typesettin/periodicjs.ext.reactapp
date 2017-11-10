@@ -72,11 +72,11 @@ function getCustomErrorIcon(hasError, isValid, state, formelement, iconStyle) {
       ? formelement.validIcon || 'fa fa-check'
       : (formelement.initialIcon)
         ? formelement.initialIcon
-        : undefined;
+        : '';
   
   return (formelement.errorIconRight || formelement.errorIconLeft)
     ? <i className={`__re-bulma_fa ${iconVar}`} style={iconStyle}></i>
-    : undefined;
+    : null;
 }
 
 function valueChangeHandler(formElement) {
@@ -581,7 +581,7 @@ export function getFormSelect(options) {
     position: 'absolute',
     top: '4px',
     zIndex: '4',
-    right: '30px'
+    right: '24px'
   };
   
   if (typeof initialValue !== 'string') {
@@ -603,20 +603,23 @@ export function getFormSelect(options) {
 
   return (<FormItem key={i} {...formElement.layoutProps} initialIcon={formElement.initialIcon} isValid={isValid} hasError={hasError} hasValue={hasValue} >
     {getFormLabel(formElement)}  
-    <Select {...formElement.passProps}
-      help={getFormElementHelp(hasError, this.state, formElement.name)}
-      color={(hasError)?'isDanger':undefined}
-      onChange={(event)=>{
-        onChange()(event);
-        if(customCallbackfunction) customCallbackfunction(event);
-      }}
-      placeholder={formElement.placeholder||formElement.label}
-      value={this.state[ formElement.name ] || initialValue} >
-      {selectOptions.map((opt, k) => {
-        return <option key={k} disabled={opt.disabled} value={opt.value}>{opt.label || opt.value}</option>;
-      })}
-    </Select>
-    {(!formElement.errorIconLeft) ? getCustomErrorIcon(hasError, isValid, this.state, formElement, iconStyle) : null}  
+    <span className="__re-bulma_control" style={{ position: 'relative'}}>
+      <Select {...formElement.passProps}
+        style={Object.assign({}, { flex: 'inherit' }, (formElement.passProps && formElement.passProps.style) ? formElement.passProps.style : {})}  
+        help={getFormElementHelp(hasError, this.state, formElement.name)}
+        color={(hasError)?'isDanger':undefined}
+        onChange={(event)=>{
+          onChange()(event);
+          if(customCallbackfunction) customCallbackfunction(event);
+        }}
+        placeholder={formElement.placeholder||formElement.label}
+        value={this.state[ formElement.name ] || initialValue} >
+        {selectOptions.map((opt, k) => {
+          return <option key={k} disabled={opt.disabled} value={opt.value}>{opt.label || opt.value}</option>;
+        })}
+        </Select>
+      {(!formElement.errorIconLeft) ? getCustomErrorIcon(hasError, isValid, this.state, formElement, iconStyle) : null}  
+    </span>  
   </FormItem>);
 }
 
