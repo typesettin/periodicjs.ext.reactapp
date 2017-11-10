@@ -3,7 +3,6 @@ import { Column, FormHorizontal, } from 're-bulma';
 
 class FormItem extends Component{
   render() {
-    console.log('FANNIEE!!!',this)
     let className = (this.props.hasValue)? '__form_element_has_value':'';
     className = (this.props.hasError)? `${(className)? `${className} `:''}__form_element_has_error`:className;
     className = (this.props.isValid)? `${(className)? `${className} `:''}__form_element_is_valid`:className;
