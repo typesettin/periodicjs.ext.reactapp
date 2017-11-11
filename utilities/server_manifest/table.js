@@ -3,7 +3,7 @@ const pluralize = require('pluralize');
 const capitalize = require('capitalize');
 
 function getTableHeader(options = {}) { 
-  const { headers, headerProps, } = options;
+  const { headers, headerProps, htmlTH, } = options;
   return {
     component: 'Thead',
     props:headerProps,
@@ -11,7 +11,7 @@ function getTableHeader(options = {}) {
       {
         component: 'Tr',
         children: headers.map(header => ({
-          component: 'Th',
+          component: htmlTH ? 'th' : 'Th',
           children: (options.capitalizeHeaders) ? capitalize(header) : header, 
         })),
       },
@@ -20,7 +20,7 @@ function getTableHeader(options = {}) {
 }
 
 function getTableBody(options = {}) {
-  const { data, bodyProps, tableRowProps, tableColProps, customRowProps = {}, } = options;
+  const { data, bodyProps, tableRowProps, tableColProps, customRowProps = {}, htmlTD, } = options;
   return {
     component: 'Tbody',
     props:bodyProps,
@@ -28,7 +28,7 @@ function getTableBody(options = {}) {
       component: 'Tr',
       props: Object.assign({}, tableRowProps, customRowProps[i]),
       children: Object.keys(row).map(col => ({
-        component: 'Td',
+        component: htmlTD ? 'td' : 'Td',
         props: Object.assign({}, tableColProps, row[col].columnProps),
         children:row[col],
       })),  
@@ -37,7 +37,7 @@ function getTableBody(options = {}) {
 }
 
 function getTableFooter(options = {}) {
-  const { footers, footerProps, } = options;
+  const { footers, footerProps, htmlTF, } = options;
   return {
     component: 'Tfoot',
     props:footerProps,
@@ -45,7 +45,7 @@ function getTableFooter(options = {}) {
       {
         component: 'Tr',
         children: footers.map(footer => ({
-          component: 'Th',
+          component: htmlTF ? 'th' : 'Th',
           children: footer,  
         })),
       },
@@ -67,6 +67,9 @@ function getBasicTable(options = {}) {
     tableRowProps,
     tableColProps,
     capitalizeHeaders,
+    htmlTH,
+    htmlTD,
+    htmlTF,
   } = options;
   const headers = header || Object.keys(data[ 0 ]);
   const footers = footer || headers;
@@ -75,9 +78,9 @@ function getBasicTable(options = {}) {
     component: 'Table',
     props: tableProps,
     children: [
-      hasHeader ? getTableHeader({ data, headers, headerProps, capitalizeHeaders, }) : null,
-      getTableBody({ data, bodyProps, tableRowProps, tableColProps, }),
-      hasFooter ? getTableFooter({ data, footers, footerProps, }) : null,
+      hasHeader ? getTableHeader({ data, headers, headerProps, capitalizeHeaders, htmlTH, }) : null,
+      getTableBody({ data, bodyProps, tableRowProps, tableColProps, htmlTD, }),
+      hasFooter ? getTableFooter({ data, footers, footerProps, htmlTF, }) : null,
     ],
   };
 }
@@ -105,7 +108,7 @@ function getTable(options) {
       }, {
         'key': 'numPages',
         'value': `${schemaName}pages`,
-      },],
+      }, ],
       'headerLinkProps': {
         'style': {
           'textDecoration': 'none',
