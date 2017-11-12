@@ -89,6 +89,7 @@ function getBasicTable(options = {}) {
     htmlTH,
     htmlTD,
     htmlTF,
+    ignoreReduxProps = true,
     customRowProps = {},
   } = options;
   const headers = header || Object.keys(data[ 0 ]);
@@ -96,6 +97,7 @@ function getBasicTable(options = {}) {
   const tableProps = props || {};
   return {
     component: 'Table',
+    ignoreReduxProps,
     props: tableProps,
     children: [
       hasHeader

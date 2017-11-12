@@ -59,6 +59,7 @@ function getLayout(options = {}) {
     component: 'Columns',
     children: row.map(col => ({
       component: 'Column',
+      props: col.columnProps,
       children: (Array.isArray(col))
         ? col
         : [col, ],
@@ -92,6 +93,7 @@ function getAreaChart(options = {}) {
     },
   };
 }
+
 function getLineChart(options = {}) {
   const { x, y, data, i, stacked, labels, } = options;
 
@@ -225,7 +227,7 @@ function getVictoryChart(options = {}) {
 }
 
 function getRechart(options = {}) {
-  const { data, charts, minHeight=300, props, chartType, includeScale, xAxis=true, yAxis=true ,  } = options;
+  const { data, charts, minHeight = 300, props, chartType, includeScale, xAxis = true, yAxis = true, legend = true, children = [], tooltipProps = {}, tooltip = true, tooltipEvalProps = {}, containerProps = {}, ignoreReduxProps = true, legendProps = {},} = options;
   const chartComponents = (Array.isArray(charts))
     ? charts.map((chart, i) => ({
       component: `recharts.${capitalize(chart.type)}`,
@@ -237,7 +239,7 @@ function getRechart(options = {}) {
     }))
     : [];
   const rechartType = chartType ||
-    (Array.isArray(charts) && charts.length === 0)
+    (Array.isArray(charts) && charts.length === 1)
     ? charts[ 0 ].type
     : (Array.isArray(charts) && charts.length > 1 && charts.filter(chart=>chart.type!==charts[0].type).length===0)
       ? charts[0].type
@@ -247,9 +249,10 @@ function getRechart(options = {}) {
 
   return {
     component: 'recharts.ResponsiveContainer',
-    props: {
+    ignoreReduxProps,
+    props: Object.assign({
       minHeight,
-    },
+    },containerProps),
     __dangerouslyInsertComponents: {
       _children: {
         component: `recharts.${capitalize(rechartType)}Chart`,
@@ -257,18 +260,25 @@ function getRechart(options = {}) {
           data,
         }, props),
         children: chartComponents.concat([
-          {
+          (legend)?{
             component: 'recharts.Legend',
-            props: {
+            props:Object.assign( {
               align: 'right',
-            },
-          },
+            },legendProps),
+          }:null,
           (xAxis)
             ?  {
               component: 'recharts.XAxis',
               props: Object.assign({
                 dataKey: 'date',
               }, xAxis.props),
+              children: [{
+                component: 'recharts.Label',
+                props: Object.assign( {
+                  // value: 'Sales $',
+                  position: 'insideBottom',
+                },xAxis.labelProps),
+              }, ],
             }
             : null,
           (yAxis)
@@ -282,28 +292,30 @@ function getRechart(options = {}) {
               }, yAxis.evalProps),
               children: [{
                 component: 'recharts.Label',
-                props: {
-                  value:'sales $',
-                },
+                props: Object.assign( {
+                  // value: 'Sales $',
+                  position: 'insideLeft',
+                  angle: -90,
+                },yAxis.labelProps),
               }, ],
             }
             : null,
-          {
+          (tooltip)?{
             component: 'recharts.Tooltip',
-            props: {
+            props: Object.assign({
               // dataKey:'actual',
-            },
-            __dangerouslyEvalProps: {
+            },tooltipProps),
+            __dangerouslyEvalProps: Object.assign({
               formatter: '(tick)=> window.__reactapp.__ra_helpers.numeral(tick).format("$0,0.00")',
-            },
-          },
+            },tooltipEvalProps),
+          }:null,
           (includeScale)
             ? {
               component:'recharts.Brush',
             }
             : null,
           
-        ]),
+        ]).concat(children),
       },
     },
   };

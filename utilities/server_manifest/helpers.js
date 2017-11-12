@@ -171,7 +171,7 @@ function getPageTitle(options) {
             ? [{
               component:'Addons',
               children:action.map(act => getAction(act)[ 0 ]),
-            }, ]
+            },]
             : getAction(action) || null
           : null,
       },
@@ -180,17 +180,17 @@ function getPageTitle(options) {
 }
 
 function getTitlePrefix(options) {
-  const { location, title, } = options;
+  const { location, title, style, } = options;
   return [{
     component: 'ResponsiveLink',
     props: {
       location,
-      style: {
+      style: Object.assign({
         textDecoration:'none',
-      },
+      }, style),
     },
     children: title,
-  },];
+  }, ];
 }
 
 function getTitleArrow() {
