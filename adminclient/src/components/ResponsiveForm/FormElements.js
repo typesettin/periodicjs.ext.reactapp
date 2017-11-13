@@ -170,12 +170,12 @@ function getPassablePropsKeyEvents(passableProps, formElement) {
   }
   if (formElement.onFocus) {
     let customFocus = () => { };
-    if (typeof formElement.onBlur==='string' && formElement.onBlur.indexOf('func:this.props') !== -1) {
-      customFocus= this.props[ formElement.onBlur.replace('func:this.props.', '') ];
-    } else if (typeof formElement.onBlur==='string' && formElement.onBlur.indexOf('func:window') !== -1 && typeof window[ formElement.onBlur.replace('func:window.', '') ] ==='function') {
-      customFocus= window[ formElement.onBlur.replace('func:window.', '') ].bind(this);
+    if (typeof formElement.onFocus==='string' && formElement.onFocus.indexOf('func:this.props') !== -1) {
+      customFocus= this.props[ formElement.onFocus.replace('func:this.props.', '') ];
+    } else if (typeof formElement.onFocus==='string' && formElement.onFocus.indexOf('func:window') !== -1 && typeof window[ formElement.onFocus.replace('func:window.', '') ] ==='function') {
+      customFocus= window[ formElement.onFocus.replace('func:window.', '') ].bind(this);
     } 
-    passableProps.customFocus = (e) => {
+    passableProps.onFocus = (e) => {
       customFocus(e, formElement);
     };
   }
