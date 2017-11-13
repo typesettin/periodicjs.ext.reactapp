@@ -614,7 +614,7 @@ export function getFormSelect(options) {
 
   return (<FormItem key={i} {...formElement.layoutProps} initialIcon={formElement.initialIcon} isValid={isValid} hasError={hasError} hasValue={hasValue} >
     {getFormLabel(formElement)}  
-    <div className="__re-bulma_control" style={{ position: 'relative'}}>
+    <span className="__re-bulma_control" style={{ position: 'relative', display: 'inline-block'}}>
       <Select {...formElement.passProps}
         style={Object.assign({}, { flex: 'inherit' }, (formElement.passProps && formElement.passProps.style) ? formElement.passProps.style : {})}  
         help={getFormElementHelp(hasError, this.state, formElement.name)}
@@ -630,7 +630,7 @@ export function getFormSelect(options) {
         })}
         </Select>
       {(!formElement.errorIconLeft) ? getCustomErrorIcon(hasError, isValid, this.state, formElement, iconStyle) : null}  
-    </div>  
+    </span>  
   </FormItem>);
 }
 
