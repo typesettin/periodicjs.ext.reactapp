@@ -168,6 +168,17 @@ function getPassablePropsKeyEvents(passableProps, formElement) {
       customonBlur(e, formElement);
     };
   }
+  if (formElement.onFocus) {
+    let customFocus = () => { };
+    if (typeof formElement.onBlur==='string' && formElement.onBlur.indexOf('func:this.props') !== -1) {
+      customFocus= this.props[ formElement.onBlur.replace('func:this.props.', '') ];
+    } else if (typeof formElement.onBlur==='string' && formElement.onBlur.indexOf('func:window') !== -1 && typeof window[ formElement.onBlur.replace('func:window.', '') ] ==='function') {
+      customFocus= window[ formElement.onBlur.replace('func:window.', '') ].bind(this);
+    } 
+    passableProps.customFocus = (e) => {
+      customFocus(e, formElement);
+    };
+  }
   if (formElement.keyUp) {
     let customkeyUp = () => { };
     if (typeof formElement.keyUp==='string' && formElement.keyUp.indexOf('func:this.props') !== -1) {
@@ -603,7 +614,7 @@ export function getFormSelect(options) {
 
   return (<FormItem key={i} {...formElement.layoutProps} initialIcon={formElement.initialIcon} isValid={isValid} hasError={hasError} hasValue={hasValue} >
     {getFormLabel(formElement)}  
-    <span className="__re-bulma_control" style={{ position: 'relative'}}>
+    <div className="__re-bulma_control" style={{ position: 'relative'}}>
       <Select {...formElement.passProps}
         style={Object.assign({}, { flex: 'inherit' }, (formElement.passProps && formElement.passProps.style) ? formElement.passProps.style : {})}  
         help={getFormElementHelp(hasError, this.state, formElement.name)}
@@ -619,7 +630,7 @@ export function getFormSelect(options) {
         })}
         </Select>
       {(!formElement.errorIconLeft) ? getCustomErrorIcon(hasError, isValid, this.state, formElement, iconStyle) : null}  
-    </span>  
+    </div>  
   </FormItem>);
 }
 
