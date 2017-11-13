@@ -52,16 +52,15 @@ function validateFormElement(options) {
     validation = validation.length > 0 ? validation[0] : false;
     if (validation) {
       var validationerror = (0, _validate4.default)((0, _defineProperty3.default)({}, validation.name, this.state[validation.name]), validation.constraints);
-      var validationErrors = (0, _assign2.default)({}, this.state.formDataErrors);
-      var validationValid = (0, _assign2.default)({}, this.state.formDataValid);
+      var validationErrors = void 0;
       if (validationerror) {
+        validationErrors = (0, _assign2.default)({}, this.state.formDataErrors);
         validationErrors[validation.name] = validationerror[validation.name];
-        validationValid[validation.name] = false;
       } else {
+        validationErrors = (0, _assign2.default)({}, this.state.formDataErrors);
         delete validationErrors[validation.name];
-        validationValid[validation.name] = true;
       }
-      this.setState({ formDataErrors: validationErrors, formDataValid: validationValid });
+      this.setState({ formDataErrors: validationErrors });
       // console.debug('has errors', validationErrors, 'this.state[formElement.name]', this.state[ formElement.name ]);
     }
   } catch (e) {
@@ -80,8 +79,6 @@ function validateForm(options) {
       // console.debug(formdata[ validation.name ], { validation, validationerror, });
       if (validationerror) {
         validationErrors[validation.name] = validationerror[validation.name];
-      } else {
-        validationErrors[validation.name] = [];
       }
     });
   } else {
