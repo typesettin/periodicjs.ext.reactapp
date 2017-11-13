@@ -614,7 +614,7 @@ export function getFormSelect(options) {
 
   return (<FormItem key={i} {...formElement.layoutProps} initialIcon={formElement.initialIcon} isValid={isValid} hasError={hasError} hasValue={hasValue} >
     {getFormLabel(formElement)}  
-    <span className="__re-bulma_control" style={{ position: 'relative', display: 'inline-block'}}>
+    <span className="__re-bulma_control" style={{ position: 'relative', display: 'block'}}>
       <Select {...formElement.passProps}
         style={Object.assign({}, { flex: 'inherit' }, (formElement.passProps && formElement.passProps.style) ? formElement.passProps.style : {})}  
         help={getFormElementHelp(hasError, this.state, formElement.name)}
@@ -1014,7 +1014,7 @@ export function getFormSubmit(options) {
       onClick={() => { 
         let validated_formdata = validateForm.call(this, { formdata: this.state, validationErrors: {} });
         let updateStateData = {
-          formDataErrors: validated_formdata.validationErrors
+          formDataErrors: validated_formdata.validationErrors,
         };
         if (this.props.sendSubmitButtonVal) {
           updateStateData[ 'submitButtonVal' ] = formElement.value;
