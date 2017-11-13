@@ -41,11 +41,11 @@ export function getPropertyAttribute(options) {
 }
 
 function getErrorStatus(state, name) {
-  return (state.formDataErrors && state.formDataErrors[ name ] && state.formDataErrors[ name ].length > 0);
+  return (state.formDataErrors && state.formDataErrors[ name ]);
 }
 
 function getValidStatus(state, name) {
-  return (state.formDataErrors && state.formDataErrors[ name ] && state.formDataErrors[ name ].length === 0);
+  return (state.formDataValid && state.formDataValid[ name ]);
 }
 
 
@@ -166,6 +166,17 @@ function getPassablePropsKeyEvents(passableProps, formElement) {
         this.validateFormElement({ formElement, });
       }
       customonBlur(e, formElement);
+    };
+  }
+  if (formElement.onFocus) {
+    let customFocus = () => { };
+    if (typeof formElement.onFocus==='string' && formElement.onFocus.indexOf('func:this.props') !== -1) {
+      customFocus= this.props[ formElement.onFocus.replace('func:this.props.', '') ];
+    } else if (typeof formElement.onFocus==='string' && formElement.onFocus.indexOf('func:window') !== -1 && typeof window[ formElement.onFocus.replace('func:window.', '') ] ==='function') {
+      customFocus= window[ formElement.onFocus.replace('func:window.', '') ].bind(this);
+    } 
+    passableProps.onFocus = (e) => {
+      customFocus(e, formElement);
     };
   }
   if (formElement.keyUp) {
@@ -603,7 +614,7 @@ export function getFormSelect(options) {
 
   return (<FormItem key={i} {...formElement.layoutProps} initialIcon={formElement.initialIcon} isValid={isValid} hasError={hasError} hasValue={hasValue} >
     {getFormLabel(formElement)}  
-    <span className="__re-bulma_control" style={{ position: 'relative'}}>
+    <div className="__re-bulma_control" style={{ position: 'relative'}}>
       <Select {...formElement.passProps}
         style={Object.assign({}, { flex: 'inherit' }, (formElement.passProps && formElement.passProps.style) ? formElement.passProps.style : {})}  
         help={getFormElementHelp(hasError, this.state, formElement.name)}
@@ -619,7 +630,7 @@ export function getFormSelect(options) {
         })}
         </Select>
       {(!formElement.errorIconLeft) ? getCustomErrorIcon(hasError, isValid, this.state, formElement, iconStyle) : null}  
-    </span>  
+    </div>  
   </FormItem>);
 }
 

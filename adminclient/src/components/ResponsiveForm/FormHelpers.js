@@ -9,15 +9,16 @@ export function validateFormElement(options) {
     if (validation) {
       let validationerror = validate({
         [validation.name]: this.state[validation.name], }, validation.constraints);
-      let validationErrors;
+      let validationErrors = Object.assign({}, this.state.formDataErrors);
+      let validationValid = Object.assign({}, this.state.formDataValid);
       if (validationerror) {
-        validationErrors = Object.assign({}, this.state.formDataErrors);
         validationErrors[validation.name] = validationerror[validation.name];
+        validationValid[validation.name] = false;
       } else {
-        validationErrors = Object.assign({}, this.state.formDataErrors);
-        validationErrors[validation.name] = [];
+        delete validationErrors[validation.name];
+        validationValid[validation.name] = true;
       }
-      this.setState({ formDataErrors: validationErrors, });
+      this.setState({ formDataErrors: validationErrors, formDataValid: validationValid});
       // console.debug('has errors', validationErrors, 'this.state[formElement.name]', this.state[ formElement.name ]);
     }
   } catch (e) {
@@ -35,8 +36,6 @@ export function validateForm(options) {
       // console.debug(formdata[ validation.name ], { validation, validationerror, });
       if (validationerror) {
         validationErrors[validation.name] = validationerror[validation.name];
-      } else {
-        validationErrors[validation.name] = [];
       }
     });
   } else {
