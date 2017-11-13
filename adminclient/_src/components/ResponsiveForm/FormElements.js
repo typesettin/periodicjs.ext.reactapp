@@ -152,11 +152,11 @@ function getPropertyAttribute(options) {
 }
 
 function getErrorStatus(state, name) {
-  return state.formDataErrors && state.formDataErrors[name] && state.formDataErrors[name].length > 0;
+  return state.formDataErrors && state.formDataErrors[name];
 }
 
 function getValidStatus(state, name) {
-  return state.formDataErrors && state.formDataErrors[name] && state.formDataErrors[name].length === 0;
+  return state.formDataValid && state.formDataValid[name];
 }
 
 function getFormElementHelp(hasError, state, name) {
@@ -272,6 +272,17 @@ function getPassablePropsKeyEvents(passableProps, formElement) {
         _this2.validateFormElement({ formElement: formElement });
       }
       customonBlur(e, formElement);
+    };
+  }
+  if (formElement.onFocus) {
+    var customFocus = function customFocus() {};
+    if (typeof formElement.onFocus === 'string' && formElement.onFocus.indexOf('func:this.props') !== -1) {
+      customFocus = this.props[formElement.onFocus.replace('func:this.props.', '')];
+    } else if (typeof formElement.onFocus === 'string' && formElement.onFocus.indexOf('func:window') !== -1 && typeof window[formElement.onFocus.replace('func:window.', '')] === 'function') {
+      customFocus = window[formElement.onFocus.replace('func:window.', '')].bind(this);
+    }
+    passableProps.onFocus = function (e) {
+      customFocus(e, formElement);
     };
   }
   if (formElement.keyUp) {
@@ -716,7 +727,7 @@ function getFormSelect(options) {
     (0, _extends3.default)({ key: i }, formElement.layoutProps, { initialIcon: formElement.initialIcon, isValid: isValid, hasError: hasError, hasValue: hasValue }),
     getFormLabel(formElement),
     _react2.default.createElement(
-      'span',
+      'div',
       { className: '__re-bulma_control', style: { position: 'relative' } },
       _react2.default.createElement(
         _reBulma.Select,
