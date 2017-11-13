@@ -155,6 +155,10 @@ function getErrorStatus(state, name) {
   return state.formDataErrors && state.formDataErrors[name];
 }
 
+function getValidStatus(state, name) {
+  return state.formDataValid && state.formDataValid[name];
+}
+
 function getFormElementHelp(hasError, state, name) {
   return hasError ? {
     color: 'isDanger',
@@ -173,8 +177,10 @@ function getCustomErrorLabel(hasError, state, formelement) {
   ) : null;
 }
 
-function getCustomErrorIcon(hasError, state, formelement) {
-  return hasError && (formelement.errorIconRight || formelement.errorIconLeft) ? _react2.default.createElement('i', { className: '__re-bulma_fa fa fa-warning' }) : null;
+function getCustomErrorIcon(hasError, isValid, state, formelement, iconStyle) {
+  var iconVar = hasError ? formelement.errorIcon || 'fa fa-warning' : isValid ? formelement.validIcon || 'fa fa-check' : formelement.initialIcon ? formelement.initialIcon : '';
+
+  return formelement.errorIconRight || formelement.errorIconLeft ? _react2.default.createElement('i', { className: '__re-bulma_fa ' + iconVar, style: iconStyle }) : null;
 }
 
 function valueChangeHandler(formElement) {
@@ -266,6 +272,17 @@ function getPassablePropsKeyEvents(passableProps, formElement) {
         _this2.validateFormElement({ formElement: formElement });
       }
       customonBlur(e, formElement);
+    };
+  }
+  if (formElement.onFocus) {
+    var customFocus = function customFocus() {};
+    if (typeof formElement.onFocus === 'string' && formElement.onFocus.indexOf('func:this.props') !== -1) {
+      customFocus = this.props[formElement.onFocus.replace('func:this.props.', '')];
+    } else if (typeof formElement.onFocus === 'string' && formElement.onFocus.indexOf('func:window') !== -1 && typeof window[formElement.onFocus.replace('func:window.', '')] === 'function') {
+      customFocus = window[formElement.onFocus.replace('func:window.', '')].bind(this);
+    }
+    passableProps.onFocus = function (e) {
+      customFocus(e, formElement);
     };
   }
   if (formElement.keyUp) {
@@ -458,6 +475,7 @@ function getFormMaskedInput(options) {
   var getPassablePropkeyevents = getPassablePropsKeyEvents.bind(this);
   var fileClassname = '__reactapp_file_' + formElement.name;
   var hasError = getErrorStatus(this.state, formElement.name);
+  var isValid = getValidStatus(this.state, formElement.name);
   var hasValue = formElement.name && this.state[formElement.name] ? true : false;
   var passableProps = (0, _assign2.default)({
     type: 'text',
@@ -528,11 +546,11 @@ function getFormMaskedInput(options) {
     className: '__re-bulma_control'
   }, formElement.wrapperProps);
 
-  wrapperProps.className = hasError && (formElement.errorIconRight || formElement.errorIconLeft) ? formElement.errorIconRight ? wrapperProps.className + ' __re-bulma_has-icon __re-bulma_has-icon-right' : wrapperProps.className + ' __re-bulma_has-icon __re-bulma_has-icon-left' : wrapperProps.className;
+  wrapperProps.className = (hasError || isValid || formElement.initialIcon) && (formElement.errorIconRight || formElement.errorIconLeft) ? formElement.errorIconRight ? wrapperProps.className + ' __re-bulma_has-icon __re-bulma_has-icon-right' : wrapperProps.className + ' __re-bulma_has-icon __re-bulma_has-icon-left' : wrapperProps.className;
 
   return _react2.default.createElement(
     _FormItem2.default,
-    (0, _extends3.default)({ key: i }, formElement.layoutProps, { hasError: hasError, hasValue: hasValue }),
+    (0, _extends3.default)({ key: i }, formElement.layoutProps, { initialIcon: formElement.initialIcon, isValid: isValid, hasError: hasError, hasValue: hasValue }),
     getFormLabel(formElement),
     _react2.default.createElement(
       'span',
@@ -544,7 +562,7 @@ function getFormMaskedInput(options) {
         onChange: onChange,
         placeholder: formElement.placeholder,
         value: initialValue })),
-      getCustomErrorIcon(hasError, this.state, formElement),
+      getCustomErrorIcon(hasError, isValid, this.state, formElement),
       getCustomErrorLabel(hasError, this.state, formElement)
     )
   );
@@ -561,6 +579,7 @@ function getFormTextInputArea(options) {
   var getPassablePropkeyevents = getPassablePropsKeyEvents.bind(this);
   var fileClassname = '__reactapp_file_' + formElement.name;
   var hasError = getErrorStatus(this.state, formElement.name);
+  var isValid = getValidStatus(this.state, formElement.name);
   var hasValue = formElement.name && this.state[formElement.name] ? true : false;
   var passableProps = (0, _assign2.default)({
     type: formElement.type || 'text'
@@ -604,12 +623,12 @@ function getFormTextInputArea(options) {
   }
   return _react2.default.createElement(
     _FormItem2.default,
-    (0, _extends3.default)({ key: i }, formElement.layoutProps, { hasError: hasError, hasValue: hasValue }),
+    (0, _extends3.default)({ key: i }, formElement.layoutProps, { initialIcon: formElement.initialIcon, isValid: isValid, hasError: hasError, hasValue: hasValue }),
     getFormLabel(formElement),
     _react2.default.createElement(_reBulma.Input, (0, _extends3.default)({}, passableProps, {
       help: getFormElementHelp(hasError, this.state, formElement.name),
       color: hasError ? 'isDanger' : undefined,
-      icon: hasError ? formElement.errorIcon || 'fa fa-warning' : undefined,
+      icon: hasError ? formElement.errorIcon || 'fa fa-warning' : isValid ? formElement.validIcon || 'fa fa-check' : formElement.initialIcon ? formElement.initialIcon : undefined,
       hasIconRight: formElement.errorIconRight,
       onChange: onChange,
       placeholder: formElement.placeholder,
@@ -624,6 +643,7 @@ function getFormTextArea(options) {
 
   var initialValue = getInitialValue(formElement, this.state); //formElement.value || this.state[ formElement.name ] || getPropertyAttribute({ element:formElement, property:this.state, });
   var hasError = getErrorStatus(this.state, formElement.name);
+  var isValid = getValidStatus(this.state, formElement.name);
   var hasValue = formElement.name && this.state[formElement.name] ? true : false;
   var passableProps = (0, _assign2.default)({}, formElement.passProps);
   var getPassablePropkeyevents = getPassablePropsKeyEvents.bind(this);
@@ -642,14 +662,14 @@ function getFormTextArea(options) {
 
   return _react2.default.createElement(
     _FormItem2.default,
-    (0, _extends3.default)({ key: i }, formElement.layoutProps, { hasError: hasError, hasValue: hasValue }),
+    (0, _extends3.default)({ key: i }, formElement.layoutProps, { initialIcon: formElement.initialIcon, isValid: isValid, hasError: hasError, hasValue: hasValue }),
     getFormLabel(formElement),
     _react2.default.createElement(_reBulma.Textarea, (0, _extends3.default)({}, passableProps, {
       onChange: function onChange(event) {
         return _onChange()(event);
       },
       help: getFormElementHelp(hasError, this.state, formElement.name),
-      icon: hasError ? formElement.errorIcon || 'fa fa-warning' : undefined,
+      icon: hasError ? formElement.errorIcon || 'fa fa-warning' : isValid ? formElement.validIcon || 'fa fa-check' : formElement.initialIcon ? formElement.initialIcon : undefined,
       color: hasError ? 'isDanger' : undefined,
       hasIconRight: formElement.errorIconRight,
       placeholder: formElement.placeholder || formElement.label,
@@ -664,8 +684,24 @@ function getFormSelect(options) {
 
   var initialValue = getInitialValue(formElement, this.state); //formElement.value || this.state[ formElement.name ] || getPropertyAttribute({ element:formElement, property:this.state, });
   var hasError = getErrorStatus(this.state, formElement.name);
+  var isValid = getValidStatus(this.state, formElement.name);
   var hasValue = formElement.name && this.state[formElement.name] ? true : false;
   var selectOptions = this.state.__formOptions && this.state.__formOptions[formElement.name] ? this.state.__formOptions[formElement.name] : formElement.options || [];
+  var iconStyle = {
+    display: 'inline-block',
+    fontSize: '1rem',
+    height: '24px',
+    lineHeight: '24px',
+    textAlign: 'center',
+    verticalAlign: 'top',
+    width: '24px',
+    color: '#aeb1b5',
+    pointerEvents: 'none',
+    position: 'absolute',
+    top: '4px',
+    zIndex: '4',
+    right: '24px'
+  };
 
   if (typeof initialValue !== 'string') {
     initialValue = (0, _stringify2.default)(initialValue, null, 2);
@@ -688,26 +724,32 @@ function getFormSelect(options) {
 
   return _react2.default.createElement(
     _FormItem2.default,
-    (0, _extends3.default)({ key: i }, formElement.layoutProps, { hasError: hasError, hasValue: hasValue }),
+    (0, _extends3.default)({ key: i }, formElement.layoutProps, { initialIcon: formElement.initialIcon, isValid: isValid, hasError: hasError, hasValue: hasValue }),
     getFormLabel(formElement),
     _react2.default.createElement(
-      _reBulma.Select,
-      (0, _extends3.default)({}, formElement.passProps, {
-        help: getFormElementHelp(hasError, this.state, formElement.name),
-        color: hasError ? 'isDanger' : undefined,
-        onChange: function onChange(event) {
-          _onChange2()(event);
-          if (customCallbackfunction) customCallbackfunction(event);
-        },
-        placeholder: formElement.placeholder || formElement.label,
-        value: this.state[formElement.name] || initialValue }),
-      selectOptions.map(function (opt, k) {
-        return _react2.default.createElement(
-          'option',
-          { key: k, disabled: opt.disabled, value: opt.value },
-          opt.label || opt.value
-        );
-      })
+      'div',
+      { className: '__re-bulma_control', style: { position: 'relative' } },
+      _react2.default.createElement(
+        _reBulma.Select,
+        (0, _extends3.default)({}, formElement.passProps, {
+          style: (0, _assign2.default)({}, { flex: 'inherit' }, formElement.passProps && formElement.passProps.style ? formElement.passProps.style : {}),
+          help: getFormElementHelp(hasError, this.state, formElement.name),
+          color: hasError ? 'isDanger' : undefined,
+          onChange: function onChange(event) {
+            _onChange2()(event);
+            if (customCallbackfunction) customCallbackfunction(event);
+          },
+          placeholder: formElement.placeholder || formElement.label,
+          value: this.state[formElement.name] || initialValue }),
+        selectOptions.map(function (opt, k) {
+          return _react2.default.createElement(
+            'option',
+            { key: k, disabled: opt.disabled, value: opt.value },
+            opt.label || opt.value
+          );
+        })
+      ),
+      !formElement.errorIconLeft ? getCustomErrorIcon(hasError, isValid, this.state, formElement, iconStyle) : null
     )
   );
 }

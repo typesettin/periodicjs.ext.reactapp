@@ -130,7 +130,6 @@ var ResponsiveTable = function (_Component) {
 
     var rows = props.rows || [];
     rows = rows.documents ? rows.documents : rows;
-    // console.log({ rows })
     var headers = (!props.headers || !props.headers.length) && rows[0] ? (0, _TableHelpers.getHeadersFromRows)({
       rows: props.rows,
       sortable: props.sortable,
@@ -157,7 +156,7 @@ var ResponsiveTable = function (_Component) {
       hasFooter: props.hasFooter,
       limit: props.limit,
       currentPage: props.currentPage,
-      numItems: props.numItems,
+      numItems: props.numItems || rows.length,
       numPages: Math.ceil(props.numItems / props.limit),
       numButtons: props.numButtons,
       isLoading: false,
