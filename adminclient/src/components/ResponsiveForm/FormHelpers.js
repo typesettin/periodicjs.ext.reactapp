@@ -36,6 +36,8 @@ export function validateForm(options) {
       // console.debug(formdata[ validation.name ], { validation, validationerror, });
       if (validationerror) {
         validationErrors[validation.name] = validationerror[validation.name];
+      } else {
+        delete validationErrors[validation.name];
       }
     });
   } else {
