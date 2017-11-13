@@ -114,7 +114,7 @@ function getBasicTable(options = {}) {
 }
 
 function getTable(options) {
-  const { schemaName, baseUrl, headers, tableProps, asyncdataprops, customLayout, customLayoutStyle, asyncprops, thisprops, dataMap, limit=100,  } = options;
+  const { schemaName, baseUrl, headers, tableProps, asyncdataprops, customLayout, customLayoutStyle, asyncprops, thisprops, dataMap, limit=100, useThisProps, bindprops,  } = options;
   return {
     component: 'ResponsiveTable',
     props: Object.assign({}, {
@@ -146,18 +146,35 @@ function getTable(options) {
       customLayout,
       customLayoutStyle,
     }, tableProps),
-    thisprops,
-    asyncprops: (asyncprops) ? asyncprops : {
-      'rows': [
-        asyncdataprops, 'data', `${pluralize(schemaName)}`,
-      ],
-      'numItems': [
-        asyncdataprops, 'data', `${pluralize(schemaName)}count`,
-      ],
-      'numPages': [
-        asyncdataprops, 'data', `${schemaName}pages`,
-      ],
-    },
+    thisprops: Object.assign({}, thisprops, useThisProps
+      ? {
+        'rows': [
+          asyncdataprops, 'data', `${pluralize(schemaName)}`,
+        ],
+        'numItems': [
+          asyncdataprops, 'data', `${pluralize(schemaName)}count`,
+        ],
+        'numPages': [
+          asyncdataprops, 'data', `${schemaName}pages`,
+        ],
+      }
+      : {}),
+    bindprops,
+    asyncprops: (asyncprops)
+      ? asyncprops
+      : useThisProps
+        ? {}
+        : {
+          'rows': [
+            asyncdataprops, 'data', `${pluralize(schemaName)}`,
+          ],
+          'numItems': [
+            asyncdataprops, 'data', `${pluralize(schemaName)}count`,
+          ],
+          'numPages': [
+            asyncdataprops, 'data', `${schemaName}pages`,
+          ],
+        },
   };
 }
 

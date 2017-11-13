@@ -1,22 +1,23 @@
 'use strict';
 
 function getTabs(options) {
-  const { tabs = [], type, props, } = options;
+  const { tabs = [], type, props, componentProps = {}, bindprops,  } = options;
   //tabs={name,layout}
-  return {
+  return Object.assign({
     component: 'ResponsiveTabs',
+    bindprops,
     props: Object.assign({
       isButton: false,
       tabContainer: {
-        className:'__rep_tab'
+        className:'__rep_tab',
       },
       tabsProps: {
-        tabStyle:'isBoxed'
+        tabStyle:'isBoxed',
       },
       tabsType: type || 'navBar',
       tabs,
-    },props),
-  };
+    }, props),
+  }, componentProps);
 }
 
 module.exports = {
