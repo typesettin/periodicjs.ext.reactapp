@@ -41,11 +41,11 @@ export function getPropertyAttribute(options) {
 }
 
 function getErrorStatus(state, name) {
-  return (state.formDataErrors && state.formDataErrors[ name ] && state.formDataErrors[ name ].length > 0);
+  return (state.formDataErrors && state.formDataErrors[ name ]);
 }
 
 function getValidStatus(state, name) {
-  return (state.formDataErrors && state.formDataErrors[ name ] && state.formDataErrors[ name ].length === 0);
+  return (state.formDataValid && state.formDataValid[ name ]);
 }
 
 
