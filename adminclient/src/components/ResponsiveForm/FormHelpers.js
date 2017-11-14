@@ -10,14 +10,14 @@ export function validateFormElement(options) {
       let validationerror = validate({
         [validation.name]: this.state[validation.name],
       }, validation.constraints);
-      
-      let validationErrors = Object.assign({}, this.state.formDataErrors);
-      let validationValid = Object.assign({}, this.state.formDataValid);
-      
+      let validationErrors;
+      let validationValid;
       if (validationerror) {
+        validationErrors = Object.assign({}, this.state.formDataErrors);
         validationErrors[validation.name] = validationerror[validation.name];
         delete validationValid[validation.name];
       } else {
+        validationValid = Object.assign({}, this.state.formDataValid);
         validationValid[validation.name] = true;
         delete validationErrors[validation.name];
       }
