@@ -7,7 +7,7 @@ const mockSchemas = require('./schema/mock_schemas');
 const JSONDictionary = require('./schema/dictionary');
 const flatten = require('flat');
 
-function generateManifestsFromCoreData(options) {
+function generateManifestsFromCoreData(options = {}) {
   const extsettings = periodic.settings.extensions['periodicjs.ext.reactapp'];
   const adminRoute = options.customAdminRoute || helpers.getManifestPathPrefix(extsettings.adminPath);
   const { indexOptions, newOptions, showOptions, schema, schemaName, allSchemas, detailOptions, } = options;
@@ -20,11 +20,11 @@ function generateManifestsFromCoreData(options) {
   };
 }
 
-function generateCoreDataManifests(options) {
+function generateCoreDataManifests(options = {}) {
   const Sequelize = require('sequelize');  
   const allSchemas = Array.from(periodic.models.keys()).reduce((result, key) => {
     let modelSchema = periodic.models.get(key).scheme;
-    if (modelSchema._id && modelSchema._id.primaryKey) {
+    if ((modelSchema._id && modelSchema._id.primaryKey) || (modelSchema._id && modelSchema._id.type )) {
       modelSchema = Object.keys(modelSchema).reduce((newModelSchema, modelSchemaProp) => {
         if (modelSchema[ modelSchemaProp ] instanceof Sequelize.STRING
           || modelSchema[ modelSchemaProp ].type instanceof Sequelize.STRING
