@@ -8,16 +8,20 @@ export function validateFormElement(options) {
     validation = (validation.length > 0) ? validation[0] : false;
     if (validation) {
       let validationerror = validate({
-        [validation.name]: this.state[validation.name], }, validation.constraints);
-      let validationErrors;
+        [validation.name]: this.state[validation.name],
+      }, validation.constraints);
+      
+      let validationErrors = Object.assign({}, this.state.formDataErrors);
+      let validationValid = Object.assign({}, this.state.formDataValid);
+      
       if (validationerror) {
-        validationErrors = Object.assign({}, this.state.formDataErrors);
         validationErrors[validation.name] = validationerror[validation.name];
+        delete validationValid[validation.name];
       } else {
-        validationErrors = Object.assign({}, this.state.formDataErrors);
+        validationValid[validation.name] = true;
         delete validationErrors[validation.name];
       }
-      this.setState({ formDataErrors: validationErrors, });
+      this.setState({ formDataErrors: validationErrors, formDataValid: validationValid });
       // console.debug('has errors', validationErrors, 'this.state[formElement.name]', this.state[ formElement.name ]);
     }
   } catch (e) {
