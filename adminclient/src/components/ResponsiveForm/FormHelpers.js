@@ -15,13 +15,17 @@ export function validateFormElement(options) {
       if (validationerror) {
         validationErrors = Object.assign({}, this.state.formDataErrors);
         validationErrors[validation.name] = validationerror[validation.name];
-        validationValid = Object.assign({}, this.state.formDataValid);
-        delete validationValid[validation.name];
+        if (this.state.formDataValid) {
+          validationValid = Object.assign({}, this.state.formDataValid);
+          delete validationValid[validation.name];
+        }
       } else {
         validationValid = Object.assign({}, this.state.formDataValid);
-        validationErrors = Object.assign({}, this.state.formDataErrors);
         validationValid[validation.name] = true;
-        delete validationErrors[validation.name];
+        if (this.state.formDataErrors) {
+          validationErrors = Object.assign({}, this.state.formDataErrors);
+          delete validationErrors[validation.name];
+        }
       }
       this.setState({ formDataErrors: validationErrors, formDataValid: validationValid });
       // console.debug('has errors', validationErrors, 'this.state[formElement.name]', this.state[ formElement.name ]);
