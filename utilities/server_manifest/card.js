@@ -43,7 +43,7 @@ function getContent(options) {
     component: 'CardContent',
     children: (Array.isArray(options.content))
       ? options.content
-      : [options.content,],
+      : [options.content, ],
   } : null;
 }
 
@@ -53,16 +53,17 @@ function getFooter(options) {
     children: (Array.isArray(options.footer))
       ? options.footer.map(footer => ({
         component: 'CardFooterItem',
-        children: [footer,],
+        children: [footer, ],
       }))
       : options.footer,
   } : null;
 }
 
-function getCard(options) {
-  const { cardProps, } = options.props;
+function getCard(options = { props: {}, }) {
+  const { componentProps, } = options;
+  const { cardProps = {}, } = options.props;
   // console.log('getCard',{ options,cardProps });
-  return {
+  return Object.assign({
     component: 'Card',
     props: cardProps,
     children: [
@@ -71,7 +72,7 @@ function getCard(options) {
       getContent(options),
       getFooter(options),
     ],
-  };
+  }, componentProps);
 }
 
 module.exports = {

@@ -1,17 +1,21 @@
 'use strict';
 const pluralize = require('pluralize');
+const capitalize = require('capitalize');
 
 function getTableHeader(options = {}) { 
-  const { headers, headerProps, } = options;
+  const { headers, headerProps, htmlTH, customRowProps = {}, } = options;
   return {
     component: 'Thead',
-    props:headerProps,
+    props: headerProps || {},
     children: [
       {
         component: 'Tr',
         children: headers.map(header => ({
-          component: 'Th',
-          children: header,  
+          component: htmlTH ? 'th' : 'Th',
+          props: Object.assign({
+            className: '__re-bulma_th',
+          }, customRowProps[ 0 ]),
+          children: (options.capitalizeHeaders) ? capitalize(header) : header,
         })),
       },
     ],
@@ -19,32 +23,47 @@ function getTableHeader(options = {}) {
 }
 
 function getTableBody(options = {}) {
-  const { data, bodyProps, tableRowProps, tableColProps, } = options;
+  const { data, bodyProps, tableRowProps, tableColProps, customRowProps = {}, htmlTD, } = options;
   return {
     component: 'Tbody',
-    props:bodyProps,
-    children: data.map(row => ({
+    props: bodyProps || {},
+    children: data.map((row, i) => ({
       component: 'Tr',
-      props: tableRowProps,
+      props: Object.assign({
+      }, tableRowProps, customRowProps[i]),
       children: Object.keys(row).map(col => ({
-        component: 'Td',
-        props: tableColProps,
-        children:row[col],
+        component: htmlTD ? 'td' : 'Td',
+        props: Object.assign(
+          {
+            className: '__re-bulma_td',                  
+          },
+          tableColProps,
+          (typeof row[ col ] === 'object' && typeof row[ col ].columnProps)
+            ? row[ col ].columnProps
+            : {}),
+        children: (typeof row[ col ] === 'object' && typeof row[ col ].displayValue !=='undefined')
+          ? row[ col ].displayValue || ' '
+          : row[ col ],
       })),  
     })),
   };
 }
 
 function getTableFooter(options = {}) {
-  const { footers, footerProps, } = options;
+  const { footers, footerProps, htmlTF, tableRowProps, customRowProps, } = options;
   return {
     component: 'Tfoot',
-    props:footerProps,
+    props: footerProps || {},
     children: [
       {
         component: 'Tr',
+        props: Object.assign({
+        }, tableRowProps ),
         children: footers.map(footer => ({
-          component: 'Th',
+          component: htmlTF ? 'th' : 'Th',
+          props: {
+            className: '__re-bulma_th',            
+          },
           children: footer,  
         })),
       },
@@ -55,6 +74,7 @@ function getTableFooter(options = {}) {
 function getBasicTable(options = {}) {
   const {
     hasHeader = true,
+    hasBody = true,
     hasFooter = true,
     data = [],
     bodyProps,
@@ -65,26 +85,39 @@ function getBasicTable(options = {}) {
     props,
     tableRowProps,
     tableColProps,
+    capitalizeHeaders,
+    htmlTH,
+    htmlTD,
+    htmlTF,
+    ignoreReduxProps = true,
+    customRowProps = {},
   } = options;
   const headers = header || Object.keys(data[ 0 ]);
   const footers = footer || headers;
   const tableProps = props || {};
   return {
     component: 'Table',
+    ignoreReduxProps,
     props: tableProps,
     children: [
-      hasHeader ? getTableHeader({ data, headers, headerProps, }) : null,
-      getTableBody({ data, bodyProps, tableRowProps, tableColProps, }),
-      hasFooter ? getTableFooter({ data, footers, footerProps, }) : null,
+      hasHeader
+        ? getTableHeader({ data, headers, headerProps, capitalizeHeaders, htmlTH, customRowProps, })
+        : null,
+      hasBody
+        ? getTableBody({ data, bodyProps, tableRowProps, tableColProps, htmlTD, customRowProps, })
+        : null,
+      hasFooter
+        ? getTableFooter({ data, footers, footerProps, htmlTF, customRowProps, })
+        : null,
     ],
   };
 }
 
 function getTable(options) {
-  const { schemaName, baseUrl, headers, tableProps, asyncdataprops, customLayout, customLayoutStyle, asyncprops, thisprops, dataMap, limit=100,} = options;
+  const { schemaName, baseUrl, headers, tableProps, asyncdataprops, customLayout, customLayoutStyle, asyncprops, thisprops, dataMap, limit=100,  } = options;
   return {
     component: 'ResponsiveTable',
-    props: Object.assign({},{
+    props: Object.assign({}, {
       style: {
         wordWrap: 'break-word',
       },
@@ -94,7 +127,7 @@ function getTable(options) {
       flattenRowData: true,
       flattenRowDataOptions: { maxDepth: 3, },
       baseUrl,
-      dataMap: (dataMap) ? dataMap : [ {
+      dataMap: (dataMap) ? dataMap : [{
         'key': 'rows',
         'value': `${pluralize(schemaName)}`,
       }, {
@@ -112,7 +145,7 @@ function getTable(options) {
       headers,
       customLayout,
       customLayoutStyle,
-    },tableProps),
+    }, tableProps),
     thisprops,
     asyncprops: (asyncprops) ? asyncprops : {
       'rows': [
@@ -131,7 +164,7 @@ function getTable(options) {
 function getSheet(options) {
   const { data = [], } = options;
   const headers = Object.keys(data[ 0 ]);
-  const columns = headers.map((column,i) => ({
+  const columns = headers.map((column, i) => ({
     title: column,
     dataIndex: column,
     key: column,
@@ -154,8 +187,8 @@ function getSheet(options) {
         // x: '150%',
         // y: 350,
         // y:true,
-      }
-    }
+      },
+    },
   };
 }
 
