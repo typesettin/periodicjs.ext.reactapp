@@ -728,7 +728,7 @@ function getFormSelect(options) {
     getFormLabel(formElement),
     _react2.default.createElement(
       'span',
-      { className: '__re-bulma_control', style: { position: 'relative', display: 'inline-block' } },
+      { className: '__re-bulma_control', style: { position: 'relative', display: 'block' } },
       _react2.default.createElement(
         _reBulma.Select,
         (0, _extends3.default)({}, formElement.passProps, {
