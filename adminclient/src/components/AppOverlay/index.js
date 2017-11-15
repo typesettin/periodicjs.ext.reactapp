@@ -145,12 +145,22 @@ class Overlay extends Component {
       }} key={key} {...notice} />)
       : null;
     let modal = (this.props.notification.modals && this.props.notification.modals.length > 0)
-      ? <ModalUI {...this.props.notification.modals[ this.props.notification.modals.length - 1 ]}
-        getState={this.props.getState}
+      ?
+      this.props.notification.modals.map((modal, index) => {
+        return (<ModalUI {...this.props.notification.modals[ index ]}
+          getState={this.props.getState}
+          key={index}  
         hide={() => {
-          this.props.hideModal(this.props.notification.modals[0].id);
+          this.props.hideModal(this.props.notification.modals[index].id);
         } }  
-        dynamicRenderComponent={this.getRenderedComponent} />
+        dynamicRenderComponent={this.getRenderedComponent} />)  
+      })
+      // <ModalUI {...this.props.notification.modals[ this.props.notification.modals.length - 1 ]}
+      //   getState={this.props.getState}
+      //   hide={() => {
+      //     this.props.hideModal(this.props.notification.modals[0].id);
+      //   } }  
+      //   dynamicRenderComponent={this.getRenderedComponent} />
       : null;
     return (
       <div className="__reactapp_overlay" {...overlayStyleOverrides} style={{ position: 'fixed', bottom: 0, width: 'auto', zIndex:100000, }}>
