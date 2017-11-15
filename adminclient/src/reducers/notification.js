@@ -37,9 +37,10 @@ const notificationReducer = (state, action) => {
     });    
   case constants.notification.HIDE_MODAL:
     var removeModalId = action.payload.id;
-    if (removeModalId === 'last') {
+      if (removeModalId === 'last') {
+        state.modals.pop();
       return Object.assign({}, state, {
-        modals: state.modals.pop(),
+        modals: state.modals,
       });    
     } else {
       return Object.assign({}, state, {
