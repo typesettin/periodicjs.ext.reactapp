@@ -164,7 +164,7 @@ export function getRenderedComponent(componentObject, resources, debug) {
         }
       });
     }
-    if (renderedCompProps._children && !componentObject.children) {
+    if (renderedCompProps._children /* && !componentObject.children */) {
       if (Array.isArray(renderedCompProps._children)) {
         componentObject.children = [].concat(renderedCompProps._children);
       } else {
