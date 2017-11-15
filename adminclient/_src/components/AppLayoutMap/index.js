@@ -279,7 +279,12 @@ function getRenderedComponent(componentObject, resources, debug) {
       });
     }
     if (renderedCompProps._children && !componentObject.children) {
-      componentObject.children = renderedCompProps._children;
+      if (Array.isArray(renderedCompProps._children)) {
+        componentObject.children = [].concat(renderedCompProps._children);
+      } else {
+        componentObject.children = renderedCompProps._children;
+      }
+      delete renderedCompProps._children;
     }
     var comparisons = {};
     // if (thisprops) {

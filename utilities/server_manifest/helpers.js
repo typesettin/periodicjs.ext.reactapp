@@ -141,7 +141,7 @@ function getPageTitle(options) {
                 ? {
                   component: 'span',
                   asyncprops: {
-                    _children: asynctitle,
+                    children: asynctitle,
                   },
                 }
                 : null,
