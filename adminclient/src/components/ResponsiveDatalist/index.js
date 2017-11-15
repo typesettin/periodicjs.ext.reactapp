@@ -26,6 +26,7 @@ const propTypes = {
   value: PropTypes.any,
   onChange: PropTypes.func,
   onFocus: PropTypes.func,
+  onBlur: PropTypes.func,
   limit: PropTypes.number,
   datalistdata: PropTypes.array,
 };
@@ -51,6 +52,9 @@ const defaultProps = {
   },
   onFocus: (data) => {
     console.debug('ResponsiveDatalist onFocus', { data, });
+  },
+  onBlur: (data) => {
+    console.debug('ResponsiveDatalist onBlur', { data, });
   },
 };
 
