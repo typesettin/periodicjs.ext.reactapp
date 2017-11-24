@@ -124,6 +124,13 @@ class ResponsiveForm extends Component{
     this.getFormGroup = getFormGroup.bind(this);
     this.getImage = getImage.bind(this);
     this.validateFormElement = validateFormElement.bind(this);
+
+    this.staticLayouts = (this.props.staticLayouts)
+      ? Object.keys(this.props.staticLayouts).reduce((result, layout) => {
+        result[layout] = this.getRenderedComponent(this.props.staticLayouts[layout], this.state);
+        return result;
+      }, {})
+      : {};
   }
   shouldComponentUpdate(nextProps, nextState){
     if (this.props.onlyUpdateStateOnSubmit) {
@@ -410,6 +417,8 @@ class ResponsiveForm extends Component{
           return this.getImage({ formElement,  i:j, formgroup, }); 
         } else if (formElement.type === 'slider') {
           return this.getSliderInput({ formElement,  i:j, formgroup, }); 
+        } else if (formElement.type === 'staticLayout') {
+          return this.staticLayouts[formElement.value]; 
         } else if (formElement.type === 'layout') {
           const layoutComponent = formElement.value;
           if (this.props.includeFormDataOnLayout) {
