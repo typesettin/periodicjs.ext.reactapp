@@ -224,7 +224,6 @@ export function getFormDatatable(options){
         ? this.state.__formOptions[ rowkey ]
         : [];
       // console.log({ selectOptions });
-
       return {
         label: capitalize(rowkey),
         sortid: rowkey,
@@ -266,6 +265,14 @@ export function getFormDatatable(options){
       label: '',
       formtype: false,
     });
+  tableHeaders = tableHeaders.map(header => {
+    if (header.formtype === 'select' && !header.formoptions) {
+      header.formoptions = (header.sortid && this.state.__formOptions && this.state.__formOptions[ header.sortid ])
+      ? this.state.__formOptions[ header.sortid ]
+      : [];
+    }
+    return header;
+  })
   let passedProps = Object.assign(
     {},
     this.props,
