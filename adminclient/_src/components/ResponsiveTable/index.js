@@ -660,7 +660,8 @@ var ResponsiveTable = function (_Component) {
           return _react2.default.createElement(
             rb.Input,
             (0, _extends3.default)({
-              value: value
+              value: value,
+              readOnly: header.readOnly ? true : false
             }, header.inputProps, {
               onChange: function onChange(event) {
                 var text = event.target.value;

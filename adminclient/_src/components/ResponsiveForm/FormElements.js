@@ -177,7 +177,22 @@ function getCustomErrorLabel(hasError, state, formelement) {
   ) : null;
 }
 
-function getCustomErrorIcon(hasError, isValid, state, formelement, iconStyle) {
+function getCustomErrorIcon(hasError, isValid, state, formelement) {
+  var iconStyle = (0, _assign2.default)({
+    display: 'inline-block',
+    fontSize: '1rem',
+    height: '24px',
+    lineHeight: '24px',
+    textAlign: 'center',
+    verticalAlign: 'top',
+    width: '24px',
+    color: '#aeb1b5',
+    pointerEvents: 'none',
+    position: 'absolute',
+    top: '5px',
+    zIndex: '4',
+    right: '24px'
+  }, formelement.customIconStyle);
   var iconVar = hasError ? formelement.errorIcon || 'fa fa-warning' : isValid ? formelement.validIcon || 'fa fa-check' : formelement.initialIcon ? formelement.initialIcon : '';
 
   return formelement.errorIconRight || formelement.errorIconLeft ? _react2.default.createElement('i', { className: '__re-bulma_fa ' + iconVar, style: iconStyle }) : null;
@@ -332,7 +347,6 @@ function getFormDatatable(options) {
     return row.map(function (rowkey) {
       var selectOptions = _this3.state.__formOptions && _this3.state.__formOptions[rowkey] ? _this3.state.__formOptions[rowkey] : [];
       // console.log({ selectOptions });
-
       return {
         label: (0, _capitalize2.default)(rowkey),
         sortid: rowkey,
@@ -361,6 +375,12 @@ function getFormDatatable(options) {
   }) : tableHeaders.concat({
     label: '',
     formtype: false
+  });
+  tableHeaders = tableHeaders.map(function (header) {
+    if (header.formtype === 'select' && !header.formoptions) {
+      header.formoptions = header.sortid && _this3.state.__formOptions && _this3.state.__formOptions[header.sortid] ? _this3.state.__formOptions[header.sortid] : [];
+    }
+    return header;
   });
   var passedProps = (0, _assign2.default)({}, this.props, {
     selectEntireRow: formElement.selectEntireRow,
@@ -475,8 +495,8 @@ function getFormMaskedInput(options) {
   var getPassablePropkeyevents = getPassablePropsKeyEvents.bind(this);
   var fileClassname = '__reactapp_file_' + formElement.name;
   var hasError = getErrorStatus(this.state, formElement.name);
-  var isValid = getValidStatus(this.state, formElement.name);
   var hasValue = formElement.name && this.state[formElement.name] ? true : false;
+  var isValid = getValidStatus(this.state, formElement.name);
   var passableProps = (0, _assign2.default)({
     type: 'text',
     className: '__re-bulma_input'
@@ -687,21 +707,6 @@ function getFormSelect(options) {
   var isValid = getValidStatus(this.state, formElement.name);
   var hasValue = formElement.name && this.state[formElement.name] ? true : false;
   var selectOptions = this.state.__formOptions && this.state.__formOptions[formElement.name] ? this.state.__formOptions[formElement.name] : formElement.options || [];
-  var iconStyle = {
-    display: 'inline-block',
-    fontSize: '1rem',
-    height: '24px',
-    lineHeight: '24px',
-    textAlign: 'center',
-    verticalAlign: 'top',
-    width: '24px',
-    color: '#aeb1b5',
-    pointerEvents: 'none',
-    position: 'absolute',
-    top: '4px',
-    zIndex: '4',
-    right: '24px'
-  };
 
   if (typeof initialValue !== 'string') {
     initialValue = (0, _stringify2.default)(initialValue, null, 2);
@@ -732,7 +737,7 @@ function getFormSelect(options) {
       _react2.default.createElement(
         _reBulma.Select,
         (0, _extends3.default)({}, formElement.passProps, {
-          style: (0, _assign2.default)({}, { flex: 'inherit' }, formElement.passProps && formElement.passProps.style ? formElement.passProps.style : {}),
+          style: (0, _assign2.default)({}, { flex: 'inherit', marginBottom: 0 }, formElement.passProps && formElement.passProps.style ? formElement.passProps.style : {}),
           help: getFormElementHelp(hasError, this.state, formElement.name),
           color: hasError ? 'isDanger' : undefined,
           onChange: function onChange(event) {
@@ -749,7 +754,7 @@ function getFormSelect(options) {
           );
         })
       ),
-      !formElement.errorIconLeft ? getCustomErrorIcon(hasError, isValid, this.state, formElement, iconStyle) : null
+      !formElement.errorIconLeft ? getCustomErrorIcon(hasError, isValid, this.state, formElement) : null
     )
   );
 }
