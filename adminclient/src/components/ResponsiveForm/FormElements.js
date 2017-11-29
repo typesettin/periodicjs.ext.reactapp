@@ -65,7 +65,22 @@ function getCustomErrorLabel(hasError, state, formelement) {
   ): null;
 }
 
-function getCustomErrorIcon(hasError, isValid, state, formelement, iconStyle) {
+function getCustomErrorIcon(hasError, isValid, state, formelement) {
+  let iconStyle = Object.assign({
+    display: 'inline-block',
+    fontSize: '1rem',
+    height: '24px',
+    lineHeight: '24px',
+    textAlign: 'center',
+    verticalAlign: 'top',
+    width: '24px',
+    color: '#aeb1b5',
+    pointerEvents: 'none',
+    position: 'absolute',
+    top: '5px',
+    zIndex: '4',
+    right: '24px'
+  }, formelement.customIconStyle);
   let iconVar = (hasError)
     ? formelement.errorIcon || 'fa fa-warning'
     : (isValid)
@@ -388,8 +403,8 @@ export function getFormMaskedInput(options) {
   let getPassablePropkeyevents = getPassablePropsKeyEvents.bind(this);
   let fileClassname = `__reactapp_file_${formElement.name}`;
   let hasError = getErrorStatus(this.state, formElement.name);
-  let isValid = getValidStatus(this.state, formElement.name);
   let hasValue = (formElement.name && this.state[formElement.name])? true : false;
+  let isValid = getValidStatus(this.state, formElement.name);
   let passableProps = Object.assign({
     type: 'text',
     className: '__re-bulma_input',
@@ -586,21 +601,6 @@ export function getFormSelect(options) {
   let selectOptions = (this.state.__formOptions && this.state.__formOptions[ formElement.name ])
     ? this.state.__formOptions[ formElement.name ]
     : formElement.options || [];
-  let iconStyle = {
-    display: 'inline-block',
-    fontSize: '1rem',
-    height: '24px',
-    lineHeight: '24px',
-    textAlign: 'center',
-    verticalAlign: 'top',
-    width: '24px',
-    color: '#aeb1b5',
-    pointerEvents: 'none',
-    position: 'absolute',
-    top: '4px',
-    zIndex: '4',
-    right: '24px'
-  };
   
   if (typeof initialValue !== 'string') {
     initialValue = JSON.stringify(initialValue, null, 2);
@@ -623,7 +623,7 @@ export function getFormSelect(options) {
     {getFormLabel(formElement)}  
     <span className="__re-bulma_control" style={{ position: 'relative', display: 'block'}}>
       <Select {...formElement.passProps}
-        style={Object.assign({}, { flex: 'inherit' }, (formElement.passProps && formElement.passProps.style) ? formElement.passProps.style : {})}  
+        style={Object.assign({}, { flex: 'inherit', marginBottom: 0 }, (formElement.passProps && formElement.passProps.style) ? formElement.passProps.style : {})}  
         help={getFormElementHelp(hasError, this.state, formElement.name)}
         color={(hasError)?'isDanger':undefined}
         onChange={(event)=>{
@@ -636,7 +636,7 @@ export function getFormSelect(options) {
           return <option key={k} disabled={opt.disabled} value={opt.value}>{opt.label || opt.value}</option>;
         })}
         </Select>
-      {(!formElement.errorIconLeft) ? getCustomErrorIcon(hasError, isValid, this.state, formElement, iconStyle) : null}  
+      {(!formElement.errorIconLeft) ? getCustomErrorIcon(hasError, isValid, this.state, formElement) : null}  
     </span>  
   </FormItem>);
 }
