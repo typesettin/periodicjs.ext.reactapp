@@ -520,6 +520,7 @@ class ResponsiveTable extends Component {
       } else if (this.props.useInputRows && header && header.formtype && header.formtype==='text') {
         return <rb.Input
           value={value}
+          readOnly={header.readOnly? true: false}
           {...header.inputProps}
           onChange={(event) => {
             let text = event.target.value;
