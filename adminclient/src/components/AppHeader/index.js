@@ -64,23 +64,25 @@ class AppHeader extends Component {
                   </Link>
                 </NavItem> 
                 <NavItem>
-                  {
-                    this.getRenderedComponent({
-                      component: 'ResponsiveLink',
-                      props: {
-                        location: `${this.all_prefixes.manifest_prefix}account/profile`,
-                        style: {
-                          width: '48px',
-                          height: '48px',
-                          display:'block',
-                          backgroundColor: 'white',
-                          borderRadius: '24px',
-                          backgroundSize: 'cover',
-                          backgroundRepeat:'no-repeat',
-                          backgroundImage:'url('+(this.props.user.profile_image_preview || this.props.settings.default_user_image || '/favicon.png' )+')',
-                        },
-                      },
-                    })} 
+                    {
+                      this.getRenderedComponent({
+                        component: 'ResponsiveLink',
+                        props: {
+                          location: `${this.all_prefixes.manifest_prefix}account/profile`,
+                          style: Object.assign({
+                            width: '48px',
+                            height: '48px',
+                            display: 'block',
+                            backgroundColor: 'white',
+                            borderRadius: '24px',
+                            backgroundSize: 'cover',
+                            backgroundRepeat: 'no-repeat',
+                          }, this.props.settings.ui.header.profileImageStyle, {
+                              backgroundImage: 'url(' + (this.props.user.profile_image_preview || this.props.settings.default_user_image || '/favicon.png') + ')'
+                          })
+                        }
+                      })
+                    }
                 </NavItem>
                 {(this.state.user.isLoggedIn && this.props.settings.ui && this.props.settings.ui.header && this.props.settings.ui.header.useHeaderLogout) ? 
                   (<NavItem>
