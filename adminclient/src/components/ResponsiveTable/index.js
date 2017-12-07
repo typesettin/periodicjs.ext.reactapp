@@ -1063,12 +1063,12 @@ class ResponsiveTable extends Component {
             </rb.Message>
           </div>
           : null}
-        <div style={Object.assign({ overflow:'hidden', height:'100%', },this.props.tableWrappingStyle)}>
+        <div style={Object.assign({ overflow:'hidden', height:'100%', position: 'relative'},this.props.tableWrappingStyle)}>
           {(this.state.isLoading)
             ? (<div style={{
               textAlign: 'center',
               position: 'absolute',
-              height: '80%',
+              height: '100%',
               width: '100%',
               opacity: '.9',
               background: 'white',
