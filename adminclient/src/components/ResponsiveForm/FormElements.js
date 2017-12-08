@@ -74,7 +74,6 @@ function getCustomErrorIcon(hasError, isValid, state, formelement) {
     textAlign: 'center',
     verticalAlign: 'top',
     width: '24px',
-    color: '#aeb1b5',
     pointerEvents: 'none',
     position: 'absolute',
     top: '5px',
