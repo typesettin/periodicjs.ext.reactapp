@@ -51,7 +51,7 @@ class AppHeader extends Component {
                 <NavItem>
                     {(this.props.settings.ui.header.customButton && typeof this.props.settings.ui.header.customButton === 'object' &&
                       this.props.settings.ui.header.customButton.layout) 
-                    ? this.getRenderedComponent(this.props.settings.ui.header.customButton) 
+                    ? this.getRenderedComponent(this.props.settings.ui.header.customButton.layout) 
                     : (<Button onClick={this.props.toggleUISidebar} buttonStyle="isOutlined" color={buttonColor} icon="fa fa-bars" style={styles.iconButton} /> )}
                 </NavItem>
                 {navLabelTitle}
