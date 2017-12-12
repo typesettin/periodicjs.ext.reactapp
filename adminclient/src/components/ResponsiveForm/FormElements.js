@@ -77,6 +77,7 @@ function getCustomErrorIcon(hasError, isValid, state, formelement) {
     pointerEvents: 'none',
     position: 'absolute',
     top: '5px',
+    right: '4px',
     zIndex: '4',
   }, formelement.customIconStyle);
   let iconVar = (hasError)
