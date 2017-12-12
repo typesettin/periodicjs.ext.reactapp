@@ -74,12 +74,11 @@ function getCustomErrorIcon(hasError, isValid, state, formelement) {
     textAlign: 'center',
     verticalAlign: 'top',
     width: '24px',
-    color: '#aeb1b5',
     pointerEvents: 'none',
     position: 'absolute',
     top: '5px',
+    right: '4px',
     zIndex: '4',
-    right: '24px'
   }, formelement.customIconStyle);
   let iconVar = (hasError)
     ? formelement.errorIcon || 'fa fa-warning'
@@ -601,7 +600,8 @@ export function getFormSelect(options) {
   let selectOptions = (this.state.__formOptions && this.state.__formOptions[ formElement.name ])
     ? this.state.__formOptions[ formElement.name ]
     : formElement.options || [];
-  
+  formElement.customIconStyle = Object.assign({ right: '24px' }, formElement.customIconStyle);
+
   if (typeof initialValue !== 'string') {
     initialValue = JSON.stringify(initialValue, null, 2);
   }
