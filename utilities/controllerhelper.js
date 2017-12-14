@@ -108,7 +108,7 @@ function pullComponentSettings(refresh) {
   // console.log({components})
   return readAndStoreConfigurations([
     handleAmbiguousExtensionType.bind(null, path.join(__dirname, '../periodicjs.reactapp.json')),
-    handleAmbiguousExtensionType.bind(null, path.join(__dirname, `../../../content/container/${appSettings.theme || appSettings.themename}/periodicjs.reactapp.json`)),
+    handleAmbiguousExtensionType.bind(null, path.join(__dirname, `../../../../content/container/${appSettings.theme || appSettings.themename}/periodicjs.reactapp.json`)),
   ])
     .then(results => {
       // console.log('util.inspect(results,{depth:20})', util.inspect(results, { depth: 20 }));
@@ -377,7 +377,7 @@ function pullNavigationSettings(configuration) {
  * @return {Object}      Aggregated manifest and navigation configuration
  */
 function finalizeSettingsWithTheme(data) {
-  let filePath = path.join(__dirname, '../../../content/container', appSettings.theme || appSettings.themename, 'periodicjs.reactapp.json');
+  let filePath = path.join(__dirname, '../../../../content/container', appSettings.theme || appSettings.themename, 'periodicjs.reactapp.json');
   // console.log({ filePath, });
   return handleAmbiguousExtensionType(filePath)
     .then(result => {
