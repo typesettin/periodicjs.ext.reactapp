@@ -5,7 +5,7 @@
     "url": "http://about.me/yawjosephetse"
   },
   "bugs": {
-    "url": "https://github.com/typesettin/periodicjs.ext.reactapp/issues"
+    "url": "https://github.com/digifi-io/periodicjs.ext.reactapp/issues"
   },
   "bundleDependencies": false,
   "config": {
@@ -128,7 +128,7 @@
   "engines": {
     "node": "^6.x"
   },
-  "homepage": "https://github.com/typesettin/periodicjs.ext.reactapp#readme",
+  "homepage": "https://github.com/digifi-io/periodicjs.ext.reactapp#readme",
   "keywords": [
     "server-side-react",
     "cms",
@@ -138,21 +138,21 @@
   "license": "MIT",
   "main": "index.js",
   "maintainers": [],
-  "name": "periodicjs.ext.reactapp",
+  "name": "@digifi/periodicjs.ext.reactapp",
   "optionalDependencies": {},
   "repository": {
     "type": "git",
-    "url": "git://github.com/typesettin/periodicjs.ext.reactapp.git"
+    "url": "git://github.com/digifi-io/periodicjs.ext.reactapp.git"
   },
   "scripts": {
     "build_ie": "webpack --config adminclient/config/webpack.config.ie.js --debug --progress",
     "build_ie_full": "webpack --config adminclient/config/webpack.config.ie.js && cp -r public/ ../../../public/themes/periodicjs.theme.cis/",
     "package": "cd adminclient && npm run build && cd .. && rm -rf public/static/* && npm run ssr && grunt copy",
-    "postinstall": "cd ../../ && periodicjs aex periodicjs.ext.reactapp",
+    "postinstall": "cd ../ && mv periodicjs.ext.reactapp ../ && cd ../../ && periodicjs aex periodicjs.ext.reactapp",
     "postuninstall": "cd ../../ && periodicjs rex periodicjs.ext.reactapp",
     "ssr": "babel utilities/ssr_manifest_es6.js > utilities/ssr_manifest.js && babel adminclient/src -d adminclient/_src --ignore adminclient/src/components/RACodeMirror/,adminclient/src/index.js",
     "ssr_build": "babel adminclient/src -d adminclient/_src --ignore adminclient/src/components/RACodeMirror/",
     "test": "mocha -R spec --recursive"
   },
-  "version": "10.9.43"
+  "version": "11.0.0"
 }
