@@ -94,23 +94,25 @@ var ui = {
       var _this = this;
 
       var state = getState();
+      var headers = state.settings && state.settings.userprofile && state.settings.userprofile.options && state.settings.userprofile.options.headers ? state.settings.userprofile.options.headers : {};
+      // console.log('fetchComponent',{type,state})
       switch (type) {
         case _constants2.default.ui.LOGIN_COMPONENT:
           component = _constants2.default.ui.LOGIN_COMPONENT;
           if (!COMPONENTS[component]) COMPONENTS[component] = function (basename) {
-            return fetchComponentUtil(basename + '/load/components/login' + (state.settings.ui.initialization.refresh_components ? '?refresh=true' : ''));
+            return fetchComponentUtil(basename + '/load/components/login' + (state.settings.ui.initialization.refresh_components ? '?refresh=true' : ''), { headers: headers });
           };
           break;
         case _constants2.default.ui.MAIN_COMPONENT:
           component = _constants2.default.ui.MAIN_COMPONENT;
           if (!COMPONENTS[component]) COMPONENTS[component] = function (basename) {
-            return fetchComponentUtil(basename + '/load/components/main' + (state.settings.ui.initialization.refresh_components ? '?refresh=true' : ''));
+            return fetchComponentUtil(basename + '/load/components/main' + (state.settings.ui.initialization.refresh_components ? '?refresh=true' : ''), { headers: headers });
           };
           break;
         case _constants2.default.ui.ERROR_COMPONENTS:
           component = _constants2.default.ui.ERROR_COMPONENTS;
           if (!COMPONENTS[component]) COMPONENTS[component] = function (basename) {
-            return fetchComponentUtil(basename + '/load/components/error' + (state.settings.ui.initialization.refresh_components ? '?refresh=true' : ''));
+            return fetchComponentUtil(basename + '/load/components/error' + (state.settings.ui.initialization.refresh_components ? '?refresh=true' : ''), { headers: headers });
           };
           break;
         default:

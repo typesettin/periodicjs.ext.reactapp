@@ -66,15 +66,7 @@ var __global__returnURL = false;
 // import { Platform, } from 'react-web';
 // import Immutable from 'immutable';
 
-var checkStatus = function checkStatus(response) {
-  if (response.status >= 200 && response.status < 300) {
-    return response;
-  } else {
-    var error = new Error(response.statusText);
-    error.response = response;
-    throw error;
-  }
-};
+var checkStatus = _util2.default.checkStatus;
 
 var initializationThrottle;
 var initializationTimeout;
@@ -147,13 +139,22 @@ var user = {
 
     console.debug('updatedUserProfile', { profile: profile });
     return function (dispatch /*, getState*/) {
-      _serverSideReactNative.AsyncStorage.setItem(_constants2.default.jwt_token.PROFILE_JSON, (0, _stringify2.default)(profile.userdata)).then(function (status) {
-        console.debug({ status: status });
-        dispatch(_this.updateUserProfileSuccess(profile));
-      }).catch(function (e) {
+      try {
+        if (!profile || !profile.userdata) {
+          dispatch(_notification2.default.errorNotification(new Error('Invalid profile data update, missing userdata')));
+        } else {
+          _serverSideReactNative.AsyncStorage.setItem(_constants2.default.jwt_token.PROFILE_JSON, (0, _stringify2.default)(profile.userdata)).then(function (status) {
+            console.debug({ status: status });
+            dispatch(_this.updateUserProfileSuccess(profile));
+          }).catch(function (e) {
+            console.error(e);
+            dispatch(_notification2.default.errorNotification(e));
+          });
+        }
+      } catch (e) {
         console.error(e);
         dispatch(_notification2.default.errorNotification(e));
-      });
+      }
     };
   },
 
@@ -261,7 +262,9 @@ var user = {
       var state = getState();
       // console.debug({ state });
       dispatch(_pages2.default.resetAppLoadedState());
-      _promise2.default.all([_serverSideReactNative.AsyncStorage.removeItem(_constants2.default.jwt_token.TOKEN_NAME), _serverSideReactNative.AsyncStorage.removeItem(_constants2.default.jwt_token.TOKEN_DATA), _serverSideReactNative.AsyncStorage.removeItem(_constants2.default.jwt_token.PROFILE_JSON), _serverSideReactNative.AsyncStorage.removeItem(_constants2.default.user.MFA_AUTHENTICATED), _util2.default.flushCacheConfiguration(['manifest.authenticated', 'user.navigation', 'user.preferences'])]).then(function () /*results*/{
+      _promise2.default.all([_serverSideReactNative.AsyncStorage.removeItem(_constants2.default.jwt_token.TOKEN_NAME), _serverSideReactNative.AsyncStorage.removeItem(_constants2.default.jwt_token.TOKEN_DATA), _serverSideReactNative.AsyncStorage.removeItem(_constants2.default.jwt_token.PROFILE_JSON), _serverSideReactNative.AsyncStorage.removeItem(_constants2.default.user.MFA_AUTHENTICATED), _util2.default.flushCacheConfiguration(['manifest.authenticated', 'user.navigation', 'user.preferences'])]
+      // AsyncStorage.removeItem(constants.pages.ASYNCSTORAGE_KEY),
+      ).then(function () /*results*/{
         dispatch(_this2.logoutUserSuccess());
         dispatch(_pages2.default.initialAppLoaded());
         dispatch(_ui2.default.closeUISidebar());
@@ -400,9 +403,13 @@ var user = {
       console.debug({ formReturnURL: formReturnURL, returnUrl: returnUrl });
       // console.log('state.settings.auth', state.settings.auth);
       // console.log('state.user.isMFAAuthenticated', state.user.isMFAAuthenticated);
+      // console.log({ extensionattributes });
+      // console.log('state.manifest.containers[`${state.settings.adminPath}/mfa`]',state.manifest.containers[`${state.settings.adminPath}/mfa`])
       // console.log('state.manifest.containers[/mfa]', state.manifest.containers[ '/mfa' ]);
       // console.log('state.manifest.containers[${state.settings.adminPath}/mfa]', state.manifest.containers[ `${state.settings.adminPath}/mfa` ]);
-      if (state.settings.auth.enforce_mfa || extensionattributes && extensionattributes.login_mfa) {
+      if (state.settings.auth.enforce_mfa || extensionattributes && extensionattributes.passport_mfa) {
+        //passport_mfa
+
         if (state.user.isMFAAuthenticated) {
           if (!noRedirect) {
             if (state.user.isLoggedIn && returnUrl) dispatch((0, _reactRouterRedux.push)(returnUrl));else dispatch((0, _reactRouterRedux.push)(state.settings.auth.logged_in_homepage));
@@ -411,7 +418,10 @@ var user = {
         } else {
           if (!state.manifest.containers || state.manifest.containers && !state.manifest.containers['/mfa'] && !state.manifest.containers[state.settings.adminPath + '/mfa']) {
             dispatch(_notification2.default.errorNotification(new Error('Multi-Factor Authentication not Properly Configured')));
-            _this6.logoutUser()(dispatch, getState);
+            var t = setTimeout(function () {
+              _this6.logoutUser()(dispatch, getState);
+              clearTimeout(t);
+            }, 2000);
           } else {
             // console.log('utilities.getMFAPath(state)')
             var mfapath = _util2.default.getMFAPath(state);
@@ -638,6 +648,7 @@ var user = {
         method: loginSettings.method || 'POST',
         headers: (0, _assign2.default)({
           'Accept': 'application/json'
+          // 'Content-Type': 'application/json',
         }, loginSettings.options.headers, {
           username: loginData.username,
           password: loginData.password

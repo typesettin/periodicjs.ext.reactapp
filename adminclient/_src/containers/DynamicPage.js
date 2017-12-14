@@ -148,7 +148,8 @@ var DynamicPage = function (_Component) {
 
     _this2.state = {
       ui_is_loaded: false,
-      async_data_is_loaded: false
+      async_data_is_loaded: false,
+      ui: _this2.props.getState().ui
     };
     _this2.overlayUIWrapperStyle = _this2.props.getState().ui.customOverlayWrapperStyle;
     _this2.uiLayout = null;
@@ -180,7 +181,7 @@ var DynamicPage = function (_Component) {
       // console.debug('this.props.getState()', this.props.getState(),'this.overlayUIWrapperStyle',this.overlayUIWrapperStyle);
       return _react2.default.createElement(
         'div',
-        { id: '__ra_dp', className: this.state.ui_is_loaded ? '__reactadmin_dp_loaded' : '__reactadmin_dp_loading' },
+        { id: '__ra_dp', className: this.state.ui_is_loaded ? '__reactapp_dp_loaded' : '__reactapp_dp_loading' },
         _react2.default.createElement(_overlay2.default, { display: !this.state.ui_is_loaded,
           ui: this.state.ui,
           wrapperstyle: (0, _assign2.default)({}, {

@@ -32,6 +32,10 @@ var _inherits2 = require('babel-runtime/helpers/inherits');
 
 var _inherits3 = _interopRequireDefault(_inherits2);
 
+var _keys = require('babel-runtime/core-js/object/keys');
+
+var _keys2 = _interopRequireDefault(_keys);
+
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
@@ -63,20 +67,25 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var propTypes = {
+  returnProperty: _react.PropTypes.any, //false or string property value
   disabled: _react.PropTypes.bool,
+  returnFormOptionsValue: _react.PropTypes.bool,
   selector: _react.PropTypes.string,
   displayfield: _react.PropTypes.string,
+  displayProps: _react.PropTypes.object,
   dbname: _react.PropTypes.string,
   multi: _react.PropTypes.bool,
   createable: _react.PropTypes.bool,
   flattenDataList: _react.PropTypes.bool,
   flattenDataListOptions: _react.PropTypes.any,
+  selectedData: _react.PropTypes.any,
   resourceUrl: _react.PropTypes.string,
   createResourceUrl: _react.PropTypes.string,
   data: _react.PropTypes.array,
-  selectedData: _react.PropTypes.object,
   value: _react.PropTypes.any,
   onChange: _react.PropTypes.func,
+  onFocus: _react.PropTypes.func,
+  onBlur: _react.PropTypes.func,
   limit: _react.PropTypes.number,
   datalistdata: _react.PropTypes.array
 };
@@ -85,10 +94,13 @@ var propTypes = {
 
 var defaultProps = {
   disabled: false,
+  returnProperty: false,
+  returnFormOptionsValue: false,
   data: false,
-  selectedData: false,
   createable: false,
   value: undefined,
+  displayProps: {},
+  selectData: [],
   flattenDataList: true,
   flattenDataListOptions: {},
   selector: '_id',
@@ -98,8 +110,20 @@ var defaultProps = {
   datalistdata: [],
   onChange: function onChange(data) {
     console.debug('ResponsiveDatalist onChange', { data: data });
+  },
+  onFocus: function onFocus(data) {
+    console.debug('ResponsiveDatalist onFocus', { data: data });
+  },
+  onBlur: function onBlur(data) {
+    console.debug('ResponsiveDatalist onBlur', { data: data });
   }
 };
+
+function getDatumValue(datum) {
+  var returnProperty = this.props.returnFormOptionsValue || (0, _keys2.default)(datum).length === 2 && typeof datum.label !== 'undefined' && typeof datum.value !== 'undefined' ? 'value' : this.props.returnProperty;
+
+  return returnProperty ? datum[returnProperty] : datum;
+}
 
 var ResponsiveDatalist = function (_Component) {
   (0, _inherits3.default)(ResponsiveDatalist, _Component);
@@ -119,6 +143,7 @@ var ResponsiveDatalist = function (_Component) {
     _this.inputProps = (0, _assign2.default)({}, _this.props.passableProps);
     _this.searchFunction = (0, _debounce2.default)(_this.updateDataList, 200);
     _this.filterStaticData = _this.filterStaticData.bind(_this);
+    _this.getDatum = getDatumValue.bind(_this);
     return _this;
   }
 
@@ -134,9 +159,17 @@ var ResponsiveDatalist = function (_Component) {
     value: function filterStaticData(options) {
       var _this2 = this;
 
-      return this.props.datalistdata.filter(function (item) {
-        return item[_this2.props.field].indexOf(options.search) > -1;
-      });
+      if (this.props.returnFormOptionsValue) {
+        return this.props.datalistdata.filter(function (item) {
+          return item.label.indexOf(options.search) > -1;
+        });
+      } else if (options.search) {
+        return this.props.datalistdata.filter(function (item) {
+          return item[_this2.props.field].indexOf(options.search) > -1;
+        });
+      } else {
+        return this.props.datalistdata;
+      }
     }
   }, {
     key: 'updateDataList',
@@ -152,17 +185,22 @@ var ResponsiveDatalist = function (_Component) {
           // sort: (newSortOptions.sortProp)
           //   ? `${newSortOptions.sortOrder}${newSortOptions.sortProp}`
           //   : undefined,
-          search: options.search,
+          query: options.search,
           allowSpecialCharacters: true
+          // pagenum: options.pagenum || 1,
         });
         var headers = (0, _assign2.default)({
           'x-access-token': stateProps.user.jwt_token
         }, stateProps.settings.userprofile.options.headers);
         _util2.default.fetchComponent(fetchURL, { headers: headers })().then(function (response) {
+          if (response.data && response.result && response.status) {
+            response = response.data;
+          }
+          // console.debug('this.state.value',this.state.value);
+
           var updatedState = {};
           updatedState.selectedData = response[(0, _pluralize2.default)(_this3.props.entity)];
           updatedState.isSearching = false;
-          // console.debug({updatedState,response});
           _this3.setState(updatedState);
         }, function (e) {
           _this3.props.errorNotification(e);
@@ -184,7 +222,17 @@ var ResponsiveDatalist = function (_Component) {
   }, {
     key: 'onChangeHandler',
     value: function onChangeHandler(event) {
-      this.searchFunction({ search: event.target.value });
+      var search = event && event.target && event.target.value ? event.target.value : '';
+      this.searchFunction({ search: search });
+    }
+  }, {
+    key: 'onBlurHandler',
+    value: function onBlurHandler() {
+      var _this4 = this;
+
+      setTimeout(function () {
+        _this4.setState({ selectedData: [] });
+      }, 400);
     }
   }, {
     key: 'getDatalistDisplay',
@@ -194,7 +242,7 @@ var ResponsiveDatalist = function (_Component) {
           datum = options.datum;
       // console.debug('getDatalistDisplay', { options });
 
-      var displayText = datum[displayField] || datum.title || datum.name || datum.username || datum.email || datum[selector] || datum;
+      var displayText = datum[displayField] || datum.title || datum.name || datum.username || datum.email || datum[selector] || (datum && typeof datum === 'string' ? datum : '');
       return _react2.default.createElement(
         'span',
         { style: {
@@ -224,32 +272,37 @@ var ResponsiveDatalist = function (_Component) {
   }, {
     key: 'removeDatalistItem',
     value: function removeDatalistItem(index) {
+      var _this5 = this;
+
       // console.debug('clicked datalist',{index});
       // console.debug('clicked onclick',this.props);
+      // console.debug('this.state.value',this.state.value);
       if (this.props.multi) {
-        var newValue = [].concat(this.state.value);
+        var newValue = (0, _assign2.default)([], [].concat(this.state.value));
         newValue.splice(index, 1);
         // let oldValue = this.state.value;
-        // console.debug({ oldValue, newValue });
         this.setState({
+          // value: [],
           value: newValue,
-          selectedData: false
+          selectedData: [],
+          update: new Date()
+        }, function () {
+          // this.props.onChange([]);
+          _this5.props.onChange(newValue);
         });
-        this.props.onChange(newValue);
       } else {
         var datum = undefined;
         this.setState({
           value: datum,
-          selectedData: false
+          selectedData: []
         });
-        // console.debug({ datum });
         this.props.onChange(datum);
       }
     }
   }, {
     key: 'render',
     value: function render() {
-      var _this4 = this;
+      var _this6 = this;
 
       var notificationStyle = {
         marginBottom: '5px',
@@ -267,15 +320,15 @@ var ResponsiveDatalist = function (_Component) {
             key: k,
             enableCloseButton: true,
             closeButtonProps: {
-              onClick: _this4.removeDatalistItem.bind(_this4, k),
+              onClick: _this6.removeDatalistItem.bind(_this6, k),
               style: notificationCloseStyle
             },
             style: notificationStyle
           },
-          _this4.getDatalistDisplay({
+          _this6.getDatalistDisplay({
             datum: selected,
-            displayField: _this4.props.displayField,
-            selector: _this4.props.selector
+            displayField: _this6.props.displayField,
+            selector: _this6.props.selector
           })
         );
       }) : null : this.state.value ? _react2.default.createElement(
@@ -294,7 +347,7 @@ var ResponsiveDatalist = function (_Component) {
           selector: this.props.selector
         })
       ) : null;
-      var displayOptions = this.state.selectedData && this.state.selectedData.length ? this.state.selectedData.map(function (datum, k) {
+      var displayOptions = Array.isArray(this.state.selectedData) && this.state.selectedData && this.state.selectedData.length ? this.state.selectedData.map(function (datum, k) {
         return _react2.default.createElement(
           rb.Notification,
           {
@@ -313,25 +366,25 @@ var ResponsiveDatalist = function (_Component) {
             },
             onClick: function onClick() {
               // console.debug('clicked onclick',this.props);
-              if (_this4.props.multi) {
-                var newValue = _this4.state.value && Array.isArray(_this4.state.value) && _this4.state.value.length ? _this4.state.value.concat([datum]) : [datum];
-                _this4.setState({
+              if (_this6.props.multi) {
+                var newValue = _this6.state.value && Array.isArray(_this6.state.value) && _this6.state.value.length ? _this6.state.value.concat([datum]) : [datum];
+                _this6.setState({
                   value: newValue,
-                  selectedData: false
+                  selectedData: []
                 });
-                _this4.props.onChange(newValue);
+                _this6.props.onChange(newValue);
               } else {
-                _this4.setState({
+                _this6.setState({
                   value: datum,
-                  selectedData: false
+                  selectedData: []
                 });
-                _this4.props.onChange(datum);
+                _this6.props.onChange(datum);
               }
             } }),
-          _this4.getDatalistDisplay({
+          _this6.getDatalistDisplay({
             datum: datum,
-            displayField: _this4.props.displayField,
-            selector: _this4.props.selector
+            displayField: _this6.props.displayField,
+            selector: _this6.props.selector
           })
         );
       }) : null;
@@ -344,14 +397,16 @@ var ResponsiveDatalist = function (_Component) {
           _react2.default.createElement(rb.Input, (0, _extends3.default)({}, this.inputProps, {
             state: this.state.isSearching || undefined,
             onChange: this.onChangeHandler.bind(this),
+            onBlur: this.onBlurHandler.bind(this),
+            onFocus: this.onChangeHandler.bind(this),
             ref: function ref(input) {
-              _this4.textInput = input;
+              _this6.textInput = input;
             }
           }))
         ),
         _react2.default.createElement(
           'div',
-          null,
+          this.props.displayProps,
           ' ',
           displayOptions
         ),

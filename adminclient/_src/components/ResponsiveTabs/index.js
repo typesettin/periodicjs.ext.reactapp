@@ -8,6 +8,10 @@ var _extends2 = require('babel-runtime/helpers/extends');
 
 var _extends3 = _interopRequireDefault(_extends2);
 
+var _assign = require('babel-runtime/core-js/object/assign');
+
+var _assign2 = _interopRequireDefault(_assign);
+
 var _keys = require('babel-runtime/core-js/object/keys');
 
 var _keys2 = _interopRequireDefault(_keys);
@@ -50,6 +54,7 @@ var propTypes = {
   tabsType: _react.PropTypes.string,
   isFullwidth: _react.PropTypes.bool.isRequired,
   isButton: _react.PropTypes.bool,
+  vertical: _react.PropTypes.bool,
   tabgroupProps: _react.PropTypes.object,
   tabsProps: _react.PropTypes.shape({
     tabStyle: _react.PropTypes.oneOf(['isToggle', 'isBoxed']),
@@ -62,10 +67,30 @@ var defaultProps = {
   tabsType: 'pageToggle',
   isFullwidth: true,
   isButton: true,
+  vertical: false,
   tabgroupProps: {},
   tabsProps: {
     alignment: 'isCentered',
     size: 'isMedium'
+  },
+  tabContainer: {
+    isGapless: true,
+    style: {
+      height: '100%'
+    }
+  },
+  verticalTabTabsContainer: {
+    size: 'is2',
+    style: {
+      // height:'100%',
+      flexDirection: 'row'
+    }
+  },
+  verticalTabContentContainer: {
+    size: 'is10',
+    style: {
+      height: '100%'
+    }
   }
 };
 
@@ -100,10 +125,20 @@ var ResponsiveTabs = function (_Component) {
       }
       var currentLayout = tab.layout && (0, _keys2.default)(tab.layout).length >= 1 ? this.getRenderedComponent(tab.layout) : '';
       // window.location.hash = tab.name;
+      // console.log({tab})
       this.setState({
         currentTab: tab,
         currentLayout: currentLayout
       });
+      var onChangeFunc = function onChangeFunc() {};
+      if (typeof this.props.onChange === 'string' && this.props.onChange.indexOf('func:this.props') !== -1) {
+        onChangeFunc = this.props[this.props.onChange.replace('func:this.props.', '')];
+      } else if (typeof this.props.onChange === 'string' && this.props.onChange.indexOf('func:window') !== -1 && typeof window[this.props.onChange.replace('func:window.', '')] === 'function') {
+        onChangeFunc = window[this.props.onChange.replace('func:window.', '')].bind(this);
+      }
+      // console.log('this.props.onChange',this.props.onChange)
+      // console.log('onChangeFunc',onChangeFunc)
+      onChangeFunc(tab);
     }
   }, {
     key: 'componentWillMount',
@@ -119,13 +154,30 @@ var ResponsiveTabs = function (_Component) {
       var _this2 = this;
 
       var TabSelector = null;
-      if (this.state.tabsType === 'pageToggle') {
-        TabSelector = this.state.tabs.map(function (tab) {
+      if (this.props.customTabLayout) {
+        TabSelector = this.state.tabs.map(function (tab, i) {
+          var active = tab.name === _this2.state.currentTab.name ? true : false;
+          var buttonStyle = tab.name === _this2.state.currentTab.name ? _styles2.default.activeButton : {};
+          var customTab = (0, _assign2.default)({}, _this2.props.customTabLayout);
+          customTab.props = (0, _assign2.default)({
+            style: buttonStyle
+          }, customTab.props, {
+            onClick: function onClick() {
+              return _this2.changeTab(tab);
+            },
+            isActive: { active: active },
+            key: tab.name + '-' + i,
+            tab: tab
+          });
+          return _this2.getRenderedComponent(customTab);
+        });
+      } else if (this.state.tabsType === 'pageToggle') {
+        TabSelector = this.state.tabs.map(function (tab, i) {
           var active = tab.name === _this2.state.currentTab.name ? true : false;
           var buttonStyle = tab.name === _this2.state.currentTab.name ? _styles2.default.activeButton : {};
           if (_this2.state.isButton) return _react2.default.createElement(
             _reBulma.Tab,
-            (0, _extends3.default)({}, tab.tabProps, { isActive: active, onClick: function onClick() {
+            (0, _extends3.default)({}, tab.tabProps, { key: tab.name + '-' + i, isActive: active, onClick: function onClick() {
                 return _this2.changeTab(tab);
               } }),
             _react2.default.createElement(
@@ -136,14 +188,13 @@ var ResponsiveTabs = function (_Component) {
           );
           return _react2.default.createElement(
             _reBulma.Tab,
-            (0, _extends3.default)({}, tab.tabProps, { isActive: active, onClick: function onClick() {
+            (0, _extends3.default)({}, tab.tabProps, { key: tab.name + '-' + i, isActive: active, onClick: function onClick() {
                 return _this2.changeTab(tab);
               } }),
             tab.name
           );
         });
-      }
-      if (this.state.tabsType === 'select') {
+      } else if (this.state.tabsType === 'select') {
         TabSelector = _react2.default.createElement(
           _reBulma.Select,
           (0, _extends3.default)({}, this.state.tabgroupProps, {
@@ -158,8 +209,7 @@ var ResponsiveTabs = function (_Component) {
             );
           })
         );
-      }
-      if (this.state.tabsType === 'navBar') {
+      } else if (this.state.tabsType === 'navBar') {
         TabSelector = this.state.tabs.map(function (tab, idx) {
           var active = tab.name === _this2.state.currentTab.name ? true : false;
           return _react2.default.createElement(
@@ -172,7 +222,53 @@ var ResponsiveTabs = function (_Component) {
         });
       }
 
-      return _react2.default.createElement(
+      return this.props.vertical ? _react2.default.createElement(
+        _reBulma.Columns,
+        this.props.tabContainer,
+        _react2.default.createElement(
+          _reBulma.Column,
+          this.props.verticalTabTabsContainer,
+          _react2.default.createElement(
+            _reBulma.Tabs,
+            (0, _extends3.default)({}, this.state.tabsProps, { style: {
+                height: '100%',
+                flexWrap: 'wrap'
+              } }),
+            this.props.customTabLayout ? _react2.default.createElement(
+              'div',
+              (0, _extends3.default)({}, this.state.tabgroupProps, { style: {
+                  flexWrap: 'wrap',
+                  flexDirection: 'row',
+                  flex: 1
+                } }),
+              this.props.tabLabel ? _react2.default.createElement(
+                _reBulma.Label,
+                this.props.tabLabelProps,
+                this.props.tabLabel
+              ) : null,
+              TabSelector
+            ) : _react2.default.createElement(
+              'ul',
+              (0, _extends3.default)({}, this.state.tabgroupProps, { style: {
+                  flexWrap: 'wrap',
+                  flexDirection: 'row',
+                  flex: 1
+                } }),
+              this.props.tabLabel ? _react2.default.createElement(
+                _reBulma.Label,
+                this.props.tabLabelProps,
+                this.props.tabLabel
+              ) : null,
+              TabSelector
+            )
+          )
+        ),
+        _react2.default.createElement(
+          _reBulma.Column,
+          this.props.verticalTabContentContainer,
+          this.state.currentLayout
+        )
+      ) : _react2.default.createElement(
         'div',
         this.props.tabContainer,
         _react2.default.createElement(

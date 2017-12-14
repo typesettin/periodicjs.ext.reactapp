@@ -9,24 +9,24 @@
     <link rel="shortcut icon" href="/favicon.png">
     <title><%if(typeof pagedata!=='undefined' && pagedata.title){
       %><%- pagedata.title %><%
-    } else if(locals.reactadmin.settings.title){
-      %><%- locals.reactadmin.settings.title %><%
-    } else if(locals.reactadmin.settings.name){
-      %><%- locals.reactadmin.settings.name %><%
+    } else if(locals.reactapp.settings.title){
+      %><%- locals.reactapp.settings.title %><%
+    } else if(locals.reactapp.settings.name){
+      %><%- locals.reactapp.settings.name %><%
     } else{%>'Welcome'<%}%></title>
-    <link href="/extensions/periodicjs.ext.reactadmin/static/css/main.b5c94ad1.css" rel="stylesheet">
-    <%- (locals.reactadmin.settings.custom_css_stylesheet)?`<link href="${locals.reactadmin.settings.custom_css_stylesheet}" rel="stylesheet">`:'' %>
-    <% if(locals.reactadmin.settings.application.additional_header){ %><%- include(`../../../../content/themes/${locals.theme_name}/views/shared/reactadmin/header`,{locals}) ;%><% } %>
+    <link href="/extensions/periodicjs.ext.reactapp/static/css/<%- locals.reactapp.reactapp_file_paths.css_file_path %>" rel="stylesheet">
+    <%- (locals.reactapp.settings.custom_css_stylesheet)?`<link href="${locals.reactapp.settings.custom_css_stylesheet}" rel="stylesheet">`:'' %>
+    <% if(locals.reactapp.settings.application.additional_header){ %><%- include(`../../../../content/container/${locals.theme_name}/views/shared/reactapp/header`,{locals}) ;%><% } %>
   </head>
 
-  <body class="__ra_mc_loaded __reactadmin_body_loaded" id="%2Fpub%2Fbrowsersupport">
+  <body class="__ra_mc_loaded __reactapp_body_loaded" id="%2Fpub%2Fbrowsersupport">
     <div id="root">
-      <div data-reactroot="" class="reactadmin__app_div_content">
-        <div class="__reactadmin_overlay" style="position: fixed; bottom: 0px; width: auto; z-index: 100000;"></div>
-        <main class="reactadmin__main" style="height: 100%;">
-          <div class="__re-bulma_columns    reactadmin__main_container" style="min-height: 100%; height: 100%;">
-            <div class="__re-bulma_column   reactadmin__main_content" style="min-height: 100%;">
-              <div id="__ra_dp" class="__reactadmin_dp_loaded">
+      <div data-reactroot="" class="reactapp__app_div_content">
+        <div class="__reactapp_overlay" style="position: fixed; bottom: 0px; width: auto; z-index: 100000;"></div>
+        <main class="reactapp__main" style="height: 100%;">
+          <div class="__re-bulma_columns    reactapp__main_container" style="min-height: 100%; height: 100%;">
+            <div class="__re-bulma_column   reactapp__main_content" style="min-height: 100%;">
+              <div id="__ra_dp" class="__reactapp_dp_loaded">
                 <!-- react-empty: 16 -->
                 <section class="__re-bulma_hero  __re-bulma_is-fullheight">
                   <section class="__re-bulma_hero-body">
@@ -65,8 +65,8 @@
       </div>
     </div>
 
-    <% if(locals.reactadmin.settings.application.additional_footer){ %>
-      <%- include(`../../../../content/themes/${locals.theme_name}/views/shared/reactadmin/footer`,{locals}) ;%>
+    <% if(locals.reactapp.settings.application.additional_footer){ %>
+      <%- include(`../../../../content/container/${locals.theme_name}/views/shared/reactapp/footer`,{locals}) ;%>
     <% } %>
   </body>
 

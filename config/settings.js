@@ -1,13 +1,15 @@
 'use strict';
-
-const index_data_tables = require('../utilities/index_data_tables.js');
-
+const periodic = require('periodicjs');
+// const index_data_tables = require('../utilities/index_data_tables.js');
+// console.log({ index_data_tables })
 module.exports = {
   settings: {
+    encryption_key_path: periodic.settings.application.server.https.ssl.private_key,
     'server_side_react': true,
     'hot_reload': true,
     'custom_css_stylesheet': false,
     'basename': 'http://localhost:8786',
+    'default_user_image': '/favicon.png',
     'skip_catch_all_route': false,
     'adminPath': '/r-admin',
     'name': 'Admin Panel',
@@ -90,30 +92,69 @@ module.exports = {
       },
     },
     data_tables: {
-      standard: index_data_tables,
+      // standard: index_data_tables,
+      /*
+        standard_user:{
+      custom header
+        }
+      */
     },
     auth: {
       logged_in_homepage: '/r-admin/dashboard',
-      logged_out_path: '/r-admin/login',
+      logged_out_path: '/r-admin/auth/account/login',
     },
-    customIndexButton: {
-      asset: {
-        onClick: 'func:this.props.createModal',
-        onclickProps: {
-          title: 'Upload new assets',
-          pathname: '/r-admin/standard/content/assets/newmodal',
+    default_manifests: {
+      include_core_data:true,
+      include_settings: true,
+    },
+    default_navigation: {
+      include_settings: true,
+      // include_
+    },
+    extension_overrides: {
+      // customDataPrefix
+      // customDataRoute
+      customCardProps: {
+        // leftIcon: true, // you can set global overrides
+        standard_account: {
+          // leftIcon: true, // or overrides by core data
         },
       },
-    },
-    data_table_props: {
-      standard: {
-        asset: {
+      // customFormgroups
+      // ignoreEntityFields
+      customIndexTableProps: {
+        standard_asset: {
           flattenRowDataOptions: {
             maxDepth: 2,
           },
         },
       },
-    },
+      // customIndexTableAsyncpropsRows
+      // customIndexTableAsyncpropsNumItems
+      // customIndexTableAsyncpropsNumPages
+      // customIndexTableDatamapRows
+      // customIndexTableDatamapNumItems
+      // customIndexTableDatamapNumPages
+      // customIndexPageData
+      // customIndexTabs
+      // customIndexHeader
+      customIndexButton: {
+        standard_asset: {
+          onClick: 'func:this.props.createModal',
+          onclickProps: {
+            title: 'Upload new assets',
+            pathname: '/r-admin/standard_assets/newmodal',
+          },
+        },
+      },
+      // customDetailPageData
+      // customDetailTabs
+      // customDetailHeader
+      // customDetailEditor
+      // customEntitytypeElements
+      // customIndexPageComponents
+      // customDetailPageComponents
+    },      
   },
   databases: {},
 };

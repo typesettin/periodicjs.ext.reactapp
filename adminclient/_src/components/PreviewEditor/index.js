@@ -199,6 +199,7 @@ var PreviewEditor = function (_Component) {
       var codeState = {
         showEditor: this.state.showEditor ? false : true,
         value: this.getInnerHTML()
+        // date: new Date().toString(),
       };
       // console.debug('clicked toggler', 'codeState',codeState);
       this.setState(codeState);
@@ -307,6 +308,11 @@ var PreviewEditor = function (_Component) {
             value: this.state.value,
             onChange: function onChange(value) {
               _reactDom2.default.findDOMNode(_this2).children[_this2.contentIndex].innerHTML = value;
+            },
+            onFocusChange: function onFocusChange(value) {
+              if (!value) {
+                _this2.emitChange.bind(_this2)();
+              }
             }
           }
         }) : null

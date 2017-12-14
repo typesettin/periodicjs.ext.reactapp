@@ -39,15 +39,15 @@ const mapStateToProps = (state) => {
     // messageBar: state.messageBar,
   };
 };
-window.__reactadmin = Object.assign({}, {
+window.__reactapp = Object.assign({}, {
   __ra_helpers: {
     numeral,
     moment,
     capitalize,
     pluralize,
   },
-}, window.__reactadmin);
-window.__reactadmin.setDynamicData = (prop, val) => store.dispatch(actions.dynamic.setDynamicData(prop, val));
+}, window.__reactapp);
+window.__reactapp.setDynamicData = (prop, val) => store.dispatch(actions.dynamic.setDynamicData(prop, val));
 const reduxActions = {
   isLoggedIn: () => store.getState().user.isLoggedIn,
   getState: () => store.getState(), //.dispatch(actions.user.getUserStatus()),
@@ -125,12 +125,12 @@ const useExtraProps = {
 class Main extends Component{
   componentDidMount() {
     if (document && document.body && document.body.classList && document.body.classList.add) {
-      document.body.classList.add('__reactadmin_body_loaded');
+      document.body.classList.add('__reactapp_body_loaded');
     } else if (document && document.body && document.body.className) {
-      document.body.className = document.body.className += ' __reactadmin_body_loaded';
+      document.body.className = document.body.className += ' __reactapp_body_loaded';
     }
     if (document && document.querySelector && document.querySelector('html')&& document.querySelector('html').add) {
-      document.querySelector('html').classList.add('__reactadmin_html_loaded');
+      document.querySelector('html').classList.add('__reactapp_html_loaded');
     }
   }
   render() {

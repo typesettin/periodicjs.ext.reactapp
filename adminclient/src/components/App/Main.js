@@ -23,7 +23,7 @@ class MainApp extends Component{
     // console.log('componentWillReceiveProps nextProps', nextProps);
     this.setState(nextProps);
     if (document && document.body && document.body.setAttribute) {
-      document.body.setAttribute('id', encodeURIComponent(nextProps.location.pathname));
+      document.body.setAttribute('id', encodeURIComponent(nextProps.location.pathname).replace(new RegExp(/%2F|%2/, 'g'), '_'));
     } 
   }
   componentDidMount() {
@@ -54,7 +54,14 @@ class MainApp extends Component{
             }
             let jwt_token = results[ 0 ];
             let jwt_token_data = JSON.parse(results[ 1 ]);
-            let jwt_user_profile = JSON.parse(results[ 2 ]);
+            let jwt_user_profile = {};
+            try {
+              jwt_user_profile = JSON.parse(results[ 2 ]);
+            } catch (e) {
+              this.props.getUserProfile(jwt_token);
+              this.props.initializeAuthenticatedUser(jwt_token, false);
+              this.props.errorNotification(new Error('Invalid User Profile'));
+            }
             if (jwt_token_data && jwt_user_profile) {
               let url = '/api/jwt/token';
               let response = {};
@@ -84,11 +91,13 @@ class MainApp extends Component{
             this.props.setUILoadedState(true);  
           } catch (e) {
             this.props.errorNotification(e);
+            // console.error(e)
             // console.log(e);
           }
           
         })
         .catch((error) => {
+          // console.error(error)
           this.props.errorNotification(error);
           // console.error('MAIN componentDidMount: JWT USER Login Error.', error);
           this.props.logoutUser();
@@ -109,18 +118,18 @@ class MainApp extends Component{
     // console.log('this.state', this.state);
     let fixedSider = (this.state.settings.ui.fixedSidebar) ? { position: 'fixed', zIndex:1000, } : {};
     let sidebarColumn = (this.state.settings.ui.sidebar.use_floating_nav && this.state.ui.sidebar_is_open)
-      ? (<FloatingNav className="reactadmin__app_floating_sidebar" {...this.state} />)
+      ? (<FloatingNav className="reactapp__app_floating_sidebar" {...this.state} />)
       : (this.state.ui.sidebar_is_open)
-        ? (<Column className="reactadmin__app_container_sidebar" size="isNarrow" style={Object.assign({}, fixedSider, styles.fullMinHeight, styles.fullHeight)}>
-          <AppSidebar className="reactadmin__app_sidebar" {...this.state} />
+        ? (<Column className="reactapp__app_container_sidebar" size="isNarrow" style={Object.assign({}, fixedSider, styles.fullMinHeight, styles.fullHeight)}>
+          <AppSidebar className="reactapp__app_sidebar" {...this.state} />
         </Column>)
         : null;
     
     let headerNav = (this.state.settings.ui.initialization.show_header || this.state.user.isLoggedIn)
-      ? (<AppHeader className="reactadmin__app_header" {...this.state} />)
+      ? (<AppHeader className="reactapp__app_header" {...this.state} />)
       : null;
     let footerNav = (this.state.settings.ui.initialization.show_footer || this.state.user.isLoggedIn)
-      ? (<AppFooter className="reactadmin__app_footer" {...this.state} />)
+      ? (<AppFooter className="reactapp__app_footer" {...this.state} />)
       : null;  
 
     let overlay = (this.props.ui.sidebar_is_open && this.state.settings.ui.initialization.show_sidebar_overlay)
@@ -128,7 +137,7 @@ class MainApp extends Component{
         onClick={this.props.toggleUISidebar} ></div>)
       : null;
     
-    return (<div className="reactadmin__app_div_content">
+    return (<div className="reactapp__app_div_content">
       <AppSectionLoadingOverlay display={!this.state.ui.ui_is_loaded} wrapperstyle={
         Object.assign({}, {
           position: 'fixed',
@@ -142,13 +151,13 @@ class MainApp extends Component{
           backgroundColor: 'rgba(255,255,255,0.8)',
           zIndex:100,
         }, this.overlayUIWrapperStyle)} ui={this.state.ui}/> 
-      <AppOverlay className="reactadmin__app_overlay" {...this.state} />
+      <AppOverlay className="reactapp__app_overlay" {...this.state} />
       {headerNav}
-      <main style={styles.fullHeight} className="reactadmin__main">
-        <Columns className="reactadmin__main_container" style={Object.assign({}, styles.fullMinHeight, styles.fullHeight)}>
+      <main style={styles.fullHeight} className="reactapp__main">
+        <Columns className="reactapp__main_container" style={Object.assign({}, styles.fullMinHeight, styles.fullHeight)}>
           {sidebarColumn}
           {overlay}
-          <Column className="reactadmin__main_content" style={styles.fullMinHeight}>
+          <Column className="reactapp__main_content" style={styles.fullMinHeight}>
             {(this.state.ui.app_container_ui_is_loaded === false)?null:this.props.children}
           </Column>
         </Columns>

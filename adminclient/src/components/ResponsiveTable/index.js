@@ -29,6 +29,7 @@ class ResponsiveTable extends Component {
     super(props);
     // console.debug('this.props.getState()',this.props.getState());
     let rows = props.rows || [];
+    rows = (rows.documents) ? rows.documents : rows;
     let headers = ((!props.headers || !props.headers.length) && rows[0]) ?
       getHeadersFromRows({
         rows: props.rows,
@@ -55,11 +56,11 @@ class ResponsiveTable extends Component {
       hasFooter: props.hasFooter,
       limit: props.limit,
       currentPage: props.currentPage,
-      numItems: props.numItems,
+      numItems: props.numItems || rows.length,
       numPages: Math.ceil(props.numItems / props.limit),
       numButtons: props.numButtons,
       isLoading: false,
-      sortProp: this.props.searchField || 'createdat',
+      sortProp: this.props.searchField || '_id',
       sortOrder: 'desc',
       filterRowData: [],
       filterRowNewData: defaultNewRowData,
@@ -67,6 +68,7 @@ class ResponsiveTable extends Component {
       selectedRowData: {},
       selectedRowIndex: {},
       showFilterSearch: props.showFilterSearch,
+      disableSort: props.disableSort,
       // usingFiltersInSearch: props.usingFiltersInSearch,
     };
     this.searchFunction = debounce(this.updateTableData, 200);
@@ -100,7 +102,7 @@ class ResponsiveTable extends Component {
       excludeEmptyHeaders: nextProps.excludeEmptyHeaders,
     });
     if (nextProps.flattenRowData) {
-      rows = rows.map(row => Object.assign({}, row, flatten(row, nextProps.flattenRowDataOptions)));
+      rows = (rows||[]).map(row => Object.assign({}, row, flatten(row, nextProps.flattenRowDataOptions)));
     }
     // console.debug('nextProps.limit', nextProps.limit);
     // console.debug('this.state.limit', this.state.limit);
@@ -165,7 +167,8 @@ class ResponsiveTable extends Component {
     let updatedStateProp = {
       newRowData: Object.assign({},
         this.state.newRowData, {
-          [name]: text, }),
+          [name]: text,
+        }),
     };
     this.props.headers.forEach(header => {
       if (header.sortid !== name && header.formtype && header.defaultValue && !updatedStateProp.newRowData[header.sortid]) {
@@ -238,13 +241,13 @@ class ResponsiveTable extends Component {
     let updatedStateProp = {
       filterRowNewData: Object.assign({},
         this.state.filterRowNewData, {
-          [name]: text, }),
+          [name]: text,
+        }),
     };
     // console.debug({ updatedStateProp, options });
     this.setState(updatedStateProp);
   }
   updateTableData(options) {
-      // console.debug({ options, });
       let updatedState = {};
       let newSortOptions = {};
       if (options.clearNewRowData) {
@@ -260,7 +263,6 @@ class ResponsiveTable extends Component {
         // console.debug({options})
         updatedState.rows = (typeof options.rows !== 'undefined') ? options.rows : this.props.rows;
         // console.debug({ updatedState, });
-
         if (options.sort) {
           newSortOptions.sortProp = options.sort;
           if (this.state.sortProp === options.sort) {
@@ -271,15 +273,14 @@ class ResponsiveTable extends Component {
           updatedState.rows = updatedState.rows.sort(utilities.sortObject(newSortOptions.sortOrder, options.sort));
           updatedState.sortOrder = newSortOptions.sortOrder;
           updatedState.sortProp = options.sort;
-        } else if (this.state.sortOrder || this.state.sortProp) {
+        } else if (this.props.turnOffTableSort){
+        updatedState.rows = updatedState.rows;
+      } else if ((this.state.sortOrder || this.state.sortProp) && !this.state.disableSort) {
           newSortOptions.sortProp = this.state.sortProp;
           newSortOptions.sortOrder = (this.state.sortOrder === 'desc' || this.state.sortOrder === '-') ? 'desc' : 'asc';
           updatedState.rows = updatedState.rows.sort(utilities.sortObject(newSortOptions.sortOrder, newSortOptions.sortProp));
+        }
 
-        }
-        if (this.props.tableSearch && this.props.searchField && options.search) {
-          updatedState.rows = this.props.rows.filter(row => row[this.props.searchField].indexOf(options.search) !== -1);
-        }
         if (this.props.tableSearch && this.state.filterRowData && this.state.filterRowData.length) {
           let filteredRows = [];
           updatedState.rows.forEach(row => {
@@ -342,6 +343,11 @@ class ResponsiveTable extends Component {
           updatedState.rows = filteredRows;
           // console.debug('updatedState.rows', updatedState.rows, { filteredRows, });
         }
+        if (this.props.tableSearch && this.props.searchField && options.search) {
+          updatedState.rows = (updatedState.rows||this.props.rows).filter(row => {
+            return row[ this.props.searchField ] && row[ this.props.searchField ].indexOf(options.search) !== -1
+          });
+        }
         updatedState.numPages = Math.ceil(updatedState.rows.length / this.state.limit);
         updatedState.limit = this.state.limit;
         updatedState.currentPage = (typeof options.pagenum !== 'undefined') ?
@@ -367,7 +373,9 @@ class ResponsiveTable extends Component {
           } else {
             newSortOptions.sortOrder = '';
           }
-        } else if (this.state.sortOrder || this.state.sortProp) {
+        } else if (this.props.turnOffTableSort){
+        updatedState.rows = updatedState.rows;
+      } else if (this.state.sortOrder || this.state.sortProp) {
           newSortOptions.sortProp = this.state.sortProp;
           newSortOptions.sortOrder = (this.state.sortOrder === 'desc' || this.state.sortOrder === '-') ? '-' : '';
         }
@@ -386,7 +394,7 @@ class ResponsiveTable extends Component {
             return `${frd.property}|||${frd.filter_value}|||${frd.value}`;
           })
           : undefined,
-        search: options.search,
+        query: options.search,
         allowSpecialCharacters: true,
         pagenum: options.pagenum || 1,
       })}`;
@@ -398,11 +406,19 @@ class ResponsiveTable extends Component {
         .then(response => { 
           // let usingResponsePages = false;
           // console.debug('this.props.dataMap',this.props.dataMap)
+          // console.log({ response })
+          if (response.data && response.result && response.status) {
+            // console.log('USE DATA FROM RESPONSE', response.data)
+            // console.log('this.props.dataMap',this.props.dataMap)
+            response = response.data;
+          }
           this.props.dataMap.forEach(data => { 
             if (data.key === 'rows') {
               let rows = response[ data.value ] || [];
+              rows = (rows.documents) ? rows.documents : rows;
+              // console.log({ rows });
               if (this.props.flattenRowData) {
-                updatedState[ data.key ] = rows.map(row => flatten(row, this.props.flattenRowDataOptions));
+                updatedState[ data.key ] = rows.map(row => Object.assign({},row,flatten(row, this.props.flattenRowDataOptions)));
               }
             } else {
               // if (data.key === 'numPages') {
@@ -420,7 +436,7 @@ class ResponsiveTable extends Component {
             updatedState.sortOrder = newSortOptions.sortOrder;
             updatedState.sortProp = options.sort;
           }
-
+          // console.log({ updatedState });
           if (this.props.tableForm) {
             this.props.onChange(updatedState);
           }
@@ -444,7 +460,17 @@ class ResponsiveTable extends Component {
         value = value.toString();
         returnValue = value.toString();
       }
-      if (header && header.selectedOptionRowHeader) {
+      if (header && header.customCellLayout) {
+        header.customCellLayout.props = Object.assign({}, header.customCellLayout.props, {cell:value,row});
+        return this.getRenderedComponent(header.customCellLayout);
+      }
+      if (header && header.tagifyArray) {
+        return value.map((val, kv) => (
+          <rb.Tag {...header.tagProps} key={kv}>{
+            (header.tagifyValue) ? val[ header.tagifyValue ].toString() : val.toString()}
+          </rb.Tag>))
+      }
+      else if (header && header.selectedOptionRowHeader) {
         return <input type="radio" checked={(options.rowIndex===this.state.selectedRowIndex)?true:false} />;
       } else if (this.props.useInputRows && header && header.formtype && header.formtype==='code') {
         let CodeMirrorProps = Object.assign({}, {
@@ -494,6 +520,7 @@ class ResponsiveTable extends Component {
       } else if (this.props.useInputRows && header && header.formtype && header.formtype==='text') {
         return <rb.Input
           value={value}
+          readOnly={header.readOnly? true: false}
           {...header.inputProps}
           onChange={(event) => {
             let text = event.target.value;
@@ -539,7 +566,9 @@ class ResponsiveTable extends Component {
       if (typeof options.idx !=='undefined' && typeof returnValue==='string' && returnValue.indexOf('--idx-ctr--')!==-1) {
         returnValue = returnValue.replace('--idx-ctr--', (options.idx+1));
       }
-      if (options.momentFormat) {
+      if (options.momentFromNow) {
+        returnValue = moment(value).fromNow();
+      } else if (options.momentFormat) {
         returnValue = moment(value).format(options.momentFormat);
       } else if (options.numeralFormat) {
         returnValue = numeral(value).format(options.numeralFormat);
@@ -676,6 +705,27 @@ class ResponsiveTable extends Component {
       ? ((this.state.limit * this.state.currentPage))
       : this.state.limit;
     let displayRows = this.state.rows.slice(startIndex, endIndex);
+    let mergedCustomLayout = (this.props.customLayout && displayRows && displayRows.length)
+      ? (<div style={
+        Object.assign({
+          flexDirection: 'rows',
+          display: 'flex',
+        },
+          this.props.customLayoutStyle)
+      }>{displayRows.map(row => {
+        let mergedLayout = Object.assign({}, this.props.customLayout, {
+          props: Object.assign({},
+            this.props.customLayout.props,
+            row,
+            {row},
+            {
+              __ra_rt_link: (this.props.customLayout.link) ? this.getHeaderLinkURL(this.props.customLayout.link, row) : undefined,
+            }),
+        });
+        // console.debug({ mergedLayout });
+        return this.getRenderedComponent(mergedLayout);
+      })}</div>)
+      : null;
     const { numPages, currentPage, } = this.state;
     const pageButtons = [];
     const lastIndex = numPages - 1;
@@ -1014,7 +1064,7 @@ class ResponsiveTable extends Component {
             </rb.Message>
           </div>
           : null}
-        <div style={{ overflow:'hidden', height:'100%', }}>
+        <div style={Object.assign({ overflow:'hidden', height:'100%', },this.props.tableWrappingStyle)}>
           {(this.state.isLoading)
             ? (<div style={{
               textAlign: 'center',
@@ -1031,182 +1081,183 @@ class ResponsiveTable extends Component {
             <rb.Button color="isWhite" state="isLoading">Loading</rb.Button> 
           </div>)
             : null
-          }   
-          <rb.Table {...this.props.tableProps}>
-            <rb.Thead className="__ra_rt_thead">
-              <rb.Tr>
-                {this.state.headers.map((header, idx) => (
-                  <rb.Th key={idx} style={{ cursor: 'pointer', }}  {...header.headerColumnProps}>{(header.sortable)
-                    ? (<a style={{
-                      cursor: 'pointer',
-                    }} {...this.props.headerLinkProps} onClick={() => {
-                      this.updateTableData({ sort: header.sortid, });
-                    }}>{header.label}</a>)
-                    : header.label
-                    }</rb.Th>
-                ))}
-              </rb.Tr>
-            </rb.Thead>
-            {(this.props.tableForm && this.props.addNewRows)
-              ? (<rb.Tfoot>
+          }
+          {(this.props.customLayout && displayRows && displayRows.length)
+            ? mergedCustomLayout
+            : (<rb.Table {...this.props.tableProps}>
+              <rb.Thead className="__ra_rt_thead">
                 <rb.Tr>
                   {this.state.headers.map((header, idx) => (
-                    <rb.Th key={idx} {...header.headerColumnProps}> 
-                      {(idx === this.state.headers.length - 1)
-                        ? (<span className="__ra_rt_tf" style={{ display: 'flex', }} {...this.props.tableFormButtonWrapperProps}>
-                          {(this.props.replaceButton)
-                            ? <FileReaderInput as="text" onChange={this.handleFileUpload.call(this, 'replace')}>
-                                <rb.Button {...this.props.replaceButtonProps}>{this.props.replaceButtonLabel||'Replace'}</rb.Button>  
-                              </FileReaderInput>  
-                            : null}
-                          {(this.props.uploadAddButton)
-                            ? <FileReaderInput as="text" onChange={this.handleFileUpload.call(this, 'add')}>
-                                <rb.Button {...this.props.uploadAddButtonProps}>{this.props.uploadAddButtonLabel||'Upload'}</rb.Button>  
-                              </FileReaderInput>   
-                            :null}
-                          <rb.Button
-                          {...this.props.tableFormAddButtonProps}
-                          style={{ width: '100%', }}
-                          onClick={() => {
-                            this.updateByAddRow();
-                          }}>
-                            {(this.props.formRowAddButtonLabel) ? this.props.formRowAddButtonLabel : 'Add'}
-                          </rb.Button>
-                          
-                        </span>  
-                        )
-                        : this.updateGetFooterAddRow(header)}
-                    </rb.Th>
+                    <rb.Th key={idx} style={{ cursor: 'pointer', }}  {...header.headerColumnProps}>{(header.sortable)
+                      ? (<a style={{
+                        cursor: 'pointer',
+                      }} {...this.props.headerLinkProps} onClick={() => {
+                        this.updateTableData({ sort: header.sortid, });
+                      }}>{header.label}</a>)
+                      : header.label
+                      }</rb.Th>
                   ))}
-                </rb.Tr>  
-              </rb.Tfoot>)
-              :null}
-            <rb.Tbody>
-              {displayRows.map((row, rowIndex) => (
-                <rb.Tr key={`row${rowIndex}`} className={(this.props.selectEntireRow && rowIndex ===  this.state.selectedRowIndex)?'__selected':undefined} >
-                  {this.state.headers.map((header, colIndex) => {
-                    // console.debug({header});
-                    if (header.link) {
-                      return (
-                        <rb.Td key={`row${rowIndex}col${colIndex}`} {...header.columnProps}>
-                          <Link {...header.linkProps} to={this.getHeaderLinkURL(header.link, row)}>{
-                            this.formatValue(
-                              (typeof row[ header.sortid ] !=='undefined')
-                              ? row[ header.sortid ]
-                              : header.value,
-                              row,
-                              {
-                                idx: rowIndex+calcStartIndex,
-                                momentFormat: header.momentFormat,
-                                numeralFormat: header.numeralFormat,
-                                image: header.image,
-                                imageProps: header.imageProps,
-                                icon: header.icon,
-                                iconProps: header.iconProps,
-                              })
-                          }</Link>
-                        </rb.Td>
-                      );
-                    } else if (header.formRowButtons) {
-                      // console.debug({ row, header, });
-                      //http://htmlarrows.com/arrows/
-                      return (
-                        <rb.Td key={`row${rowIndex}col${colIndex}`} style={{ textAlign:'right', }} {...header.columnProps}>
-                          {(rowIndex !== 0)
-                            ? <rb.Button {...this.props.formRowUpButton} onClick={() => {
-                              this.moveRowUp(rowIndex);
-                            }}>{(this.props.formRowUputtonLabel)?this.props.formRowUputtonLabel:'⇧'}</rb.Button>
-                            : null
-                          }
-                          {(rowIndex < this.state.rows.length - 1)
-                            ? <rb.Button  {...this.props.formRowDownButton} onClick={() => {
-                              this.moveRowDown(rowIndex);
-                            }}>{(this.props.formRowDownButtonLabel)?this.props.formRowDownButtonLabel:'⇩'}</rb.Button>
-                            : null
-                          }
-                          <rb.Button {...this.props.formRowDeleteButton} onClick={() => {
-                            this.deleteRow(rowIndex);
-                          }}>{(this.props.formRowDeleteButtonLabel)?this.props.formRowDeleteButtonLabel:'⤫'}</rb.Button>
-                        </rb.Td>
-                      );
-                    } else if (header.buttons && header.buttons.length) {
-                      // console.debug({ row, header, });
-                      return (
-                        <rb.Td key={`row${rowIndex}col${colIndex}`} {...header.columnProps}>
-                          {
-                            header.buttons.map(button => {
-                              return this.getRenderedComponent(Object.assign({
-                                component: 'ResponsiveButton',
-                                props: Object.assign({
-                                  onclickPropObject: row,
-                                  buttonProps: {},
-                                }, button.passProps),
-                                children: this.formatValue(
-                                  (typeof row[ header.sortid ] !=='undefined')
-                                  ? row[ header.sortid ]
-                                  : header.value,
-                                  row,
-                                  {
-                                    idx: rowIndex+calcStartIndex,
-                                    momentFormat: header.momentFormat,
-                                    image: header.image,
-                                    imageProps: header.imageProps,
-                                    icon: header.icon,
-                                    iconProps: header.iconProps,
-                                  }) || '',
-                              }, button));
-                            })
-                            // Object.assign
-                            
-                          }
-                        </rb.Td>
-                      );
-                    
-                    } else {
-                      return (
-                        <rb.Td key={`row${rowIndex}col${colIndex}`} {...header.columnProps} onClick={() => {
-                          if (this.props.selectEntireRow) {
-                            this.selectRow({
-                              selectedRowData: row,
-                              selectedRowIndex: rowIndex,
-                            });
-                          }
-                          // console.debug({ event, rowIndex });
-                        }}>
-                          {
-                            this.formatValue.call(this,
-                              (typeof row[ header.sortid ] !=='undefined')
-                              ? row[ header.sortid ]
-                              : header.value,
-                              row,
-                              {
-                                rowIndex: rowIndex,
-                                idx: rowIndex+calcStartIndex,
-                                momentFormat: header.momentFormat,
-                                numeralFormat: header.numeralFormat,
-                                image: header.image,
-                                imageProps: header.imageProps,
-                                icon: header.icon,
-                                iconProps: header.iconProps,
-                              },
-                              header)
-                          }
-                        </rb.Td>
-                      );
-                      // return (
-                      //   <rb.Td>{(row[ header.sortid ] && header.momentFormat)
-                      //     ? moment(row[header.sortid]).format(header.momentFormat)
-                      //     :row[ header.sortid ]}</rb.Td>
-                      // );
-                    }
-                  })}
                 </rb.Tr>
-                ))}
-            </rb.Tbody>
-          </rb.Table>
+              </rb.Thead>
+              {(this.props.tableForm && this.props.addNewRows)
+                ? (<rb.Tfoot>
+                  <rb.Tr>
+                    {this.state.headers.map((header, idx) => (
+                      <rb.Th key={idx} {...header.headerColumnProps}> 
+                        {(idx === this.state.headers.length - 1)
+                          ? (<span className="__ra_rt_tf" style={{ display: 'flex', }} {...this.props.tableFormButtonWrapperProps}>
+                            {(this.props.replaceButton)
+                              ? <FileReaderInput as="text" onChange={this.handleFileUpload.call(this, 'replace')}>
+                                  <rb.Button {...this.props.replaceButtonProps}>{this.props.replaceButtonLabel||'Replace'}</rb.Button>  
+                                </FileReaderInput>  
+                              : null}
+                            {(this.props.uploadAddButton)
+                              ? <FileReaderInput as="text" onChange={this.handleFileUpload.call(this, 'add')}>
+                                  <rb.Button {...this.props.uploadAddButtonProps}>{this.props.uploadAddButtonLabel||'Upload'}</rb.Button>  
+                                </FileReaderInput>   
+                              :null}
+                            <rb.Button
+                            {...this.props.tableFormAddButtonProps}
+                            style={{ width: '100%', }}
+                            onClick={() => {
+                              this.updateByAddRow();
+                            }}>
+                              {(this.props.formRowAddButtonLabel) ? this.props.formRowAddButtonLabel : 'Add'}
+                            </rb.Button>
+                            
+                          </span>  
+                          )
+                          : this.updateGetFooterAddRow(header)}
+                      </rb.Th>
+                    ))}
+                  </rb.Tr>  
+                </rb.Tfoot>)
+                :null}
+              <rb.Tbody>
+                {displayRows.map((row, rowIndex) => (
+                  <rb.Tr key={`row${rowIndex}`} className={(this.props.selectEntireRow && rowIndex ===  this.state.selectedRowIndex)?'__selected':undefined} >
+                    {this.state.headers.map((header, colIndex) => {
+                      // console.debug({header});
+                      if (header.link) {
+                        return (
+                          <rb.Td key={`row${rowIndex}col${colIndex}`} {...header.columnProps}>
+                            <Link {...header.linkProps} to={this.getHeaderLinkURL(header.link, row)}>{
+                              this.formatValue(
+                                (typeof row[ header.sortid ] !=='undefined')
+                                ? row[ header.sortid ]
+                                : header.value,
+                                row,
+                                {
+                                  idx: rowIndex+calcStartIndex,
+                                  momentFormat: header.momentFormat,
+                                  numeralFormat: header.numeralFormat,
+                                  image: header.image,
+                                  imageProps: header.imageProps,
+                                  icon: header.icon,
+                                  iconProps: header.iconProps,
+                                })
+                            }</Link>
+                          </rb.Td>
+                        );
+                      } else if (header.formRowButtons) {
+                        // console.debug({ row, header, });
+                        //http://htmlarrows.com/arrows/
+                        return (
+                          <rb.Td key={`row${rowIndex}col${colIndex}`} style={{ textAlign:'right', }} {...header.columnProps}>
+                            {(rowIndex !== 0 && this.props.useUpArrowButton)
+                              ? <rb.Button {...this.props.formRowUpButton} onClick={() => {
+                                this.moveRowUp(rowIndex);
+                              }}>{(this.props.formRowUputtonLabel)?this.props.formRowUputtonLabel:'⇧'}</rb.Button>
+                              : null
+                            }
+                            {(rowIndex < this.state.rows.length - 1 && this.props.useDownArrowButton)
+                              ? <rb.Button  {...this.props.formRowDownButton} onClick={() => {
+                                this.moveRowDown(rowIndex);
+                              }}>{(this.props.formRowDownButtonLabel)?this.props.formRowDownButtonLabel:'⇩'}</rb.Button>
+                              : null
+                            }
+                            <rb.Button {...this.props.formRowDeleteButton} onClick={() => {
+                              this.deleteRow(rowIndex);
+                            }}>{(this.props.formRowDeleteButtonLabel)?this.props.formRowDeleteButtonLabel:'⤫'}</rb.Button>
+                          </rb.Td>
+                        );
+                      } else if (header.buttons && header.buttons.length) {
+                        // console.debug({ row, header, });
+                        return (
+                          <rb.Td key={`row${rowIndex}col${colIndex}`} {...header.columnProps}>
+                            {
+                              header.buttons.map(button => {
+                                return this.getRenderedComponent(Object.assign({
+                                  component: 'ResponsiveButton',
+                                  props: Object.assign({
+                                    onclickPropObject: row,
+                                    buttonProps: {},
+                                  }, button.passProps),
+                                  children: this.formatValue(
+                                    (typeof row[ header.sortid ] !=='undefined')
+                                    ? row[ header.sortid ]
+                                    : header.value,
+                                    row,
+                                    {
+                                      idx: rowIndex+calcStartIndex,
+                                      momentFormat: header.momentFormat,
+                                      image: header.image,
+                                      imageProps: header.imageProps,
+                                      icon: header.icon,
+                                      iconProps: header.iconProps,
+                                    }) || '',
+                                }, button));
+                              })
+                              // Object.assign
+                              
+                            }
+                          </rb.Td>
+                        );
+                      
+                      } else {
+                        return (
+                          <rb.Td key={`row${rowIndex}col${colIndex}`} {...header.columnProps} onClick={() => {
+                            if (this.props.selectEntireRow) {
+                              this.selectRow({
+                                selectedRowData: row,
+                                selectedRowIndex: rowIndex,
+                              });
+                            }
+                            // console.debug({ event, rowIndex });
+                          }}>
+                            {
+                              this.formatValue.call(this,
+                                (typeof row[ header.sortid ] !=='undefined')
+                                ? row[ header.sortid ]
+                                : header.value,
+                                row,
+                                {
+                                  rowIndex: rowIndex,
+                                  idx: rowIndex+calcStartIndex,
+                                  momentFormat: header.momentFormat,
+                                  numeralFormat: header.numeralFormat,
+                                  image: header.image,
+                                  imageProps: header.imageProps,
+                                  icon: header.icon,
+                                  iconProps: header.iconProps,
+                                },
+                                header)
+                            }
+                          </rb.Td>
+                        );
+                        // return (
+                        //   <rb.Td>{(row[ header.sortid ] && header.momentFormat)
+                        //     ? moment(row[header.sortid]).format(header.momentFormat)
+                        //     :row[ header.sortid ]}</rb.Td>
+                        // );
+                      }
+                    })}
+                  </rb.Tr>
+                  ))}
+              </rb.Tbody>
+            </rb.Table>)
+          }
         </div>  
-
-          
         {(this.state.hasPagination && displayRows.length >0) ? footer : null}
       </rb.Container>
     );

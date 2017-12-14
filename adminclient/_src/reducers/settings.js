@@ -20,6 +20,7 @@ var appDefaultSettings = {
   adminPath: '/r-admin',
   routerHistory: 'browserHistory',
   hot_reload: false,
+  disableLogger: false,
   includeCoreData: {
     manifest: true,
     navigation: true
@@ -67,29 +68,29 @@ var appDefaultSettings = {
   },
   auth: {
     logged_in_homepage: '/r-admin/dashboard',
-    logged_out_path: '/login'
+    logged_out_path: '/'
   },
   login: {
-    url: 'http://localhost:8786/api/jwt/token',
-    devurl: 'http://localhost:8786/api/jwt/token',
+    url: '/api/jwt/token',
+    devurl: '/api/jwt/token',
     options: {
       method: 'POST',
       headers: {
         Accept: 'application/json',
-        clientid: 'fbff80bd23de5b1699cb595167370a1a',
+        clientid: 'e2852fd35ef3c16ef206d4e34252e0e5',
         entitytype: 'account'
       }
     }
   },
   userprofile: {
-    url: 'http://localhost:8786/api/jwt/profile',
-    devurl: 'http://localhost:8786/api/jwt/profile',
+    url: '/api/jwt/profile',
+    devurl: '/api/jwt/profile',
     options: {
       method: 'POST',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
-        clientid: 'fbff80bd23de5b1699cb595167370a1a',
+        clientid: 'e2852fd35ef3c16ef206d4e34252e0e5',
         clientid_default: 'clientIDNEEDED',
         entitytype: 'account'
       }
@@ -136,14 +137,16 @@ var defaultUserNavigation = {
 };
 var packageJSON = {
   name: 'adminclient',
-  version: '0.1.0',
+  version: '10.1.0',
   'private': true,
   devDependencies: {
     'animate.css': '^3.5.2',
     capitalize: '^1.0.0',
     eslint: '^3.14.1',
     'font-awesome': '^4.7.0',
+    'google-map-react': '^0.24.0',
     moment: '^2.17.1',
+    numeral: '^2.0.6',
     pluralize: '^3.1.0',
     'react-addons-css-transition-group': '^15.4.1',
     'react-animate.css': '0.0.4',
@@ -153,10 +156,11 @@ var packageJSON = {
     'react-router': '^3.0.0',
     'react-router-redux': '^4.0.7',
     'react-scripts': '0.8.4',
-    recharts: '0.20.5',
+    recharts: '^1.0.0-beta.1',
     redux: '^3.6.0',
     'redux-logger': '^2.7.4',
     'redux-thunk': '^2.1.0',
+    'string-to-json': '^0.1.0',
     'ua-parser-js': '^0.7.12',
     useragent: '^2.1.13'
   },
@@ -171,6 +175,10 @@ var packageJSON = {
     'json-2-csv': '^2.1.0',
     mime: '^1.3.6',
     'rc-slider': '^6.2.0',
+    'rc-steps': '^2.5.1',
+    'rc-switch': '^1.5.3',
+    'rc-table': '^5.6.7',
+    'rc-tree': '^1.7.4',
     're-bulma': '^0.4.3',
     react: '15.3.2',
     'react-codemirror': '^0.3.0',
@@ -178,9 +186,11 @@ var packageJSON = {
     'react-draft-wysiwyg': '^1.7.6',
     'react-file-reader-input': '^1.1.0',
     'react-responsive-carousel': '^3.1.3',
+    'react-slick': '^0.15.4',
     'react-text-mask': '^5.0.2',
     'text-mask-addons': '^3.6.0',
     'validate.js': '^0.11.1',
+    victory: '^0.24.0',
     'whatwg-fetch': '^2.0.3'
   },
   scripts: {
@@ -189,8 +199,8 @@ var packageJSON = {
     test: 'react-scripts test --env=jsdom',
     eject: 'react-scripts eject'
   },
-  proxy: 'http://localhost:8786',
-  homepage: '/extensions/periodicjs.ext.reactadmin'
+  proxy: 'https://localhost:8787',
+  homepage: '/extensions/periodicjs.ext.reactapp'
 };
 
 var windowState = typeof window !== 'undefined' && window.__padmin ? window.__padmin : {};

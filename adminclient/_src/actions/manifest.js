@@ -99,12 +99,13 @@ var manifest = {
       var hasCached = void 0;
       var isInitial = state.manifest.unauthenticated.isInitial;
       var basename = typeof state.settings.adminPath === 'string' && state.settings.adminPath !== '/' ? state.settings.basename + state.settings.adminPath : state.settings.basename;
+      var headers = state.settings && state.settings.userprofile && state.settings.userprofile.options && state.settings.userprofile.options.headers ? state.settings.userprofile.options.headers : {};
       //add ?refresh=true to below route to reload manifest configuration
       return _util2.default.loadCacheConfigurations().then(function (result) {
         hasCached = result.manifest && result.manifest.unauthenticated;
         if (hasCached && !options.skip_cache) dispatch(_this2.unauthenticatedReceivedManifestData(result.manifest.unauthenticated));
         var pathname = typeof window !== 'undefined' && window.location.pathname ? window.location.pathname : _this2.props.location.pathname;
-        return _util2.default.fetchComponent(basename + '/load/public_manifest' + (isInitial ? '?initial=true&location=' + pathname : ''))();
+        return _util2.default.fetchComponent(basename + '/load/public_manifest' + (isInitial ? '?initial=true&location=' + pathname : ''), { headers: headers })();
       }).then(function (response) {
         dispatch(_this2.unauthenticatedReceivedManifestData(response.data.settings));
         if (isInitial) _this2.fetchUnauthenticatedManifest({ skip_cache: true })(dispatch, getState);

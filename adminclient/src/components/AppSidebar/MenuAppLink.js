@@ -7,10 +7,11 @@ class MenuAppLink extends Component {
     super(...arguments);
     this.state = { isActive: (this.props.ui.selected_nav !== undefined && ((this.props.id && this.props.ui.selected_nav === this.props.id) || (this.props.ui.selected_nav === this.props.href))), };
   }
-  render () {
+  render() {
     return (
       <li>
-        <Link style={(this.state.isActive)?styles.activeButton:undefined} to={this.props.href} onClick={() => {
+        <Link style={(this.state.isActive) ? styles.activeButton : undefined} to={(this.props.href !== this.props.location.pathname) ? this.props.href : undefined
+        } onClick={() => {
           if (typeof this.props.onClick === 'string' && this.props.onClick.indexOf('func:this.props') !== -1) { 
             this.props[ this.props.onClick.replace('func:this.props.', '') ](this.props.onClickProps);
           }

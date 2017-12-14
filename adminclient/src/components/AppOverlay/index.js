@@ -36,16 +36,33 @@ class ModalUI extends Component {
       async_data_is_loaded: false,
     };
     this.uiLayout = {};
+    this.uiResources = {};
     this.title = '';
     this.footer = '';
     this.text = '';
     this.getState = this.props.getState;
     this.getRenderedComponent = this.props.dynamicRenderComponent.bind(this);
     this.fetchData = utilities.fetchDynamicContent.bind(this);
+    this.modalPathname = this.props.pathname;
   }
   handleComponentLifecycle () {
     this.uiLayout = {};
-    if (typeof this.props.pathname === 'string') this.fetchData(this.props.pathname);
+    this.uiResources = {
+      modalProps: {
+        formdata: this.props.formdata,
+        pathname: this.props.pathname,
+        modalPathname: this.modalPathname,
+        title: this.props.title,
+      }
+    };
+    if (typeof this.props.pathname === 'string') {
+      if (this.props.pathnameParams && this.props.pathnameParams.length > 0) {
+        this.props.pathnameParams.forEach((param) => {
+          this.modalPathname = this.modalPathname.replace(param.key, this.props.formdata[ param.val ]);
+        });
+      }
+      this.fetchData(this.modalPathname);
+    }
     this.title = this.props.title;
     this.footer = this.props.footer;
     this.text = this.props.text;
@@ -59,10 +76,23 @@ class ModalUI extends Component {
   }
   render () {
     let initialize = (content) => {
-      let modelContent = (content) ? content : ((typeof this.text !== 'string') ? this.props.dynamicRenderComponent(this.text) : this.text);
+      let passedProps = {
+        modalProps: {
+          formdata: this.props.formdata,
+          pathname: this.props.pathname,
+          modalPathname: this.modalPathname,
+          title: this.props.title,
+        }
+      };
+
+      // if (typeof this.text === 'object' && this.text.layout) {
+      // }
+
+      let modelContent = (content) ? content : ((typeof this.text !== 'string') ? this.props.dynamicRenderComponent(this.text, passedProps, true) : this.text);
       let footerContent = (this.footer)
         ? ((typeof this.footer === 'object')? this.props.dynamicRenderComponent(this.footer) : <div style={{ padding: '20px', }} >{this.footer}</div>)
-          : undefined; 
+        : undefined; 
+      
       return (<div style={Object.assign({
         position: 'fixed',
         height: '100%',
@@ -79,12 +109,16 @@ class ModalUI extends Component {
             footerContent={footerContent}
             isActive={true}
             onCloseRequest={this.props.hide}
-            className={`animated ${(this.props.animation? this.props.animation: 'zoomIn')} Medium-Speed`}
+            className={`animated ${this.props.modalClassName} ${(this.props.animation? this.props.animation: 'zoomIn')} Medium-Speed`}
             showOverlayCloseButton={false}
-            >
-            <Content>
+        >
+          {(this.props.noContentWrapper)
+            ? (<div  {...this.props.modalContentProps}>{modelContent}</div>)
+            : (<Content {...this.props.modalContentProps}>
               {modelContent}
-          </Content>
+          </Content>)
+          }
+          
         </Modal>
       </div>);
     };
@@ -111,15 +145,25 @@ class Overlay extends Component {
       }} key={key} {...notice} />)
       : null;
     let modal = (this.props.notification.modals && this.props.notification.modals.length > 0)
-      ? <ModalUI {...this.props.notification.modals[ this.props.notification.modals.length - 1 ]}
-        getState={this.props.getState}
+      ?
+      this.props.notification.modals.map((modal, index) => {
+        return (<ModalUI {...this.props.notification.modals[ index ]}
+          getState={this.props.getState}
+          key={index}  
         hide={() => {
-          this.props.hideModal(this.props.notification.modals[0].id);
+          this.props.hideModal(this.props.notification.modals[index].id);
         } }  
-        dynamicRenderComponent={this.getRenderedComponent} />
+        dynamicRenderComponent={this.getRenderedComponent} />)  
+      })
+      // <ModalUI {...this.props.notification.modals[ this.props.notification.modals.length - 1 ]}
+      //   getState={this.props.getState}
+      //   hide={() => {
+      //     this.props.hideModal(this.props.notification.modals[0].id);
+      //   } }  
+      //   dynamicRenderComponent={this.getRenderedComponent} />
       : null;
     return (
-      <div className="__reactadmin_overlay" {...overlayStyleOverrides} style={{ position: 'fixed', bottom: 0, width: 'auto', zIndex:100000, }}>
+      <div className="__reactapp_overlay" {...overlayStyleOverrides} style={{ position: 'fixed', bottom: 0, width: 'auto', zIndex:100000, }}>
         {modal}
         {notices}
       </div>

@@ -30,6 +30,7 @@ var AppConfigSettings = {
   adminPath: '/r-admin',
   routerHistory: 'browserHistory',
   hot_reload: false,
+  disableLogger: false,
   includeCoreData: {
     manifest: true,
     navigation: true
@@ -77,29 +78,29 @@ var AppConfigSettings = {
   },
   auth: {
     logged_in_homepage: '/r-admin/dashboard',
-    logged_out_path: '/login'
+    logged_out_path: '/'
   },
   login: {
-    url: 'http://localhost:8786/api/jwt/token',
-    devurl: 'http://localhost:8786/api/jwt/token',
+    url: '/api/jwt/token',
+    devurl: '/api/jwt/token',
     options: {
       method: 'POST',
       headers: {
         Accept: 'application/json',
-        clientid: 'fbff80bd23de5b1699cb595167370a1a',
+        clientid: 'e2852fd35ef3c16ef206d4e34252e0e5',
         entitytype: 'account'
       }
     }
   },
   userprofile: {
-    url: 'http://localhost:8786/api/jwt/profile',
-    devurl: 'http://localhost:8786/api/jwt/profile',
+    url: '/api/jwt/profile',
+    devurl: '/api/jwt/profile',
     options: {
       method: 'POST',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
-        clientid: 'fbff80bd23de5b1699cb595167370a1a',
+        clientid: 'e2852fd35ef3c16ef206d4e34252e0e5',
         clientid_default: 'clientIDNEEDED',
         entitytype: 'account'
       }
@@ -107,7 +108,16 @@ var AppConfigSettings = {
   }
 }; // import promise from 'redux-promise';
 
-var logger = (0, _reduxLogger2.default)();
+var windowState = typeof window !== 'undefined' && window.__padmin ? window.__padmin : {};
+var disableLogger = function disableLogger(store) {
+  return function (next) {
+    return function (action) {
+      // console .log('dispatching: ', action,{store});
+      return next(action);
+    };
+  };
+};
+var logger = windowState.disableLogger ? disableLogger : (0, _reduxLogger2.default)();
 // const logger = (store) => (next) => (action) => {
 //   console.log('dispatching: ', action,{store});
 //   return next(action);

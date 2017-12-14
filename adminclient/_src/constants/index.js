@@ -9,6 +9,7 @@ var AppConfigSettings = {
   adminPath: '/r-admin',
   routerHistory: 'browserHistory',
   hot_reload: false,
+  disableLogger: false,
   includeCoreData: {
     manifest: true,
     navigation: true
@@ -56,29 +57,29 @@ var AppConfigSettings = {
   },
   auth: {
     logged_in_homepage: '/r-admin/dashboard',
-    logged_out_path: '/login'
+    logged_out_path: '/'
   },
   login: {
-    url: 'http://localhost:8786/api/jwt/token',
-    devurl: 'http://localhost:8786/api/jwt/token',
+    url: '/api/jwt/token',
+    devurl: '/api/jwt/token',
     options: {
       method: 'POST',
       headers: {
         Accept: 'application/json',
-        clientid: 'fbff80bd23de5b1699cb595167370a1a',
+        clientid: 'e2852fd35ef3c16ef206d4e34252e0e5',
         entitytype: 'account'
       }
     }
   },
   userprofile: {
-    url: 'http://localhost:8786/api/jwt/profile',
-    devurl: 'http://localhost:8786/api/jwt/profile',
+    url: '/api/jwt/profile',
+    devurl: '/api/jwt/profile',
     options: {
       method: 'POST',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
-        clientid: 'fbff80bd23de5b1699cb595167370a1a',
+        clientid: 'e2852fd35ef3c16ef206d4e34252e0e5',
         clientid_default: 'clientIDNEEDED',
         entitytype: 'account'
       }
@@ -117,6 +118,7 @@ exports.default = {
     NAVIGATION_LOAD_ERROR: 'navigation failed',
     NAVIGATION_REQUEST: 'navigation request',
     MFA_AUTHENTICATED: 'mfa authenticated'
+    // CURRENT_USER_STATUS:'get current login status',    
   },
   clientCacheData: {
     CLIENT_CACHE_DATA_REQUEST: 'client cache data save request',
@@ -125,10 +127,12 @@ exports.default = {
   },
   dynamic: {
     SET_DYNAMIC_DATA: 'set dynamic data'
+    // SHOW_ERROR:'show error notification',
   },
   output: {
     OUTPUT_FILE_DATA_SUCCESS: 'output data to file',
     OUTPUT_FILE_DATA_ERROR: 'error outputing data to file'
+    // SHOW_ERROR:'show error notification',
   },
   jwt_token: {
     TOKEN_NAME: AppConfigSettings.name + '_jwt_token',
@@ -165,6 +169,7 @@ exports.default = {
     MAIN_COMPONENT: 'fetchMainComponent',
     ERROR_COMPONENTS: 'fetchErrorComponents',
     SET_SELECTED_NAV_STATE: 'making nav item active'
+    // GET_APP_STATE:'get current app state',
   },
   settings: {
     UPDATE_APP_SETTINGS: 'update application settings'

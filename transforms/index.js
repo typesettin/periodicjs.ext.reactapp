@@ -1,31 +1,25 @@
 'use strict';
 const periodic = require('periodicjs');
-function testPreTransform(req) {
-  return new Promise((resolve, reject) => {
-    periodic.logger.silly('sample pre transfrom', req.params.id);
-    resolve(req);
-  });
-}
-function testPostTransform(req) {
-  return new Promise((resolve, reject) => {
-    periodic.logger.silly('sample post transfrom', req.params.id);
-    resolve(req);
-  });
-}
-
+const asset = require('./asset');
+const reactappLocals = periodic.locals.extensions.get('periodicjs.ext.reactapp');
+const reactapp = reactappLocals.reactapp();
 module.exports = {
   pre: {
     GET: {
-      '/some/route/path/:id':[testPreTransform]
+      // '/some/route/path/:id': [testPreTransform],
     },
-    PUT: {
-    }
+    PUT: {},
   },
   post: {
     GET: {
-      '/another/route/test/:id':[testPostTransform]
+      [`${reactapp.manifest_prefix}contentdata/standard_assets/:id`]: [
+        asset.formatAssetItem,
+        // asset.getFileMetaInfo(periodic),
+      ],
+      [`${reactapp.manifest_prefix}contentdata/standard_assets`]: [
+        asset.formatAssetIndex,
+      ],
     },
-    PUT: {
-    }
-  }
-}
+    PUT: {},
+  },
+};

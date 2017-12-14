@@ -17,6 +17,8 @@ var _assign = require('babel-runtime/core-js/object/assign');
 
 var _assign2 = _interopRequireDefault(_assign);
 
+exports.getFunctionFromProps = getFunctionFromProps;
+exports.getComponentFromMap = getComponentFromMap;
 exports.getRenderedComponent = getRenderedComponent;
 
 var _react = require('react');
@@ -31,6 +33,10 @@ var _recharts = require('recharts');
 
 var recharts = _interopRequireWildcard(_recharts);
 
+var _victory = require('victory');
+
+var victory = _interopRequireWildcard(_victory);
+
 var _reactTextMask = require('react-text-mask');
 
 var _reactTextMask2 = _interopRequireDefault(_reactTextMask);
@@ -40,6 +46,22 @@ var _reactRouter = require('react-router');
 var _rcSlider = require('rc-slider');
 
 var _rcSlider2 = _interopRequireDefault(_rcSlider);
+
+var _reactSlick = require('react-slick');
+
+var _reactSlick2 = _interopRequireDefault(_reactSlick);
+
+var _rcTable = require('rc-table');
+
+var _rcTable2 = _interopRequireDefault(_rcTable);
+
+var _rcSwitch = require('rc-switch');
+
+var _rcSwitch2 = _interopRequireDefault(_rcSwitch);
+
+var _rcTree = require('rc-tree');
+
+var _rcTree2 = _interopRequireDefault(_rcTree);
 
 var _reactResponsiveCarousel = require('react-responsive-carousel');
 
@@ -117,6 +139,10 @@ var _ResponsiveButton = require('../ResponsiveButton');
 
 var _ResponsiveButton2 = _interopRequireDefault(_ResponsiveButton);
 
+var _ResponsiveSteps = require('../ResponsiveSteps');
+
+var _ResponsiveSteps2 = _interopRequireDefault(_ResponsiveSteps);
+
 var _FormItem = require('../FormItem');
 
 var _FormItem2 = _interopRequireDefault(_FormItem);
@@ -129,21 +155,70 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var advancedBinding = (0, _advancedBinding.getAdvancedBinding)();
 // import Editor from '../RAEditor';
-
+var advancedBinding = (0, _advancedBinding.getAdvancedBinding)();
 var renderIndex = 0;
 
-var AppLayoutMap = exports.AppLayoutMap = (0, _assign2.default)({}, {
-  recharts: recharts, ResponsiveForm: _ResponsiveForm2.default, DynamicLayout: _DynamicLayout2.default, DynamicForm: _DynamicForm2.default, RawOutput: _RawOutput2.default, RawStateOutput: _RawStateOutput2.default, FormItem: _FormItem2.default, MenuAppLink: _MenuAppLink2.default, SubMenuLinks: _SubMenuLinks2.default, ResponsiveTable: _ResponsiveTable2.default, ResponsiveCard: _ResponsiveCard2.default, DynamicChart: _DynamicChart2.default, ResponsiveBar: _ResponsiveBar2.default, ResponsiveTabs: _ResponsiveTabs2.default, ResponsiveDatalist: _ResponsiveDatalist2.default, CodeMirror: _RACodeMirror2.default, Range: _rcSlider.Range, Slider: _rcSlider2.default, GoogleMap: _googleMapReact2.default, Carousel: _reactResponsiveCarousel.Carousel, PreviewEditor: _PreviewEditor2.default, /* Editor,*/
+function getFunctionFromProps(options) {
+  var propFunc = options.propFunc;
+
+
+  if (typeof propFunc === 'string' && propFunc.indexOf('func:this.props.reduxRouter') !== -1) {
+    return this.props.reduxRouter[propFunc.replace('func:this.props.reduxRouter.', '')];
+  } else if (typeof propFunc === 'string' && propFunc.indexOf('func:this.props') !== -1) {
+    return this.props[propFunc.replace('func:this.props.', '')].bind(this);
+  } else if (typeof propFunc === 'string' && propFunc.indexOf('func:window') !== -1 && typeof window[propFunc.replace('func:window.', '')] === 'function') {
+    return window[propFunc.replace('func:window.', '')].bind(this);
+  } else if (typeof this.props[propFunc] === 'function') {
+    return propFunc.bind(this);
+  } else {
+    return function () {};
+  }
+}
+
+var AppLayoutMap = exports.AppLayoutMap = (0, _assign2.default)({}, { victory: victory,
+  recharts: recharts, ResponsiveForm: _ResponsiveForm2.default, DynamicLayout: _DynamicLayout2.default, DynamicForm: _DynamicForm2.default, RawOutput: _RawOutput2.default, RawStateOutput: _RawStateOutput2.default, FormItem: _FormItem2.default, MenuAppLink: _MenuAppLink2.default, SubMenuLinks: _SubMenuLinks2.default, ResponsiveTable: _ResponsiveTable2.default, ResponsiveCard: _ResponsiveCard2.default, DynamicChart: _DynamicChart2.default, ResponsiveBar: _ResponsiveBar2.default, ResponsiveTabs: _ResponsiveTabs2.default, ResponsiveDatalist: _ResponsiveDatalist2.default, CodeMirror: _RACodeMirror2.default, Range: _rcSlider.Range, Slider: _rcSlider2.default, GoogleMap: _googleMapReact2.default, Carousel: _reactResponsiveCarousel.Carousel, PreviewEditor: _PreviewEditor2.default, ResponsiveSteps: _ResponsiveSteps2.default, /* Editor,*/
   ResponsiveLink: _ResponsiveLink2.default,
   ResponsiveButton: _ResponsiveButton2.default,
-  MaskedInput: _reactTextMask2.default
+  MaskedInput: _reactTextMask2.default,
+  RCTable: _rcTable2.default,
+  RCTree: _rcTree2.default,
+  RCTreeNode: _rcTree.TreeNode,
+  RCSwitch: _rcSwitch2.default,
+  Slick: _reactSlick2.default
 }, _react2.default.DOM, rebulma, window.__ra_custom_elements, { Link: _reactRouter.Link });
+
+function getComponentFromMap() {
+  var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  var componentObject = options.componentObject,
+      AppLayoutMap = options.AppLayoutMap;
+  // let reactComponent = null;
+
+  try {
+    if (typeof componentObject.component !== 'string') {
+      return componentObject.component;
+    } else if (_react2.default.DOM[componentObject.component]) {
+      return componentObject.component;
+    } else if (recharts[componentObject.component.replace('recharts.', '')]) {
+      return recharts[componentObject.component.replace('recharts.', '')];
+    } else if (victory[componentObject.component.replace('victory.', '')]) {
+      return victory[componentObject.component.replace('victory.', '')];
+    } else {
+      return AppLayoutMap[componentObject.component];
+    }
+  } catch (e) {
+    console.error(e, e.stack ? e.stack : 'no stack');
+    // throw e;
+    return null;
+  }
+}
 
 function getRenderedComponent(componentObject, resources, debug) {
   var _this = this;
 
+  if (debug) {
+    console.debug({ resources: resources, componentObject: componentObject });
+  }
   try {
     if (advancedBinding) {
       AppLayoutMap.ResponsiveLink = _ResponsiveLink2.default.bind(this);
@@ -159,23 +234,40 @@ function getRenderedComponent(componentObject, resources, debug) {
     return (0, _react.createElement)('span', {}, debug ? 'Error: Missing Component Object' : '');
   }
   try {
+    var getFunction = getFunctionFromProps.bind(this);
     var asyncprops = componentObject.asyncprops && (0, _typeof3.default)(componentObject.asyncprops) === 'object' ? _util2.default.traverse(componentObject.asyncprops, resources) : {};
     var windowprops = componentObject.windowprops && (0, _typeof3.default)(componentObject.windowprops) === 'object' ? _util2.default.traverse(componentObject.windowprops, window) : {};
     var thisprops = componentObject.thisprops && (0, _typeof3.default)(componentObject.thisprops) === 'object' ? _util2.default.traverse(componentObject.thisprops, (0, _assign2.default)({
-      __reactadmin_manifest: {
+      __reactapp_manifest: {
         _component: componentObject,
         _resources: resources
       }
     }, this.props, componentObject.props, this.props.getState())) : {};
     var thisDotProps = !_react2.default.DOM[componentObject.component] && !rebulma[componentObject.component] && !componentObject.ignoreReduxProps ? this.props : null;
+    //allowing javascript injections
+    var evalProps = componentObject.__dangerouslyEvalProps ? (0, _keys2.default)(componentObject.__dangerouslyEvalProps).reduce(function (eprops, epropName) {
+      // eslint-disable-next-line
+      eprops[epropName] = eval(componentObject.__dangerouslyEvalProps[epropName]);
+      return eprops;
+    }, {}) : {};
+    var insertedComponents = componentObject.__dangerouslyInsertComponents ? (0, _keys2.default)(componentObject.__dangerouslyInsertComponents).reduce(function (cprops, cpropName) {
+      // eslint-disable-next-line
+      cprops[cpropName] = getRenderedComponent.call(_this, componentObject.__dangerouslyInsertComponents[cpropName], resources, debug);
+      return cprops;
+    }, {}) : {};
+    // if (componentObject.__dangerouslyInsertComponents){ console.log({ insertedComponents });}
     var renderedCompProps = (0, _assign2.default)({
       key: renderIndex
-    }, thisDotProps, thisprops, componentObject.props, asyncprops, windowprops);
+    }, thisDotProps, thisprops, componentObject.props, asyncprops, windowprops, evalProps, insertedComponents);
+
     //Allowing for window functions
-    if (componentObject.hasWindowFunc) {
+    if (componentObject.hasWindowFunc || componentObject.hasPropFunc) {
       (0, _keys2.default)(renderedCompProps).forEach(function (key) {
-        if (typeof renderedCompProps[key] === 'string' && renderedCompProps[key].indexOf('func:window') !== -1 && typeof window[renderedCompProps[key].replace('func:window.', '')] === 'function') {
-          renderedCompProps[key] = window[renderedCompProps[key].replace('func:window.', '')].bind(_this);
+        // if (typeof renderedCompProps[key] ==='string' && renderedCompProps[key].indexOf('func:window') !== -1 && typeof window[ renderedCompProps[key].replace('func:window.', '') ] ==='function'){
+        //   renderedCompProps[key]= window[ renderedCompProps[key].replace('func:window.', '') ].bind(this);
+        // } 
+        if (typeof renderedCompProps[key] === 'string' && renderedCompProps[key].indexOf('func:') !== -1) {
+          renderedCompProps[key] = getFunction({ propFunc: renderedCompProps[key] });
         }
       });
     }
@@ -186,6 +278,14 @@ function getRenderedComponent(componentObject, resources, debug) {
         }
       });
     }
+    if (renderedCompProps._children /* && !componentObject.children */) {
+        if (Array.isArray(renderedCompProps._children)) {
+          componentObject.children = [].concat(renderedCompProps._children);
+        } else {
+          componentObject.children = renderedCompProps._children;
+        }
+        delete renderedCompProps._children;
+      }
     var comparisons = {};
     // if (thisprops) {
     //   console.debug({ thisprops, renderedCompProps });
@@ -234,16 +334,28 @@ function getRenderedComponent(componentObject, resources, debug) {
     }
     if (componentObject.comparisonprops && comparisons.filter(function (comp) {
       return comp === true;
-    }).length !== comparisons.length) {
+    }).length !== comparisons.length && (!componentObject.comparisonorprops || componentObject.comparisonorprops && comparisons.filter(function (comp) {
+      return comp === true;
+    }).length === 0)) {
       return null;
     } else if (typeof componentObject.conditionalprops !== 'undefined' && !(0, _keys2.default)(_util2.default.traverse(componentObject.conditionalprops, renderedCompProps)).filter(function (key) {
       return _util2.default.traverse(componentObject.conditionalprops, renderedCompProps)[key];
-    }).length) {
+    }).length && (!componentObject.comparisonorprops || componentObject.comparisonorprops && comparisons.filter(function (comp) {
+      return comp === true;
+    }).length === 0)) {
       return null;
     } else {
+
       return (0, _react.createElement)(
       //element component
-      typeof componentObject.component === 'string' ? _react2.default.DOM[componentObject.component] ? componentObject.component : recharts[componentObject.component.replace('recharts.', '')] ? recharts[componentObject.component.replace('recharts.', '')] : AppLayoutMap[componentObject.component] : componentObject.component,
+      getComponentFromMap({ componentObject: componentObject, AppLayoutMap: AppLayoutMap }),
+      // (typeof componentObject.component === 'string')
+      //   ? (React.DOM[ componentObject.component ])
+      //     ? componentObject.component
+      //     : (recharts[ componentObject.component.replace('recharts.', '') ])
+      //       ? recharts[ componentObject.component.replace('recharts.', '') ]
+      //       : AppLayoutMap[ componentObject.component ]
+      //   : componentObject.component,
       //element props
       renderedCompProps,
       //props children
@@ -257,8 +369,9 @@ function getRenderedComponent(componentObject, resources, debug) {
       }) : typeof componentObject.children === 'undefined' ? renderedCompProps && renderedCompProps.children && typeof renderedCompProps.children === 'string' ? renderedCompProps.children : null : componentObject.children);
     }
   } catch (e) {
-    console.error(e, e.stack ? e.stack : 'no stack');
     console.error({ componentObject: componentObject, resources: resources }, 'this', this);
-    return (0, _react.createElement)('div', {}, e.toString());
+    console.error(e, e.stack ? e.stack : 'no stack');
+    throw e;
+    // return createElement('div', {}, e.toString());
   }
 }

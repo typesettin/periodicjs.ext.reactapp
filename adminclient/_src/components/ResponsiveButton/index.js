@@ -53,6 +53,7 @@ var propTypes = {
 };
 
 var defaultProps = {
+  // useAllPropsAsClickProp: true,
   // onClick: '/',
   style: {}
 };
@@ -111,6 +112,7 @@ var ResponsiveButton = function (_Component) {
           clickThisProp = options.clickThisProp,
           clickPropObject = options.clickPropObject,
           clickBaseUrl = options.clickBaseUrl,
+          clickAddPropObject = options.clickAddPropObject,
           clickLinkParams = options.clickLinkParams,
           clickPassProps = options.clickPassProps,
           clickFetchProps = options.clickFetchProps,
@@ -119,8 +121,15 @@ var ResponsiveButton = function (_Component) {
       var onclickFunction = function onclickFunction(data) {
         console.debug('ResponsiveButton', { data: data });
       };
-      var linkSelectionProp = clickThisProp ? thisDotProp[clickThisProp] : clickPropObject;
-      var onclickProp = clickBaseUrl ? this.getButtonLink(clickBaseUrl, clickLinkParams, linkSelectionProp) : clickPassProps;
+      var linkSelectionProp = clickThisProp ? thisDotProp[clickThisProp] : clickPropObject || this.props;
+      var onclickProp = clickBaseUrl ? this.getButtonLink(clickBaseUrl, clickLinkParams, linkSelectionProp) : clickPassProps || clickPropObject;
+
+      if (clickAddPropObject && linkSelectionProp) {
+        linkSelectionProp[clickAddPropObject] = this.props[clickAddPropObject];
+      }
+      if (clickAddPropObject && onclickProp) {
+        onclickProp[clickAddPropObject] = this.props[clickAddPropObject];
+      }
 
       if (typeof clickprop === 'string' && clickprop.indexOf('func:this.props.reduxRouter') !== -1) {
         onclickFunction = this.props.reduxRouter[clickprop.replace('func:this.props.reduxRouter.', '')];
@@ -186,6 +195,9 @@ var ResponsiveButton = function (_Component) {
             }]
           }
         }, this.props.confirmModal));
+      } else if (typeof clickprop === 'string' && clickprop === 'func:this.props.createModal') {
+        var modalPathName = onclickProp.params ? this.getButtonLink(onclickProp.pathname, onclickProp.params, linkSelectionProp) : onclickProp.pathname;
+        return onclickFunction.call(this, (0, _assign2.default)({}, onclickProp, { pathname: modalPathName }), clickFetchProps, clickSuccessProps);
       } else {
         // console.debug('debugging this regular onclick', this);
         return onclickFunction.call(this, onclickProp, clickFetchProps, clickSuccessProps);
@@ -200,6 +212,7 @@ var ResponsiveButton = function (_Component) {
       this.handleOnClick.call(this, {
         clickprop: buttonProps.onClick,
         clickThisProp: buttonProps.onclickThisProp,
+        clickAddPropObject: buttonProps.onclickAddProp,
         clickPropObject: buttonProps.onclickPropObject,
         clickBaseUrl: buttonProps.onclickBaseUrl,
         clickLinkParams: buttonProps.onclickLinkParams,
@@ -219,6 +232,7 @@ var ResponsiveButton = function (_Component) {
         return {
           clickprop: _this3.props.onClick,
           clickThisProp: _this3.props.onclickThisProp,
+          clickAddPropObject: _this3.props.onclickAddProp,
           clickPropObject: _this3.props.onclickPropObject,
           clickBaseUrl: _this3.props.onclickBaseUrl,
           clickLinkParams: _this3.props.onclickLinkParams,

@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.fetchAction = exports.fetchDynamicContent = exports.fetchSuccessContent = exports.fetchErrorContent = exports._handleFetchPaths = exports._handleDynamicParams = undefined;
+exports.fetchAction = exports.getDynamicFunctionName = exports.fetchDynamicContent = exports.fetchSuccessContent = exports.fetchErrorContent = exports._handleFetchPaths = exports._handleDynamicParams = undefined;
 
 var _typeof2 = require('babel-runtime/helpers/typeof');
 
@@ -79,10 +79,9 @@ var _handleFetchPaths = exports._handleFetchPaths = function _handleFetchPaths(l
   if (state.user && state.user.jwt_token) {
     headers['x-access-token'] = state.user.jwt_token;
   }
-
   return _index2.default.fetchPaths.call(this, state.settings.basename, resources, headers).then(typeof options.onSuccess === 'function' ? options.onSuccess : function (_resources) {
     if (!_resources || _resources && !_resources.__hasError) {
-      _this.uiLayout = _this.getRenderedComponent(layout, _resources);
+      _this.uiLayout = _this.getRenderedComponent(layout, (0, _assign2.default)({}, _resources, _this.uiResources));
       _this.setState({ ui_is_loaded: true, async_data_is_loaded: true });
       if (options.callbacks) _webhooks._invokeWebhooks.call(_this, options.callbacks);
     }
@@ -128,6 +127,11 @@ var fetchSuccessContent = exports.fetchSuccessContent = function _fetchSuccessCo
     var state = getState();
     var containers = state.manifest.containers;
     var layout = (0, _assign2.default)({}, containers[pathname].layout);
+
+    if (typeof window.customOnChangeLocation === 'function') {
+      window.customOnChangeLocation(window.location.pathname);
+    }
+
     if (containers[pathname].dynamic && (0, _typeof3.default)(containers[pathname].dynamic) === 'object') {
       (0, _keys2.default)(containers[pathname].dynamic).forEach(function (dynamicProp) {
         _this2.props.setDynamicData(dynamicProp, containers[pathname].dynamic[dynamicProp]);
@@ -146,13 +150,13 @@ var fetchSuccessContent = exports.fetchSuccessContent = function _fetchSuccessCo
       });
     } else {
       if (containers[pathname].callbacks) _webhooks._invokeWebhooks.call(this, containers[pathname].callbacks);
-      this.uiLayout = this.getRenderedComponent(containers[pathname].layout);
+      this.uiLayout = this.getRenderedComponent(containers[pathname].layout, this.uiResources);
       this.setState({ ui_is_loaded: true, async_data_is_loaded: true });
       if (window && window.scrollTo) {
         window.scrollTo(0, 0);
       }
-      if (document && document.querySelector && document.querySelector('.reactadmin__app_div_content')) {
-        document.querySelector('.reactadmin__app_div_content').scrollIntoView(true);
+      if (document && document.querySelector && document.querySelector('.reactapp__app_div_content')) {
+        document.querySelector('.reactapp__app_div_content').scrollIntoView(true);
       }
     }
   } catch (e) {
@@ -161,8 +165,8 @@ var fetchSuccessContent = exports.fetchSuccessContent = function _fetchSuccessCo
     if (window && window.scrollTo) {
       window.scrollTo(0, 0);
     }
-    if (document && document.querySelector && document.querySelector('.reactadmin__app_div_content')) {
-      document.querySelector('.reactadmin__app_div_content').scrollIntoView(true);
+    if (document && document.querySelector && document.querySelector('.reactapp__app_div_content')) {
+      document.querySelector('.reactapp__app_div_content').scrollIntoView(true);
     }
   }
 };
@@ -195,6 +199,11 @@ var fetchDynamicContent = exports.fetchDynamicContent = function _fetchDynamicCo
     if (!dynamicPathname) return onError();
     return onSuccess(dynamicPathname, true);
   }
+};
+
+var FUNCTION_NAME_REGEXP = /func:(?:this\.props|window)(?:\.reduxRouter)?\.(\D.+)*/;
+var getDynamicFunctionName = exports.getDynamicFunctionName = function _getDynamicFunctionName(function_name) {
+  return function_name.replace(FUNCTION_NAME_REGEXP, '$1');
 };
 
 var fetchAction = exports.fetchAction = function _fetchAction(pathname, fetchOptions, success) {

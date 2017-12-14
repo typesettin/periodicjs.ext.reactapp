@@ -11,15 +11,7 @@ let __global__returnURL = false;
 // import { Platform, } from 'react-web';
 // import Immutable from 'immutable';
 
-const checkStatus = function (response) {
-  if (response.status >= 200 && response.status < 300) {
-    return response;
-  } else {
-    let error = new Error(response.statusText);
-    error.response = response;
-    throw error;
-  }
-};
+const checkStatus = utilities.checkStatus;
 
 var initializationThrottle;
 var initializationTimeout;
@@ -87,15 +79,24 @@ const user = {
   updateUserProfile(profile) {
     console.debug('updatedUserProfile', { profile, });
     return (dispatch/*, getState*/) => {
-      AsyncStorage.setItem(constants.jwt_token.PROFILE_JSON, JSON.stringify(profile.userdata))
-        .then((status) => {
-          console.debug({ status, });
-          dispatch(this.updateUserProfileSuccess(profile));
-        })
-        .catch(e => { 
-          console.error(e);
-          dispatch(notification.errorNotification(e));
-        });
+      try {
+        if (!profile || !profile.userdata) {
+          dispatch(notification.errorNotification(new Error('Invalid profile data update, missing userdata')));
+        } else {
+          AsyncStorage.setItem(constants.jwt_token.PROFILE_JSON, JSON.stringify(profile.userdata))
+            .then((status) => {
+              console.debug({ status, });
+              dispatch(this.updateUserProfileSuccess(profile));
+            })
+            .catch(e => {
+              console.error(e);
+              dispatch(notification.errorNotification(e));
+            });
+        }
+      } catch (e) {
+        console.error(e);
+        dispatch(notification.errorNotification(e));
+      }
     };
   },
   /**
@@ -346,19 +347,25 @@ const user = {
       console.debug({ formReturnURL, returnUrl, });
       // console.log('state.settings.auth', state.settings.auth);
       // console.log('state.user.isMFAAuthenticated', state.user.isMFAAuthenticated);
+      // console.log({ extensionattributes });
+      // console.log('state.manifest.containers[`${state.settings.adminPath}/mfa`]',state.manifest.containers[`${state.settings.adminPath}/mfa`])
       // console.log('state.manifest.containers[/mfa]', state.manifest.containers[ '/mfa' ]);
       // console.log('state.manifest.containers[${state.settings.adminPath}/mfa]', state.manifest.containers[ `${state.settings.adminPath}/mfa` ]);
-      if (state.settings.auth.enforce_mfa || (extensionattributes && extensionattributes.login_mfa)) {
+      if (state.settings.auth.enforce_mfa || (extensionattributes && extensionattributes.passport_mfa)) { //passport_mfa
+       
         if (state.user.isMFAAuthenticated) {
           if (!noRedirect) {
             if (state.user.isLoggedIn && returnUrl) dispatch(push(returnUrl));
             else dispatch(push(state.settings.auth.logged_in_homepage));
           }
           return true;
-        } else {
+        }  else {
           if (!state.manifest.containers || (state.manifest.containers && !state.manifest.containers['/mfa']  && !state.manifest.containers[`${state.settings.adminPath}/mfa`])) {
             dispatch(notification.errorNotification(new Error('Multi-Factor Authentication not Properly Configured')));
-            this.logoutUser()(dispatch, getState);
+            let t = setTimeout(() => { 
+              this.logoutUser()(dispatch, getState);
+              clearTimeout(t);
+            },2000)
           } else {
             // console.log('utilities.getMFAPath(state)')
             let mfapath = utilities.getMFAPath(state);
@@ -371,7 +378,7 @@ const user = {
             
             dispatch(push(`${mfapath}${(returnUrl) ? '?return_url=' + returnUrl : ''}`));
           }
-          return false;
+          return false;         
         }
       } else {
         if (!noRedirect) {

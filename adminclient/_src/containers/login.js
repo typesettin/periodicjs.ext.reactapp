@@ -184,7 +184,7 @@ function getLoginLayout() /*options*/{
                       value: {
                         component: 'ResponsiveLink',
                         props: {
-                          location: '/auth/forgot'
+                          location: '/r-admin/auth/account/forgot'
                         },
                         children: 'Forgot Password'
                       }
@@ -223,7 +223,7 @@ function getLoginLayout() /*options*/{
                         component: 'ResponsiveButton',
                         props: {
                           onClick: 'func:this.props.reduxRouter.push',
-                          onclickProps: '/auth/user/new',
+                          onclickProps: '/r-admin/auth/account/register',
                           style: {},
                           buttonProps: {
                             // color: 'isPrimary',
@@ -237,6 +237,7 @@ function getLoginLayout() /*options*/{
                       style: {
                         justifyContent: 'center'
                       }
+                      // "horizontalform": true
                     }
                   }]
                 }]

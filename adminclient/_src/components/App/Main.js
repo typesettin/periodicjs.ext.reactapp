@@ -104,7 +104,7 @@ var MainApp = function (_Component) {
       // console.log('componentWillReceiveProps nextProps', nextProps);
       this.setState(nextProps);
       if (document && document.body && document.body.setAttribute) {
-        document.body.setAttribute('id', encodeURIComponent(nextProps.location.pathname));
+        document.body.setAttribute('id', encodeURIComponent(nextProps.location.pathname).replace(new RegExp(/%2F|%2/, 'g'), '_'));
       }
     }
   }, {
@@ -120,14 +120,23 @@ var MainApp = function (_Component) {
           _this2.props.setUILoadedState(true);
         });
       } else {
-        _promise2.default.all([_serverSideReactNative.AsyncStorage.getItem(_constants2.default.jwt_token.TOKEN_NAME), _serverSideReactNative.AsyncStorage.getItem(_constants2.default.jwt_token.TOKEN_DATA), _serverSideReactNative.AsyncStorage.getItem(_constants2.default.jwt_token.PROFILE_JSON), this.props.fetchMainComponent(), this.props.fetchErrorComponents(), this.props.fetchUnauthenticatedManifest(), _serverSideReactNative.AsyncStorage.getItem(_constants2.default.user.MFA_AUTHENTICATED)]).then(function (results) {
+        _promise2.default.all([_serverSideReactNative.AsyncStorage.getItem(_constants2.default.jwt_token.TOKEN_NAME), _serverSideReactNative.AsyncStorage.getItem(_constants2.default.jwt_token.TOKEN_DATA), _serverSideReactNative.AsyncStorage.getItem(_constants2.default.jwt_token.PROFILE_JSON), this.props.fetchMainComponent(), this.props.fetchErrorComponents(), this.props.fetchUnauthenticatedManifest(), _serverSideReactNative.AsyncStorage.getItem(_constants2.default.user.MFA_AUTHENTICATED)]
+        //AsyncStorage.getItem(constants.async_token.TABBAR_TOKEN),
+        ).then(function (results) {
           try {
             if (results[results.length - 1] === 'true') {
               _this2.props.authenticatedMFA();
             }
             var jwt_token = results[0];
             var jwt_token_data = JSON.parse(results[1]);
-            var jwt_user_profile = JSON.parse(results[2]);
+            var jwt_user_profile = {};
+            try {
+              jwt_user_profile = JSON.parse(results[2]);
+            } catch (e) {
+              _this2.props.getUserProfile(jwt_token);
+              _this2.props.initializeAuthenticatedUser(jwt_token, false);
+              _this2.props.errorNotification(new Error('Invalid User Profile'));
+            }
             if (jwt_token_data && jwt_user_profile) {
               var url = '/api/jwt/token';
               var response = {};
@@ -157,9 +166,11 @@ var MainApp = function (_Component) {
             _this2.props.setUILoadedState(true);
           } catch (e) {
             _this2.props.errorNotification(e);
+            // console.error(e)
             // console.log(e);
           }
         }).catch(function (error) {
+          // console.error(error)
           _this2.props.errorNotification(error);
           // console.error('MAIN componentDidMount: JWT USER Login Error.', error);
           _this2.props.logoutUser();
@@ -180,21 +191,21 @@ var MainApp = function (_Component) {
     value: function render() {
       // console.log('this.state', this.state);
       var fixedSider = this.state.settings.ui.fixedSidebar ? { position: 'fixed', zIndex: 1000 } : {};
-      var sidebarColumn = this.state.settings.ui.sidebar.use_floating_nav && this.state.ui.sidebar_is_open ? _react2.default.createElement(_FloatingNav2.default, (0, _extends3.default)({ className: 'reactadmin__app_floating_sidebar' }, this.state)) : this.state.ui.sidebar_is_open ? _react2.default.createElement(
+      var sidebarColumn = this.state.settings.ui.sidebar.use_floating_nav && this.state.ui.sidebar_is_open ? _react2.default.createElement(_FloatingNav2.default, (0, _extends3.default)({ className: 'reactapp__app_floating_sidebar' }, this.state)) : this.state.ui.sidebar_is_open ? _react2.default.createElement(
         _reBulma.Column,
-        { className: 'reactadmin__app_container_sidebar', size: 'isNarrow', style: (0, _assign2.default)({}, fixedSider, _styles2.default.fullMinHeight, _styles2.default.fullHeight) },
-        _react2.default.createElement(_AppSidebar2.default, (0, _extends3.default)({ className: 'reactadmin__app_sidebar' }, this.state))
+        { className: 'reactapp__app_container_sidebar', size: 'isNarrow', style: (0, _assign2.default)({}, fixedSider, _styles2.default.fullMinHeight, _styles2.default.fullHeight) },
+        _react2.default.createElement(_AppSidebar2.default, (0, _extends3.default)({ className: 'reactapp__app_sidebar' }, this.state))
       ) : null;
 
-      var headerNav = this.state.settings.ui.initialization.show_header || this.state.user.isLoggedIn ? _react2.default.createElement(_AppHeader2.default, (0, _extends3.default)({ className: 'reactadmin__app_header' }, this.state)) : null;
-      var footerNav = this.state.settings.ui.initialization.show_footer || this.state.user.isLoggedIn ? _react2.default.createElement(_AppFooter2.default, (0, _extends3.default)({ className: 'reactadmin__app_footer' }, this.state)) : null;
+      var headerNav = this.state.settings.ui.initialization.show_header || this.state.user.isLoggedIn ? _react2.default.createElement(_AppHeader2.default, (0, _extends3.default)({ className: 'reactapp__app_header' }, this.state)) : null;
+      var footerNav = this.state.settings.ui.initialization.show_footer || this.state.user.isLoggedIn ? _react2.default.createElement(_AppFooter2.default, (0, _extends3.default)({ className: 'reactapp__app_footer' }, this.state)) : null;
 
       var overlay = this.props.ui.sidebar_is_open && this.state.settings.ui.initialization.show_sidebar_overlay ? _react2.default.createElement('div', { style: _styles2.default.sidebarOverlay, className: '__ra_show_sidebar_overlay',
         onClick: this.props.toggleUISidebar }) : null;
 
       return _react2.default.createElement(
         'div',
-        { className: 'reactadmin__app_div_content' },
+        { className: 'reactapp__app_div_content' },
         _react2.default.createElement(_overlay2.default, { display: !this.state.ui.ui_is_loaded, wrapperstyle: (0, _assign2.default)({}, {
             position: 'fixed',
             height: '100%',
@@ -207,19 +218,19 @@ var MainApp = function (_Component) {
             backgroundColor: 'rgba(255,255,255,0.8)',
             zIndex: 100
           }, this.overlayUIWrapperStyle), ui: this.state.ui }),
-        _react2.default.createElement(_AppOverlay2.default, (0, _extends3.default)({ className: 'reactadmin__app_overlay' }, this.state)),
+        _react2.default.createElement(_AppOverlay2.default, (0, _extends3.default)({ className: 'reactapp__app_overlay' }, this.state)),
         headerNav,
         _react2.default.createElement(
           'main',
-          { style: _styles2.default.fullHeight, className: 'reactadmin__main' },
+          { style: _styles2.default.fullHeight, className: 'reactapp__main' },
           _react2.default.createElement(
             _reBulma.Columns,
-            { className: 'reactadmin__main_container', style: (0, _assign2.default)({}, _styles2.default.fullMinHeight, _styles2.default.fullHeight) },
+            { className: 'reactapp__main_container', style: (0, _assign2.default)({}, _styles2.default.fullMinHeight, _styles2.default.fullHeight) },
             sidebarColumn,
             overlay,
             _react2.default.createElement(
               _reBulma.Column,
-              { className: 'reactadmin__main_content', style: _styles2.default.fullMinHeight },
+              { className: 'reactapp__main_content', style: _styles2.default.fullMinHeight },
               this.state.ui.app_container_ui_is_loaded === false ? null : this.props.children
             )
           )

@@ -6,14 +6,14 @@ module.exports = {
       'node_modules/periodicjs.ext.reactapp/adminclient/src/content/config/manifest.json',
       // 'node_modules/periodicjs.ext.reactapp/views/home/',
       // 'node_modules/periodicjs.ext.reactapp/views/account/',
-      'node_modules/periodicjs.ext.reactapp/views/reactadmin/manifests/',
+      'node_modules/periodicjs.ext.reactapp/views/reactapp/manifests/',
       'node_modules/periodicjs.ext.reactapp/views/test/',
     ],
     'unauthenticated_manifests': [
       'node_modules/periodicjs.ext.reactapp/views/public/home/',
     ],
-    'navigation': 'node_modules/periodicjs.ext.reactapp/adminclient/src/content/config/navigation.json',
-    // 'navigation': 'node_modules/periodicjs.ext.reactapp/views/reactadmin/components/navigation.manifest.js',
+    // 'navigation': 'node_modules/periodicjs.ext.reactapp/adminclient/src/content/config/navigation.json',
+    'navigation': 'node_modules/periodicjs.ext.reactapp/views/reactapp/components/navigation.manifest.js',
     'components': {
       // 'login':'/content/themes/periodicjs.theme.default/views/auth/loginDISABLED.manifest.json',
       'main': {
