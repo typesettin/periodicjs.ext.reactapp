@@ -3,7 +3,7 @@ import { Columns, Card, CardHeader, CardHeaderTitle, CardContent, CardFooter, Ca
 import ResponsiveCard from '../ResponsiveCard';
 import { getRenderedComponent, } from '../AppLayoutMap';
 import utilities from '../../util';
-import { getFormTextInputArea, getFormMaskedInput, getFormCheckbox, getFormSubmit, getFormSelect, getCardFooterItem, getFormCode, getFormTextArea, getFormEditor, getFormLink, getHiddenInput, getFormGroup, getImage, getFormDatalist, getRawInput, getSliderInput, getFormDatatable, getFormSwitch, } from './FormElements';
+import { getFormTextInputArea, getFormMaskedInput, getFormDropdown, getFormCheckbox, getFormSubmit, getFormSelect, getCardFooterItem, getFormCode, getFormTextArea, getFormEditor, getFormLink, getHiddenInput, getFormGroup, getImage, getFormDatalist, getRawInput, getSliderInput, getFormDatatable, getFormSwitch, } from './FormElements';
 import { getCallbackFromString, setFormNameFields, assignHiddenFields, validateForm, assignFormBody, handleFormSubmitNotification, handleSuccessCallbacks, submitThisDotPropsFunc, submitWindowFunc, validateFormElement, } from './FormHelpers';
 import flatten from 'flat';
 import qs from 'querystring';
@@ -110,6 +110,7 @@ class ResponsiveForm extends Component{
     this.getFormCode = getFormCode.bind(this);
     this.getFormTextInputArea = getFormTextInputArea.bind(this);
     this.getFormMaskedInput = getFormMaskedInput.bind(this);
+    this.getFormDropdown = getFormDropdown.bind(this);
     this.getFormTextArea = getFormTextArea.bind(this);
     this.getFormCheckbox = getFormCheckbox.bind(this);
     this.getCardFooterItem = getCardFooterItem.bind(this);
@@ -389,6 +390,8 @@ class ResponsiveForm extends Component{
           return this.getHiddenInput({ formElement,  i:j, formgroup, });
         } else if (formElement.type === 'datalist') {
           return this.getFormDatalist({ formElement,  i:j, formgroup, });
+        } else if (formElement.type === 'dropdown') {
+          return this.getFormDropdown({ formElement,  i:j, formgroup, });
         } else if (formElement.type === 'datatable') {
           return this.getFormDatatable({ formElement,  i:j, formgroup, });
         } else if (formElement.type === 'checkbox' || formElement.type === 'radio') {

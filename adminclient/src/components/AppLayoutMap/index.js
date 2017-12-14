@@ -3,6 +3,7 @@ import * as rebulma from 're-bulma';
 import * as recharts from 'recharts';
 import * as victory from 'victory';
 import MaskedInput from 'react-text-mask';
+import { Dropdown } from 'semantic-ui-react';
 import { Link, } from 'react-router';
 import Slider, { Range, } from 'rc-slider';
 import { default as Slick } from 'react-slick';
@@ -57,6 +58,7 @@ export let AppLayoutMap = Object.assign({}, { victory,
   ResponsiveLink,
   ResponsiveButton,
   MaskedInput,
+  Dropdown,
   RCTable,
   RCTree,
   RCTreeNode,
