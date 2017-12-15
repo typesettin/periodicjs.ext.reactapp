@@ -50,7 +50,7 @@ function admin_index(req, res, next) {
     // logger.silly('render reactapp, req.query.format',req.query.format);
     let viewtemplate = {
       viewname,
-      extname: 'periodicjs.ext.reactapp',
+      extname: '@digifi/periodicjs.ext.reactapp',
     };
     let viewdata = {
       pagedata: {

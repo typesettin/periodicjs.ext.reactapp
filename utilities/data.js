@@ -41,7 +41,7 @@ function getDataCoreController() {
           override,
           concat_documents: true,
           use_json_post_transforms: true,
-          dirname: path.join(periodic.config.app_root, '/node_modules/periodicjs.ext.reactapp/views'),
+          dirname: path.join(periodic.config.app_root, '/node_modules/@digifi/periodicjs.ext.reactapp/views'),
         }).router,
       });
     }

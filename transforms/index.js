@@ -1,7 +1,7 @@
 'use strict';
 const periodic = require('periodicjs');
 const asset = require('./asset');
-const reactappLocals = periodic.locals.extensions.get('periodicjs.ext.reactapp');
+const reactappLocals = periodic.locals.extensions.get('@digifi/periodicjs.ext.reactapp');
 const reactapp = reactappLocals.reactapp();
 module.exports = {
   pre: {
