@@ -1,6 +1,6 @@
 {
   "name": "adminclient",
-  "version": "10.1.0",
+  "version": "10.1.1",
   "private": true,
   "devDependencies": {
     "animate.css": "^3.5.2",
