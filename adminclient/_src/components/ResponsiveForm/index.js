@@ -170,6 +170,7 @@ var ResponsiveForm = function (_Component) {
     _this.getFormCode = _FormElements.getFormCode.bind(_this);
     _this.getFormTextInputArea = _FormElements.getFormTextInputArea.bind(_this);
     _this.getFormMaskedInput = _FormElements.getFormMaskedInput.bind(_this);
+    _this.getFormDropdown = _FormElements.getFormDropdown.bind(_this);
     _this.getFormTextArea = _FormElements.getFormTextArea.bind(_this);
     _this.getFormCheckbox = _FormElements.getFormCheckbox.bind(_this);
     _this.getCardFooterItem = _FormElements.getCardFooterItem.bind(_this);
@@ -435,6 +436,8 @@ var ResponsiveForm = function (_Component) {
             return _this3.getHiddenInput({ formElement: formElement, i: j, formgroup: formgroup });
           } else if (formElement.type === 'datalist') {
             return _this3.getFormDatalist({ formElement: formElement, i: j, formgroup: formgroup });
+          } else if (formElement.type === 'dropdown') {
+            return _this3.getFormDropdown({ formElement: formElement, i: j, formgroup: formgroup });
           } else if (formElement.type === 'datatable') {
             return _this3.getFormDatatable({ formElement: formElement, i: j, formgroup: formgroup });
           } else if (formElement.type === 'checkbox' || formElement.type === 'radio') {
