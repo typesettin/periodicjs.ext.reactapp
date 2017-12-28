@@ -13,6 +13,7 @@ import Slider from 'rc-slider';
 import { default as RCSwitch } from 'rc-switch';
 import { ControlLabel, Label, Input, Button, CardFooterItem, Select, Textarea, Group, Image, } from 're-bulma';
 import MaskedInput from 'react-text-mask';
+import { Dropdown } from 'semantic-ui-react';
 import moment from 'moment';
 import numeral from 'numeral';
 import pluralize from 'pluralize';
@@ -394,6 +395,60 @@ export function getFormDatalist(options){
         this.setState(updatedStateProp);
       }}
       value={ initialValue } />
+  </FormItem>);
+}
+
+export function getFormDropdown(options){
+  let { formElement, i, } = options;
+  let initialValue = getInitialValue(formElement, Object.assign({}, this.state, unflatten(this.state)));
+  let hasError = getErrorStatus(this.state, formElement.name);
+  let passedProps = Object.assign({},
+    this.props,
+    {
+      wrapperProps:{
+        style:{
+          display: 'flex',
+          width: '100%',
+          flex: '5',
+          alignItems: 'stretch',
+          flexDirection: 'column',
+        },
+      },
+      passableProps:{
+        help:getFormElementHelp(hasError, this.state, formElement.name),
+        color:(hasError)?'isDanger':undefined,
+        icon:(hasError)?formElement.errorIcon || 'fa fa-warning':undefined,
+        placeholder:formElement.placeholder,
+        style:{
+          width:'100%',
+        },
+      },
+    },
+    formElement.passProps);
+    // console.debug({formElement,initialValue, },'this.state',this.state);
+  // console.debug({ passedProps });
+    let dropdowndata = [];
+    let displayField = (formElement.passProps.displayField)? formElement.passProps.displayField : 'label';
+    let valueField = (formElement.passProps.valueField)? formElement.passProps.valueField : 'value';
+    if(this.props.__formOptions && this.props.__formOptions[formElement.name]){
+      dropdowndata = this.props.__formOptions[formElement.name];
+      dropdowndata = dropdowndata.map(option => ({ text: option[displayField], value: option[valueField]}));
+    } else {
+      dropdowndata = formElement.options || [];
+      dropdowndata = dropdowndata.map(option => ({ text: option[displayField], value: option[valueField]}));
+    }
+    passedProps.options = dropdowndata;
+  return (<FormItem key={i} {...formElement.layoutProps} >
+  {getFormLabel(formElement)}  
+    <Dropdown {...passedProps}
+      onChange={(event, newvalue)=>{
+        // console.log({ newvalue});
+        let updatedStateProp = {};
+        updatedStateProp[ formElement.name ] = newvalue.value;
+        this.setState(updatedStateProp);
+      }}
+      onSubmit={() => {return}}
+      />
   </FormItem>);
 }
 

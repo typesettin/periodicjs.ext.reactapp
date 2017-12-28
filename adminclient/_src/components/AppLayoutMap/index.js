@@ -41,6 +41,8 @@ var _reactTextMask = require('react-text-mask');
 
 var _reactTextMask2 = _interopRequireDefault(_reactTextMask);
 
+var _semanticUiReact = require('semantic-ui-react');
+
 var _reactRouter = require('react-router');
 
 var _rcSlider = require('rc-slider');
@@ -181,6 +183,7 @@ var AppLayoutMap = exports.AppLayoutMap = (0, _assign2.default)({}, { victory: v
   ResponsiveLink: _ResponsiveLink2.default,
   ResponsiveButton: _ResponsiveButton2.default,
   MaskedInput: _reactTextMask2.default,
+  Dropdown: _semanticUiReact.Dropdown,
   RCTable: _rcTable2.default,
   RCTree: _rcTree2.default,
   RCTreeNode: _rcTree.TreeNode,

@@ -55,7 +55,11 @@ module.exports = {
         'buttonColor': 'isWhite',
         'useGlobalSearch': false,
         'useHeaderLogout': false,
-        'customButton': false,
+        'productHeader': {
+          'layout': false,
+          'productLinks': []
+        },
+        'customButton': {},
         'navLabelStyle': {},
         'containerStyle': {},
         'userNameStyle': {},
