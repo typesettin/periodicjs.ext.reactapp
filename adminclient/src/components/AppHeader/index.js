@@ -51,6 +51,8 @@ class AppHeader extends Component {
           alt: `${this.props.settings.name}`,
           style: {
             maxHeight: 'none',
+            height: '100%',
+            width: 'auto',
           }
         }
       }]
@@ -95,8 +97,8 @@ class AppHeader extends Component {
                 <NavGroup align="right" style={{ display: 'flex'}}>
                   <NavItem style={Object.assign({padding: 0, alignItems: 'stretch'}, this.props.settings.ui.header.navLabelStyle)}>
                     <Dropdown text={this.props.ui.nav_label} style={{ display: 'flex', alignItems: 'center', padding: '10px'}}>
-                      <Dropdown.Menu>
-                        {dropdownLinks}  
+                      <Dropdown.Menu style={{right: '0px', left:'initial'}}>
+                        {dropdownLinks}
                     </Dropdown.Menu>
                     </Dropdown>
                   </NavItem> 
