@@ -9,7 +9,6 @@ const ROUTE_MAP = new Map();
 const reactapp_file_paths = {};
 
 function getSettings() {
-  console.log('periodic.settings.extensions: ', periodic.settings.extensions);
   return periodic.settings.extensions['@digifi/periodicjs.ext.reactapp'];
 }
 
