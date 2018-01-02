@@ -16,9 +16,9 @@ import 'rc-steps/assets/iconfont.css';
 import './vendor/slick/slick.css';
 import './vendor/slick/slick-theme.css';
 import './index.css';
+import 'semantic-ui-css/semantic.min.css';
 import insertCss from 'insert-css';
 import css from 're-bulma/build/css';
-import 'semantic-ui-css/semantic.min.css';
 try {
   if (typeof document !== 'undefined' || document !== null) insertCss(css, { prepend: true });
 } catch (e) { }
