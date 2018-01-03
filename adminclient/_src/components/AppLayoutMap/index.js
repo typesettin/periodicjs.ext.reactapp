@@ -37,11 +37,13 @@ var _victory = require('victory');
 
 var victory = _interopRequireWildcard(_victory);
 
+var _semanticUiReact = require('semantic-ui-react');
+
+var semantic = _interopRequireWildcard(_semanticUiReact);
+
 var _reactTextMask = require('react-text-mask');
 
 var _reactTextMask2 = _interopRequireDefault(_reactTextMask);
-
-var _semanticUiReact = require('semantic-ui-react');
 
 var _reactRouter = require('react-router');
 
@@ -183,7 +185,6 @@ var AppLayoutMap = exports.AppLayoutMap = (0, _assign2.default)({}, { victory: v
   ResponsiveLink: _ResponsiveLink2.default,
   ResponsiveButton: _ResponsiveButton2.default,
   MaskedInput: _reactTextMask2.default,
-  Dropdown: _semanticUiReact.Dropdown,
   RCTable: _rcTable2.default,
   RCTree: _rcTree2.default,
   RCTreeNode: _rcTree.TreeNode,
@@ -206,6 +207,8 @@ function getComponentFromMap() {
       return recharts[componentObject.component.replace('recharts.', '')];
     } else if (victory[componentObject.component.replace('victory.', '')]) {
       return victory[componentObject.component.replace('victory.', '')];
+    } else if (componentObject.component.indexOf('Semantic.') !== -1 && semantic[componentObject.component.replace('Semantic.', '')]) {
+      return semantic[componentObject.component.replace('Semantic.', '')];
     } else {
       return AppLayoutMap[componentObject.component];
     }
@@ -362,7 +365,12 @@ function getRenderedComponent(componentObject, resources, debug) {
       //element props
       renderedCompProps,
       //props children
-      componentObject.children && Array.isArray(componentObject.children) && typeof componentObject.children !== 'string' ? componentObject.children.map(function (childComponentObject) {
+      componentObject.children && Array.isArray(componentObject.children) && typeof componentObject.children !== 'string' ? componentObject.children.length === 1 ? getRenderedComponent.call(this, componentObject.bindprops ? (0, _assign2.default)({}, componentObject.children[0], {
+        props: (0, _assign2.default)({}, renderedCompProps, componentObject.children[0].thisprops && componentObject.children[0].thisprops.style || // this is to make sure when you bind props, if you've defined props in a dynamic property, to not use bind props to  remove passing down styles
+        componentObject.children[0].asyncprops && componentObject.children[0].asyncprops.style || componentObject.children[0].windowprops && componentObject.children[0].windowprops.style ? {} : {
+          style: {}
+        }, componentObject.children[0].props, { key: renderIndex + Math.random() })
+      }) : componentObject.children[0], resources) : componentObject.children.map(function (childComponentObject) {
         return getRenderedComponent.call(_this, componentObject.bindprops ? (0, _assign2.default)({}, childComponentObject, {
           props: (0, _assign2.default)({}, renderedCompProps, childComponentObject.thisprops && childComponentObject.thisprops.style || // this is to make sure when you bind props, if you've defined props in a dynamic property, to not use bind props to  remove passing down styles
           childComponentObject.asyncprops && childComponentObject.asyncprops.style || childComponentObject.windowprops && childComponentObject.windowprops.style ? {} : {
