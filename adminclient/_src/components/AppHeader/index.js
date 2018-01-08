@@ -116,7 +116,9 @@ var AppHeader = function (_Component) {
             src: this.props.settings.ui.header.customLogo || '/favicon.png',
             alt: '' + this.props.settings.name,
             style: {
-              maxHeight: 'none'
+              maxHeight: 'none',
+              height: '100%',
+              width: 'auto'
             }
           }
         }]
@@ -182,7 +184,7 @@ var AppHeader = function (_Component) {
                     { text: this.props.ui.nav_label, style: { display: 'flex', alignItems: 'center', padding: '10px' } },
                     _react2.default.createElement(
                       _semanticUiReact.Dropdown.Menu,
-                      null,
+                      { style: { right: '0px', left: 'initial' } },
                       dropdownLinks
                     )
                   )
