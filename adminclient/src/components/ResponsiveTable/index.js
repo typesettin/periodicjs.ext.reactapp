@@ -52,6 +52,7 @@ class ResponsiveTable extends Component {
       headers: headers,
       rows: rows,
       hasPagination: props.hasPagination,
+      simplePagination: props.simplePagination,
       hasHeader: props.hasHeader,
       hasFooter: props.hasFooter,
       limit: props.limit,
@@ -790,7 +791,21 @@ class ResponsiveTable extends Component {
         </li>
       ));
     }
-    const footer = (
+    const footer = (this.state.simplePagination)
+      ? (
+        <rb.Pagination>
+          {(this.state.currentPage < 2)
+          ? (<rb.Button icon="fa fa-angle-left" state="isDisabled"></rb.Button>)
+            : (<rb.Button icon="fa fa-angle-left" onClick={() => this.updateTableData({ pagenum: (this.state.currentPage - 1), })}></rb.Button>)}  
+          
+          <span style={{margin: '0 20px'}}>Page {this.state.currentPage} of {this.state.numPages}</span>
+          
+          {(this.state.currentPage >= this.state.numPages)
+          ? (<rb.Button icon="fa fa-angle-right" state="isDisabled"></rb.Button>)
+          : (<rb.Button icon="fa fa-angle-right" onClick={()=>this.updateTableData({ pagenum: (this.state.currentPage+1), })}></rb.Button>)}  
+        </rb.Pagination>
+      )
+      : (
       <rb.Pagination>
         {(this.state.currentPage < 2)
           ? (<rb.Button state="isDisabled"> Previous </rb.Button>)
@@ -1064,14 +1079,15 @@ class ResponsiveTable extends Component {
             </rb.Message>
           </div>
           : null}
-        <div style={Object.assign({ overflow:'hidden', height:'100%', },this.props.tableWrappingStyle)}>
+        <div style={Object.assign({ overflow:'hidden', height:'100%', position: 'relative' },this.props.tableWrappingStyle)}>
           {(this.state.isLoading)
             ? (<div style={{
               textAlign: 'center',
               position: 'absolute',
-              height: '80%',
+              height: '100%',
               width: '100%',
               opacity: '.9',
+              zIndex: 10,
               background: 'white',
               display: 'flex',
               alignSelf: 'stretch',
