@@ -402,18 +402,18 @@ export function getFormDropdown(options){
   let { formElement, i, } = options;
   let initialValue = getInitialValue(formElement, Object.assign({}, this.state, unflatten(this.state)));
   let hasError = getErrorStatus(this.state, formElement.name);
-  let passedProps = Object.assign({},
-    this.props,
-    {
-      wrapperProps:{
-        style:{
+  let wrapperProps= {
+        style: {
           display: 'flex',
           width: '100%',
           flex: '5',
           alignItems: 'stretch',
           flexDirection: 'column',
         },
-      },
+      }
+  let passedProps = Object.assign({},
+    this.props,
+    {
       passableProps:{
         help:getFormElementHelp(hasError, this.state, formElement.name),
         color:(hasError)?'isDanger':undefined,
@@ -439,16 +439,18 @@ export function getFormDropdown(options){
     }
     passedProps.options = dropdowndata;
   return (<FormItem key={i} {...formElement.layoutProps} >
-  {getFormLabel(formElement)}  
-    <Dropdown {...passedProps}
-      onChange={(event, newvalue)=>{
-        // console.log({ newvalue});
-        let updatedStateProp = {};
-        updatedStateProp[ formElement.name ] = newvalue.value;
-        this.setState(updatedStateProp);
-      }}
-      onSubmit={() => {return}}
+    {getFormLabel(formElement)}  
+    <div className="__re-bulma_control">  
+      <Dropdown {...passedProps}
+        onChange={(event, newvalue)=>{
+          // console.log({ newvalue});
+          let updatedStateProp = {};
+          updatedStateProp[ formElement.name ] = newvalue.value;
+          this.setState(updatedStateProp);
+        }}
+        onSubmit={() => {return}}
       />
+      </div>
   </FormItem>);
 }
 
