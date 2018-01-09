@@ -835,7 +835,7 @@ class ResponsiveTable extends Component {
     return (
       <rb.Container {...this.props.containerProps}>
         
-        {(this.props.tableSearch)
+        {(this.props.tableSearch && !this.props.simpleSearchFilter)
           ? (<rb.Addons
               {...this.props.filterAddonProps}
             >
@@ -855,7 +855,21 @@ class ResponsiveTable extends Component {
               >Search</rb.Button>
               {fbts}
             </rb.Addons>)
-          : null}
+          : (this.props.tableSearch && this.props.simpleSearchFilter)
+            ? (
+              <rb.Input {...this.props.filterSearchProps}
+                onChange={(data) => {
+                  this.searchFunction({ search: data.target.value, });
+                  this.searchInputTextVal = data.target.value;  //TODO: this is janky fix it
+                }}
+                ref={(input) => {
+                  this.searchTextInput = input;
+                }}
+                hasIconRight
+                icon="fa fa-search"
+              />
+            )
+            : null }
         {(this.state.showFilterSearch)
           ? <div className="__ra_rt_asf" {...this.props.searchFilterContainerProps}>
             <rb.Message header="Advanced Search Filters" > 
