@@ -107,8 +107,8 @@ var ResponsiveCard = function (_Component) {
         } })) : _react2.default.createElement(_reBulma.CardHeaderIcon, { icon: this.state.icon, onClick: function onClick() {
           return _this2.expandCard();
         } });
-      var leftIcon = this.props.leftIcon ? cardIcon : null;
-      var rightIcon = !this.props.leftIcon ? cardIcon : null;
+      var leftIcon = this.props.leftIcon && !this.props.staticCard ? cardIcon : null;
+      var rightIcon = !this.props.leftIcon && !this.props.staticCard ? cardIcon : null;
       var fullCard = _react2.default.createElement(
         _reBulma.Card,
         (0, _extends3.default)({}, this.props.cardProps, { isFullwidth: true, style: this.props.cardStyle }),
@@ -118,7 +118,7 @@ var ResponsiveCard = function (_Component) {
           leftIcon,
           _react2.default.createElement(
             _reBulma.CardHeaderTitle,
-            { style: this.props.headerTitleStyle, onClick: function onClick() {
+            { style: this.props.headerTitleStyle, onClick: this.props.staticCard ? undefined : function () {
                 return _this2.expandCard();
               } },
             !this.state.cardTitle || typeof this.state.cardTitle === 'string' ? this.state.cardTitle : this.getRenderedComponent(this.state.cardTitle)

@@ -152,6 +152,7 @@ var ResponsiveTable = function (_Component) {
       headers: headers,
       rows: rows,
       hasPagination: props.hasPagination,
+      simplePagination: props.simplePagination,
       hasHeader: props.hasHeader,
       hasFooter: props.hasFooter,
       limit: props.limit,
@@ -979,7 +980,24 @@ var ResponsiveTable = function (_Component) {
           )
         ));
       }
-      var footer = _react2.default.createElement(
+      var footer = this.state.simplePagination ? _react2.default.createElement(
+        rb.Pagination,
+        null,
+        this.state.currentPage < 2 ? _react2.default.createElement(rb.Button, { icon: 'fa fa-angle-left', state: 'isDisabled' }) : _react2.default.createElement(rb.Button, { icon: 'fa fa-angle-left', onClick: function onClick() {
+            return _this8.updateTableData({ pagenum: _this8.state.currentPage - 1 });
+          } }),
+        _react2.default.createElement(
+          'span',
+          { style: { margin: '0 20px' } },
+          'Page ',
+          this.state.currentPage,
+          ' of ',
+          this.state.numPages
+        ),
+        this.state.currentPage >= this.state.numPages ? _react2.default.createElement(rb.Button, { icon: 'fa fa-angle-right', state: 'isDisabled' }) : _react2.default.createElement(rb.Button, { icon: 'fa fa-angle-right', onClick: function onClick() {
+            return _this8.updateTableData({ pagenum: _this8.state.currentPage + 1 });
+          } })
+      ) : _react2.default.createElement(
         rb.Pagination,
         null,
         this.state.currentPage < 2 ? _react2.default.createElement(
@@ -1028,7 +1046,7 @@ var ResponsiveTable = function (_Component) {
       return _react2.default.createElement(
         rb.Container,
         this.props.containerProps,
-        this.props.tableSearch ? _react2.default.createElement(
+        this.props.tableSearch && !this.props.simpleSearchFilter ? _react2.default.createElement(
           rb.Addons,
           this.props.filterAddonProps,
           _react2.default.createElement(rb.Input, (0, _extends3.default)({}, this.props.filterSearchProps, {
@@ -1050,7 +1068,17 @@ var ResponsiveTable = function (_Component) {
             'Search'
           ),
           fbts
-        ) : null,
+        ) : this.props.tableSearch && this.props.simpleSearchFilter ? _react2.default.createElement(rb.Input, (0, _extends3.default)({}, this.props.filterSearchProps, {
+          onChange: function onChange(data) {
+            _this8.searchFunction({ search: data.target.value });
+            _this8.searchInputTextVal = data.target.value; //TODO: this is janky fix it
+          },
+          ref: function ref(input) {
+            _this8.searchTextInput = input;
+          },
+          hasIconRight: true,
+          icon: 'fa fa-search'
+        })) : null,
         this.state.showFilterSearch ? _react2.default.createElement(
           'div',
           (0, _extends3.default)({ className: '__ra_rt_asf' }, this.props.searchFilterContainerProps),
@@ -1465,15 +1493,16 @@ var ResponsiveTable = function (_Component) {
         ) : null,
         _react2.default.createElement(
           'div',
-          { style: (0, _assign2.default)({ overflow: 'hidden', height: '100%' }, this.props.tableWrappingStyle) },
+          { style: (0, _assign2.default)({ overflow: 'hidden', height: '100%', position: 'relative' }, this.props.tableWrappingStyle) },
           this.state.isLoading ? _react2.default.createElement(
             'div',
             { style: {
                 textAlign: 'center',
                 position: 'absolute',
-                height: '80%',
+                height: '100%',
                 width: '100%',
                 opacity: '.9',
+                zIndex: 10,
                 background: 'white',
                 display: 'flex',
                 alignSelf: 'stretch',
