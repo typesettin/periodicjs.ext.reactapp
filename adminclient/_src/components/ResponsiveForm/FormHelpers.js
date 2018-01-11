@@ -78,9 +78,9 @@ function validateFormElement(options) {
 }
 
 function validateForm(options) {
-  // console.debug('testin valdation',this.props.validations)
   var formdata = options.formdata,
       validationErrors = options.validationErrors;
+  // console.debug('testin valdation',this.props.validations,) 
 
   if (this.props.validations) {
     this.props.validations.forEach(function (validation) {
