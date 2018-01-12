@@ -172,11 +172,8 @@ function getFormElementHelp(hasError, state, name) {
 
 function getCustomErrorLabel(hasError, state, formelement) {
   return hasError ? _react2.default.createElement(
-    'div',
-    { style: (0, _assign2.default)({
-        fontSize: 11,
-        color: formelement.errorColor || '#ed6c63'
-      }, formelement.customErrorProps) },
+    'span',
+    { className: '__re-bulma_help __re-bulma_is-danger', style: formelement.customErrorProps },
     state.formDataErrors[formelement.name][0]
   ) : null;
 }
@@ -493,34 +490,25 @@ function getFormDropdown(options) {
 
   var formElement = options.formElement,
       i = options.i;
+  // let initialValue = getInitialValue(formElement, Object.assign({}, this.state, unflatten(this.state)));
 
-  var initialValue = getInitialValue(formElement, (0, _assign2.default)({}, this.state, (0, _flat.unflatten)(this.state)));
   var hasError = getErrorStatus(this.state, formElement.name);
-  var passedProps = (0, _assign2.default)({}, this.props, {
-    wrapperProps: {
-      style: {
-        display: 'flex',
-        width: '100%',
-        flex: '5',
-        alignItems: 'stretch',
-        flexDirection: 'column'
-      }
-    },
-    passableProps: {
-      help: getFormElementHelp(hasError, this.state, formElement.name),
-      color: hasError ? 'isDanger' : undefined,
-      icon: hasError ? formElement.errorIcon || 'fa fa-warning' : undefined,
-      placeholder: formElement.placeholder,
-      style: {
-        width: '100%'
-      }
-    }
-  }, formElement.passProps);
+  var hasValue = formElement.name && this.state[formElement.name] ? true : false;
+  var isValid = getValidStatus(this.state, formElement.name);
+  var wrapperProps = (0, _assign2.default)({
+    className: '__re-bulma_control'
+  }, formElement.wrapperProps);
+
+  var passedProps = formElement.passProps;
+  var getPassablePropkeyevents = getPassablePropsKeyEvents.bind(this);
+  passedProps = getPassablePropkeyevents(passedProps, formElement);
+
   // console.debug({formElement,initialValue, },'this.state',this.state);
   // console.debug({ passedProps });
   var dropdowndata = [];
   var displayField = formElement.passProps.displayField ? formElement.passProps.displayField : 'label';
   var valueField = formElement.passProps.valueField ? formElement.passProps.valueField : 'value';
+
   if (this.props.__formOptions && this.props.__formOptions[formElement.name]) {
     dropdowndata = this.props.__formOptions[formElement.name];
     dropdowndata = dropdowndata.map(function (option) {
@@ -533,21 +521,28 @@ function getFormDropdown(options) {
     });
   }
   passedProps.options = dropdowndata;
+
   return _react2.default.createElement(
     _FormItem2.default,
-    (0, _extends3.default)({ key: i }, formElement.layoutProps),
+    (0, _extends3.default)({ key: i }, formElement.layoutProps, { initialIcon: formElement.initialIcon, isValid: isValid, hasError: hasError, hasValue: hasValue }),
     getFormLabel(formElement),
-    _react2.default.createElement(_semanticUiReact.Dropdown, (0, _extends3.default)({}, passedProps, {
-      onChange: function onChange(event, newvalue) {
-        // console.log({ newvalue});
-        var updatedStateProp = {};
-        updatedStateProp[formElement.name] = newvalue.value;
-        _this5.setState(updatedStateProp);
-      },
-      onSubmit: function onSubmit() {
-        return;
-      }
-    }))
+    _react2.default.createElement(
+      'div',
+      wrapperProps,
+      _react2.default.createElement(_semanticUiReact.Dropdown, (0, _extends3.default)({}, passedProps, {
+        onChange: function onChange(event, newvalue) {
+          // console.log({ newvalue});
+          var updatedStateProp = {};
+          updatedStateProp[formElement.name] = newvalue.value;
+          _this5.setState(updatedStateProp);
+        },
+        onSubmit: function onSubmit() {
+          return;
+        }
+      })),
+      getCustomErrorIcon(hasError, isValid, this.state, formElement),
+      getCustomErrorLabel(hasError, this.state, formElement)
+    )
   );
 }
 

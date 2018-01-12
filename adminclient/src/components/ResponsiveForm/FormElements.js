@@ -59,10 +59,7 @@ function getFormElementHelp(hasError, state, name) {
 
 function getCustomErrorLabel(hasError, state, formelement) {
   return (hasError) ? (
-    <div style={Object.assign({
-      fontSize: 11,
-      color:formelement.errorColor||'#ed6c63',
-    }, formelement.customErrorProps)}>{state.formDataErrors[ formelement.name ][ 0 ]}</div>
+    <span className="__re-bulma_help __re-bulma_is-danger" style={formelement.customErrorProps}>{state.formDataErrors[ formelement.name ][ 0 ]}</span>
   ): null;
 }
 
@@ -400,36 +397,24 @@ export function getFormDatalist(options){
 
 export function getFormDropdown(options){
   let { formElement, i, } = options;
-  let initialValue = getInitialValue(formElement, Object.assign({}, this.state, unflatten(this.state)));
+  // let initialValue = getInitialValue(formElement, Object.assign({}, this.state, unflatten(this.state)));
   let hasError = getErrorStatus(this.state, formElement.name);
-  let passedProps = Object.assign({},
-    this.props,
-    {
-      wrapperProps:{
-        style:{
-          display: 'flex',
-          width: '100%',
-          flex: '5',
-          alignItems: 'stretch',
-          flexDirection: 'column',
-        },
-      },
-      passableProps:{
-        help:getFormElementHelp(hasError, this.state, formElement.name),
-        color:(hasError)?'isDanger':undefined,
-        icon:(hasError)?formElement.errorIcon || 'fa fa-warning':undefined,
-        placeholder:formElement.placeholder,
-        style:{
-          width:'100%',
-        },
-      },
-    },
-    formElement.passProps);
+  let hasValue = (formElement.name && this.state[formElement.name])? true : false;
+  let isValid = getValidStatus(this.state, formElement.name);
+  let wrapperProps= Object.assign({
+    className: '__re-bulma_control',
+  }, formElement.wrapperProps)
+
+  let passedProps = formElement.passProps;
+  let getPassablePropkeyevents = getPassablePropsKeyEvents.bind(this);
+  passedProps = getPassablePropkeyevents(passedProps, formElement);
+
     // console.debug({formElement,initialValue, },'this.state',this.state);
   // console.debug({ passedProps });
     let dropdowndata = [];
     let displayField = (formElement.passProps.displayField)? formElement.passProps.displayField : 'label';
-    let valueField = (formElement.passProps.valueField)? formElement.passProps.valueField : 'value';
+    let valueField = (formElement.passProps.valueField) ? formElement.passProps.valueField : 'value';
+  
     if(this.props.__formOptions && this.props.__formOptions[formElement.name]){
       dropdowndata = this.props.__formOptions[formElement.name];
       dropdowndata = dropdowndata.map(option => ({ text: option[displayField], value: option[valueField]}));
@@ -438,17 +423,22 @@ export function getFormDropdown(options){
       dropdowndata = dropdowndata.map(option => ({ text: option[displayField], value: option[valueField]}));
     }
     passedProps.options = dropdowndata;
-  return (<FormItem key={i} {...formElement.layoutProps} >
-  {getFormLabel(formElement)}  
-    <Dropdown {...passedProps}
-      onChange={(event, newvalue)=>{
-        // console.log({ newvalue});
-        let updatedStateProp = {};
-        updatedStateProp[ formElement.name ] = newvalue.value;
-        this.setState(updatedStateProp);
-      }}
-      onSubmit={() => {return}}
+  
+  return (<FormItem key={i} {...formElement.layoutProps} initialIcon={formElement.initialIcon} isValid={isValid} hasError={hasError} hasValue={hasValue}>
+    {getFormLabel(formElement)}  
+    <div {...wrapperProps}>  
+      <Dropdown {...passedProps}
+        onChange={(event, newvalue)=>{
+          // console.log({ newvalue});
+          let updatedStateProp = {};
+          updatedStateProp[ formElement.name ] = newvalue.value;
+          this.setState(updatedStateProp);
+        }}
+        onSubmit={() => { return }}
       />
+       {getCustomErrorIcon(hasError, isValid, this.state, formElement)}  
+      {getCustomErrorLabel(hasError, this.state, formElement)}
+    </div>
   </FormItem>);
 }
 

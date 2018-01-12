@@ -36,8 +36,8 @@ export function validateFormElement(options) {
 }
 
 export function validateForm(options) {
-  // console.debug('testin valdation',this.props.validations)
   let { formdata, validationErrors, } = options;
+  // console.debug('testin valdation',this.props.validations,) 
   if (this.props.validations) {
     this.props.validations.forEach(validation => {
       let validationerror = validate({
