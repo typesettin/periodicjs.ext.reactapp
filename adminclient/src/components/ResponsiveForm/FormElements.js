@@ -1048,6 +1048,98 @@ export function getFormEditor(options) {
   );
 }
 
+function getConfirmModal(options) {
+  let { formElement, } = options;
+  let confirmModal;
+  let modalContent = formElement.confirmModal.textContent || [];
+  let onSubmit;
+  if (formElement.confirmModal.type === 'comment') {
+    let name = formElement.confirmModal.name || 'comment';
+    onSubmit = (e) => {
+      if (this.props.formgroups[ this.props.formgroups.length - 1 ] && this.props.formgroups[ this.props.formgroups.length - 1 ].formElements) {
+        this.props.formgroups[ this.props.formgroups.length - 1 ].formElements.push({ name, });
+        this.props.hideModal('last');
+        this.submitForm.call(this);
+        this.props.formgroups[ this.props.formgroups.length - 1 ].formElements = this.props.formgroups[ this.props.formgroups.length - 1 ].formElements.filter(formElement => formElement.name !== name);
+      } else {
+        this.submitForm.call(this);
+      }
+    };
+    let comment_box = Object.assign({}, {
+      component: 'Input',
+      props: {
+        onChange: (e) => this.setState({ [ name ]: e.target.value }),
+      },
+    }, formElement.confirmModal.comment);
+    modalContent.push(comment_box);
+  } else {
+    onSubmit = () => {
+      this.props.hideModal('last');
+      this.submitForm.call(this);
+    };
+  }
+      confirmModal = Object.assign({
+        title: 'Please Confirm',
+        text: {
+          component: 'div',
+          props: {
+            style: {
+              textAlign: 'center',
+            },
+            className: '__ra_rf_fe_s_cm',
+          },
+          children: [
+            {
+              component: 'div',
+              props: {
+                className: '__ra_rf_fe_s_cm_t',
+              },
+              children: modalContent || '',
+            },
+            {
+              component: 'div',
+              props: Object.assign({
+                className: '__ra_rf_fe_s_cm_bc',
+              }, formElement.confirmModal.buttonWrapperProps),
+              children: [
+                {
+                  component: 'ResponsiveButton',
+                  props: Object.assign({
+                    style: {
+                      margin: 10,
+                    },
+                    buttonProps: {
+                      size: 'isMedium',
+                      
+                      color: 'isPrimary',
+                    },
+                    onClick: onSubmit,
+                    onclickProps: 'last',
+                  }, formElement.confirmModal.yesButtonProps),
+                  children: formElement.confirmModal.yesButtonText || 'Yes',
+                },
+                {
+                  component: 'ResponsiveButton',
+                  props: Object.assign({
+                    style: {
+                      margin: 10,
+                    },
+                    buttonProps: {
+                      size: 'isMedium',
+                    },
+                    onClick: 'func:this.props.hideModal',
+                    onclickProps: 'last',
+                  }, formElement.confirmModal.noButtonProps),
+                  children: formElement.confirmModal.noButtonText || 'No',
+                },
+              ],
+            },
+          ],
+        },
+      }, formElement.confirmModal);
+      this.props.createModal(confirmModal);
+}
+
 export function getFormSubmit(options) {
   let { formElement, i, } = options;
   let passableProps = Object.assign({
@@ -1072,75 +1164,14 @@ export function getFormSubmit(options) {
           updateStateData[ 'submitButtonVal' ] = formElement.value;
         }
         this.setState(updateStateData, () => {
-          (formElement.confirmModal && Object.keys(this.state.formDataErrors).length<1)
-            ? this.props.createModal(Object.assign({
-              title: 'Please Confirm',
-              text: {
-                component: 'div',
-                props: {
-                  style: {
-                    textAlign:'center',
-                  },
-                  className:'__ra_rf_fe_s_cm',
-                },
-                children: [
-                  {
-                    component: 'div',
-                    props: {
-                      className:'__ra_rf_fe_s_cm_t',
-                    },
-                    children: formElement.confirmModal.textContent || '',
-                  },
-                  {
-                    component: 'div',
-                    props: Object.assign({
-                      className:'__ra_rf_fe_s_cm_bc',
-                    }, formElement.confirmModal.buttonWrapperProps),
-                    children: [
-                      {
-                        component: 'ResponsiveButton',
-                        props: Object.assign({
-                          style:{
-                            margin:10,
-                          },
-                          buttonProps: {
-                            size:'isMedium',
-                            
-                            color:'isPrimary',
-                          },
-                          onClick: () => {
-                            this.props.hideModal('last');
-                            this.submitForm.call(this);
-                          },
-                          onclickProps:'last',
-                        }, formElement.confirmModal.yesButtonProps),  
-                        children:formElement.confirmModal.yesButtonText||'Yes', 
-                      },
-                      {
-                        component: 'ResponsiveButton',
-                        props: Object.assign({
-                          style:{
-                            margin:10,
-                          },
-                          buttonProps: {
-                            size:'isMedium',
-                          },
-                          onClick: 'func:this.props.hideModal',
-                          onclickProps:'last',
-                        }, formElement.confirmModal.noButtonProps),  
-                        children:formElement.confirmModal.noButtonText||'No',
-                      },
-                    ], 
-                  },
-                ],
-              } ,}, formElement.confirmModal))
-            : this.submitForm.call(this);
+          (formElement.confirmModal && Object.keys(this.state.formDataErrors).length < 1) ? getConfirmModal.call(this, { formElement }) : this.submitForm.call(this); 
         });
       }}>
       {formElement.value}
     </Button>
   </FormItem>);
 }
+
 
 export function getCardFooterItem(options) {
   let { formElement, i, } = options;
