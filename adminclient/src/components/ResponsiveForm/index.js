@@ -287,6 +287,11 @@ class ResponsiveForm extends Component{
               let responseCallback = (fetchOptions.responseCallback)
                 ? getCBFromString(fetchOptions.responseCallback)
                 : false;
+              if (Array.isArray(fetchOptions.successCallback) && Array.isArray(fetchOptions.successProps)) {
+                  successCallback = (fetchOptions.successCallback)
+                  ? getCBFromString(fetchOptions.successCallback, true)
+                  : false;
+                }
               res.json()
                 .then(successData => {
                   if (successData && (typeof successData.successCallback === 'string' || (Array.isArray(successData.successCallback) && successData.successCallback.length))) {
