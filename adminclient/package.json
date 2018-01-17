@@ -62,6 +62,6 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
-  "proxy": "https://localhost:8787",
+  "proxy": "https://dcp-dev.promisefinancial.net:8788",
   "homepage": "/extensions/periodicjs.ext.reactapp"
 }

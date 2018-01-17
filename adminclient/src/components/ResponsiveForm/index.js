@@ -10,6 +10,7 @@ import qs from 'querystring';
 // function getCallbackFromString(fetchOptions.successCallback) {
 
 const propTypes = {
+  updateFormLayout: PropTypes.func,
   notificationForm: PropTypes.any,
   flattenFormData: PropTypes.bool,
   stringyFormData: PropTypes.bool,
@@ -35,6 +36,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+  updateFormLayout: function () { },
   notificationForm: false,
   flattenFormData: false,
   useFormOptions: false,
@@ -69,8 +71,6 @@ function getFunctionFromProps(options) {
 class ResponsiveForm extends Component{
   constructor(props) {
     super(props);
-    // console.debug('initialformdata', setFormNameFields.call(this,{ formElementFields: [], formdata: {}, }));
-    // console.debug({ props });
     let formdata = Object.assign({},
       setFormNameFields.call({ props, }, { formElementFields: [], formdata: {}, }).formdata,  
       (props.flattenFormData && props.formdata) 
@@ -124,7 +124,7 @@ class ResponsiveForm extends Component{
     this.getFormGroup = getFormGroup.bind(this);
     this.getImage = getImage.bind(this);
     this.validateFormElement = validateFormElement.bind(this);
-
+    this.submitForm = this.submitForm.bind(this); 
     this.staticLayouts = (this.props.staticLayouts)
       ? Object.keys(this.props.staticLayouts).reduce((result, layout) => {
         result[layout] = this.getRenderedComponent(this.props.staticLayouts[layout], this.state);
@@ -132,10 +132,12 @@ class ResponsiveForm extends Component{
       }, {})
       : {};
   }
-  shouldComponentUpdate(nextProps, nextState){
+  shouldComponentUpdate(nextProps, nextState) {
     if (this.props.onlyUpdateStateOnSubmit) {
       return this.state.__formDataStatusDate !== nextState.__formDataStatusDate;
     } else {
+      let prevState = Object.assign({}, this.state);
+      this.props.updateFormLayout(prevState, nextState);
       return true;
     }
   }

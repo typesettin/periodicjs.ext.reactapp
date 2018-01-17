@@ -13,6 +13,7 @@ import { Carousel, } from 'react-responsive-carousel';
 import GoogleMap from 'google-map-react';
 import { getAdvancedBinding, } from './advancedBinding';
 import ResponsiveForm from '../ResponsiveForm';
+import ResponsiveFormContainer from '../ResponsiveFormContainer';
 import DynamicForm from '../DynamicForm';
 import DynamicLayout from '../DynamicLayout';
 import RawOutput from '../RawOutput';
@@ -53,7 +54,7 @@ export function getFunctionFromProps(options) {
 }
 
 export let AppLayoutMap = Object.assign({}, { victory,
-  recharts, ResponsiveForm, DynamicLayout, DynamicForm, RawOutput, RawStateOutput, FormItem, MenuAppLink, SubMenuLinks, ResponsiveTable, ResponsiveCard, DynamicChart, ResponsiveBar, ResponsiveTabs, ResponsiveDatalist, CodeMirror, Range, Slider, GoogleMap, Carousel, PreviewEditor, ResponsiveSteps, /* Editor,*/
+  recharts, ResponsiveForm, ResponsiveFormContainer, DynamicLayout, DynamicForm, RawOutput, RawStateOutput, FormItem, MenuAppLink, SubMenuLinks, ResponsiveTable, ResponsiveCard, DynamicChart, ResponsiveBar, ResponsiveTabs, ResponsiveDatalist, CodeMirror, Range, Slider, GoogleMap, Carousel, PreviewEditor, ResponsiveSteps, /* Editor,*/
   ResponsiveLink,
   ResponsiveButton,
   MaskedInput,
