@@ -397,7 +397,7 @@ export function getFormDatalist(options){
 
 export function getFormDropdown(options){
   let { formElement, i, } = options;
-  // let initialValue = getInitialValue(formElement, Object.assign({}, this.state, unflatten(this.state)));
+  let initialValue = getInitialValue(formElement, Object.assign({}, this.state, unflatten(this.state)));
   let hasError = getErrorStatus(this.state, formElement.name);
   let hasValue = (formElement.name && this.state[formElement.name])? true : false;
   let isValid = getValidStatus(this.state, formElement.name);
@@ -428,6 +428,7 @@ export function getFormDropdown(options){
     {getFormLabel(formElement)}  
     <div {...wrapperProps}>  
       <Dropdown {...passedProps}
+        value={this.state[ formElement.name ] || initialValue}  
         onChange={(event, newvalue)=>{
           // console.log({ newvalue});
           let updatedStateProp = {};
