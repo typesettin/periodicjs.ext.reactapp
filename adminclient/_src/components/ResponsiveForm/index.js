@@ -330,6 +330,9 @@ var ResponsiveForm = function (_Component) {
             if (fetchOptions.successCallback || fetchOptions.responseCallback) {
               var successCallback = fetchOptions.successCallback ? getCBFromString(fetchOptions.successCallback) : false;
               var responseCallback = fetchOptions.responseCallback ? getCBFromString(fetchOptions.responseCallback) : false;
+              if (Array.isArray(fetchOptions.successCallback) && Array.isArray(fetchOptions.successProps)) {
+                successCallback = fetchOptions.successCallback ? getCBFromString(fetchOptions.successCallback, true) : false;
+              }
               res.json().then(function (successData) {
                 if (successData && (typeof successData.successCallback === 'string' || Array.isArray(successData.successCallback) && successData.successCallback.length)) {
                   successCallback = getCBFromString(successData.successCallback);

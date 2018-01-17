@@ -194,7 +194,7 @@ var packageJSON = {
     'react-slick': '^0.15.4',
     'react-text-mask': '^5.0.2',
     'semantic-ui-css': '^2.2.12',
-    'semantic-ui-react': '^0.77.1',
+    'semantic-ui-react': '^0.77.2',
     'text-mask-addons': '^3.6.0',
     'validate.js': '^0.11.1',
     victory: '^0.24.0',

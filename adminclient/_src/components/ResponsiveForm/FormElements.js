@@ -490,8 +490,8 @@ function getFormDropdown(options) {
 
   var formElement = options.formElement,
       i = options.i;
-  // let initialValue = getInitialValue(formElement, Object.assign({}, this.state, unflatten(this.state)));
 
+  var initialValue = getInitialValue(formElement, (0, _assign2.default)({}, this.state, (0, _flat.unflatten)(this.state)));
   var hasError = getErrorStatus(this.state, formElement.name);
   var hasValue = formElement.name && this.state[formElement.name] ? true : false;
   var isValid = getValidStatus(this.state, formElement.name);
@@ -530,6 +530,7 @@ function getFormDropdown(options) {
       'div',
       wrapperProps,
       _react2.default.createElement(_semanticUiReact.Dropdown, (0, _extends3.default)({}, passedProps, {
+        value: this.state[formElement.name] || initialValue,
         onChange: function onChange(event, newvalue) {
           // console.log({ newvalue});
           var updatedStateProp = {};
@@ -1259,8 +1260,101 @@ function getFormEditor(options) {
   );
 }
 
-function getFormSubmit(options) {
+function getConfirmModal(options) {
   var _this13 = this;
+
+  var formElement = options.formElement;
+
+  var confirmModal = void 0;
+  var modalContent = formElement.confirmModal.textContent || [];
+  var onSubmit = void 0;
+  if (formElement.confirmModal.type === 'comment') {
+    var name = formElement.confirmModal.name || 'comment';
+    onSubmit = function onSubmit(e) {
+      if (_this13.props.formgroups[_this13.props.formgroups.length - 1] && _this13.props.formgroups[_this13.props.formgroups.length - 1].formElements) {
+        _this13.props.formgroups[_this13.props.formgroups.length - 1].formElements.push({ name: name });
+        _this13.props.hideModal('last');
+        _this13.submitForm.call(_this13);
+        _this13.props.formgroups[_this13.props.formgroups.length - 1].formElements = _this13.props.formgroups[_this13.props.formgroups.length - 1].formElements.filter(function (formElement) {
+          return formElement.name !== name;
+        });
+      } else {
+        _this13.submitForm.call(_this13);
+      }
+    };
+    var comment_box = (0, _assign2.default)({}, {
+      component: 'Input',
+      props: {
+        onChange: function onChange(e) {
+          return _this13.setState((0, _defineProperty3.default)({}, name, e.target.value));
+        }
+      }
+    }, formElement.confirmModal.comment);
+    modalContent.push(comment_box);
+  } else {
+    onSubmit = function onSubmit() {
+      _this13.props.hideModal('last');
+      _this13.submitForm.call(_this13);
+    };
+  }
+  confirmModal = (0, _assign2.default)({
+    title: 'Please Confirm',
+    text: {
+      component: 'div',
+      props: {
+        style: {
+          textAlign: 'center'
+        },
+        className: '__ra_rf_fe_s_cm'
+      },
+      children: [{
+        component: 'div',
+        props: {
+          className: '__ra_rf_fe_s_cm_t'
+        },
+        children: modalContent || ''
+      }, {
+        component: 'div',
+        props: (0, _assign2.default)({
+          className: '__ra_rf_fe_s_cm_bc'
+        }, formElement.confirmModal.buttonWrapperProps),
+        children: [{
+          component: 'ResponsiveButton',
+          props: (0, _assign2.default)({
+            style: {
+              margin: 10
+            },
+            buttonProps: {
+              size: 'isMedium',
+
+              color: 'isPrimary'
+            },
+            onClick: onSubmit,
+            onclickProps: 'last'
+          }, formElement.confirmModal.yesButtonProps),
+          children: formElement.confirmModal.yesButtonText || 'Yes'
+        }, {
+          component: 'ResponsiveButton',
+          props: (0, _assign2.default)({
+            style: {
+              margin: 10
+            },
+            buttonProps: {
+              size: 'isMedium'
+            },
+            onClick: 'func:this.props.hideModal',
+            onclickProps: 'last'
+          }, formElement.confirmModal.noButtonProps),
+          children: formElement.confirmModal.noButtonText || 'No'
+        }]
+      }]
+    }
+  }, formElement.confirmModal);
+  this.props.createModal(confirmModal);
+}
+
+function getFormSubmit(options) {
+  var _this14 = this;
 
   var formElement = options.formElement,
       i = options.i;
@@ -1278,69 +1372,15 @@ function getFormSubmit(options) {
       _reBulma.Button,
       (0, _extends3.default)({}, passableProps, {
         onClick: function onClick() {
-          var validated_formdata = _FormHelpers.validateForm.call(_this13, { formdata: _this13.state, validationErrors: {} });
+          var validated_formdata = _FormHelpers.validateForm.call(_this14, { formdata: _this14.state, validationErrors: {} });
           var updateStateData = {
             formDataErrors: validated_formdata.validationErrors
           };
-          if (_this13.props.sendSubmitButtonVal) {
+          if (_this14.props.sendSubmitButtonVal) {
             updateStateData['submitButtonVal'] = formElement.value;
           }
-          _this13.setState(updateStateData, function () {
-            formElement.confirmModal && (0, _keys2.default)(_this13.state.formDataErrors).length < 1 ? _this13.props.createModal((0, _assign2.default)({
-              title: 'Please Confirm',
-              text: {
-                component: 'div',
-                props: {
-                  style: {
-                    textAlign: 'center'
-                  },
-                  className: '__ra_rf_fe_s_cm'
-                },
-                children: [{
-                  component: 'div',
-                  props: {
-                    className: '__ra_rf_fe_s_cm_t'
-                  },
-                  children: formElement.confirmModal.textContent || ''
-                }, {
-                  component: 'div',
-                  props: (0, _assign2.default)({
-                    className: '__ra_rf_fe_s_cm_bc'
-                  }, formElement.confirmModal.buttonWrapperProps),
-                  children: [{
-                    component: 'ResponsiveButton',
-                    props: (0, _assign2.default)({
-                      style: {
-                        margin: 10
-                      },
-                      buttonProps: {
-                        size: 'isMedium',
-
-                        color: 'isPrimary'
-                      },
-                      onClick: function onClick() {
-                        _this13.props.hideModal('last');
-                        _this13.submitForm.call(_this13);
-                      },
-                      onclickProps: 'last'
-                    }, formElement.confirmModal.yesButtonProps),
-                    children: formElement.confirmModal.yesButtonText || 'Yes'
-                  }, {
-                    component: 'ResponsiveButton',
-                    props: (0, _assign2.default)({
-                      style: {
-                        margin: 10
-                      },
-                      buttonProps: {
-                        size: 'isMedium'
-                      },
-                      onClick: 'func:this.props.hideModal',
-                      onclickProps: 'last'
-                    }, formElement.confirmModal.noButtonProps),
-                    children: formElement.confirmModal.noButtonText || 'No'
-                  }]
-                }]
-              } }, formElement.confirmModal)) : _this13.submitForm.call(_this13);
+          _this14.setState(updateStateData, function () {
+            formElement.confirmModal && (0, _keys2.default)(_this14.state.formDataErrors).length < 1 ? getConfirmModal.call(_this14, { formElement: formElement }) : _this14.submitForm.call(_this14);
           });
         } }),
       formElement.value
