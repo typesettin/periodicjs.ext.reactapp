@@ -67,9 +67,94 @@
     }
 
     var firstnameOnChange = function(element, event){
-      
+
+      window[this.props.onSubmit.replace('func:window.', '')]
     }
 
+    let minimum = function (currState, formElementsQueue, formElement) {
+      return (currState.comparator === 'range')? formElement: false;
+    };
+    window.minimum = minimum;
+    let maximum = function (currState, formElementsQueue, formElement) {
+      return (currState.comparator === 'range')? formElement: false;
+    };
+    window.maximum = maximum;
+    let static_val =  function (currState, formElementsQueue, formElement) {
+      return (currState.comparator === 'equal')? formElement: false;
+    };
+    window.static_val = static_val;
+    
+    let comparator = function (currState, formElementsQueue, formElement, prevState) {
+      if (prevState.comparator === currState.comparator) {
+        return formElement;
+      } else if (currState.comparator === 'range') {
+      formElementsQueue.push({
+          label: 'Minimum',
+          type: 'text',
+          name: 'minimum',
+          'layoutProps': {
+            'horizontalform': true,
+          },
+        }, {
+          label: 'Maximum',
+          type: 'text',
+          name: 'maximum',
+          'layoutProps': {
+            'horizontalform': true,
+          },
+          }); 
+        return formElement;
+      } else {
+        formElementsQueue.push({
+          label: 'Value',
+          type: 'text',
+          name: 'static_val',
+          'layoutProps': {
+            'horizontalform': true,
+          },
+        }); 
+        return formElement;
+      }
+    };
+    window.comparator = comparator;
+    let firstname = function (currState, formElementsQueue) {
+      return (currState.firstname === 'Iris') ? {
+        name: 'lastname',
+        type: 'text',
+        label: 'Last Name',
+        'layoutProps': {
+          'horizontalform': true,
+        },
+      } : {
+        name: 'firstname',
+        type: 'text',
+        label: 'First Name',
+        'layoutProps': {
+          'horizontalform': true,
+          },
+          keyUp: true,
+          validateOnKeyup: true,
+      };
+    };
+    window.firstname = firstname;
+    let lastname = function (currState, formElementsQueue) {
+      return (currState.lastname === 'Dan') ? {
+        name: 'firstname',
+        type: 'text',
+        label: 'First Name',
+        'layoutProps': {
+          'horizontalform': true,
+        },
+      } : {
+        name: 'lastname',
+        type: 'text',
+        label: 'Last Name',
+        'layoutProps': {
+          'horizontalform': true,
+        },
+      };
+    };
+    window.lastname = lastname;
 /*
 window.__reactapp = Object.assign({}, {
   __ra_helpers: {

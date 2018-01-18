@@ -10,6 +10,7 @@ import qs from 'querystring';
 // function getCallbackFromString(fetchOptions.successCallback) {
 
 const propTypes = {
+  hasContainer: PropTypes.bool,
   updateFormLayout: PropTypes.func,
   notificationForm: PropTypes.any,
   flattenFormData: PropTypes.bool,
@@ -47,6 +48,8 @@ const defaultProps = {
   dynamicField: false,
   blockPageUI:false,
   cardForm: false,
+  hasContainer: false,
+  validations: [],
   useLoadingButtons: false,
   includeFormDataOnLayout:false,
   onSubmit: 'func:this.props.debug',
@@ -76,7 +79,6 @@ class ResponsiveForm extends Component{
       (props.flattenFormData && props.formdata) 
         ? flatten(Object.assign({}, props.formdata), props.flattenDataOptions)
         : props.formdata);
-    // console.debug('initial', { formdata });
     if (props.stringyFormData) {
       formdata.genericdocjson = JSON.stringify(props.formdata, null, 2);
     }
@@ -124,7 +126,7 @@ class ResponsiveForm extends Component{
     this.getFormGroup = getFormGroup.bind(this);
     this.getImage = getImage.bind(this);
     this.validateFormElement = validateFormElement.bind(this);
-    this.submitForm = this.submitForm.bind(this); 
+    // this.submitForm = this.submitForm.bind(this); 
     this.staticLayouts = (this.props.staticLayouts)
       ? Object.keys(this.props.staticLayouts).reduce((result, layout) => {
         result[layout] = this.getRenderedComponent(this.props.staticLayouts[layout], this.state);
@@ -136,14 +138,24 @@ class ResponsiveForm extends Component{
     if (this.props.onlyUpdateStateOnSubmit) {
       return this.state.__formDataStatusDate !== nextState.__formDataStatusDate;
     } else {
-      let prevState = Object.assign({}, this.state);
-      this.props.updateFormLayout(prevState, nextState);
       return true;
     }
   }
+  componentWillMount() {
+    if (this.props.hasContainer) {
+      let prevState = Object.assign({}, this.state);
+      let { validations } = this.props.updateFormLayout(prevState, {});
+      let validationsLength = this.props.validations.length;
+      let tempArr = [];
+      for (let i = 0; i < validationsLength; i++){
+        tempArr.push(this.props.validations.pop());
+      }
+      validations.forEach(validation => {
+        this.props.validations.push(validation);
+      })
+    }
+  }
   componentWillReceiveProps(nextProps) {
-    console.log('***********************************');
-    console.log('componentWillReceiveProps', nextProps);
     let formdata = (nextProps.flattenFormData)
       ? flatten(Object.assign({}, nextProps.formdata), nextProps.flattenDataOptions)
       : nextProps.formdata;
@@ -215,7 +227,6 @@ class ResponsiveForm extends Component{
     let validatedFormData = getFormValidations({ formdata, validationErrors, });
     validationErrors = validatedFormData.validationErrors;
     formdata = validatedFormData.formdata;
-
     if (formElementFields && formElementFields.length) {
       formElementFields.forEach(formElmField => {
         submitFormData[ formElmField ] = formdata[ formElmField ];
@@ -337,7 +348,7 @@ class ResponsiveForm extends Component{
       this.props.onSubmit(submitFormData);
     }
   }
-  componentWillUpdate (nextProps, nextState) {
+  componentWillUpdate(nextProps, nextState) {
     if (this.props.filterFunction) {
       const filterFunction = getFunctionFromProps.call(this,{ propFunc: this.props.filterFunction, });
       nextState = filterFunction.call(this,nextState);
@@ -367,9 +378,20 @@ class ResponsiveForm extends Component{
         this.props.onChange(nextState);
       }
     }
+    if (this.props.hasContainer) {
+      let prevState = Object.assign({}, this.state);
+      let { validations } = this.props.updateFormLayout(prevState, nextState);
+      let validationsLength = this.props.validations.length;
+      let tempArr = [];
+      for (let i = 0; i < validationsLength; i++){
+        tempArr.push(this.props.validations.pop());
+      }
+      validations.forEach(validation => {
+        this.props.validations.push(validation);
+      })
+    }
   }
   render() {
-    // console.debug('form render', this.state);
     let keyValue = 0;
     let formGroupData = this.props.formgroups.map((formgroup, i) => {
       let gridProps = Object.assign({
