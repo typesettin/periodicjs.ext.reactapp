@@ -1072,7 +1072,12 @@ function getConfirmModal(options) {
         onChange: (e) => this.setState({ [ name ]: e.target.value }),
       },
     }, formElement.confirmModal.comment);
-    modalContent.push(comment_box);
+    if (modalContent[modalContent.length - 1].type === 'commentbox') {
+      modalContent.pop();
+      modalContent.push(comment_box);
+    } else {
+      modalContent.push(comment_box);
+    }
   } else {
     onSubmit = () => {
       this.props.hideModal('last');
