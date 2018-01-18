@@ -7,18 +7,45 @@ const propTypes = {
   renderFormElements: PropTypes.object,
 };
 
-
+//validations structure = Object
 const defaultProps = {
   form: {},
+  validations: {
+    firstname: {
+      "name":"firstname",
+      "constraints":{
+        "firstname":{
+          "presence":"true",
+          "length":{
+            "minimum":3,
+            "message":"must be greater than 3 characters"
+          }
+        }
+      }
+    },
+    minimum: {
+      'name': 'minimum',
+      'constraints': {
+        'minimum': {
+          'presence': 'true',
+        },
+      },
+    },
+  },
   renderFormElements: {
-    minimum: function (formdata, formElementsQueue, formElement) {
-      return (formdata.comparator === 'range')? formElement: false;
+    minimum: function (currState, formElementsQueue, formElement) {
+      return (currState.comparator === 'range')? formElement: false;
     },
-    maximum: function (formdata, formElementsQueue, formElement) {
-      return (formdata.comparator === 'range')? formElement: false;
+    maximum: function (currState, formElementsQueue, formElement) {
+      return (currState.comparator === 'range')? formElement: false;
     },
-    comparator: function (formdata, formElementsQueue, formElement, prevformdata) {
-      if (formdata.comparator === 'range' && (prevformdata.comparator !== formdata.comparator)) {
+    static_val:  function (currState, formElementsQueue, formElement) {
+      return (currState.comparator === 'equal')? formElement: false;
+    },
+    comparator: function (currState, formElementsQueue, formElement, prevState) {
+      if (prevState.comparator === currState.comparator) {
+        return formElement;
+      } else if (currState.comparator === 'range') {
       formElementsQueue.push({
           label: 'Minimum',
           type: 'text',
@@ -36,11 +63,19 @@ const defaultProps = {
           }); 
         return formElement;
       } else {
+        formElementsQueue.push({
+          label: 'Value',
+          type: 'text',
+          name: 'static_val',
+          'layoutProps': {
+            'horizontalform': true,
+          },
+        }); 
         return formElement;
       }
     },
-    firstname: function (formdata, formElementsQueue) {
-      return (formdata.firstname === 'Iris') ? {
+    firstname: function (currState, formElementsQueue) {
+      return (currState.firstname === 'Iris') ? {
         name: 'lastname',
         type: 'text',
         label: 'Last Name',
@@ -53,11 +88,13 @@ const defaultProps = {
         label: 'First Name',
         'layoutProps': {
           'horizontalform': true,
-        },
+          },
+          keyUp: true,
+          validateOnKeyup: true,
       };
     },
-    lastname: function (formdata, formElementsQueue) {
-      return (formdata.lastname === 'Dan') ? {
+    lastname: function (currState, formElementsQueue) {
+      return (currState.lastname === 'Dan') ? {
         name: 'firstname',
         type: 'text',
         label: 'First Name',
@@ -80,60 +117,57 @@ const defaultProps = {
 class ResponsiveFormContainer extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      formdata: {},
-    };
-    // this.updateFormState = this.updateFormState.bind(this);
+    this.state = {};
     this.updateFormLayout = this.updateFormLayout.bind(this);
     this.updateFormGroup = this.updateFormGroup.bind(this);
-  }
-  // updateFormState(prevformdata, formdata) {
-  //   this.updateFormLayout(prevformdata, formdata);
-  //   // console.log(this.state);
-  //   // this.setState({ formdata }, () => {
-  //   //   // this.updateFormLayout();
-  //   // })
-    
-  //   // console.log('returning state');
-  //   // return this.getState().formdata;
-  // }
-  updateFormGroup() {
-    let formElementsQueue = [];
-    
+    this.updateValidations = this.updateValidations.bind(this);
   }
 
-  updateFormLayout(prevformdata, formdata) {
+  updateFormGroup(options) {
+    let { formgroup, prevState, currState } = options;
     let formElementsQueue = [];
-    this.props.form.formgroups.forEach(formgroup => {
-      if (formgroup.formElements) {
-        formElementsQueue.push(...formgroup.formElements.slice());
-      }
-    });
-    this.props.form.formgroups[ 0 ].formElements = [];
+    formElementsQueue.push(...formgroup.formElements.slice());
+    formgroup.formElements = [];
     while (formElementsQueue.length > 0) {
       let currentElement = formElementsQueue.shift();
       if (currentElement.name && this.props.renderFormElements[ currentElement.name ]) {
-        currentElement = this.props.renderFormElements[ currentElement.name ].call(this, formdata, formElementsQueue, currentElement, prevformdata);
-        this.props.form.formgroups[ 0 ].formElements.push(currentElement);
+        currentElement = this.props.renderFormElements[ currentElement.name ].call(this, currState, formElementsQueue, currentElement, prevState);
+        if(currentElement) formgroup.formElements.push(currentElement);
       } else {
-        this.props.form.formgroups[ 0 ].formElements.push(currentElement);
+        formgroup.formElements.push(currentElement);
       }
-      // this.props.form.formgroups = this.props.form.formgroups.map(formgroup => {
-      //   if (formgroup.formElements) {
-      //     formgroup.formElements = formgroup.formElements.map(formElement => {
-      //       //if false remove the validation;
-      //       return (this.props.renderFormElements[ formElement.name ]) ? this.props.renderFormElements[ formElement.name ].call(this, formdata) : formElement;
-      //     });
-      //     return formgroup;
-      //   } else {
-      //     return formgroup;
-      //   }
-      // })    
     }
+    return formgroup;
+  }
+
+  updateValidations(options) {
+    let formElements = [];
+    this.props.form.formgroups.forEach(formgroup => {
+      if (formgroup.formElements) formElements.push(...formgroup.formElements);
+    });
+    let validations = formElements.reduce((valArr, formElement) => { 
+      if (formElement.name && this.props.validations[ formElement.name ]) valArr.push(this.props.validations[ formElement.name ]);
+      return valArr;
+    }, []);
+    console.log({ formElements, validations });
+    return validations;
+  }
+
+  updateFormLayout(prevState, currState) {
+    this.props.form.formgroups = this.props.form.formgroups.map(formgroup => {
+      if (formgroup.formElements) {
+        return this.updateFormGroup({formgroup, prevState, currState });
+      } else {
+        return formgroup;
+      }
+    });
+    this.props.form.validations = this.updateValidations();
   }
 
   render() {
-    let passedProps = Object.assign({}, this.props, this.props.form);
+    console.log('ran this validation in render');
+    let validations = (this.props.form.validations.length > 0)? this.props.form.validations : this.updateValidations();
+    let passedProps = Object.assign({}, this.props, this.props.form, {validations});
     return (<div><ResponsiveForm updateFormLayout={this.updateFormLayout}  {...passedProps} /></div>)
   }
 }

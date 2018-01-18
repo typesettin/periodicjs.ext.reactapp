@@ -142,7 +142,8 @@ class ResponsiveForm extends Component{
     }
   }
   componentWillReceiveProps(nextProps) {
-    // console.warn('componentWillReceiveProps', nextProps);
+    console.log('***********************************');
+    console.log('componentWillReceiveProps', nextProps);
     let formdata = (nextProps.flattenFormData)
       ? flatten(Object.assign({}, nextProps.formdata), nextProps.flattenDataOptions)
       : nextProps.formdata;
