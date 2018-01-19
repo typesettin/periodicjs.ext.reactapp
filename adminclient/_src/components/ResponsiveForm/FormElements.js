@@ -1290,7 +1290,12 @@ function getConfirmModal(options) {
         }
       }
     }, formElement.confirmModal.comment);
-    modalContent.push(comment_box);
+    if (modalContent[modalContent.length - 1].type === 'commentbox') {
+      modalContent.pop();
+      modalContent.push(comment_box);
+    } else {
+      modalContent.push(comment_box);
+    }
   } else {
     onSubmit = function onSubmit() {
       _this13.props.hideModal('last');
