@@ -1068,11 +1068,12 @@ function getConfirmModal(options) {
     };
     let comment_box = Object.assign({}, {
       component: 'Input',
+      type: 'commentbox',
       props: {
         onChange: (e) => this.setState({ [ name ]: e.target.value }),
       },
     }, formElement.confirmModal.comment);
-    if (modalContent[modalContent.length - 1].type === 'commentbox') {
+    if (modalContent && modalContent[modalContent.length - 1] && modalContent[modalContent.length - 1].type === 'commentbox') {
       modalContent.pop();
       modalContent.push(comment_box);
     } else {
