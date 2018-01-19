@@ -10,6 +10,8 @@ import qs from 'querystring';
 // function getCallbackFromString(fetchOptions.successCallback) {
 
 const propTypes = {
+  hasContainer: PropTypes.bool,
+  updateFormLayout: PropTypes.func,
   notificationForm: PropTypes.any,
   flattenFormData: PropTypes.bool,
   stringyFormData: PropTypes.bool,
@@ -50,6 +52,9 @@ const defaultProps = {
   onSubmit: 'func:this.props.debug',
   formgroups: [],
   updateStateOnSubmit: false,
+  updateFormLayout: function () { },
+  hasContainer: false,
+  validations: [],
 };
 
 function getFunctionFromProps(options) {
@@ -140,6 +145,21 @@ class ResponsiveForm extends Component{
       return true;
     }
   }
+  componentWillMount() {
+    if (this.props.hasContainer) {
+      let prevState = Object.assign({}, this.state);
+      let { validations } = this.props.updateFormLayout(prevState, {});
+      let validationsLength = this.props.validations.length;
+      let tempArr = [];
+      for (let i = 0; i < validationsLength; i++){
+        tempArr.push(this.props.validations.pop());
+      }
+      validations.forEach(validation => {
+        this.props.validations.push(validation);
+      })
+    }
+  }
+
   componentWillReceiveProps(nextProps) {
     // console.warn('componentWillReceiveProps', nextProps);
     let formdata = (nextProps.flattenFormData)
@@ -369,6 +389,18 @@ class ResponsiveForm extends Component{
       } else if(typeof this.props.onChange ==='function') {
         this.props.onChange(nextState);
       }
+    }
+    if (this.props.hasContainer) {
+      let prevState = Object.assign({}, this.state);
+      let { validations } = this.props.updateFormLayout(prevState, nextState);
+      let validationsLength = this.props.validations.length;
+      let tempArr = [];
+      for (let i = 0; i < validationsLength; i++){
+        tempArr.push(this.props.validations.pop());
+      }
+      validations.forEach(validation => {
+        this.props.validations.push(validation);
+      })
     }
   }
   render() {
