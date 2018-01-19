@@ -1284,13 +1284,14 @@ function getConfirmModal(options) {
     };
     var comment_box = (0, _assign2.default)({}, {
       component: 'Input',
+      type: 'commentbox',
       props: {
         onChange: function onChange(e) {
           return _this13.setState((0, _defineProperty3.default)({}, name, e.target.value));
         }
       }
     }, formElement.confirmModal.comment);
-    if (modalContent[modalContent.length - 1].type === 'commentbox') {
+    if (modalContent && modalContent[modalContent.length - 1] && modalContent[modalContent.length - 1].type === 'commentbox') {
       modalContent.pop();
       modalContent.push(comment_box);
     } else {
