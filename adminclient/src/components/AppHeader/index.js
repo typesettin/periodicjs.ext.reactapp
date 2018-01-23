@@ -72,7 +72,13 @@ class AppHeader extends Component {
     let dropdownLinks = (this.props.settings.ui.header.productHeader.productLinks.length > 0)
       ? this.props.settings.ui.header.productHeader.productLinks.map(link => {
         return (
-          <Dropdown.Item text={link.text} onClick={() => { this.props.reduxRouter.push(link.location)}}/>
+          <Dropdown.Item text={link.text} onClick={() => {
+            (link.location)
+              ? this.props.reduxRouter.push(link.location)
+              : (link.customFunc)
+                ? link.customFunc()
+                : null
+            }} />
         )
         })
       : null;
@@ -82,53 +88,34 @@ class AppHeader extends Component {
       className={(this.props.settings.ui.initialization.show_header || this.props.user.isLoggedIn) ? 'animated fadeInDown Header-Speed' : 'animated slideOutDown Header-Speed'}>
         {(this.props.ui && this.props.ui.components && this.props.ui.components.header && typeof this.props.ui.components.header==='object' && this.props.ui.components.header.layout) 
         ? this.getRenderedComponent(this.props.ui.components.header.layout)
-          : (this.props.settings.ui.header.productHeader.layout) ? (<HeroHead>
+          : (<HeroHead>
           <Container>
             <Nav style={{ boxShadow:'none', }}>
-                <NavGroup align="left">
-                  <NavItem>
-                    {logoImage}
-                  </NavItem>
-                  <NavItem style={this.props.settings.ui.header.navLabelStyle}>
-                    <span style={Object.assign({ fontSize: '17px', }, this.props.settings.ui.header.navLabelStyle)}>{this.props.settings.ui.header.productHeader.headerTitle}</span>
-                  </NavItem>
-                </NavGroup>  
-                {globalSearch}
-                <NavGroup align="right" style={{ display: 'flex'}}>
-                  <NavItem style={Object.assign({padding: 0, alignItems: 'stretch'}, this.props.settings.ui.header.navLabelStyle)}>
-                    <Dropdown text={this.props.ui.nav_label} style={{ display: 'flex', alignItems: 'center', padding: '10px'}}>
-                      <Dropdown.Menu style={{right: '0px', left:'initial'}}>
-                        {dropdownLinks}
-                    </Dropdown.Menu>
-                    </Dropdown>
-                  </NavItem> 
-                  <NavItem style={Object.assign({ padding: 0, alignItems: 'stretch' },this.props.settings.ui.header.navLabelStyle)}>
-                    <Dropdown style={{ display: 'flex', alignItems: 'center',padding:'10px 0 10px 10px'}} trigger={(<div style={profileStyle}></div>)}>
-                      <Dropdown.Menu style={{right: '0px', left:'initial'}}>
-                        <Dropdown.Item text='My Account' onClick={() => { this.props.reduxRouter.push(`${this.all_prefixes.manifest_prefix}account/profile`)}}/>
-                      <Dropdown.Item text='Log Out' onClick={this.props.logoutUser}/>
-                    </Dropdown.Menu>
-                    </Dropdown>
-                  </NavItem>
-              </NavGroup>
-            </Nav>
-          </Container>
-        </HeroHead>) : (<HeroHead>
-          <Container>
-            <Nav style={{ boxShadow:'none', }}>
-                <NavGroup align="left">
+                <NavGroup align="left" style={{overflow: 'visible'}}>
                     <NavItem>
-                      {(this.props.settings.ui.header.customButton && typeof this.props.settings.ui.header.customButton === 'object' &&
+                      {(this.props.settings.ui.header.customDropdownNav)
+                      ? 
+                        logoImage
+                        : (this.props.settings.ui.header.customButton && typeof this.props.settings.ui.header.customButton === 'object' &&
                         this.props.settings.ui.header.customButton.layout) 
-                      ? this.getRenderedComponent(this.props.settings.ui.header.customButton) 
-                      : <Button onClick={this.props.toggleUISidebar} buttonStyle="isOutlined" color={buttonColor} icon="fa fa-bars" style={styles.iconButton} /> }
+                          ? this.getRenderedComponent(this.props.settings.ui.header.customButton) 
+                          : <Button onClick={this.props.toggleUISidebar} buttonStyle="isOutlined" color={buttonColor} icon="fa fa-bars" style={styles.iconButton} /> }
                     </NavItem>
-                  <NavItem style={Object.assign({ justifyContent: 'flex-start' }, styles.fullWidth)}>
+                    {(this.props.settings.ui.header.customDropdownNav)
+                      ? <NavItem style={Object.assign({ padding: 0, alignItems: 'stretch' }, this.props.settings.ui.header.navLabelStyle)}>
+                        <Dropdown text={this.props.ui.nav_label} style={{ display: 'flex', alignItems: 'center', padding: '10px' }}>
+                          <Dropdown.Menu>
+                            {dropdownLinks}
+                          </Dropdown.Menu>
+                        </Dropdown>
+                      </NavItem>
+                      : <NavItem style={Object.assign({ justifyContent: 'flex-start' }, styles.fullWidth)}>
                     {(!this.props.settings.ui.header.useGlobalSearch && this.props.ui.nav_label) ? (
                       <NavItem >
-                        <span style={Object.assign({ fontSize:'20px', }, this.props.settings.ui.header.navLabelStyle)}>{this.props.ui.nav_label}</span>
-                      </NavItem>) : null}
-                  </NavItem>
+                          <span style={Object.assign({ fontSize:'20px', }, this.props.settings.ui.header.navLabelStyle)}>{this.props.ui.nav_label}</span>
+                        </NavItem>) : null}
+                    </NavItem>
+                    }
                 </NavGroup>  
                 {globalSearch}
               <NavGroup align="right" isMenu>
