@@ -10,7 +10,7 @@ import capitalize from 'capitalize';
 // import ResponsiveButton from '../ResponsiveButton';
 // import { EditorState, } from 'draft-js';
 import Slider from 'rc-slider';
-import { default as RCSwitch } from 'rc-switch';
+import {  default  as RCSwitch } from 'rc-switch';
 import { ControlLabel, Label, Input, Button, CardFooterItem, Select, Textarea, Group, Image, } from 're-bulma';
 import MaskedInput from 'react-text-mask';
 import { Dropdown, Checkbox } from 'semantic-ui-react';
@@ -279,7 +279,7 @@ export function getFormDatatable(options){
       formtype: false,
     });
   tableHeaders = tableHeaders.map(header => {
-    if (header.formtype === 'select' && !header.formoptions) {
+    if ((header.formtype === 'select' || header.formtype === 'dropdown')  && !header.formoptions) {
       header.formoptions = (header.sortid && this.state.__formOptions && this.state.__formOptions[ header.sortid ])
       ? this.state.__formOptions[ header.sortid ]
       : [];
@@ -417,10 +417,10 @@ export function getFormDropdown(options){
   
     if(this.props.__formOptions && this.props.__formOptions[formElement.name]){
       dropdowndata = this.props.__formOptions[formElement.name];
-      dropdowndata = dropdowndata.map(option => ({ text: option[displayField], value: option[valueField]}));
+      dropdowndata = dropdowndata.map(option => ({ text: option[displayField], value: option[valueField], key: option[valueField]}));
     } else {
       dropdowndata = formElement.options || [];
-      dropdowndata = dropdowndata.map(option => ({ text: option[displayField], value: option[valueField]}));
+      dropdowndata = dropdowndata.map(option => ({ text: option[displayField], value: option[valueField], key: option[valueField]}));
     }
     passedProps.options = dropdowndata;
   
