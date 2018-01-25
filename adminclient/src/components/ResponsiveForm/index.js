@@ -3,7 +3,7 @@ import { Columns, Card, CardHeader, CardHeaderTitle, CardContent, CardFooter, Ca
 import ResponsiveCard from '../ResponsiveCard';
 import { getRenderedComponent, } from '../AppLayoutMap';
 import utilities from '../../util';
-import { getFormTextInputArea, getFormMaskedInput, getFormDropdown, getFormCheckbox, getFormSubmit, getFormSelect, getCardFooterItem, getFormCode, getFormTextArea, getFormEditor, getFormLink, getHiddenInput, getFormGroup, getImage, getFormDatalist, getRawInput, getSliderInput, getFormDatatable, getFormSwitch, } from './FormElements';
+import { getFormTextInputArea, getFormMaskedInput, getFormDropdown, getFormCheckbox, getFormSemanticCheckbox, getFormSubmit, getFormSelect, getCardFooterItem, getFormCode, getFormTextArea, getFormEditor, getFormLink, getHiddenInput, getFormGroup, getImage, getFormDatalist, getRawInput, getSliderInput, getFormDatatable, getFormSwitch, } from './FormElements';
 import { getCallbackFromString, setFormNameFields, assignHiddenFields, validateForm, assignFormBody, handleFormSubmitNotification, handleSuccessCallbacks, submitThisDotPropsFunc, submitWindowFunc, validateFormElement, } from './FormHelpers';
 import flatten from 'flat';
 import qs from 'querystring';
@@ -118,6 +118,7 @@ class ResponsiveForm extends Component{
     this.getFormDropdown = getFormDropdown.bind(this);
     this.getFormTextArea = getFormTextArea.bind(this);
     this.getFormCheckbox = getFormCheckbox.bind(this);
+    this.getFormSemanticCheckbox = getFormSemanticCheckbox.bind(this);
     this.getCardFooterItem = getCardFooterItem.bind(this);
     this.getFormSelect = getFormSelect.bind(this);
     this.getRawInput = getRawInput.bind(this);
@@ -433,6 +434,8 @@ class ResponsiveForm extends Component{
           return this.getFormDatatable({ formElement,  i:j, formgroup, });
         } else if (formElement.type === 'checkbox' || formElement.type === 'radio') {
           return this.getFormCheckbox({ formElement,  i:j, formgroup, });
+        } else if (formElement.type === 'Semantic.checkbox') {
+          return this.getFormSemanticCheckbox({ formElement,  i:j, formgroup, });
         } else if (formElement.type === 'label') {
           return (<Column key={j} {...formElement.layoutProps}>
             <Label key={j} {...formElement.labelProps}>{formElement.label}</Label>
@@ -571,19 +574,24 @@ class ResponsiveForm extends Component{
       : [];
 
     if (this.props.cardForm) {
-      return (<Card className="__ra_rf" {...Object.assign({}, {
-        isFullwidth: true,
-      }, this.props.cardFormProps) }>
+      let cardFormProps = this.props.cardFormProps || {};
+      return (<Card
+          {...Object.assign({}, { isFullwidth: true, }, cardFormProps.cardProps) }
+          style={this.props.cardStyle}
+          className={'__ra_rf' + (cardFormProps.cardProps && cardFormProps.cardProps.className) ? (cardFormProps.cardProps.className) : ''} >
         {(this.props.cardFormTitle)
-          ? (<CardHeader><CardHeaderTitle {...this.props.cardFormTitleProps}>{this.props.cardFormTitle}</CardHeaderTitle></CardHeader>)
-          : null}  
-        <CardContent>
+          ? (<CardHeader style={cardFormProps.headerStyle}>
+              <CardHeaderTitle style={cardFormProps.headerTitleStyle}>{cardFormProps.cardFormTitle}
+              </CardHeaderTitle>
+            </CardHeader>)
+          : null}
+        <CardContent {...cardFormProps.cardContentProps}>
           {formGroupData}
           {this.props.children}
         </CardContent>
         {footerGroupData}
       </Card>);
-    } else if(this.props.notificationForm){
+    } else if(this.props.notificationForm) {
       return (<div className="__ra_rf" style={this.props.style}>
         <Notification {...this.props.notificationForm}>
           {formGroupData}

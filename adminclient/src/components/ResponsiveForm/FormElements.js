@@ -10,17 +10,17 @@ import capitalize from 'capitalize';
 // import ResponsiveButton from '../ResponsiveButton';
 // import { EditorState, } from 'draft-js';
 import Slider from 'rc-slider';
-import { default as RCSwitch } from 'rc-switch';
+import {  default  as RCSwitch } from 'rc-switch';
 import { ControlLabel, Label, Input, Button, CardFooterItem, Select, Textarea, Group, Image, } from 're-bulma';
 import MaskedInput from 'react-text-mask';
-import { Dropdown } from 'semantic-ui-react';
+import { Dropdown, Checkbox } from 'semantic-ui-react';
 import moment from 'moment';
 import numeral from 'numeral';
 import pluralize from 'pluralize';
 import flatten, { unflatten, } from 'flat';
 import styles from '../../styles';
 import { validateForm, } from './FormHelpers';
-
+    
 export function getPropertyAttribute(options) {
   let { property, element, } = options;
   let attribute = element.name;
@@ -279,7 +279,7 @@ export function getFormDatatable(options){
       formtype: false,
     });
   tableHeaders = tableHeaders.map(header => {
-    if (header.formtype === 'select' && !header.formoptions) {
+    if ((header.formtype === 'select' || header.formtype === 'dropdown')  && !header.formoptions) {
       header.formoptions = (header.sortid && this.state.__formOptions && this.state.__formOptions[ header.sortid ])
       ? this.state.__formOptions[ header.sortid ]
       : [];
@@ -417,10 +417,10 @@ export function getFormDropdown(options){
   
     if(this.props.__formOptions && this.props.__formOptions[formElement.name]){
       dropdowndata = this.props.__formOptions[formElement.name];
-      dropdowndata = dropdowndata.map(option => ({ text: option[displayField], value: option[valueField]}));
+      dropdowndata = dropdowndata.map(option => ({ text: option[displayField], value: option[valueField], key: option[valueField]}));
     } else {
       dropdowndata = formElement.options || [];
-      dropdowndata = dropdowndata.map(option => ({ text: option[displayField], value: option[valueField]}));
+      dropdowndata = dropdowndata.map(option => ({ text: option[displayField], value: option[valueField], key: option[valueField]}));
     }
     passedProps.options = dropdowndata;
   
@@ -730,6 +730,48 @@ export function getFormCheckbox(options) {
     >
     </input>
     <span {...formElement.placeholderProps}>{this.state[ formElement.formdata_placeholder] || formElement.placeholder}</span>
+    {getCustomErrorLabel(hasError, this.state, formElement)}
+  </FormItem>);
+}
+
+export function getFormSemanticCheckbox(options) {
+  let { formElement, i, onValueChange, } = options;
+  let hasError = getErrorStatus(this.state, formElement.name);
+  let hasValue = (formElement.name && this.state[formElement.name])? true : false;
+  if (formElement.disableOnChange) {
+    onValueChange = () => { };
+  } else if (!onValueChange) {
+    onValueChange = (/*event*/) => {
+      // let text = event.target.value;
+      let updatedStateProp = {};
+      // console.debug('before', { updatedStateProp, formElement, }, event.target);
+      
+      updatedStateProp[this.state[formElement.formdata_name] || formElement.name] = (this.state[this.state[formElement.formdata_name] || formElement.name]) ? 0 : 'on';
+      // console.debug('after', { updatedStateProp, formElement, }, event.target);
+      if (formElement.onChangeFilter) {
+        const onChangeFunc = getFunctionFromProps.call(this, { propFunc: formElement.onChangeFilter });
+        updatedStateProp = onChangeFunc.call(this, Object.assign({}, this.state, updatedStateProp), updatedStateProp);
+      }
+      this.setState(updatedStateProp, () => {
+        if (formElement.validateOnChange) {
+          this.validateFormElement({ formElement, });
+        }
+      });
+    };
+  }
+  return (<FormItem key={i} {...formElement.layoutProps} hasError={hasError} hasValue={hasValue} >
+    <Checkbox {...formElement.passProps}
+      name={this.state[ formElement.formdata_name] || formElement.name}
+      checked={ (this.state[ formElement.name ] === "on") ? true : false }
+      onChange={onValueChange}
+      label={(typeof formElement.label === "string")
+        ? formElement.label
+        : (typeof formElement.label === "object")
+          ? this.getRenderedComponent(formElement.label) 
+          : null}
+    >
+    </Checkbox>
+    {/*<span {...formElement.placeholderProps}>{this.state[ formElement.formdata_placeholder] || formElement.placeholder}</span>*/}
     {getCustomErrorLabel(hasError, this.state, formElement)}
   </FormItem>);
 }
