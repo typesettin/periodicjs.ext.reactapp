@@ -404,13 +404,10 @@ export function getFormDropdown(options){
   let wrapperProps= Object.assign({
     className: '__re-bulma_control',
   }, formElement.wrapperProps)
-
+  let onChange;
   let passedProps = formElement.passProps;
   let getPassablePropkeyevents = getPassablePropsKeyEvents.bind(this);
   passedProps = getPassablePropkeyevents(passedProps, formElement);
-
-    // console.debug({formElement,initialValue, },'this.state',this.state);
-  // console.debug({ passedProps });
     let dropdowndata = [];
     let displayField = (formElement.passProps.displayField)? formElement.passProps.displayField : 'label';
     let valueField = (formElement.passProps.valueField) ? formElement.passProps.valueField : 'value';
@@ -422,18 +419,35 @@ export function getFormDropdown(options){
       dropdowndata = formElement.options || [];
       dropdowndata = dropdowndata.map(option => ({ text: option[displayField], value: option[valueField]}));
     }
-    passedProps.options = dropdowndata;
-  
+  passedProps.options = dropdowndata;
+  if (formElement.disableOnChange) {
+    onChange = () => { return () => {}};
+  } else if (!onChange) {
+    onChange = (event, newvalue)=>{
+      let updatedStateProp = {};
+      updatedStateProp[ formElement.name ] = newvalue.value;
+      this.setState(updatedStateProp, () => {
+        if(formElement.validateOnChange){
+        this.validateFormElement({ formElement, });
+      }});
+    }
+  }  
+  let customCallbackfunction;
+  if (formElement.customOnChange) {
+    if (formElement.customOnChange.indexOf('func:this.props') !== -1) {
+      customCallbackfunction= this.props[ formElement.customOnChange.replace('func:this.props.', '') ];
+    } else if (formElement.customOnChange.indexOf('func:window') !== -1 && typeof window[ formElement.customOnChange.replace('func:window.', '') ] ==='function') {
+      customCallbackfunction= window[ formElement.customOnChange.replace('func:window.', '') ].bind(this, formElement);
+    } 
+  }
   return (<FormItem key={i} {...formElement.layoutProps} initialIcon={formElement.initialIcon} isValid={isValid} hasError={hasError} hasValue={hasValue}>
     {getFormLabel(formElement)}  
     <div {...wrapperProps}>  
       <Dropdown {...passedProps}
         value={this.state[ formElement.name ] || initialValue}  
         onChange={(event, newvalue)=>{
-          // console.log({ newvalue});
-          let updatedStateProp = {};
-          updatedStateProp[ formElement.name ] = newvalue.value;
-          this.setState(updatedStateProp);
+          onChange.call(this, event, newvalue);
+          if(customCallbackfunction) customCallbackfunction(event);
         }}
         onSubmit={() => { return }}
       />
