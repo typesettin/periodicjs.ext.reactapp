@@ -574,19 +574,24 @@ class ResponsiveForm extends Component{
       : [];
 
     if (this.props.cardForm) {
-      return (<Card className="__ra_rf" {...Object.assign({}, {
-        isFullwidth: true,
-      }, this.props.cardFormProps) }>
+      let cardFormProps = this.props.cardFormProps || {};
+      return (<Card
+          {...Object.assign({}, { isFullwidth: true, }, cardFormProps.cardProps) }
+          style={this.props.cardStyle}
+          className={'__ra_rf' + (cardFormProps.cardProps && cardFormProps.cardProps.className) ? (cardFormProps.cardProps.className) : ''} >
         {(this.props.cardFormTitle)
-          ? (<CardHeader><CardHeaderTitle {...this.props.cardFormTitleProps}>{this.props.cardFormTitle}</CardHeaderTitle></CardHeader>)
-          : null}  
-        <CardContent>
+          ? (<CardHeader style={cardFormProps.headerStyle}>
+              <CardHeaderTitle style={cardFormProps.headerTitleStyle}>{cardFormProps.cardFormTitle}
+              </CardHeaderTitle>
+            </CardHeader>)
+          : null}
+        <CardContent {...cardFormProps.cardContentProps}>
           {formGroupData}
           {this.props.children}
         </CardContent>
         {footerGroupData}
       </Card>);
-    } else if(this.props.notificationForm){
+    } else if(this.props.notificationForm) {
       return (<div className="__ra_rf" style={this.props.style}>
         <Notification {...this.props.notificationForm}>
           {formGroupData}
