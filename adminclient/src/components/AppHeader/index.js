@@ -75,8 +75,8 @@ class AppHeader extends Component {
           <Dropdown.Item text={link.text} onClick={() => {
             (link.location)
               ? this.props.reduxRouter.push(link.location)
-              : (link.customFunc)
-                ? link.customFunc()
+              : (link.logoutUser)
+                ? this.props.logoutUser()
                 : null
             }} />
         )
@@ -103,7 +103,7 @@ class AppHeader extends Component {
                     </NavItem>
                     {(this.props.settings.ui.header.customDropdownNav)
                       ? <NavItem style={Object.assign({ padding: 0, alignItems: 'stretch' }, this.props.settings.ui.header.navLabelStyle)}>
-                        <Dropdown text={this.props.ui.nav_label} style={{ display: 'flex', alignItems: 'center', padding: '10px' }}>
+                        <Dropdown text={this.props.ui.nav_label} style={Object.assign({ display: 'flex', alignItems: 'center', padding: '10px' }, this.props.settings.ui.header.navLabelStyle)}>
                           <Dropdown.Menu>
                             {dropdownLinks}
                           </Dropdown.Menu>
@@ -119,11 +119,11 @@ class AppHeader extends Component {
                 </NavGroup>  
                 {globalSearch}
               <NavGroup align="right" isMenu>
-                {<NavItem>
-                  <Link to={`${this.all_prefixes.manifest_prefix}account/profile`} style={Object.assign({ fontSize:'20px', }, styles.noUnderline, this.props.settings.ui.header.userNameStyle)}>
-                    {`${capitalize(this.state.user.firstname || '')} ${capitalize(this.state.user.lastname || '')}`}
-                  </Link>
-                </NavItem> }  
+                <NavItem>
+                    {<Link to={`${this.all_prefixes.manifest_prefix}account/profile`} style={Object.assign({ fontSize: '20px', }, styles.noUnderline, this.props.settings.ui.header.userNameStyle)}>
+                      {`${capitalize(this.state.user.userdata.first_name || '')} ${capitalize(this.state.user.userdata.last_name || '')}`}
+                    </Link>}
+                </NavItem>   
                   <NavItem>{this.getRenderedComponent({
                     component: 'ResponsiveLink',
                     props: {
