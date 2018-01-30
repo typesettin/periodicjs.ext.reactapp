@@ -247,7 +247,7 @@ const extensionHelperText = {
 };
 
 function getDefaultIndexTableFields() {
-  const reactAppConfig = periodic.settings.extensions['periodicjs.ext.reactapp'];
+  const reactAppConfig = periodic.settings.extensions['@digifi/periodicjs.ext.reactapp'];
   const adminRoute = helpers.getManifestPathPrefix(reactAppConfig.adminPath);
 
   function getUserTableHeader(schemaName) {
@@ -476,15 +476,15 @@ function getAdditionalJSFiles() {
 }
 
 function setInitialIndexTable() {
-  const reactAppConfig = periodic.settings.extensions['periodicjs.ext.reactapp'];
-  periodic.settings.extensions[ 'periodicjs.ext.reactapp' ].data_tables = Object.assign({}, getDefaultIndexTableFields(), periodic.settings.extensions[ 'periodicjs.ext.reactapp' ].data_tables);
-  periodic.settings.extensions[ 'periodicjs.ext.reactapp' ].extension_overrides.customIndexPageComponents = Object.assign({},
-    periodic.settings.extensions[ 'periodicjs.ext.reactapp' ].extension_overrides.customIndexPageComponents, {
+  const reactAppConfig = periodic.settings.extensions['@digifi/periodicjs.ext.reactapp'];
+  periodic.settings.extensions[ '@digifi/periodicjs.ext.reactapp' ].data_tables = Object.assign({}, getDefaultIndexTableFields(), periodic.settings.extensions[ '@digifi/periodicjs.ext.reactapp' ].data_tables);
+  periodic.settings.extensions[ '@digifi/periodicjs.ext.reactapp' ].extension_overrides.customIndexPageComponents = Object.assign({},
+    periodic.settings.extensions[ '@digifi/periodicjs.ext.reactapp' ].extension_overrides.customIndexPageComponents, {
       configuration: configurationHelperText,
       extension: extensionHelperText,
     });
-  periodic.settings.extensions[ 'periodicjs.ext.reactapp' ].extension_overrides.customDetailPageComponents = Object.assign({},
-    periodic.settings.extensions[ 'periodicjs.ext.reactapp' ].extension_overrides.customDetailPageComponents, {
+  periodic.settings.extensions[ '@digifi/periodicjs.ext.reactapp' ].extension_overrides.customDetailPageComponents = Object.assign({},
+    periodic.settings.extensions[ '@digifi/periodicjs.ext.reactapp' ].extension_overrides.customDetailPageComponents, {
       configuration: configurationHelperText,
       extension: extensionHelperText,
     });
@@ -492,7 +492,7 @@ function setInitialIndexTable() {
     // settings.auth.enforce_mfa
   // console.log("periodic.settings.extensions[ 'periodicjs.ext.reactapp' ].auth", periodic.settings.extensions[ 'periodicjs.ext.reactapp' ].auth);
   // console.log('getDefaultIndexTableFields()', getDefaultIndexTableFields())
-  periodic.settings.extensions[ 'periodicjs.ext.reactapp' ].additional_js_files = Object.assign({}, periodic.settings.extensions[ 'periodicjs.ext.reactapp' ].additional_js_files, getAdditionalJSFiles());
+  periodic.settings.extensions[ '@digifi/periodicjs.ext.reactapp' ].additional_js_files = Object.assign({}, periodic.settings.extensions[ '@digifi/periodicjs.ext.reactapp' ].additional_js_files, getAdditionalJSFiles());
   if (reactAppConfig && reactAppConfig.includeCoreData && reactAppConfig.includeCoreData.manifest) {
     let task = setImmediate(() => {
       controllerhelper.setCoreDataConfigurations();
@@ -569,9 +569,9 @@ function init() {
           },
         }).then(createdReactAppConfig => {
           logger.silly('created initial react app config');
-          periodic.settings.extensions[ 'periodicjs.ext.reactapp' ] = flatten.unflatten(
+          periodic.settings.extensions[ '@digifi/periodicjs.ext.reactapp' ] = flatten.unflatten(
             Object.assign({},
-              flatten(periodic.settings.extensions[ 'periodicjs.ext.reactapp' ] || {}),
+              flatten(periodic.settings.extensions[ '@digifi/periodicjs.ext.reactapp' ] || {}),
               flatten(reactAppConfig || {})
             )
           );

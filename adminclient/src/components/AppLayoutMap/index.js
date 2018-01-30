@@ -2,6 +2,7 @@ import React, { createElement, } from 'react';
 import * as rebulma from 're-bulma';
 import * as recharts from 'recharts';
 import * as victory from 'victory';
+import * as semantic from 'semantic-ui-react';
 import MaskedInput from 'react-text-mask';
 import { Link, } from 'react-router';
 import Slider, { Range, } from 'rc-slider';
@@ -29,6 +30,7 @@ import DynamicChart from '../DynamicChart';
 import ResponsiveTabs from '../ResponsiveTabs';
 import ResponsiveBar from '../ResponsiveBar';
 import ResponsiveLink from '../ResponsiveLink';
+import ResponsiveFormContainer from '../ResponsiveFormContainer';
 import ResponsiveButton from '../ResponsiveButton';
 import ResponsiveSteps from '../ResponsiveSteps';
 import FormItem from '../FormItem';
@@ -53,7 +55,7 @@ export function getFunctionFromProps(options) {
 }
 
 export let AppLayoutMap = Object.assign({}, { victory,
-  recharts, ResponsiveForm, DynamicLayout, DynamicForm, RawOutput, RawStateOutput, FormItem, MenuAppLink, SubMenuLinks, ResponsiveTable, ResponsiveCard, DynamicChart, ResponsiveBar, ResponsiveTabs, ResponsiveDatalist, CodeMirror, Range, Slider, GoogleMap, Carousel, PreviewEditor, ResponsiveSteps, /* Editor,*/
+  recharts, ResponsiveForm, ResponsiveFormContainer, DynamicLayout, DynamicForm, RawOutput, RawStateOutput, FormItem, MenuAppLink, SubMenuLinks, ResponsiveTable, ResponsiveCard, DynamicChart, ResponsiveBar, ResponsiveTabs, ResponsiveDatalist, CodeMirror, Range, Slider, GoogleMap, Carousel, PreviewEditor, ResponsiveSteps, /* Editor,*/
   ResponsiveLink,
   ResponsiveButton,
   MaskedInput,
@@ -75,7 +77,9 @@ export function getComponentFromMap(options = {}) {
     } else if (recharts[ componentObject.component.replace('recharts.', '') ]) {
       return recharts[ componentObject.component.replace('recharts.', '') ];
     } else if (victory[ componentObject.component.replace('victory.', '') ]) {
-      return victory[ componentObject.component.replace('victory.', '') ];
+      return victory[componentObject.component.replace('victory.', '')];
+    } else if (componentObject.component.indexOf('Semantic.') !== -1 && semantic[componentObject.component.replace('Semantic.', '')]) {
+      return semantic[ componentObject.component.replace('Semantic.', '') ];
     } else {
       return AppLayoutMap[ componentObject.component ];
     }
@@ -239,7 +243,25 @@ export function getRenderedComponent(componentObject, resources, debug) {
         renderedCompProps,
         //props children
         (componentObject.children && Array.isArray(componentObject.children) && typeof componentObject.children !== 'string')
-          ? componentObject.children.map(childComponentObject => getRenderedComponent.call(this,
+          ? (componentObject.children.length === 1)
+            ? getRenderedComponent.call(this,
+              (componentObject.bindprops)
+                ? Object.assign({},
+                  componentObject.children[0], {
+                    props: Object.assign({},
+                      renderedCompProps,
+                      ((componentObject.children[0].thisprops && componentObject.children[0].thisprops.style) // this is to make sure when you bind props, if you've defined props in a dynamic property, to not use bind props to  remove passing down styles
+                        || (componentObject.children[0].asyncprops && componentObject.children[0].asyncprops.style)
+                          || (componentObject.children[0].windowprops && componentObject.children[0].windowprops.style))
+                          ? {}
+                          : {
+                            style: {},
+                          },
+                      componentObject.children[0].props,
+                      { key: renderIndex + Math.random(), }),
+                  })
+                : componentObject.children[0], resources)
+            : componentObject.children.map(childComponentObject => getRenderedComponent.call(this,
             (componentObject.bindprops)
               ? Object.assign({},
                 childComponentObject, {

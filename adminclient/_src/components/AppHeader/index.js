@@ -54,9 +54,11 @@ var _capitalize2 = _interopRequireDefault(_capitalize);
 
 var _AppLayoutMap = require('../AppLayoutMap');
 
+var _semanticUiReact = require('semantic-ui-react');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// FormHorizontal, NavToggle, ControlLabel, Group,
+// import ResponsiveLink from '../ResponsiveLink';;;
 var AppHeader = function (_Component) {
   (0, _inherits3.default)(AppHeader, _Component);
 
@@ -85,6 +87,8 @@ var AppHeader = function (_Component) {
   }, {
     key: 'render',
     value: function render() {
+      var _this2 = this;
+
       // console.debug('this.all_prefixes.manifest_prefix', this.all_prefixes.manifest_prefix);
       var buttonColor = this.props.settings.ui.header.buttonColor;
       var globalSearch = this.props.settings.ui.header.useGlobalSearch ? _react2.default.createElement(
@@ -96,17 +100,47 @@ var AppHeader = function (_Component) {
           _react2.default.createElement(_reBulma.Input, { type: 'text', placeholder: 'Search', isExpanded: true, style: _styles2.default.fullWidth })
         )
       ) : null;
-      var navLabelTitle = !this.props.settings.ui.header.useGlobalSearch && this.props.ui.nav_label ? _react2.default.createElement(
-        _reBulma.NavItem,
-        { style: (0, _assign2.default)({
-            justifyContent: 'flex-start'
-          }, _styles2.default.fullWidth) },
-        _react2.default.createElement(
-          'span',
-          { style: (0, _assign2.default)({ fontSize: '20px' }, this.props.settings.ui.header.navLabelStyle) },
-          this.props.ui.nav_label
-        )
-      ) : null;
+
+      var logoImage = this.getRenderedComponent({
+        component: 'ResponsiveLink',
+        props: {
+          location: '/',
+          style: {
+            height: '40px',
+            display: 'inline-flex'
+          }
+        },
+        children: [{
+          component: 'img',
+          props: {
+            src: this.props.settings.ui.header.customLogo || '/favicon.png',
+            alt: '' + this.props.settings.name,
+            style: {
+              maxHeight: 'none',
+              height: '100%',
+              width: 'auto'
+            }
+          }
+        }]
+      });
+      var profileStyle = (0, _assign2.default)({
+        width: '42px',
+        height: '42px',
+        display: 'inline-block',
+        backgroundColor: 'white',
+        borderRadius: '24px',
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat'
+      }, this.props.settings.ui.header.profileImageStyle, {
+        backgroundImage: 'url(' + (this.props.user.profile_image_preview || this.props.settings.default_user_image || '/favicon.png') + ')'
+      });
+
+      var dropdownLinks = this.props.settings.ui.header.productHeader.productLinks.length > 0 ? this.props.settings.ui.header.productHeader.productLinks.map(function (link) {
+        return _react2.default.createElement(_semanticUiReact.Dropdown.Item, { text: link.text, onClick: function onClick() {
+            link.location ? _this2.props.reduxRouter.push(link.location) : link.logoutUser ? _this2.props.logoutUser() : null;
+          } });
+      }) : null;
+
       return _react2.default.createElement(
         _reBulma.Hero,
         { color: this.props.settings.ui.header.color, isBold: this.props.settings.ui.header.isBold, style: (0, _assign2.default)(_styles2.default.fixedTop, _styles2.default.navContainer, this.props.settings.ui.header.containerStyle),
@@ -122,13 +156,37 @@ var AppHeader = function (_Component) {
               { style: { boxShadow: 'none' } },
               _react2.default.createElement(
                 _reBulma.NavGroup,
-                { align: 'left' },
+                { align: 'left', style: { overflow: 'visible' } },
                 _react2.default.createElement(
                   _reBulma.NavItem,
                   null,
-                  this.props.settings.ui.header.customButton && (0, _typeof3.default)(this.props.settings.ui.header.customButton) === 'object' && this.props.settings.ui.header.customButton.layout ? this.getRenderedComponent(this.props.settings.ui.header.customButton) : _react2.default.createElement(_reBulma.Button, { onClick: this.props.toggleUISidebar, buttonStyle: 'isOutlined', color: buttonColor, icon: 'fa fa-bars', style: _styles2.default.iconButton })
+                  this.props.settings.ui.header.customDropdownNav ? logoImage : this.props.settings.ui.header.customButton && (0, _typeof3.default)(this.props.settings.ui.header.customButton) === 'object' && this.props.settings.ui.header.customButton.layout ? this.getRenderedComponent(this.props.settings.ui.header.customButton) : _react2.default.createElement(_reBulma.Button, { onClick: this.props.toggleUISidebar, buttonStyle: 'isOutlined', color: buttonColor, icon: 'fa fa-bars', style: _styles2.default.iconButton })
                 ),
-                navLabelTitle
+                this.props.settings.ui.header.customDropdownNav ? _react2.default.createElement(
+                  _reBulma.NavItem,
+                  { style: (0, _assign2.default)({ padding: 0, alignItems: 'stretch' }, this.props.settings.ui.header.navLabelStyle) },
+                  _react2.default.createElement(
+                    _semanticUiReact.Dropdown,
+                    { text: this.props.ui.nav_label, style: (0, _assign2.default)({ display: 'flex', alignItems: 'center', padding: '10px' }, this.props.settings.ui.header.navLabelStyle) },
+                    _react2.default.createElement(
+                      _semanticUiReact.Dropdown.Menu,
+                      null,
+                      dropdownLinks
+                    )
+                  )
+                ) : _react2.default.createElement(
+                  _reBulma.NavItem,
+                  { style: (0, _assign2.default)({ justifyContent: 'flex-start' }, _styles2.default.fullWidth) },
+                  !this.props.settings.ui.header.useGlobalSearch && this.props.ui.nav_label ? _react2.default.createElement(
+                    _reBulma.NavItem,
+                    null,
+                    _react2.default.createElement(
+                      'span',
+                      { style: (0, _assign2.default)({ fontSize: '20px' }, this.props.settings.ui.header.navLabelStyle) },
+                      this.props.ui.nav_label
+                    )
+                  ) : null
+                )
               ),
               globalSearch,
               _react2.default.createElement(
@@ -140,7 +198,7 @@ var AppHeader = function (_Component) {
                   _react2.default.createElement(
                     _reactRouter.Link,
                     { to: this.all_prefixes.manifest_prefix + 'account/profile', style: (0, _assign2.default)({ fontSize: '20px' }, _styles2.default.noUnderline, this.props.settings.ui.header.userNameStyle) },
-                    (0, _capitalize2.default)(this.state.user.firstname || '') + ' ' + (0, _capitalize2.default)(this.state.user.lastname || '')
+                    (0, _capitalize2.default)(this.state.user.userdata.first_name || '') + ' ' + (0, _capitalize2.default)(this.state.user.userdata.last_name || '')
                   )
                 ),
                 _react2.default.createElement(
@@ -150,16 +208,7 @@ var AppHeader = function (_Component) {
                     component: 'ResponsiveLink',
                     props: {
                       location: this.all_prefixes.manifest_prefix + 'account/profile',
-                      style: {
-                        width: '48px',
-                        height: '48px',
-                        display: 'block',
-                        backgroundColor: 'white',
-                        borderRadius: '24px',
-                        backgroundSize: 'cover',
-                        backgroundRepeat: 'no-repeat',
-                        backgroundImage: 'url(' + (this.props.user.profile_image_preview || this.props.settings.default_user_image || '/favicon.png') + ')'
-                      }
+                      style: profileStyle
                     }
                   })
                 ),
@@ -176,8 +225,7 @@ var AppHeader = function (_Component) {
     }
   }]);
   return AppHeader;
-}(_react.Component);
-// import ResponsiveLink from '../ResponsiveLink';;;
+}(_react.Component); // FormHorizontal, NavToggle, ControlLabel, Group,
 
 
 exports.default = AppHeader;

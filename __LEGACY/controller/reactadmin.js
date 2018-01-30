@@ -416,7 +416,7 @@ var pullNavigationSettings = function (configuration) {
  * @return {Object}      Aggregated manifest and navigation configuration
  */
 var finalizeSettingsWithTheme = function (data) {
-  let filePath = path.join(__dirname, '../../../content/themes', appSettings.theme || appSettings.themename, 'periodicjs.reactadmin.json');
+  let filePath = path.join(__dirname, '../../../../content/themes', appSettings.theme || appSettings.themename, 'periodicjs.reactadmin.json');
   return handleAmbiguousExtensionType(filePath)
     .then(result => {
       result = result['periodicjs.ext.reactadmin'];
@@ -645,7 +645,7 @@ var assignComponentStatus = function (component) {
  */
 var pullComponentSettings = function (refresh) {
   if (components && !refresh) return Promisie.resolve(components);
-  return readAndStoreConfigurations([handleAmbiguousExtensionType.bind(null, path.join(__dirname, '../periodicjs.reactadmin.json')), handleAmbiguousExtensionType.bind(null, path.join(__dirname, `../../../content/themes/${ appSettings.theme || appSettings.themename }/periodicjs.reactadmin.json`)), ])
+  return readAndStoreConfigurations([handleAmbiguousExtensionType.bind(null, path.join(__dirname, '../periodicjs.reactadmin.json')), handleAmbiguousExtensionType.bind(null, path.join(__dirname, `../../../../content/themes/${ appSettings.theme || appSettings.themename }/periodicjs.reactadmin.json`)), ])
     .then(results => {
       switch (Object.keys(results).length.toString()) {
       case '1':
@@ -787,7 +787,7 @@ module.exports = function (resources) {
   extsettings = resources.app.locals.extension.reactadmin.settings;
   utility = require(path.join(__dirname, '../utility/index'))(resources);
   versions = (extsettings.application.use_offline_cache) ? {
-    theme: fs.readJsonSync(path.join(__dirname, '../../../', `content/themes/${ appSettings.theme || appSettings.themename }/package.json`)).version,
+    theme: fs.readJsonSync(path.join(__dirname, '../../../../', `content/themes/${ appSettings.theme || appSettings.themename }/package.json`)).version,
     reactadmin: fs.readJsonSync(path.join(__dirname, '../package.json')).version,
   } : false;
   if (extsettings && extsettings.includeCoreData && extsettings.includeCoreData.manifest) {

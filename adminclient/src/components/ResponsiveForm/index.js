@@ -3,13 +3,15 @@ import { Columns, Card, CardHeader, CardHeaderTitle, CardContent, CardFooter, Ca
 import ResponsiveCard from '../ResponsiveCard';
 import { getRenderedComponent, } from '../AppLayoutMap';
 import utilities from '../../util';
-import { getFormTextInputArea, getFormMaskedInput, getFormCheckbox, getFormSubmit, getFormSelect, getCardFooterItem, getFormCode, getFormTextArea, getFormEditor, getFormLink, getHiddenInput, getFormGroup, getImage, getFormDatalist, getRawInput, getSliderInput, getFormDatatable, getFormSwitch, } from './FormElements';
+import { getFormTextInputArea, getFormMaskedInput, getFormDropdown, getFormCheckbox, getFormSemanticCheckbox, getFormSubmit, getFormSelect, getCardFooterItem, getFormCode, getFormTextArea, getFormEditor, getFormLink, getHiddenInput, getFormGroup, getImage, getFormDatalist, getRawInput, getSliderInput, getFormDatatable, getFormSwitch, } from './FormElements';
 import { getCallbackFromString, setFormNameFields, assignHiddenFields, validateForm, assignFormBody, handleFormSubmitNotification, handleSuccessCallbacks, submitThisDotPropsFunc, submitWindowFunc, validateFormElement, } from './FormHelpers';
 import flatten from 'flat';
 import qs from 'querystring';
 // function getCallbackFromString(fetchOptions.successCallback) {
 
 const propTypes = {
+  hasContainer: PropTypes.bool,
+  updateFormLayout: PropTypes.func,
   notificationForm: PropTypes.any,
   flattenFormData: PropTypes.bool,
   stringyFormData: PropTypes.bool,
@@ -50,6 +52,9 @@ const defaultProps = {
   onSubmit: 'func:this.props.debug',
   formgroups: [],
   updateStateOnSubmit: false,
+  updateFormLayout: function () { },
+  hasContainer: false,
+  validations: [],
 };
 
 function getFunctionFromProps(options) {
@@ -110,8 +115,10 @@ class ResponsiveForm extends Component{
     this.getFormCode = getFormCode.bind(this);
     this.getFormTextInputArea = getFormTextInputArea.bind(this);
     this.getFormMaskedInput = getFormMaskedInput.bind(this);
+    this.getFormDropdown = getFormDropdown.bind(this);
     this.getFormTextArea = getFormTextArea.bind(this);
     this.getFormCheckbox = getFormCheckbox.bind(this);
+    this.getFormSemanticCheckbox = getFormSemanticCheckbox.bind(this);
     this.getCardFooterItem = getCardFooterItem.bind(this);
     this.getFormSelect = getFormSelect.bind(this);
     this.getRawInput = getRawInput.bind(this);
@@ -139,6 +146,21 @@ class ResponsiveForm extends Component{
       return true;
     }
   }
+  componentWillMount() {
+    if (this.props.hasContainer) {
+      let prevState = Object.assign({}, this.state);
+      let { validations } = this.props.updateFormLayout(prevState, {});
+      let validationsLength = this.props.validations.length;
+      let tempArr = [];
+      for (let i = 0; i < validationsLength; i++){
+        tempArr.push(this.props.validations.pop());
+      }
+      validations.forEach(validation => {
+        this.props.validations.push(validation);
+      })
+    }
+  }
+
   componentWillReceiveProps(nextProps) {
     // console.warn('componentWillReceiveProps', nextProps);
     let formdata = (nextProps.flattenFormData)
@@ -286,6 +308,11 @@ class ResponsiveForm extends Component{
               let responseCallback = (fetchOptions.responseCallback)
                 ? getCBFromString(fetchOptions.responseCallback)
                 : false;
+              if (Array.isArray(fetchOptions.successCallback) && Array.isArray(fetchOptions.successProps)) {
+                  successCallback = (fetchOptions.successCallback)
+                  ? getCBFromString(fetchOptions.successCallback, true)
+                  : false;
+                }
               res.json()
                 .then(successData => {
                   if (successData && (typeof successData.successCallback === 'string' || (Array.isArray(successData.successCallback) && successData.successCallback.length))) {
@@ -364,6 +391,18 @@ class ResponsiveForm extends Component{
         this.props.onChange(nextState);
       }
     }
+    if (this.props.hasContainer) {
+      let prevState = Object.assign({}, this.state);
+      let { validations } = this.props.updateFormLayout(prevState, nextState);
+      let validationsLength = this.props.validations.length;
+      let tempArr = [];
+      for (let i = 0; i < validationsLength; i++){
+        tempArr.push(this.props.validations.pop());
+      }
+      validations.forEach(validation => {
+        this.props.validations.push(validation);
+      })
+    }
   }
   render() {
     // console.debug('form render', this.state);
@@ -389,10 +428,14 @@ class ResponsiveForm extends Component{
           return this.getHiddenInput({ formElement,  i:j, formgroup, });
         } else if (formElement.type === 'datalist') {
           return this.getFormDatalist({ formElement,  i:j, formgroup, });
+        } else if (formElement.type === 'dropdown') {
+          return this.getFormDropdown({ formElement,  i:j, formgroup, });
         } else if (formElement.type === 'datatable') {
           return this.getFormDatatable({ formElement,  i:j, formgroup, });
         } else if (formElement.type === 'checkbox' || formElement.type === 'radio') {
           return this.getFormCheckbox({ formElement,  i:j, formgroup, });
+        } else if (formElement.type === 'Semantic.checkbox') {
+          return this.getFormSemanticCheckbox({ formElement,  i:j, formgroup, });
         } else if (formElement.type === 'label') {
           return (<Column key={j} {...formElement.layoutProps}>
             <Label key={j} {...formElement.labelProps}>{formElement.label}</Label>
@@ -531,19 +574,24 @@ class ResponsiveForm extends Component{
       : [];
 
     if (this.props.cardForm) {
-      return (<Card className="__ra_rf" {...Object.assign({}, {
-        isFullwidth: true,
-      }, this.props.cardFormProps) }>
+      let cardFormProps = this.props.cardFormProps || {};
+      return (<Card
+          {...Object.assign({}, { isFullwidth: true, }, cardFormProps.cardProps) }
+          style={this.props.cardStyle}
+          className={'__ra_rf' + (cardFormProps.cardProps && cardFormProps.cardProps.className) ? (cardFormProps.cardProps.className) : ''} >
         {(this.props.cardFormTitle)
-          ? (<CardHeader><CardHeaderTitle {...this.props.cardFormTitleProps}>{this.props.cardFormTitle}</CardHeaderTitle></CardHeader>)
-          : null}  
-        <CardContent>
+          ? (<CardHeader style={cardFormProps.headerStyle}>
+              <CardHeaderTitle style={cardFormProps.headerTitleStyle}>{cardFormProps.cardFormTitle}
+              </CardHeaderTitle>
+            </CardHeader>)
+          : null}
+        <CardContent {...cardFormProps.cardContentProps}>
           {formGroupData}
           {this.props.children}
         </CardContent>
         {footerGroupData}
       </Card>);
-    } else if(this.props.notificationForm){
+    } else if(this.props.notificationForm) {
       return (<div className="__ra_rf" style={this.props.style}>
         <Notification {...this.props.notificationForm}>
           {formGroupData}

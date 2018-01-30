@@ -8,7 +8,7 @@ const JSONDictionary = require('./schema/dictionary');
 const flatten = require('flat');
 
 function generateManifestsFromCoreData(options = {}) {
-  const extsettings = periodic.settings.extensions['periodicjs.ext.reactapp'];
+  const extsettings = periodic.settings.extensions['@digifi/periodicjs.ext.reactapp'];
   const adminRoute = options.customAdminRoute || helpers.getManifestPathPrefix(extsettings.adminPath);
   const { indexOptions, newOptions, showOptions, schema, schemaName, allSchemas, detailOptions, } = options;
   // options.extsettings = extsettings;

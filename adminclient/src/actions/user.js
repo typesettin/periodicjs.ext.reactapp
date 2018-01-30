@@ -411,7 +411,10 @@ const user = {
       delete headers.clientid_default;
       let options = Object.assign({}, requestOptions);
       options.headers = Object.assign({}, options.headers, { 'x-access-token': state.user.jwt_token, });
-      return utilities.fetchComponent(`${ basename }/load/mfa`, options)()
+      let url = (setttings.validateMFAPath)
+        ? `${basename}${validateMFAPath}`
+        : `${basename}/load/mfa`;
+      return utilities.fetchComponent(url, options)()
         .then(response => {
           if (response && response.data && response.data.authenticated) {
             dispatch(this.authenticatedMFA());
@@ -578,6 +581,7 @@ const user = {
       let fetchResponse;
       let cachedResponseData;
       let loginSettings = getState().settings.login;
+      let sessionSettings = getState().settings.session;
       let notificationsSettings = getState().settings.ui.notifications;
       let url = loginSettings.url;
 
@@ -588,9 +592,9 @@ const user = {
           'Accept': 'application/json',
           // 'Content-Type': 'application/json',
         }, loginSettings.options.headers, {
-          username: loginData.username,
-          password: loginData.password,
-        }),
+            username: loginData.username,
+            password: loginData.password,
+          }),
         body: JSON.stringify({
           username: loginData.username,
           password: loginData.password,
@@ -613,6 +617,28 @@ const user = {
             this.initializeAuthenticatedUser(responseData.token, false, __global__returnURL)(dispatch, getState),
           ]);
         })
+        .then(() => {
+          if (sessionSettings && sessionSettings.registerUser) {
+            return fetch(sessionSettings.url, {
+              method: sessionSettings.method || 'POST',
+              headers: Object.assign({
+                'Accept': 'application/json',
+                // 'Content-Type': 'application/json',
+              }, sessionSettings.options.headers, {
+                  username: loginData.username,
+                  token: cachedResponseData.token
+                }),
+              body: JSON.stringify({
+                username: loginData.username,
+                token: cachedResponseData.token
+              }),
+            })
+          } else {
+            return;
+          }
+        })
+        .then(checkStatus)
+        .then((response) => response.json())
         .then(() => {
           dispatch(this.recievedLoginUser(url, fetchResponse, cachedResponseData));
           if(!notificationsSettings.hide_login_notification){

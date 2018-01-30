@@ -63,7 +63,12 @@ var AppConfigSettings = {
       buttonColor: 'isWhite',
       useGlobalSearch: false,
       useHeaderLogout: false,
-      customButton: false,
+      productHeader: {
+        layout: false,
+        productLinks: []
+      },
+      customButton: {},
+      profileImageStyle: {},
       navLabelStyle: {},
       containerStyle: {},
       userNameStyle: {}

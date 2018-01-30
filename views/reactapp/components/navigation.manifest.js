@@ -5,7 +5,7 @@ const helpers = require('../../../utilities/manifest/helpers');
 const capitalize = require('capitalize');
 const pluralize = require('pluralize');
 const reactapp = utilities.reactapp();
-const extsettings = periodic.settings.extensions['periodicjs.ext.reactapp'];
+const extsettings = periodic.settings.extensions['@digifi/periodicjs.ext.reactapp'];
 // console.log({ extsettings });
 // console.log('reactapp.manifest_prefix', reactapp.manifest_prefix)
 let navlinks = [{

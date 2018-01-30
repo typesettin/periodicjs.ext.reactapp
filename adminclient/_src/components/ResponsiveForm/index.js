@@ -77,6 +77,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 // function getCallbackFromString(fetchOptions.successCallback) {
 
 var propTypes = {
+  hasContainer: _react.PropTypes.bool,
+  updateFormLayout: _react.PropTypes.func,
   notificationForm: _react.PropTypes.any,
   flattenFormData: _react.PropTypes.bool,
   stringyFormData: _react.PropTypes.bool,
@@ -113,7 +115,10 @@ var defaultProps = {
   includeFormDataOnLayout: false,
   onSubmit: 'func:this.props.debug',
   formgroups: [],
-  updateStateOnSubmit: false
+  updateStateOnSubmit: false,
+  updateFormLayout: function updateFormLayout() {},
+  hasContainer: false,
+  validations: []
 };
 
 function getFunctionFromProps(options) {
@@ -170,8 +175,10 @@ var ResponsiveForm = function (_Component) {
     _this.getFormCode = _FormElements.getFormCode.bind(_this);
     _this.getFormTextInputArea = _FormElements.getFormTextInputArea.bind(_this);
     _this.getFormMaskedInput = _FormElements.getFormMaskedInput.bind(_this);
+    _this.getFormDropdown = _FormElements.getFormDropdown.bind(_this);
     _this.getFormTextArea = _FormElements.getFormTextArea.bind(_this);
     _this.getFormCheckbox = _FormElements.getFormCheckbox.bind(_this);
+    _this.getFormSemanticCheckbox = _FormElements.getFormSemanticCheckbox.bind(_this);
     _this.getCardFooterItem = _FormElements.getCardFooterItem.bind(_this);
     _this.getFormSelect = _FormElements.getFormSelect.bind(_this);
     _this.getRawInput = _FormElements.getRawInput.bind(_this);
@@ -202,6 +209,27 @@ var ResponsiveForm = function (_Component) {
       }
     }
   }, {
+    key: 'componentWillMount',
+    value: function componentWillMount() {
+      var _this2 = this;
+
+      if (this.props.hasContainer) {
+        var prevState = (0, _assign2.default)({}, this.state);
+
+        var _props$updateFormLayo = this.props.updateFormLayout(prevState, {}),
+            validations = _props$updateFormLayo.validations;
+
+        var validationsLength = this.props.validations.length;
+        var tempArr = [];
+        for (var i = 0; i < validationsLength; i++) {
+          tempArr.push(this.props.validations.pop());
+        }
+        validations.forEach(function (validation) {
+          _this2.props.validations.push(validation);
+        });
+      }
+    }
+  }, {
     key: 'componentWillReceiveProps',
     value: function componentWillReceiveProps(nextProps) {
       // console.warn('componentWillReceiveProps', nextProps);
@@ -225,7 +253,7 @@ var ResponsiveForm = function (_Component) {
   }, {
     key: 'submitForm',
     value: function submitForm() {
-      var _this2 = this;
+      var _this3 = this;
 
       if (this.props.blockPageUI) {
         this.props.setUILoadedState(false, this.props.blockPageUILayout);
@@ -245,13 +273,13 @@ var ResponsiveForm = function (_Component) {
       var formSubmitNotification = _FormHelpers.handleFormSubmitNotification.bind(this);
       var formSuccessCallbacks = _FormHelpers.handleSuccessCallbacks.bind(this);
       var __formStateUpdate = function __formStateUpdate() {
-        _this2.setState({
+        _this3.setState({
           __formIsSubmitting: false,
           __formDataStatusDate: new Date().toString()
         });
 
-        if (_this2.props.blockPageUI) {
-          _this2.props.setUILoadedState(true);
+        if (_this3.props.blockPageUI) {
+          _this3.props.setUILoadedState(true);
         }
       };
       this.setState({
@@ -329,6 +357,9 @@ var ResponsiveForm = function (_Component) {
             if (fetchOptions.successCallback || fetchOptions.responseCallback) {
               var successCallback = fetchOptions.successCallback ? getCBFromString(fetchOptions.successCallback) : false;
               var responseCallback = fetchOptions.responseCallback ? getCBFromString(fetchOptions.responseCallback) : false;
+              if (Array.isArray(fetchOptions.successCallback) && Array.isArray(fetchOptions.successProps)) {
+                successCallback = fetchOptions.successCallback ? getCBFromString(fetchOptions.successCallback, true) : false;
+              }
               res.json().then(function (successData) {
                 if (successData && (typeof successData.successCallback === 'string' || Array.isArray(successData.successCallback) && successData.successCallback.length)) {
                   successCallback = getCBFromString(successData.successCallback);
@@ -357,16 +388,16 @@ var ResponsiveForm = function (_Component) {
             var errorCB = getCBFromString(e.callback);
             errorCB(e.callbackProps);
           } else {
-            var _errorCB = getCBFromString(_this2.props.errorCallback);
-            if (_this2.props.useErrorNotification) {
+            var _errorCB = getCBFromString(_this3.props.errorCallback);
+            if (_this3.props.useErrorNotification) {
               console.error(e);
-              _this2.props.errorNotification(e);
+              _this3.props.errorNotification(e);
             }
             if (_errorCB) {
-              var errorProps = _this2.props.useErrorMessageProp ? e.message : e;
+              var errorProps = _this3.props.useErrorMessageProp ? e.message : e;
               _errorCB(errorProps);
-            } else if (_this2.props.onError && typeof _this2.props.onError === 'function') {
-              _this2.props.onError(e);
+            } else if (_this3.props.onError && typeof _this3.props.onError === 'function') {
+              _this3.props.onError(e);
             }
           }
         });
@@ -377,6 +408,8 @@ var ResponsiveForm = function (_Component) {
   }, {
     key: 'componentWillUpdate',
     value: function componentWillUpdate(nextProps, nextState) {
+      var _this4 = this;
+
       if (this.props.filterFunction) {
         var filterFunction = getFunctionFromProps.call(this, { propFunc: this.props.filterFunction });
         nextState = filterFunction.call(this, nextState);
@@ -406,11 +439,26 @@ var ResponsiveForm = function (_Component) {
           this.props.onChange(nextState);
         }
       }
+      if (this.props.hasContainer) {
+        var prevState = (0, _assign2.default)({}, this.state);
+
+        var _props$updateFormLayo2 = this.props.updateFormLayout(prevState, nextState),
+            validations = _props$updateFormLayo2.validations;
+
+        var validationsLength = this.props.validations.length;
+        var tempArr = [];
+        for (var i = 0; i < validationsLength; i++) {
+          tempArr.push(this.props.validations.pop());
+        }
+        validations.forEach(function (validation) {
+          _this4.props.validations.push(validation);
+        });
+      }
     }
   }, {
     key: 'render',
     value: function render() {
-      var _this3 = this;
+      var _this5 = this;
 
       // console.debug('form render', this.state);
       var keyValue = 0;
@@ -424,21 +472,25 @@ var ResponsiveForm = function (_Component) {
           if (!formElement) {
             return null;
           } else if (formElement.type === 'text' || formElement.type === 'file') {
-            return _this3.getFormTextInputArea({ formElement: formElement, i: j, formgroup: formgroup });
+            return _this5.getFormTextInputArea({ formElement: formElement, i: j, formgroup: formgroup });
           } else if (formElement.type === 'input') {
-            return _this3.getRawInput({ formElement: formElement, i: j, formgroup: formgroup });
+            return _this5.getRawInput({ formElement: formElement, i: j, formgroup: formgroup });
           } else if (formElement.type === 'maskedinput') {
-            return _this3.getFormMaskedInput({ formElement: formElement, i: j, formgroup: formgroup });
+            return _this5.getFormMaskedInput({ formElement: formElement, i: j, formgroup: formgroup });
           } else if (formElement.type === 'textarea') {
-            return _this3.getFormTextArea({ formElement: formElement, i: j, formgroup: formgroup });
+            return _this5.getFormTextArea({ formElement: formElement, i: j, formgroup: formgroup });
           } else if (formElement.type === 'hidden') {
-            return _this3.getHiddenInput({ formElement: formElement, i: j, formgroup: formgroup });
+            return _this5.getHiddenInput({ formElement: formElement, i: j, formgroup: formgroup });
           } else if (formElement.type === 'datalist') {
-            return _this3.getFormDatalist({ formElement: formElement, i: j, formgroup: formgroup });
+            return _this5.getFormDatalist({ formElement: formElement, i: j, formgroup: formgroup });
+          } else if (formElement.type === 'dropdown') {
+            return _this5.getFormDropdown({ formElement: formElement, i: j, formgroup: formgroup });
           } else if (formElement.type === 'datatable') {
-            return _this3.getFormDatatable({ formElement: formElement, i: j, formgroup: formgroup });
+            return _this5.getFormDatatable({ formElement: formElement, i: j, formgroup: formgroup });
           } else if (formElement.type === 'checkbox' || formElement.type === 'radio') {
-            return _this3.getFormCheckbox({ formElement: formElement, i: j, formgroup: formgroup });
+            return _this5.getFormCheckbox({ formElement: formElement, i: j, formgroup: formgroup });
+          } else if (formElement.type === 'Semantic.checkbox') {
+            return _this5.getFormSemanticCheckbox({ formElement: formElement, i: j, formgroup: formgroup });
           } else if (formElement.type === 'label') {
             return _react2.default.createElement(
               _reBulma.Column,
@@ -456,40 +508,40 @@ var ResponsiveForm = function (_Component) {
               _react2.default.createElement('hr', formElement.passProps)
             );
           } else if (formElement.type === 'code') {
-            return _this3.getFormCode({ formElement: formElement, i: j, formgroup: formgroup });
+            return _this5.getFormCode({ formElement: formElement, i: j, formgroup: formgroup });
           } else if (formElement.type === 'editor') {
-            return _this3.getFormEditor({ formElement: formElement, i: j, formgroup: formgroup });
+            return _this5.getFormEditor({ formElement: formElement, i: j, formgroup: formgroup });
           } else if (formElement.type === 'link') {
-            return _this3.getFormLink({
-              formElement: formElement, i: j, button: _this3.getRenderedComponent(formElement.value, undefined, true)
+            return _this5.getFormLink({
+              formElement: formElement, i: j, button: _this5.getRenderedComponent(formElement.value, undefined, true)
             });
           } else if (formElement.type === 'select') {
-            return _this3.getFormSelect({ formElement: formElement, i: j, formgroup: formgroup });
+            return _this5.getFormSelect({ formElement: formElement, i: j, formgroup: formgroup });
           } else if (formElement.type === 'switch') {
-            return _this3.getFormSwitch({ formElement: formElement, i: j, formgroup: formgroup });
+            return _this5.getFormSwitch({ formElement: formElement, i: j, formgroup: formgroup });
           } else if (formElement.type === 'image') {
-            return _this3.getImage({ formElement: formElement, i: j, formgroup: formgroup });
+            return _this5.getImage({ formElement: formElement, i: j, formgroup: formgroup });
           } else if (formElement.type === 'slider') {
-            return _this3.getSliderInput({ formElement: formElement, i: j, formgroup: formgroup });
+            return _this5.getSliderInput({ formElement: formElement, i: j, formgroup: formgroup });
           } else if (formElement.type === 'staticLayout') {
-            return _this3.staticLayouts[formElement.value];
+            return _this5.staticLayouts[formElement.value];
           } else if (formElement.type === 'layout') {
             var layoutComponent = formElement.value;
-            if (_this3.props.includeFormDataOnLayout) {
-              layoutComponent.props = (0, _assign2.default)({}, layoutComponent.props, { formdata: _this3.state });
+            if (_this5.props.includeFormDataOnLayout) {
+              layoutComponent.props = (0, _assign2.default)({}, layoutComponent.props, { formdata: _this5.state });
             }
             return _react2.default.createElement(
               _reBulma.Column,
               (0, _extends3.default)({ key: j }, formElement.layoutProps),
-              _this3.getRenderedComponent(formElement.value, _this3.state)
+              _this5.getRenderedComponent(formElement.value, _this5.state)
             );
           } else if (formElement.type === 'submit') {
-            return _this3.getFormSubmit({ formElement: formElement, i: j, formgroup: formgroup });
+            return _this5.getFormSubmit({ formElement: formElement, i: j, formgroup: formgroup });
           } else if (formElement.type === 'group') {
-            return _this3.getFormGroup({ formElement: formElement, i: j, groupElements: formElement.groupElements.map(getFormElements) });
+            return _this5.getFormGroup({ formElement: formElement, i: j, groupElements: formElement.groupElements.map(getFormElements) });
           } else {
             formElement.passProps = (0, _assign2.default)({}, formElement.passProps, { type: formElement.type });
-            return _this3.getFormTextInputArea({ formElement: formElement, i: j, formgroup: formgroup });
+            return _this5.getFormTextInputArea({ formElement: formElement, i: j, formgroup: formgroup });
 
             // return <Column key={j} {...formElement.layoutProps}>{`${formElement.label || formElement.name }(${formElement.type || 'unknown'}):${ this.state[formElement.name] || formElement.value }`}</Column>;
           }
@@ -602,7 +654,7 @@ var ResponsiveForm = function (_Component) {
         }, formgroup.gridProps);
         var getFormElements = function getFormElements(formElement, j) {
           if (formElement.type === 'submit') {
-            return _this3.getCardFooterItem({ formElement: formElement, i: j, formgroup: formgroup });
+            return _this5.getCardFooterItem({ formElement: formElement, i: j, formgroup: formgroup });
           } else {
             return _react2.default.createElement(
               _reBulma.CardFooterItem,
@@ -619,23 +671,24 @@ var ResponsiveForm = function (_Component) {
       }) : [];
 
       if (this.props.cardForm) {
+        var cardFormProps = this.props.cardFormProps || {};
         return _react2.default.createElement(
           _reBulma.Card,
-          (0, _extends3.default)({ className: '__ra_rf' }, (0, _assign2.default)({}, {
-            isFullwidth: true
-          }, this.props.cardFormProps)),
+          (0, _extends3.default)({}, (0, _assign2.default)({}, { isFullwidth: true }, cardFormProps.cardProps), {
+            style: this.props.cardStyle,
+            className: '__ra_rf' + (cardFormProps.cardProps && cardFormProps.cardProps.className) ? cardFormProps.cardProps.className : '' }),
           this.props.cardFormTitle ? _react2.default.createElement(
             _reBulma.CardHeader,
-            null,
+            { style: cardFormProps.headerStyle },
             _react2.default.createElement(
               _reBulma.CardHeaderTitle,
-              this.props.cardFormTitleProps,
-              this.props.cardFormTitle
+              { style: cardFormProps.headerTitleStyle },
+              cardFormProps.cardFormTitle
             )
           ) : null,
           _react2.default.createElement(
             _reBulma.CardContent,
-            null,
+            cardFormProps.cardContentProps,
             formGroupData,
             this.props.children
           ),

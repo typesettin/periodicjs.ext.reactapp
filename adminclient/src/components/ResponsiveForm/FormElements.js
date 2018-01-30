@@ -10,16 +10,17 @@ import capitalize from 'capitalize';
 // import ResponsiveButton from '../ResponsiveButton';
 // import { EditorState, } from 'draft-js';
 import Slider from 'rc-slider';
-import { default as RCSwitch } from 'rc-switch';
+import {  default  as RCSwitch } from 'rc-switch';
 import { ControlLabel, Label, Input, Button, CardFooterItem, Select, Textarea, Group, Image, } from 're-bulma';
 import MaskedInput from 'react-text-mask';
+import { Dropdown, Checkbox } from 'semantic-ui-react';
 import moment from 'moment';
 import numeral from 'numeral';
 import pluralize from 'pluralize';
 import flatten, { unflatten, } from 'flat';
 import styles from '../../styles';
 import { validateForm, } from './FormHelpers';
-
+    
 export function getPropertyAttribute(options) {
   let { property, element, } = options;
   let attribute = element.name;
@@ -58,10 +59,7 @@ function getFormElementHelp(hasError, state, name) {
 
 function getCustomErrorLabel(hasError, state, formelement) {
   return (hasError) ? (
-    <div style={Object.assign({
-      fontSize: 11,
-      color:formelement.errorColor||'#ed6c63',
-    }, formelement.customErrorProps)}>{state.formDataErrors[ formelement.name ][ 0 ]}</div>
+    <span className="__re-bulma_help __re-bulma_is-danger" style={formelement.customErrorProps}>{state.formDataErrors[ formelement.name ][ 0 ]}</span>
   ): null;
 }
 
@@ -281,7 +279,7 @@ export function getFormDatatable(options){
       formtype: false,
     });
   tableHeaders = tableHeaders.map(header => {
-    if (header.formtype === 'select' && !header.formoptions) {
+    if ((header.formtype === 'select' || header.formtype === 'dropdown')  && !header.formoptions) {
       header.formoptions = (header.sortid && this.state.__formOptions && this.state.__formOptions[ header.sortid ])
       ? this.state.__formOptions[ header.sortid ]
       : [];
@@ -394,6 +392,68 @@ export function getFormDatalist(options){
         this.setState(updatedStateProp);
       }}
       value={ initialValue } />
+  </FormItem>);
+}
+
+export function getFormDropdown(options){
+  let { formElement, i, } = options;
+  let initialValue = getInitialValue(formElement, Object.assign({}, this.state, unflatten(this.state)));
+  let hasError = getErrorStatus(this.state, formElement.name);
+  let hasValue = (formElement.name && this.state[formElement.name])? true : false;
+  let isValid = getValidStatus(this.state, formElement.name);
+  let wrapperProps= Object.assign({
+    className: '__re-bulma_control',
+  }, formElement.wrapperProps)
+  let onChange;
+  let passedProps = formElement.passProps;
+  let getPassablePropkeyevents = getPassablePropsKeyEvents.bind(this);
+  passedProps = getPassablePropkeyevents(passedProps, formElement);
+    let dropdowndata = [];
+    let displayField = (formElement.passProps.displayField)? formElement.passProps.displayField : 'label';
+    let valueField = (formElement.passProps.valueField) ? formElement.passProps.valueField : 'value';
+  
+    if(this.props.__formOptions && this.props.__formOptions[formElement.name]){
+      dropdowndata = this.props.__formOptions[formElement.name];
+      dropdowndata = dropdowndata.map(option => ({ text: option[displayField], value: option[valueField], key: option[valueField]}));
+    } else {
+      dropdowndata = formElement.options || [];
+      dropdowndata = dropdowndata.map(option => ({ text: option[displayField], value: option[valueField], key: option[valueField]}));
+    }
+  passedProps.options = dropdowndata;
+  if (formElement.disableOnChange) {
+    onChange = () => { return () => {}};
+  } else if (!onChange) {
+    onChange = (event, newvalue)=>{
+      let updatedStateProp = {};
+      updatedStateProp[ formElement.name ] = newvalue.value;
+      this.setState(updatedStateProp, () => {
+        if(formElement.validateOnChange){
+        this.validateFormElement({ formElement, });
+      }});
+    }
+  }  
+  let customCallbackfunction;
+  if (formElement.customOnChange) {
+    if (formElement.customOnChange.indexOf('func:this.props') !== -1) {
+      customCallbackfunction= this.props[ formElement.customOnChange.replace('func:this.props.', '') ];
+    } else if (formElement.customOnChange.indexOf('func:window') !== -1 && typeof window[ formElement.customOnChange.replace('func:window.', '') ] ==='function') {
+      customCallbackfunction= window[ formElement.customOnChange.replace('func:window.', '') ].bind(this, formElement);
+    } 
+  }
+  return (<FormItem key={i} {...formElement.layoutProps} initialIcon={formElement.initialIcon} isValid={isValid} hasError={hasError} hasValue={hasValue}>
+    {getFormLabel(formElement)}  
+    <div {...wrapperProps}>  
+      <Dropdown {...passedProps}
+        value={this.state[ formElement.name ] || initialValue}  
+        onChange={(event, newvalue)=>{
+          onChange.call(this, event, newvalue);
+          if(customCallbackfunction) customCallbackfunction(event);
+        }}
+        onSubmit={() => { return }}
+      />
+       {getCustomErrorIcon(hasError, isValid, this.state, formElement)}  
+      {getCustomErrorLabel(hasError, this.state, formElement)}
+    </div>
   </FormItem>);
 }
 
@@ -684,6 +744,48 @@ export function getFormCheckbox(options) {
     >
     </input>
     <span {...formElement.placeholderProps}>{this.state[ formElement.formdata_placeholder] || formElement.placeholder}</span>
+    {getCustomErrorLabel(hasError, this.state, formElement)}
+  </FormItem>);
+}
+
+export function getFormSemanticCheckbox(options) {
+  let { formElement, i, onValueChange, } = options;
+  let hasError = getErrorStatus(this.state, formElement.name);
+  let hasValue = (formElement.name && this.state[formElement.name])? true : false;
+  if (formElement.disableOnChange) {
+    onValueChange = () => { };
+  } else if (!onValueChange) {
+    onValueChange = (/*event*/) => {
+      // let text = event.target.value;
+      let updatedStateProp = {};
+      // console.debug('before', { updatedStateProp, formElement, }, event.target);
+      
+      updatedStateProp[this.state[formElement.formdata_name] || formElement.name] = (this.state[this.state[formElement.formdata_name] || formElement.name]) ? 0 : 'on';
+      // console.debug('after', { updatedStateProp, formElement, }, event.target);
+      if (formElement.onChangeFilter) {
+        const onChangeFunc = getFunctionFromProps.call(this, { propFunc: formElement.onChangeFilter });
+        updatedStateProp = onChangeFunc.call(this, Object.assign({}, this.state, updatedStateProp), updatedStateProp);
+      }
+      this.setState(updatedStateProp, () => {
+        if (formElement.validateOnChange) {
+          this.validateFormElement({ formElement, });
+        }
+      });
+    };
+  }
+  return (<FormItem key={i} {...formElement.layoutProps} hasError={hasError} hasValue={hasValue} >
+    <Checkbox {...formElement.passProps}
+      name={this.state[ formElement.formdata_name] || formElement.name}
+      checked={ (this.state[ formElement.name ] === "on") ? true : false }
+      onChange={onValueChange}
+      label={(typeof formElement.label === "string")
+        ? formElement.label
+        : (typeof formElement.label === "object")
+          ? this.getRenderedComponent(formElement.label) 
+          : null}
+    >
+    </Checkbox>
+    {/*<span {...formElement.placeholderProps}>{this.state[ formElement.formdata_placeholder] || formElement.placeholder}</span>*/}
     {getCustomErrorLabel(hasError, this.state, formElement)}
   </FormItem>);
 }
@@ -1003,6 +1105,104 @@ export function getFormEditor(options) {
   );
 }
 
+function getConfirmModal(options) {
+  let { formElement, } = options;
+  let confirmModal;
+  let modalContent = formElement.confirmModal.textContent || [];
+  let onSubmit;
+  if (formElement.confirmModal.type === 'comment') {
+    let name = formElement.confirmModal.name || 'comment';
+    onSubmit = (e) => {
+      if (this.props.formgroups[ this.props.formgroups.length - 1 ] && this.props.formgroups[ this.props.formgroups.length - 1 ].formElements) {
+        this.props.formgroups[ this.props.formgroups.length - 1 ].formElements.push({ name, });
+        this.props.hideModal('last');
+        this.submitForm.call(this);
+        this.props.formgroups[ this.props.formgroups.length - 1 ].formElements = this.props.formgroups[ this.props.formgroups.length - 1 ].formElements.filter(formElement => formElement.name !== name);
+      } else {
+        this.submitForm.call(this);
+      }
+    };
+    let comment_box = Object.assign({}, {
+      component: 'Input',
+      type: 'commentbox',
+      props: {
+        onChange: (e) => this.setState({ [ name ]: e.target.value }),
+      },
+    }, formElement.confirmModal.comment);
+    if (modalContent && modalContent[modalContent.length - 1] && modalContent[modalContent.length - 1].type === 'commentbox') {
+      modalContent.pop();
+      modalContent.push(comment_box);
+    } else {
+      modalContent.push(comment_box);
+    }
+  } else {
+    onSubmit = () => {
+      this.props.hideModal('last');
+      this.submitForm.call(this);
+    };
+  }
+      confirmModal = Object.assign({
+        title: 'Please Confirm',
+        text: {
+          component: 'div',
+          props: {
+            style: {
+              textAlign: 'center',
+            },
+            className: '__ra_rf_fe_s_cm',
+          },
+          children: [
+            {
+              component: 'div',
+              props: {
+                className: '__ra_rf_fe_s_cm_t',
+              },
+              children: modalContent || '',
+            },
+            {
+              component: 'div',
+              props: Object.assign({
+                className: '__ra_rf_fe_s_cm_bc',
+              }, formElement.confirmModal.buttonWrapperProps),
+              children: [
+                {
+                  component: 'ResponsiveButton',
+                  props: Object.assign({
+                    style: {
+                      margin: 10,
+                    },
+                    buttonProps: {
+                      size: 'isMedium',
+                      
+                      color: 'isPrimary',
+                    },
+                    onClick: onSubmit,
+                    onclickProps: 'last',
+                  }, formElement.confirmModal.yesButtonProps),
+                  children: formElement.confirmModal.yesButtonText || 'Yes',
+                },
+                {
+                  component: 'ResponsiveButton',
+                  props: Object.assign({
+                    style: {
+                      margin: 10,
+                    },
+                    buttonProps: {
+                      size: 'isMedium',
+                    },
+                    onClick: 'func:this.props.hideModal',
+                    onclickProps: 'last',
+                  }, formElement.confirmModal.noButtonProps),
+                  children: formElement.confirmModal.noButtonText || 'No',
+                },
+              ],
+            },
+          ],
+        },
+      }, formElement.confirmModal);
+      this.props.createModal(confirmModal);
+}
+
 export function getFormSubmit(options) {
   let { formElement, i, } = options;
   let passableProps = Object.assign({
@@ -1027,75 +1227,14 @@ export function getFormSubmit(options) {
           updateStateData[ 'submitButtonVal' ] = formElement.value;
         }
         this.setState(updateStateData, () => {
-          (formElement.confirmModal && Object.keys(this.state.formDataErrors).length<1)
-            ? this.props.createModal(Object.assign({
-              title: 'Please Confirm',
-              text: {
-                component: 'div',
-                props: {
-                  style: {
-                    textAlign:'center',
-                  },
-                  className:'__ra_rf_fe_s_cm',
-                },
-                children: [
-                  {
-                    component: 'div',
-                    props: {
-                      className:'__ra_rf_fe_s_cm_t',
-                    },
-                    children: formElement.confirmModal.textContent || '',
-                  },
-                  {
-                    component: 'div',
-                    props: Object.assign({
-                      className:'__ra_rf_fe_s_cm_bc',
-                    }, formElement.confirmModal.buttonWrapperProps),
-                    children: [
-                      {
-                        component: 'ResponsiveButton',
-                        props: Object.assign({
-                          style:{
-                            margin:10,
-                          },
-                          buttonProps: {
-                            size:'isMedium',
-                            
-                            color:'isPrimary',
-                          },
-                          onClick: () => {
-                            this.props.hideModal('last');
-                            this.submitForm.call(this);
-                          },
-                          onclickProps:'last',
-                        }, formElement.confirmModal.yesButtonProps),  
-                        children:formElement.confirmModal.yesButtonText||'Yes', 
-                      },
-                      {
-                        component: 'ResponsiveButton',
-                        props: Object.assign({
-                          style:{
-                            margin:10,
-                          },
-                          buttonProps: {
-                            size:'isMedium',
-                          },
-                          onClick: 'func:this.props.hideModal',
-                          onclickProps:'last',
-                        }, formElement.confirmModal.noButtonProps),  
-                        children:formElement.confirmModal.noButtonText||'No',
-                      },
-                    ], 
-                  },
-                ],
-              } ,}, formElement.confirmModal))
-            : this.submitForm.call(this);
+          (formElement.confirmModal && Object.keys(this.state.formDataErrors).length < 1) ? getConfirmModal.call(this, { formElement }) : this.submitForm.call(this); 
         });
       }}>
       {formElement.value}
     </Button>
   </FormItem>);
 }
+
 
 export function getCardFooterItem(options) {
   let { formElement, i, } = options;

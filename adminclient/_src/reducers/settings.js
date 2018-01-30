@@ -53,7 +53,12 @@ var appDefaultSettings = {
       buttonColor: 'isWhite',
       useGlobalSearch: false,
       useHeaderLogout: false,
-      customButton: false,
+      productHeader: {
+        layout: false,
+        productLinks: []
+      },
+      customButton: {},
+      profileImageStyle: {},
       navLabelStyle: {},
       containerStyle: {},
       userNameStyle: {}
@@ -137,7 +142,7 @@ var defaultUserNavigation = {
 };
 var packageJSON = {
   name: 'adminclient',
-  version: '10.1.0',
+  version: '10.1.1',
   'private': true,
   devDependencies: {
     'animate.css': '^3.5.2',
@@ -188,6 +193,8 @@ var packageJSON = {
     'react-responsive-carousel': '^3.1.3',
     'react-slick': '^0.15.4',
     'react-text-mask': '^5.0.2',
+    'semantic-ui-css': '^2.2.12',
+    'semantic-ui-react': '^0.77.2',
     'text-mask-addons': '^3.6.0',
     'validate.js': '^0.11.1',
     victory: '^0.24.0',

@@ -51,13 +51,13 @@ class ResponsiveCard extends Component {
 
   render() {
     let cardIcon = (this.props.iconImage) ? <Image src={this.state.icon} {...this.props.iconImage} onClick={() => this.expandCard()}/> : <CardHeaderIcon icon={this.state.icon} onClick={() => this.expandCard()} />;
-    let leftIcon = (this.props.leftIcon)?cardIcon:null;
-    let rightIcon = (!this.props.leftIcon)?cardIcon:null;
+    let leftIcon = (this.props.leftIcon && !this.props.staticCard)?cardIcon:null;
+    let rightIcon = (!this.props.leftIcon && !this.props.staticCard)?cardIcon:null;
     const fullCard = (
       <Card {...this.props.cardProps} isFullwidth style={this.props.cardStyle}>
         <CardHeader style={Object.assign({ cursor:'pointer', }, this.props.headerStyle)}>
           {leftIcon}
-          <CardHeaderTitle style={this.props.headerTitleStyle} onClick={() => this.expandCard()}>
+          <CardHeaderTitle style={this.props.headerTitleStyle} onClick={(this.props.staticCard)? undefined : () => this.expandCard()}>
             {(!this.state.cardTitle || typeof this.state.cardTitle ==='string')? this.state.cardTitle
               : this.getRenderedComponent(this.state.cardTitle)}
           </CardHeaderTitle>

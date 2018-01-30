@@ -36,8 +36,8 @@ export function validateFormElement(options) {
 }
 
 export function validateForm(options) {
-  // console.debug('testin valdation',this.props.validations)
   let { formdata, validationErrors, } = options;
+  // console.debug('testin valdation',this.props.validations,) 
   if (this.props.validations) {
     this.props.validations.forEach(validation => {
       let validationerror = validate({
@@ -85,13 +85,21 @@ export function assignHiddenFields(options) {
   return { formdata, hiddenInputs, submitFormData, };
 }
 
-export function getCallbackFromString(successCBProp) {
+export function getCallbackFromString(successCBProp, multiArgs=false) {
   let successCallback;
-  if (Array.isArray(successCBProp) && successCBProp.length) {
+  if (!multiArgs && Array.isArray(successCBProp) && successCBProp.length) {
     let fns = successCBProp.map(getCallbackFromString.bind(this));
     successCallback = function () {
       for (let i = 0; i < fns.length; i++) {
         fns[i].call(this, ...arguments);
+      }
+    }.bind(this);
+  } else if (multiArgs & Array.isArray(successCBProp) && successCBProp.length) {
+    let fns = successCBProp.map(getCallbackFromString.bind(this));
+    successCallback = function () {
+      for (let i = 0; i < fns.length; i++) {
+        let args = [ arguments[ 0 ][ i ] ].concat([].slice.call(arguments, 1));
+        fns[i].call(this, ...args);
       }
     }.bind(this);
   } else {
@@ -254,7 +262,7 @@ export function handleSuccessCallbacks(options) {
       this.props.setDynamicData(this.props.dynamicField, submitFormData);
     }
     if (successCallback) {
-      successCallback(fetchOptions.successProps || successData.callbackProps || Object.assign({}, submitFormData, successData), submitFormData);
+        successCallback(fetchOptions.successProps || successData.callbackProps || Object.assign({}, submitFormData, successData), submitFormData);
     }
   }
   if (responseCallback) {
@@ -264,7 +272,7 @@ export function handleSuccessCallbacks(options) {
       if (fetchOptions.setDynamicResponseData) {
         this.props.setDynamicData(this.props.dynamicResponseField, successData);
       }
-      responseCallback(successData.callbackProps || successData, submitFormData);
+      responseCallback(fetchOptions.responseProps || successData.callbackProps || successData, submitFormData);
     }
   }
   if (this.props.updateFormOnResponse) {

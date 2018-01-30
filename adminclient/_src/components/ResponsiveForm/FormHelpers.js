@@ -12,6 +12,10 @@ var _keys = require('babel-runtime/core-js/object/keys');
 
 var _keys2 = _interopRequireDefault(_keys);
 
+var _toConsumableArray2 = require('babel-runtime/helpers/toConsumableArray');
+
+var _toConsumableArray3 = _interopRequireDefault(_toConsumableArray2);
+
 var _assign = require('babel-runtime/core-js/object/assign');
 
 var _assign2 = _interopRequireDefault(_assign);
@@ -78,9 +82,9 @@ function validateFormElement(options) {
 }
 
 function validateForm(options) {
-  // console.debug('testin valdation',this.props.validations)
   var formdata = options.formdata,
       validationErrors = options.validationErrors;
+  // console.debug('testin valdation',this.props.validations,) 
 
   if (this.props.validations) {
     this.props.validations.forEach(function (validation) {
@@ -128,14 +132,26 @@ function assignHiddenFields(options) {
 }
 
 function getCallbackFromString(successCBProp) {
+  var multiArgs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
   var successCallback = void 0;
-  if (Array.isArray(successCBProp) && successCBProp.length) {
+  if (!multiArgs && Array.isArray(successCBProp) && successCBProp.length) {
     var fns = successCBProp.map(getCallbackFromString.bind(this));
     successCallback = function () {
       for (var i = 0; i < fns.length; i++) {
         var _fns$i;
 
         (_fns$i = fns[i]).call.apply(_fns$i, [this].concat(Array.prototype.slice.call(arguments)));
+      }
+    }.bind(this);
+  } else if (multiArgs & Array.isArray(successCBProp) && successCBProp.length) {
+    var _fns = successCBProp.map(getCallbackFromString.bind(this));
+    successCallback = function () {
+      for (var i = 0; i < _fns.length; i++) {
+        var _fns$i2;
+
+        var args = [arguments[0][i]].concat([].slice.call(arguments, 1));
+        (_fns$i2 = _fns[i]).call.apply(_fns$i2, [this].concat((0, _toConsumableArray3.default)(args)));
       }
     }.bind(this);
   } else {
@@ -326,7 +342,7 @@ function handleSuccessCallbacks(options) {
       if (fetchOptions.setDynamicResponseData) {
         this.props.setDynamicData(this.props.dynamicResponseField, successData);
       }
-      responseCallback(successData.callbackProps || successData, submitFormData);
+      responseCallback(fetchOptions.responseProps || successData.callbackProps || successData, submitFormData);
     }
   }
   if (this.props.updateFormOnResponse) {

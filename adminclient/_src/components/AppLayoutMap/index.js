@@ -37,6 +37,10 @@ var _victory = require('victory');
 
 var victory = _interopRequireWildcard(_victory);
 
+var _semanticUiReact = require('semantic-ui-react');
+
+var semantic = _interopRequireWildcard(_semanticUiReact);
+
 var _reactTextMask = require('react-text-mask');
 
 var _reactTextMask2 = _interopRequireDefault(_reactTextMask);
@@ -135,6 +139,10 @@ var _ResponsiveLink = require('../ResponsiveLink');
 
 var _ResponsiveLink2 = _interopRequireDefault(_ResponsiveLink);
 
+var _ResponsiveFormContainer = require('../ResponsiveFormContainer');
+
+var _ResponsiveFormContainer2 = _interopRequireDefault(_ResponsiveFormContainer);
+
 var _ResponsiveButton = require('../ResponsiveButton');
 
 var _ResponsiveButton2 = _interopRequireDefault(_ResponsiveButton);
@@ -155,8 +163,9 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// import Editor from '../RAEditor';
 var advancedBinding = (0, _advancedBinding.getAdvancedBinding)();
+// import Editor from '../RAEditor';
+
 var renderIndex = 0;
 
 function getFunctionFromProps(options) {
@@ -177,7 +186,7 @@ function getFunctionFromProps(options) {
 }
 
 var AppLayoutMap = exports.AppLayoutMap = (0, _assign2.default)({}, { victory: victory,
-  recharts: recharts, ResponsiveForm: _ResponsiveForm2.default, DynamicLayout: _DynamicLayout2.default, DynamicForm: _DynamicForm2.default, RawOutput: _RawOutput2.default, RawStateOutput: _RawStateOutput2.default, FormItem: _FormItem2.default, MenuAppLink: _MenuAppLink2.default, SubMenuLinks: _SubMenuLinks2.default, ResponsiveTable: _ResponsiveTable2.default, ResponsiveCard: _ResponsiveCard2.default, DynamicChart: _DynamicChart2.default, ResponsiveBar: _ResponsiveBar2.default, ResponsiveTabs: _ResponsiveTabs2.default, ResponsiveDatalist: _ResponsiveDatalist2.default, CodeMirror: _RACodeMirror2.default, Range: _rcSlider.Range, Slider: _rcSlider2.default, GoogleMap: _googleMapReact2.default, Carousel: _reactResponsiveCarousel.Carousel, PreviewEditor: _PreviewEditor2.default, ResponsiveSteps: _ResponsiveSteps2.default, /* Editor,*/
+  recharts: recharts, ResponsiveForm: _ResponsiveForm2.default, ResponsiveFormContainer: _ResponsiveFormContainer2.default, DynamicLayout: _DynamicLayout2.default, DynamicForm: _DynamicForm2.default, RawOutput: _RawOutput2.default, RawStateOutput: _RawStateOutput2.default, FormItem: _FormItem2.default, MenuAppLink: _MenuAppLink2.default, SubMenuLinks: _SubMenuLinks2.default, ResponsiveTable: _ResponsiveTable2.default, ResponsiveCard: _ResponsiveCard2.default, DynamicChart: _DynamicChart2.default, ResponsiveBar: _ResponsiveBar2.default, ResponsiveTabs: _ResponsiveTabs2.default, ResponsiveDatalist: _ResponsiveDatalist2.default, CodeMirror: _RACodeMirror2.default, Range: _rcSlider.Range, Slider: _rcSlider2.default, GoogleMap: _googleMapReact2.default, Carousel: _reactResponsiveCarousel.Carousel, PreviewEditor: _PreviewEditor2.default, ResponsiveSteps: _ResponsiveSteps2.default, /* Editor,*/
   ResponsiveLink: _ResponsiveLink2.default,
   ResponsiveButton: _ResponsiveButton2.default,
   MaskedInput: _reactTextMask2.default,
@@ -203,6 +212,8 @@ function getComponentFromMap() {
       return recharts[componentObject.component.replace('recharts.', '')];
     } else if (victory[componentObject.component.replace('victory.', '')]) {
       return victory[componentObject.component.replace('victory.', '')];
+    } else if (componentObject.component.indexOf('Semantic.') !== -1 && semantic[componentObject.component.replace('Semantic.', '')]) {
+      return semantic[componentObject.component.replace('Semantic.', '')];
     } else {
       return AppLayoutMap[componentObject.component];
     }
@@ -359,7 +370,12 @@ function getRenderedComponent(componentObject, resources, debug) {
       //element props
       renderedCompProps,
       //props children
-      componentObject.children && Array.isArray(componentObject.children) && typeof componentObject.children !== 'string' ? componentObject.children.map(function (childComponentObject) {
+      componentObject.children && Array.isArray(componentObject.children) && typeof componentObject.children !== 'string' ? componentObject.children.length === 1 ? getRenderedComponent.call(this, componentObject.bindprops ? (0, _assign2.default)({}, componentObject.children[0], {
+        props: (0, _assign2.default)({}, renderedCompProps, componentObject.children[0].thisprops && componentObject.children[0].thisprops.style || // this is to make sure when you bind props, if you've defined props in a dynamic property, to not use bind props to  remove passing down styles
+        componentObject.children[0].asyncprops && componentObject.children[0].asyncprops.style || componentObject.children[0].windowprops && componentObject.children[0].windowprops.style ? {} : {
+          style: {}
+        }, componentObject.children[0].props, { key: renderIndex + Math.random() })
+      }) : componentObject.children[0], resources) : componentObject.children.map(function (childComponentObject) {
         return getRenderedComponent.call(_this, componentObject.bindprops ? (0, _assign2.default)({}, childComponentObject, {
           props: (0, _assign2.default)({}, renderedCompProps, childComponentObject.thisprops && childComponentObject.thisprops.style || // this is to make sure when you bind props, if you've defined props in a dynamic property, to not use bind props to  remove passing down styles
           childComponentObject.asyncprops && childComponentObject.asyncprops.style || childComponentObject.windowprops && childComponentObject.windowprops.style ? {} : {

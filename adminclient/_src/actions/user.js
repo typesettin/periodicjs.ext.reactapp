@@ -640,6 +640,7 @@ var user = {
       var fetchResponse = void 0;
       var cachedResponseData = void 0;
       var loginSettings = getState().settings.login;
+      var sessionSettings = getState().settings.session;
       var notificationsSettings = getState().settings.ui.notifications;
       var url = loginSettings.url;
 
@@ -668,6 +669,27 @@ var user = {
           timeout: responseData.timeout,
           token: responseData.token
         })), _serverSideReactNative.AsyncStorage.setItem(_constants2.default.jwt_token.PROFILE_JSON, (0, _stringify2.default)(responseData.user)), _this10.initializeAuthenticatedUser(responseData.token, false, __global__returnURL)(dispatch, getState)]);
+      }).then(function () {
+        if (sessionSettings && sessionSettings.registerUser) {
+          return fetch(sessionSettings.url, {
+            method: sessionSettings.method || 'POST',
+            headers: (0, _assign2.default)({
+              'Accept': 'application/json'
+              // 'Content-Type': 'application/json',
+            }, sessionSettings.options.headers, {
+              username: loginData.username,
+              token: cachedResponseData.token
+            }),
+            body: (0, _stringify2.default)({
+              username: loginData.username,
+              token: cachedResponseData.token
+            })
+          });
+        } else {
+          return;
+        }
+      }).then(checkStatus).then(function (response) {
+        return response.json();
       }).then(function () {
         dispatch(_this10.recievedLoginUser(url, fetchResponse, cachedResponseData));
         if (!notificationsSettings.hide_login_notification) {
