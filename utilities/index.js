@@ -10,7 +10,8 @@ const manifest = require('./manifest');
 const styles = require('./styles');
 const controllerhelper = require('./controllerhelper');
 const detail_views = require('./detail_views');
-const server_manifest = require('./server_manifest');
+// const server_manifest = require('./server_manifest');
+const server_manifest = require('../adminclient/src/server_manifest');
 
 module.exports = {
   settings,

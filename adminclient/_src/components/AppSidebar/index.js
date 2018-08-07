@@ -86,7 +86,6 @@ var AppSidebar = function (_Component) {
         //   : ()
         // }
 
-
         _react2.default.createElement(
           'div',
           { style: (0, _assign2.default)({ padding: '1rem', borderRight: '1px solid black' }, _styles2.default.fullHeight, _styles2.default.mainContainer, _styles2.default.sidebarContainer, navigationContainer.style),

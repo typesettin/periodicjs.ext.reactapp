@@ -26,6 +26,7 @@ const filterLabelStyleProps = {
 
 class ResponsiveTable extends Component {
   constructor(props) {
+    // console.log({props})
     super(props);
     // console.debug('this.props.getState()',this.props.getState());
     let rows = props.rows || [];

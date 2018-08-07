@@ -137,7 +137,7 @@ var defaultUserNavigation = {
 };
 var packageJSON = {
   name: 'adminclient',
-  version: '10.1.0',
+  version: '11.0.0',
   'private': true,
   devDependencies: {
     'animate.css': '^3.5.2',
