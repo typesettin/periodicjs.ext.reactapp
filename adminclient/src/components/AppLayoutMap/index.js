@@ -26,6 +26,8 @@ import ResponsiveDatalist from '../ResponsiveDatalist';
 import ResponsiveTable from '../ResponsiveTable';
 import ResponsiveCard from '../ResponsiveCard';
 import DynamicChart from '../DynamicChart';
+// import DynamicResponsiveChart from '../DynamicChart/responsive';
+import DynamicComponent from '../DynamicComponent';
 import ResponsiveTabs from '../ResponsiveTabs';
 import ResponsiveBar from '../ResponsiveBar';
 import ResponsiveLink from '../ResponsiveLink';
@@ -38,7 +40,7 @@ let renderIndex = 0;
 
 export function getFunctionFromProps(options) {
   const { propFunc } = options;
-
+  
   if (typeof propFunc === 'string' && propFunc.indexOf('func:this.props.reduxRouter') !== -1) {
     return this.props.reduxRouter[ propFunc.replace('func:this.props.reduxRouter.', '') ];
   } else if (typeof propFunc === 'string' && propFunc.indexOf('func:this.props') !== -1) {
@@ -53,7 +55,7 @@ export function getFunctionFromProps(options) {
 }
 
 export let AppLayoutMap = Object.assign({}, { victory,
-  recharts, ResponsiveForm, DynamicLayout, DynamicForm, RawOutput, RawStateOutput, FormItem, MenuAppLink, SubMenuLinks, ResponsiveTable, ResponsiveCard, DynamicChart, ResponsiveBar, ResponsiveTabs, ResponsiveDatalist, CodeMirror, Range, Slider, GoogleMap, Carousel, PreviewEditor, ResponsiveSteps, /* Editor,*/
+  recharts, ResponsiveForm, DynamicLayout, DynamicComponent, DynamicForm, RawOutput, RawStateOutput, FormItem, MenuAppLink, SubMenuLinks, ResponsiveTable, ResponsiveCard, DynamicChart, /* DynamicResponsiveChart,*/ ResponsiveBar, ResponsiveTabs, ResponsiveDatalist, CodeMirror, Range, Slider, GoogleMap, Carousel, PreviewEditor, ResponsiveSteps, /* Editor,*/
   ResponsiveLink,
   ResponsiveButton,
   MaskedInput,

@@ -189,7 +189,7 @@ export const getDynamicFunctionName = function _getDynamicFunctionName (function
   return function_name.replace(FUNCTION_NAME_REGEXP, '$1');
 };
 
-export const fetchAction = function _fetchAction(pathname, fetchOptions, success) {
+export const fetchAction = function _fetchAction(pathname, fetchOptions = {}, success = {}) {
   // let pathname, fetchOptions, success;
   if (typeof pathname === 'object') {
     pathname = pathname.pathname;
@@ -208,7 +208,7 @@ export const fetchAction = function _fetchAction(pathname, fetchOptions, success
   }
   fetchOptions.headers = Object.assign({}, fetchOptions.headers, headers);
 
-  fetch(pathname, fetchOptions)
+  return fetch(pathname, fetchOptions)
     .then(utilities.checkStatus)
     .then(res => {
       if (success.success) {

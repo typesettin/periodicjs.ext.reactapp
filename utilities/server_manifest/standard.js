@@ -2,7 +2,7 @@
 
 const capitalize = require('capitalize');
 
-const colors = [
+const standard_colors = [
   '#6991AC',
   '#314D5F',
   '#B1DCF8',
@@ -62,7 +62,7 @@ function getLayout(options = {}) {
       props: col.columnProps,
       children: (Array.isArray(col))
         ? col
-        : [col, ],
+        : [col,],
     })),
     // children:'ok'
   }));
@@ -70,6 +70,7 @@ function getLayout(options = {}) {
 
 function getAreaChart(options = {}) {
   const { x, y, data, i, stacked, labels, } = options;
+  const colors = options.colors || standard_colors;
 
   return {
     component: 'victory.VictoryArea',
@@ -96,6 +97,7 @@ function getAreaChart(options = {}) {
 
 function getLineChart(options = {}) {
   const { x, y, data, i, stacked, labels, } = options;
+  const colors = options.colors || standard_colors;
 
   return {
     component: 'victory.VictoryLine',
@@ -133,6 +135,7 @@ function getVictoryChart(options = {}) {
       ? charts.map((chart, i) => getLineChart({ data, x: chart.x, y: chart.y, i, stacked, labels, }))
       : null,
   };
+  const colors = options.colors || standard_colors;
   
   return {
     component: 'div',
@@ -156,8 +159,8 @@ function getVictoryChart(options = {}) {
             component: 'victory.VictoryAxis',
             props: {
               tickValues: (displayXAxis)
-            ? data.map(datum => datum.date)
-            : undefined,
+                ? data.map(datum => datum.date)
+                : undefined,
               label: options.xAxisTitle,
             },
           } : null,
@@ -183,17 +186,17 @@ function getVictoryChart(options = {}) {
             }
             : null,
           (stacked)
-        ? {
-          component: 'victory.VictoryStack',
-          props: {
-            colorScale: colors,
-            style: {
-              fontFamily:sansSerif,
-            },
-          },
-          children: chartTypeLookup[ chartType ] || null,
-        }
-      : null,
+            ? {
+              component: 'victory.VictoryStack',
+              props: {
+                colorScale: colors,
+                style: {
+                  fontFamily:sansSerif,
+                },
+              },
+              children: chartTypeLookup[ chartType ] || null,
+            }
+            : null,
         ].concat((stacked===false)?chartTypeLookup[ chartType ]:[]),
       },
       (externalLegend)?{
@@ -227,10 +230,15 @@ function getVictoryChart(options = {}) {
 }
 
 function getRechart(options = {}) {
-  const { data, charts, minHeight = 300, props, chartType, includeScale, xAxis = true, yAxis = true, legend = true, children = [], tooltipProps = {}, tooltip = true, tooltipEvalProps = {}, containerProps = {}, ignoreReduxProps = true, legendProps = {},} = options;
+  const { data, charts, minHeight = 300, props, chartType, includeScale, xAxis = true, yAxis = true, legend = true, children = [], tooltipProps = {}, tooltip = true, tooltipEvalProps = {}, containerProps = {}, ignoreReduxProps = true, legendProps = {}, } = options;
+  const colors = options.colors || standard_colors;
+
   const chartComponents = (Array.isArray(charts))
     ? charts.map((chart, i) => ({
       component: `recharts.${capitalize(chart.type)}`,
+      
+      ignoreReduxProps,
+      bindprops:false,
       props: Object.assign({
         dataKey: chart.dataKey,
         fill: (chart.fill || chart.fillColor) ? chart.fillColor || colors[ i % colors.length ] : undefined,
@@ -250,11 +258,14 @@ function getRechart(options = {}) {
   return {
     component: 'recharts.ResponsiveContainer',
     ignoreReduxProps,
+    bindprops:false,
     props: Object.assign({
       minHeight,
-    },containerProps),
+    }, containerProps),
     __dangerouslyInsertComponents: {
       _children: {
+        ignoreReduxProps,
+        bindprops:false,
         component: `recharts.${capitalize(rechartType)}Chart`,
         props: Object.assign({
           data,
@@ -262,13 +273,18 @@ function getRechart(options = {}) {
         children: chartComponents.concat([
           (legend)?{
             component: 'recharts.Legend',
+            ignoreReduxProps,
+            bindprops:false,
             props:Object.assign( {
               align: 'right',
-            },legendProps),
+            }, legendProps),
           }:null,
           (xAxis)
             ?  {
               component: 'recharts.XAxis',
+              
+              ignoreReduxProps,
+              bindprops:false,
               props: Object.assign({
                 dataKey: 'date',
               }, xAxis.props),
@@ -277,13 +293,16 @@ function getRechart(options = {}) {
                 props: Object.assign( {
                   // value: 'Sales $',
                   position: 'insideBottom',
-                },xAxis.labelProps),
-              }, ],
+                }, xAxis.labelProps),
+              },],
             }
             : null,
           (yAxis)
             ?  {
               component: 'recharts.YAxis',
+              
+              ignoreReduxProps,
+              bindprops:false,
               props: Object.assign({
               }, yAxis.props),
               
@@ -292,26 +311,35 @@ function getRechart(options = {}) {
               }, yAxis.evalProps),
               children: [{
                 component: 'recharts.Label',
+                
+                ignoreReduxProps,
+                bindprops:false,
                 props: Object.assign( {
                   // value: 'Sales $',
                   position: 'insideLeft',
                   angle: -90,
-                },yAxis.labelProps),
-              }, ],
+                }, yAxis.labelProps),
+              },],
             }
             : null,
           (tooltip)?{
             component: 'recharts.Tooltip',
+            
+            ignoreReduxProps,
+            bindprops:false,
             props: Object.assign({
               // dataKey:'actual',
-            },tooltipProps),
+            }, tooltipProps),
             __dangerouslyEvalProps: Object.assign({
               formatter: '(tick)=> window.__reactapp.__ra_helpers.numeral(tick).format("$0,0.00")',
-            },tooltipEvalProps),
+            }, tooltipEvalProps),
           }:null,
           (includeScale)
             ? {
-              component:'recharts.Brush',
+              component: 'recharts.Brush',
+              
+              ignoreReduxProps,
+              bindprops:false,
             }
             : null,
           
