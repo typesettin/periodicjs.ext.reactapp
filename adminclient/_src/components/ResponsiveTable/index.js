@@ -127,6 +127,8 @@ var ResponsiveTable = function (_Component) {
 
     // console.debug('this.props.getState()',this.props.getState());
     var _this = (0, _possibleConstructorReturn3.default)(this, (ResponsiveTable.__proto__ || (0, _getPrototypeOf2.default)(ResponsiveTable)).call(this, props));
+    // console.log({props})
+
 
     var rows = props.rows || [];
     rows = rows.documents ? rows.documents : rows;

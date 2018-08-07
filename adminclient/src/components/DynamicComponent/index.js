@@ -4,10 +4,10 @@ import { getRenderedComponent, } from '../AppLayoutMap';
 import AppSectionLoadingIndex from '../AppSectionLoading/index';
 import AppSectionLoadingError from '../AppSectionLoading/error';
 import flatten, { unflatten, } from 'flat';
-import { getAreaChart, getLayout, getLevel, getLineChart, getPageWrapper, getRechart, getVictoryChart, } from '../../../../utilities/server_manifest/standard';
-import { getTable, getBasicTable, getSheet } from '../../../../utilities/server_manifest/table';
-import { createForm, } from '../../../../utilities/server_manifest/forms';
-import { getCard, } from '../../../../utilities/server_manifest/card';
+import { getAreaChart, getLayout, getLevel, getLineChart, getPageWrapper, getRechart, getVictoryChart, } from '../../server_manifest/standard';
+import { getTable, getBasicTable, getSheet } from '../../server_manifest/table';
+import { createForm, } from '../../server_manifest/forms';
+import { getCard, } from '../../server_manifest/card';
 
 const functionalComponents = {
   getAreaChart, getLayout, getLevel, getLineChart, getPageWrapper, getRechart, getVictoryChart, getTable, getBasicTable, getSheet, createForm, getCard,

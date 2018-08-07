@@ -10,9 +10,7 @@ const disableLogger = (store) => (next) => (action) => {
   // console .log('dispatching: ', action,{store});
   return next(action);
 };
-const logger = (windowState.disableLogger || true)
-  ? disableLogger
-  : createLogger();
+const logger = (windowState.disableLogger) ? disableLogger : createLogger();
 // const logger = (store) => (next) => (action) => {
 //   console.log('dispatching: ', action,{store});
 //   return next(action);

@@ -206,8 +206,11 @@ var getDynamicFunctionName = exports.getDynamicFunctionName = function _getDynam
   return function_name.replace(FUNCTION_NAME_REGEXP, '$1');
 };
 
-var fetchAction = exports.fetchAction = function _fetchAction(pathname, fetchOptions, success) {
+var fetchAction = exports.fetchAction = function _fetchAction(pathname) {
   var _this3 = this;
+
+  var fetchOptions = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  var success = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
   // let pathname, fetchOptions, success;
   if ((typeof pathname === 'undefined' ? 'undefined' : (0, _typeof3.default)(pathname)) === 'object') {
@@ -225,7 +228,7 @@ var fetchAction = exports.fetchAction = function _fetchAction(pathname, fetchOpt
   }
   fetchOptions.headers = (0, _assign2.default)({}, fetchOptions.headers, headers);
 
-  fetch(pathname, fetchOptions).then(_index2.default.checkStatus).then(function (res) {
+  return fetch(pathname, fetchOptions).then(_index2.default.checkStatus).then(function (res) {
     if (success.success) {
       if (success.success.modal) {
         _this3.props.createModal(success.success.modal);
