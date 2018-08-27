@@ -546,10 +546,16 @@ class ResponsiveTable extends Component {
           })}
         </rb.Select>;
       } else if (this.props.useInputRows && header && header.formtype && header.formtype === 'datalist') {
-        let rowdata = Array.isArray(this.props.__tableOptions[ header.sortid ][ options.rowIndex ]) ? this.props.__tableOptions[ header.sortid ][ options.rowIndex ]
-          : Array.isArray(this.props.__tableOptions[ header.sortid ]) ? this.props.__tableOptions[ header.sortid ]
-            : [];
+        let rowdata = [];
+        if (this.props.__tableOptions) {
+          rowdata = Array.isArray(this.props.__tableOptions[ header.sortid ][ options.rowIndex ])
+            ? this.props.__tableOptions[ header.sortid ][ options.rowIndex ]
+            : Array.isArray(this.props.__tableOptions[ header.sortid ])
+              ? this.props.__tableOptions[ header.sortid ]
+              : [];
+        }
         return <ResponsiveDatalist
+          getState={this.props.getState.bind(this)}
           value={value}
           {...header.datalistProps}
           datalistdata={ rowdata }
@@ -675,6 +681,33 @@ class ResponsiveTable extends Component {
         {...CodeMirrorProps}
         {...codeProps}
       />);  
+    case 'datalist':
+      let rowdata = this.props.__tableOptions && Array.isArray(this.props.__tableOptions[ header.sortid ])
+        ? this.props.__tableOptions[ header.sortid ]
+        : [];
+        // console.log('outside this.props', this.props);
+      // const updateFunction = {
+      //   onChange: function (event) {
+      //     let text = event;
+      //     let name = header.sortid;
+      //     this.updateNewRowText({ name, text, });
+      //   }.bind(this)
+      // };
+      return (<ResponsiveDatalist
+        // value={value}
+        {...this.props}
+        datalistdata={rowdata}
+        onChange={(event)=> {
+          console.log('inside this.props', this.props);
+
+          let text = event;
+          let name = header.sortid;
+          this.updateNewRowText({ name, text, });
+        }}
+        // {{...}updateFunction}
+        {...header.datalistProps}
+      >
+      </ResponsiveDatalist>);
     case 'text':
     default:
       return (<rb.Input
@@ -1128,7 +1161,7 @@ class ResponsiveTable extends Component {
                             
                           </span>  
                           )
-                          : this.updateGetFooterAddRow(header)}
+                          : this.getFooterAddRow(header)}
                       </rb.Th>
                     ))}
                   </rb.Tr>  

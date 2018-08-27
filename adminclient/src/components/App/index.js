@@ -22,6 +22,7 @@ import pluralize from 'pluralize';
 import numeral from 'numeral';
 import capitalize from 'capitalize';
 import moment from 'moment';
+import luxon from 'luxon';
 // import debounce from 'debounce';
 const history = getHistory(historySettings, AppConfigSettings, store);
 
@@ -43,6 +44,7 @@ window.__reactapp = Object.assign({}, {
   __ra_helpers: {
     numeral,
     moment,
+    luxon,
     capitalize,
     pluralize,
   },

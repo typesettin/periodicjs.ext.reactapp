@@ -1,3 +1,4 @@
+// eslint-disable-next-line 
 'use strict';
 
 var _assign = require('babel-runtime/core-js/object/assign');

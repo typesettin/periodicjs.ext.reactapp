@@ -3,7 +3,7 @@ import { Columns, Card, CardHeader, CardHeaderTitle, CardContent, CardFooter, Ca
 import ResponsiveCard from '../ResponsiveCard';
 import { getRenderedComponent, } from '../AppLayoutMap';
 import utilities from '../../util';
-import { getFormTextInputArea, getFormMaskedInput, getFormCheckbox, getFormSubmit, getFormSelect, getCardFooterItem, getFormCode, getFormTextArea, getFormEditor, getFormLink, getHiddenInput, getFormGroup, getImage, getFormDatalist, getRawInput, getSliderInput, getFormDatatable, getFormSwitch, } from './FormElements';
+import { getFormTextInputArea, getFormMaskedInput, getFormCheckbox, getFormSubmit, getFormSelect, getCardFooterItem, getFormCode, getFormTextArea, getFormEditor, getFormLink, getHiddenInput, getFormGroup, getImage, getFormDatalist, getRawInput, getSliderInput, getFormDatatable, getFormSwitch, getButton, } from './FormElements';
 import { getCallbackFromString, setFormNameFields, assignHiddenFields, validateForm, assignFormBody, handleFormSubmitNotification, handleSuccessCallbacks, submitThisDotPropsFunc, submitWindowFunc, validateFormElement, } from './FormHelpers';
 import flatten from 'flat';
 import qs from 'querystring';
@@ -36,6 +36,7 @@ const propTypes = {
 
 const defaultProps = {
   notificationForm: false,
+  useStatefulFormgroups: false,
   flattenFormData: false,
   useFormOptions: false,
   useDynamicData: false,
@@ -95,6 +96,9 @@ class ResponsiveForm extends Component{
         formDataError: null,
         formDataErrors: {},
         __formDataStatusDate: new Date().toString(),
+        __formGroups: (props.useStatefulFormgroups)
+          ? props.formgroups
+          : undefined,
         formDataLists:{},
         formDataTables:{},
         formDataFiles:{},
@@ -115,6 +119,7 @@ class ResponsiveForm extends Component{
     this.getCardFooterItem = getCardFooterItem.bind(this);
     this.getFormSelect = getFormSelect.bind(this);
     this.getRawInput = getRawInput.bind(this);
+    this.getButton = getButton.bind(this);
     this.getSliderInput = getSliderInput.bind(this);
     this.getFormSwitch = getFormSwitch.bind(this);
     this.getFormDatatable = getFormDatatable.bind(this);
@@ -199,6 +204,9 @@ class ResponsiveForm extends Component{
     delete formdata.formDataLists;
     delete formdata.__formDataStatusDate;
     delete formdata.formDataTables;
+    delete formdata.__formGroups;
+    
+    console.log({ formdata });
 
     let assigedHiddenFields = getAssigedHiddenField({ formdata, hiddenInputs, submitFormData, });
     hiddenInputs = assigedHiddenFields.hiddenInputs;
@@ -368,7 +376,10 @@ class ResponsiveForm extends Component{
   render() {
     // console.debug('form render', this.state);
     let keyValue = 0;
-    let formGroupData = this.props.formgroups.map((formgroup, i) => {
+    const formGroupsToUse = (this.props.useStatefulFormgroups)
+      ? this.state.__formGroups
+      : this.props.formgroups;
+    let formGroupData = formGroupsToUse.map((formgroup, i) => {
       let gridProps = Object.assign({
         isMultiline: true,
         key: i,
@@ -385,6 +396,8 @@ class ResponsiveForm extends Component{
           return this.getFormMaskedInput({ formElement,  i:j, formgroup, });
         } else if (formElement.type === 'textarea') {
           return this.getFormTextArea({ formElement,  i:j, formgroup, });
+        } else if (formElement.type === 'button') {
+          return this.getButton({ formElement,  i:j, formgroup, });
         } else if (formElement.type === 'hidden') {
           return this.getHiddenInput({ formElement,  i:j, formgroup, });
         } else if (formElement.type === 'datalist') {

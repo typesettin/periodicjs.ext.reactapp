@@ -78,6 +78,10 @@ var _moment = require('moment');
 
 var _moment2 = _interopRequireDefault(_moment);
 
+var _luxon = require('luxon');
+
+var _luxon2 = _interopRequireDefault(_luxon);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // import constants from '../../constants';
@@ -196,6 +200,7 @@ window.__reactapp = (0, _assign2.default)({}, {
   __ra_helpers: {
     numeral: _numeral2.default,
     moment: _moment2.default,
+    luxon: _luxon2.default,
     capitalize: _capitalize2.default,
     pluralize: _pluralize2.default
   }

@@ -8,6 +8,7 @@ import { getAreaChart, getLayout, getLevel, getLineChart, getPageWrapper, getRec
 import { getTable, getBasicTable, getSheet } from '../../server_manifest/table';
 import { createForm, } from '../../server_manifest/forms';
 import { getCard, } from '../../server_manifest/card';
+import cache from 'memory-cache';
 
 const functionalComponents = {
   getAreaChart, getLayout, getLevel, getLineChart, getPageWrapper, getRechart, getVictoryChart, getTable, getBasicTable, getSheet, createForm, getCard,
@@ -16,6 +17,8 @@ const propTypes = {
   assignResourceProperty: PropTypes.string,
   assignFunctionalResourceProperty: PropTypes.string,
   data: PropTypes.object,
+  useCache: PropTypes.boolean,
+  cacheTimeout: PropTypes.number,
   dynamicDataTransformFunction: PropTypes.string,
   functionalComponent: PropTypes.string,
   functionalComponentProps: PropTypes.object,
@@ -25,6 +28,8 @@ const defaultProps = {
   assignResourceProperty: undefined,
   assignFunctionalResourceProperty: undefined,
   data: {},
+  useCache: true,
+  cacheTimeout:20000,
   dynamicDataTransformFunction: undefined,
   functionalComponent: undefined,
   functionalComponentProps: undefined,
@@ -96,15 +101,25 @@ class DynamicComponent extends Component {
         }
       );
       if (this.props.fetch_url) {
-        this.props.fetchAction.call(this,this.props.fetch_url, this.props.fetch_options)
-          .then(dynamicData => {
-            resources = dataTransform(dynamicData);
-            this.assignResources(resources);
-          })
-          .catch(e => {
-            console.error('dynamicComponent Error', e);
-            this.setState({ hasError: true, });
-          });
+        const cachedData = cache.get(this.props.fetch_url);
+        if (cachedData && this.props.useCache) {
+          console.log('got data from cache', this.props.fetch_url, cachedData, this.props.cacheTimeout);
+          resources = dataTransform(cachedData);
+          this.assignResources(resources);
+        } else {
+          this.props.fetchAction.call(this,this.props.fetch_url, this.props.fetch_options)
+            .then(dynamicData => {
+              if (this.props.useCache) {
+                cache.put(this.props.fetch_url, dynamicData,this.props.cacheTimeout,()=>{ console.log('removing from cache: '+this.props.fetch_url) });
+              }
+              resources = dataTransform(dynamicData);
+              this.assignResources(resources);
+            })
+            .catch(e => {
+              console.error('dynamicComponent Error', e);
+              this.setState({ hasError: true, });
+            });
+        }
       } else {
         setTimeout(() => { 
           try {

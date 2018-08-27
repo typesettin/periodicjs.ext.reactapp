@@ -1,4 +1,9 @@
+// eslint-disable-next-line 
 'use strict';
+
+var _stringify = require('babel-runtime/core-js/json/stringify');
+
+var _stringify2 = _interopRequireDefault(_stringify);
 
 var _typeof2 = require('babel-runtime/helpers/typeof');
 
@@ -51,7 +56,9 @@ function getTableBody() {
       tableColProps = options.tableColProps,
       _options$customRowPro2 = options.customRowProps,
       customRowProps = _options$customRowPro2 === undefined ? {} : _options$customRowPro2,
-      htmlTD = options.htmlTD;
+      htmlTD = options.htmlTD,
+      stringifyValues = options.stringifyValues,
+      stringifySpacing = options.stringifySpacing;
 
   return {
     component: 'Tbody',
@@ -66,7 +73,7 @@ function getTableBody() {
             props: (0, _assign2.default)({
               className: '__re-bulma_td'
             }, tableColProps, (0, _typeof3.default)(row[col]) === 'object' && (0, _typeof3.default)(row[col].columnProps) ? row[col].columnProps : {}),
-            children: (0, _typeof3.default)(row[col]) === 'object' && typeof row[col].displayValue !== 'undefined' ? row[col].displayValue || ' ' : row[col]
+            children: (0, _typeof3.default)(row[col]) === 'object' && typeof row[col].displayValue !== 'undefined' ? row[col].displayValue || ' ' : (0, _typeof3.default)(row[col]) === 'object' && stringifyValues ? (0, _stringify2.default)(row[col], null, stringifySpacing) : row[col]
           };
         })
       };
@@ -79,8 +86,7 @@ function getTableFooter() {
   var footers = options.footers,
       footerProps = options.footerProps,
       htmlTF = options.htmlTF,
-      tableRowProps = options.tableRowProps,
-      customRowProps = options.customRowProps;
+      tableRowProps = options.tableRowProps;
 
   return {
     component: 'Tfoot',
@@ -126,7 +132,11 @@ function getBasicTable() {
       _options$ignoreReduxP = options.ignoreReduxProps,
       ignoreReduxProps = _options$ignoreReduxP === undefined ? true : _options$ignoreReduxP,
       _options$customRowPro3 = options.customRowProps,
-      customRowProps = _options$customRowPro3 === undefined ? {} : _options$customRowPro3;
+      customRowProps = _options$customRowPro3 === undefined ? {} : _options$customRowPro3,
+      _options$stringifyVal = options.stringifyValues,
+      stringifyValues = _options$stringifyVal === undefined ? true : _options$stringifyVal,
+      _options$stringifySpa = options.stringifySpacing,
+      stringifySpacing = _options$stringifySpa === undefined ? 2 : _options$stringifySpa;
 
   var headers = header || (0, _keys2.default)(data[0]);
   var footers = footer || headers;
@@ -135,7 +145,7 @@ function getBasicTable() {
     component: 'Table',
     ignoreReduxProps: ignoreReduxProps,
     props: tableProps,
-    children: [hasHeader ? getTableHeader({ data: data, headers: headers, headerProps: headerProps, capitalizeHeaders: capitalizeHeaders, htmlTH: htmlTH, customRowProps: customRowProps }) : null, hasBody ? getTableBody({ data: data, bodyProps: bodyProps, tableRowProps: tableRowProps, tableColProps: tableColProps, htmlTD: htmlTD, customRowProps: customRowProps }) : null, hasFooter ? getTableFooter({ data: data, footers: footers, footerProps: footerProps, htmlTF: htmlTF, customRowProps: customRowProps }) : null]
+    children: [hasHeader ? getTableHeader({ data: data, headers: headers, headerProps: headerProps, capitalizeHeaders: capitalizeHeaders, htmlTH: htmlTH, customRowProps: customRowProps }) : null, hasBody ? getTableBody({ data: data, bodyProps: bodyProps, tableRowProps: tableRowProps, tableColProps: tableColProps, htmlTD: htmlTD, customRowProps: customRowProps, stringifyValues: stringifyValues, stringifySpacing: stringifySpacing }) : null, hasFooter ? getTableFooter({ data: data, footers: footers, footerProps: footerProps, htmlTF: htmlTF, customRowProps: customRowProps }) : null]
   };
 }
 

@@ -196,7 +196,8 @@ function getButton() {
       button = options.button,
       onclickProps = options.onclickProps,
       style = options.style,
-      onclickAddProp = options.onclickAddProp;
+      onclickAddProp = options.onclickAddProp,
+      buttonProps = options.buttonProps;
 
 
   var actionType = {
@@ -206,15 +207,15 @@ function getButton() {
       // style: {
       //   marginLeft: '10px',
       // },
-      buttonProps: {
+      buttonProps: (0, _assign2.default)({
         color: 'isPrimary'
-      }
+      }, buttonProps)
     } : undefined,
     fetch: action && action.type === 'fetch' ? {
-      buttonProps: {
+      buttonProps: (0, _assign2.default)({
         color: action.method === 'DELETE' ? 'isDanger' : 'isPrimary',
         buttonStyle: 'isOutlined'
-      },
+      }, buttonProps),
       onClick: 'func:this.props.fetchAction',
       onclickBaseUrl: action.pathname,
       onclickLinkParams: action.pathParams,
@@ -243,7 +244,7 @@ function getButton() {
       buttonProps: button ? (0, _assign2.default)({}, {
         color: 'isPrimary',
         buttonStyle: 'isOutlined'
-      }, button.props) : undefined
+      }, button.props, buttonProps) : undefined
       // aProps: {},
     } : undefined
   };
@@ -252,7 +253,7 @@ function getButton() {
     props: (0, _assign2.default)({}, actionType[action.type], props),
     children: content
   }, options.responsiveButton);
-  // console.log({ returnButton });
+  // console.log('returnButton',JSON.stringify(returnButton,null,2),props);
   return returnButton;
 }
 

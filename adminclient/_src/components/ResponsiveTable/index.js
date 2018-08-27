@@ -696,8 +696,12 @@ var ResponsiveTable = function (_Component) {
             })
           );
         } else if (this.props.useInputRows && header && header.formtype && header.formtype === 'datalist') {
-          var rowdata = Array.isArray(this.props.__tableOptions[header.sortid][options.rowIndex]) ? this.props.__tableOptions[header.sortid][options.rowIndex] : Array.isArray(this.props.__tableOptions[header.sortid]) ? this.props.__tableOptions[header.sortid] : [];
+          var rowdata = [];
+          if (this.props.__tableOptions) {
+            rowdata = Array.isArray(this.props.__tableOptions[header.sortid][options.rowIndex]) ? this.props.__tableOptions[header.sortid][options.rowIndex] : Array.isArray(this.props.__tableOptions[header.sortid]) ? this.props.__tableOptions[header.sortid] : [];
+          }
           return _react2.default.createElement(_ResponsiveDatalist2.default, (0, _extends3.default)({
+            getState: this.props.getState.bind(this),
             value: value
           }, header.datalistProps, {
             datalistdata: rowdata,
@@ -836,6 +840,29 @@ var ResponsiveTable = function (_Component) {
             }
           }, header.codeProps);
           return _react2.default.createElement(_RACodeMirror2.default, (0, _extends3.default)({}, CodeMirrorProps, codeProps));
+        case 'datalist':
+          var rowdata = this.props.__tableOptions && Array.isArray(this.props.__tableOptions[header.sortid]) ? this.props.__tableOptions[header.sortid] : [];
+          // console.log('outside this.props', this.props);
+          // const updateFunction = {
+          //   onChange: function (event) {
+          //     let text = event;
+          //     let name = header.sortid;
+          //     this.updateNewRowText({ name, text, });
+          //   }.bind(this)
+          // };
+          return _react2.default.createElement(_ResponsiveDatalist2.default
+          // value={value}
+          , (0, _extends3.default)({}, this.props, {
+            datalistdata: rowdata,
+            onChange: function onChange(event) {
+              console.log('inside this.props', _this7.props);
+
+              var text = event;
+              var name = header.sortid;
+              _this7.updateNewRowText({ name: name, text: text });
+            }
+            // {{...}updateFunction}
+          }, header.datalistProps));
         case 'text':
         default:
           return _react2.default.createElement(rb.Input, (0, _extends3.default)({}, header.footerFormElementPassProps, {
@@ -1554,7 +1581,7 @@ var ResponsiveTable = function (_Component) {
                           } }),
                         _this8.props.formRowAddButtonLabel ? _this8.props.formRowAddButtonLabel : 'Add'
                       )
-                    ) : _this8.updateGetFooterAddRow(header)
+                    ) : _this8.getFooterAddRow(header)
                   );
                 })
               )
