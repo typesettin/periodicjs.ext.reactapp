@@ -199,9 +199,10 @@ function setFormNameFields(options) {
       formdata = options.formdata;
 
   var addNameToName = setAddNameToName.bind(this);
+  var formgroups = this.state && this.props.useStatefulFormgroups ? this.state.__formGroups : this.props.formgroups;
 
-  if (this.props.formgroups && this.props.formgroups.length) {
-    this.props.formgroups.forEach(function (formgroup) {
+  if (formgroups && formgroups.length) {
+    formgroups.forEach(function (formgroup) {
       if (formgroup.formElements && formgroup.formElements.length) {
         formgroup.formElements.forEach(function (formElement) {
           var formElementsLeft = formElement.formGroupElementsLeft && formElement.formGroupElementsLeft.length ? formElement.formGroupElementsLeft : false;

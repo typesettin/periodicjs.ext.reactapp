@@ -46,6 +46,7 @@ exports.getFormSelect = getFormSelect;
 exports.getFormCheckbox = getFormCheckbox;
 exports.getFormSwitch = getFormSwitch;
 exports.getRawInput = getRawInput;
+exports.getButton = getButton;
 exports.getSliderInput = getSliderInput;
 exports.getHiddenInput = getHiddenInput;
 exports.getImage = getImage;
@@ -232,6 +233,15 @@ function getFormLabel(formElement) {
 
 function getInitialValue(formElement, state) {
   // console.debug({formElement, state})
+  if (!formElement.value && formElement.headers && Array.isArray(formElement.headers) && formElement.headers.length) {
+    formElement.value = formElement.headers.reduce(function (returnValue, header, i) {
+      if (i === 0) {
+        returnValue[0] = {};
+      }
+      returnValue[0][header.sortid] = header.value;
+      return returnValue;
+    }, []);
+  }
   var formElementValue = formElement.value;
 
   if (!formElement.showNullValue && (state[formElement.name] === null || formElementValue === null || formElementValue === 'null')) {
@@ -253,6 +263,22 @@ function getInitialValue(formElement, state) {
 function getPassablePropsKeyEvents(passableProps, formElement) {
   var _this2 = this;
 
+  var customEventFunctions = ['_onClick', '_onKeyPress', '_onBlur', '_onFocus', '_onKeyUp'];
+  customEventFunctions.forEach(function (customEventFunc) {
+    if (formElement[customEventFunc]) {
+      passableProps[customEventFunc.replace('_', '')] = function (e) {
+        // eslint-disable-next-line
+        var clickFunc = Function('e', 'formElement', '"use strict";' + formElement[customEventFunc]).bind(_this2);
+        clickFunc(e, formElement);
+      };
+    }
+    // if (formElement._onClick) {
+    //   passableProps.onClick = (e) => {
+    //     const clickFunc = Function('e','formElement', '"use strict";' + formElement._onClick).bind(this);
+    //     clickFunc(e, formElement);
+    //   };
+    // }
+  });
   if (formElement.keyPress) {
     var customKeyPress = function customKeyPress() {};
     if (typeof formElement.keyPress === 'string' && formElement.keyPress.indexOf('func:this.props') !== -1) {
@@ -928,8 +954,49 @@ function getRawInput(options) {
   );
 }
 
-function getSliderInput(options) {
+function getButton(options) {
   var _this10 = this;
+
+  var formElement = options.formElement,
+      i = options.i,
+      onValueChange = options.onValueChange;
+
+  var hasError = getErrorStatus(this.state, formElement.name);
+  var passableProps = formElement.passProps || {};
+  var getPassablePropkeyevents = getPassablePropsKeyEvents.bind(this);
+  passableProps = getPassablePropkeyevents(passableProps, formElement);
+  if (!onValueChange) {
+    onValueChange = function onValueChange() /*event*/{
+      // let text = event.target.value;
+      var updatedStateProp = {};
+      updatedStateProp[formElement.name] = _this10.state[formElement.name] ? false : 'on';
+      // console.log({ updatedStateProp });
+      if (formElement.onChangeFilter) {
+        var onChangeFunc = getFunctionFromProps.call(_this10, { propFunc: formElement.onChangeFilter });
+        updatedStateProp = onChangeFunc.call(_this10, (0, _assign2.default)({}, _this10.state, updatedStateProp), updatedStateProp);
+      }
+      _this10.setState(updatedStateProp);
+    };
+  }
+
+  return _react2.default.createElement(
+    _FormItem2.default,
+    (0, _extends3.default)({ key: i }, formElement.layoutProps),
+    getFormLabel(formElement),
+    _react2.default.createElement(
+      _reBulma.Button,
+      (0, _extends3.default)({}, passableProps, {
+        type: formElement.type,
+        onChange: onValueChange
+      }),
+      formElement.value || passableProps.value
+    ),
+    getCustomErrorLabel(hasError, this.state, formElement)
+  );
+}
+
+function getSliderInput(options) {
+  var _this11 = this;
 
   var formElement = options.formElement,
       i = options.i,
@@ -977,10 +1044,10 @@ function getSliderInput(options) {
       updatedStateProp[formElement.name] = val;
       // console.log({ updatedStateProp });
       if (formElement.onChangeFilter) {
-        var onChangeFunc = getFunctionFromProps.call(_this10, { propFunc: formElement.onChangeFilter });
-        updatedStateProp = onChangeFunc.call(_this10, (0, _assign2.default)({}, _this10.state, updatedStateProp), updatedStateProp);
+        var onChangeFunc = getFunctionFromProps.call(_this11, { propFunc: formElement.onChangeFilter });
+        updatedStateProp = onChangeFunc.call(_this11, (0, _assign2.default)({}, _this11.state, updatedStateProp), updatedStateProp);
       }
-      _this10.setState(updatedStateProp);
+      _this11.setState(updatedStateProp);
       customCallbackfunction(val);
     };
   }
@@ -1146,7 +1213,7 @@ function getFormCode(options) {
 }
 
 function getFormEditor(options) {
-  var _this11 = this;
+  var _this12 = this;
 
   var formElement = options.formElement,
       i = options.i,
@@ -1159,10 +1226,10 @@ function getFormEditor(options) {
       var updatedStateProp = {};
       updatedStateProp[formElement.name] = newvalue.target.value;
       if (formElement.onChangeFilter) {
-        var onChangeFunc = getFunctionFromProps.call(_this11, { propFunc: formElement.onChangeFilter });
-        updatedStateProp = onChangeFunc.call(_this11, (0, _assign2.default)({}, _this11.state, updatedStateProp), updatedStateProp);
+        var onChangeFunc = getFunctionFromProps.call(_this12, { propFunc: formElement.onChangeFilter });
+        updatedStateProp = onChangeFunc.call(_this12, (0, _assign2.default)({}, _this12.state, updatedStateProp), updatedStateProp);
       }
-      _this11.setState(updatedStateProp);
+      _this12.setState(updatedStateProp);
     };
   }
   // console.debug({ initialVal });
@@ -1198,7 +1265,7 @@ function getFormEditor(options) {
 }
 
 function getFormSubmit(options) {
-  var _this12 = this;
+  var _this13 = this;
 
   var formElement = options.formElement,
       i = options.i;
@@ -1216,15 +1283,15 @@ function getFormSubmit(options) {
       _reBulma.Button,
       (0, _extends3.default)({}, passableProps, {
         onClick: function onClick() {
-          var validated_formdata = _FormHelpers.validateForm.call(_this12, { formdata: _this12.state, validationErrors: {} });
+          var validated_formdata = _FormHelpers.validateForm.call(_this13, { formdata: _this13.state, validationErrors: {} });
           var updateStateData = {
             formDataErrors: validated_formdata.validationErrors
           };
-          if (_this12.props.sendSubmitButtonVal) {
+          if (_this13.props.sendSubmitButtonVal) {
             updateStateData['submitButtonVal'] = formElement.value;
           }
-          _this12.setState(updateStateData, function () {
-            formElement.confirmModal && (0, _keys2.default)(_this12.state.formDataErrors).length < 1 ? _this12.props.createModal((0, _assign2.default)({
+          _this13.setState(updateStateData, function () {
+            formElement.confirmModal && (0, _keys2.default)(_this13.state.formDataErrors).length < 1 ? _this13.props.createModal((0, _assign2.default)({
               title: 'Please Confirm',
               text: {
                 component: 'div',
@@ -1257,8 +1324,8 @@ function getFormSubmit(options) {
                         color: 'isPrimary'
                       },
                       onClick: function onClick() {
-                        _this12.props.hideModal('last');
-                        _this12.submitForm.call(_this12);
+                        _this13.props.hideModal('last');
+                        _this13.submitForm.call(_this13);
                       },
                       onclickProps: 'last'
                     }, formElement.confirmModal.yesButtonProps),
@@ -1278,7 +1345,7 @@ function getFormSubmit(options) {
                     children: formElement.confirmModal.noButtonText || 'No'
                   }]
                 }]
-              } }, formElement.confirmModal)) : _this12.submitForm.call(_this12);
+              } }, formElement.confirmModal)) : _this13.submitForm.call(_this13);
           });
         } }),
       formElement.value

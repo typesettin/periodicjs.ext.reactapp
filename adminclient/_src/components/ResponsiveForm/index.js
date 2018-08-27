@@ -100,6 +100,7 @@ var propTypes = {
 
 var defaultProps = {
   notificationForm: false,
+  useStatefulFormgroups: false,
   flattenFormData: false,
   useFormOptions: false,
   useDynamicData: false,
@@ -155,6 +156,7 @@ var ResponsiveForm = function (_Component) {
       formDataError: null,
       formDataErrors: {},
       __formDataStatusDate: new Date().toString(),
+      __formGroups: props.useStatefulFormgroups ? props.formgroups : undefined,
       formDataLists: {},
       formDataTables: {},
       formDataFiles: {}
@@ -175,6 +177,7 @@ var ResponsiveForm = function (_Component) {
     _this.getCardFooterItem = _FormElements.getCardFooterItem.bind(_this);
     _this.getFormSelect = _FormElements.getFormSelect.bind(_this);
     _this.getRawInput = _FormElements.getRawInput.bind(_this);
+    _this.getButton = _FormElements.getButton.bind(_this);
     _this.getSliderInput = _FormElements.getSliderInput.bind(_this);
     _this.getFormSwitch = _FormElements.getFormSwitch.bind(_this);
     _this.getFormDatatable = _FormElements.getFormDatatable.bind(_this);
@@ -260,6 +263,9 @@ var ResponsiveForm = function (_Component) {
       delete formdata.formDataLists;
       delete formdata.__formDataStatusDate;
       delete formdata.formDataTables;
+      delete formdata.__formGroups;
+
+      console.log({ formdata: formdata });
 
       var assigedHiddenFields = getAssigedHiddenField({ formdata: formdata, hiddenInputs: hiddenInputs, submitFormData: submitFormData });
       hiddenInputs = assigedHiddenFields.hiddenInputs;
@@ -414,7 +420,8 @@ var ResponsiveForm = function (_Component) {
 
       // console.debug('form render', this.state);
       var keyValue = 0;
-      var formGroupData = this.props.formgroups.map(function (formgroup, i) {
+      var formGroupsToUse = this.props.useStatefulFormgroups ? this.state.__formGroups : this.props.formgroups;
+      var formGroupData = formGroupsToUse.map(function (formgroup, i) {
         var gridProps = (0, _assign2.default)({
           isMultiline: true,
           key: i
@@ -431,6 +438,8 @@ var ResponsiveForm = function (_Component) {
             return _this3.getFormMaskedInput({ formElement: formElement, i: j, formgroup: formgroup });
           } else if (formElement.type === 'textarea') {
             return _this3.getFormTextArea({ formElement: formElement, i: j, formgroup: formgroup });
+          } else if (formElement.type === 'button') {
+            return _this3.getButton({ formElement: formElement, i: j, formgroup: formgroup });
           } else if (formElement.type === 'hidden') {
             return _this3.getHiddenInput({ formElement: formElement, i: j, formgroup: formgroup });
           } else if (formElement.type === 'datalist') {

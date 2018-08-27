@@ -121,6 +121,9 @@ var defaultProps = {
 
 function getDatumValue(datum) {
   var returnProperty = this.props.returnFormOptionsValue || (0, _keys2.default)(datum).length === 2 && typeof datum.label !== 'undefined' && typeof datum.value !== 'undefined' ? 'value' : this.props.returnProperty;
+  if (typeof this.props.returnProperty !== 'string') returnProperty = this.props.selector;
+
+  // console.log({ datum, returnProperty }, 'datum[ returnProperty ] ', datum[ returnProperty ]);
 
   return returnProperty ? datum[returnProperty] : datum;
 }
@@ -137,6 +140,7 @@ var ResponsiveDatalist = function (_Component) {
       disabled: props.disabled,
       data: props.data,
       value: props.value,
+      internal_value: props.value,
       selectedData: props.selectedData,
       isSearching: false
     };
@@ -326,7 +330,8 @@ var ResponsiveDatalist = function (_Component) {
             style: notificationStyle
           },
           _this6.getDatalistDisplay({
-            datum: selected,
+            // datum:selected,
+            datum: _this6.state.internal_value[k],
             displayField: _this6.props.displayField,
             selector: _this6.props.selector
           })
@@ -342,7 +347,8 @@ var ResponsiveDatalist = function (_Component) {
           style: notificationStyle
         },
         this.getDatalistDisplay({
-          datum: this.state.value,
+          // datum:this.state.value,
+          datum: this.state.internal_value,
           displayField: this.props.displayField,
           selector: this.props.selector
         })
@@ -367,15 +373,22 @@ var ResponsiveDatalist = function (_Component) {
             onClick: function onClick() {
               // console.debug('clicked onclick',this.props);
               if (_this6.props.multi) {
-                var newValue = _this6.state.value && Array.isArray(_this6.state.value) && _this6.state.value.length ? _this6.state.value.concat([datum]) : [datum];
+                var newValue = _this6.state.value && Array.isArray(_this6.state.value) && _this6.state.value.length ? _this6.state.value.concat([datum])
+                // ? this.state.value.concat([ datum, ])
+                : [datum];
+                // : [ datum, ];
                 _this6.setState({
-                  value: newValue,
+                  value: newValue.map(function (v) {
+                    return _this6.getDatum;
+                  }),
+                  internal_value: newValue,
                   selectedData: []
                 });
                 _this6.props.onChange(newValue);
               } else {
                 _this6.setState({
-                  value: datum,
+                  value: _this6.getDatum(datum), // datum,
+                  internal_value: datum, // datum,
                   selectedData: []
                 });
                 _this6.props.onChange(datum);

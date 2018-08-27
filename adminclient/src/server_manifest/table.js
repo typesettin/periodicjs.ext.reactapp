@@ -1,3 +1,4 @@
+// eslint-disable-next-line 
 'use strict';
 const pluralize = require('pluralize');
 const capitalize = require('capitalize');
@@ -23,7 +24,7 @@ function getTableHeader(options = {}) {
 }
 
 function getTableBody(options = {}) {
-  const { data, bodyProps, tableRowProps, tableColProps, customRowProps = {}, htmlTD, } = options;
+  const { data, bodyProps, tableRowProps, tableColProps, customRowProps = {}, htmlTD, stringifyValues, stringifySpacing } = options;
   return {
     component: 'Tbody',
     props: bodyProps || {},
@@ -43,14 +44,16 @@ function getTableBody(options = {}) {
             : {}),
         children: (typeof row[ col ] === 'object' && typeof row[ col ].displayValue !=='undefined')
           ? row[ col ].displayValue || ' '
-          : row[ col ],
+          : typeof row[ col ] ==='object' && stringifyValues ?JSON.stringify(row[ col ],null,stringifySpacing):row[ col ],
       })),  
     })),
   };
 }
 
 function getTableFooter(options = {}) {
-  const { footers, footerProps, htmlTF, tableRowProps, customRowProps, } = options;
+  const { footers, footerProps, htmlTF, tableRowProps,
+    // customRowProps,
+  } = options;
   return {
     component: 'Tfoot',
     props: footerProps || {},
@@ -91,6 +94,8 @@ function getBasicTable(options = {}) {
     htmlTF,
     ignoreReduxProps = true,
     customRowProps = {},
+    stringifyValues = true,
+    stringifySpacing = 2,
   } = options;
   const headers = header || Object.keys(data[ 0 ]);
   const footers = footer || headers;
@@ -104,7 +109,7 @@ function getBasicTable(options = {}) {
         ? getTableHeader({ data, headers, headerProps, capitalizeHeaders, htmlTH, customRowProps, })
         : null,
       hasBody
-        ? getTableBody({ data, bodyProps, tableRowProps, tableColProps, htmlTD, customRowProps, })
+        ? getTableBody({ data, bodyProps, tableRowProps, tableColProps, htmlTD, customRowProps, stringifyValues, stringifySpacing, })
         : null,
       hasFooter
         ? getTableFooter({ data, footers, footerProps, htmlTF, customRowProps, })

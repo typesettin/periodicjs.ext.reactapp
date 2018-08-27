@@ -1,3 +1,4 @@
+// eslint-disable-next-line 
 'use strict';
 
 var _defineProperty2 = require('babel-runtime/helpers/defineProperty');

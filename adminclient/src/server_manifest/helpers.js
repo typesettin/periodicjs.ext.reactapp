@@ -204,7 +204,7 @@ function getTitleArrow() {
 }
 
 function getButton(options = {}) {
-  const { action, props, content, button, onclickProps, style, onclickAddProp, } = options;
+  const { action, props, content, button, onclickProps, style, onclickAddProp, buttonProps, } = options;
 
   const actionType = {
     link: (action && action.type==='link')
@@ -214,17 +214,17 @@ function getButton(options = {}) {
         // style: {
         //   marginLeft: '10px',
         // },
-        buttonProps: {
+        buttonProps: Object.assign( {
           color: 'isPrimary',
-        },
+        },buttonProps),
       }
       : undefined,
     fetch: (action && action.type === 'fetch')
       ? {
-        buttonProps: {
+        buttonProps: Object.assign({
           color: (action.method==='DELETE')?'isDanger':'isPrimary',
           buttonStyle:'isOutlined',              
-        },
+        },buttonProps),
         onClick: 'func:this.props.fetchAction',
         onclickBaseUrl: action.pathname,
         onclickLinkParams: action.pathParams,
@@ -258,7 +258,7 @@ function getButton(options = {}) {
           ? Object.assign({}, {
             color: 'isPrimary',
             buttonStyle:'isOutlined',
-          }, button.props)
+          }, button.props, buttonProps)
           : undefined,
         // aProps: {},
       }
@@ -269,7 +269,7 @@ function getButton(options = {}) {
     props: Object.assign({}, actionType[ action.type ], props),
     children: content,
   }, options.responsiveButton);
-  // console.log({ returnButton });
+  // console.log('returnButton',JSON.stringify(returnButton,null,2),props);
   return returnButton;
 }
 

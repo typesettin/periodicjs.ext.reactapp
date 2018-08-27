@@ -58,17 +58,22 @@ var _forms = require('../../server_manifest/forms');
 
 var _card = require('../../server_manifest/card');
 
+var _memoryCache = require('memory-cache');
+
+var _memoryCache2 = _interopRequireDefault(_memoryCache);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+// import { Columns, } from 're-bulma';
 var functionalComponents = {
   getAreaChart: _standard.getAreaChart, getLayout: _standard.getLayout, getLevel: _standard.getLevel, getLineChart: _standard.getLineChart, getPageWrapper: _standard.getPageWrapper, getRechart: _standard.getRechart, getVictoryChart: _standard.getVictoryChart, getTable: _table.getTable, getBasicTable: _table.getBasicTable, getSheet: _table.getSheet, createForm: _forms.createForm, getCard: _card.getCard
 };
-// import { Columns, } from 're-bulma';
-
 var propTypes = {
   assignResourceProperty: _react.PropTypes.string,
   assignFunctionalResourceProperty: _react.PropTypes.string,
   data: _react.PropTypes.object,
+  useCache: _react.PropTypes.boolean,
+  cacheTimeout: _react.PropTypes.number,
   dynamicDataTransformFunction: _react.PropTypes.string,
   functionalComponent: _react.PropTypes.string,
   functionalComponentProps: _react.PropTypes.object,
@@ -78,6 +83,8 @@ var defaultProps = {
   assignResourceProperty: undefined,
   assignFunctionalResourceProperty: undefined,
   data: {},
+  useCache: true,
+  cacheTimeout: 20000,
   dynamicDataTransformFunction: undefined,
   functionalComponent: undefined,
   functionalComponentProps: undefined,
@@ -151,13 +158,25 @@ var DynamicComponent = function (_Component) {
           value: 'componentDidMount_dataTransform'
         });
         if (this.props.fetch_url) {
-          this.props.fetchAction.call(this, this.props.fetch_url, this.props.fetch_options).then(function (dynamicData) {
-            resources = dataTransform(dynamicData);
-            _this2.assignResources(resources);
-          }).catch(function (e) {
-            console.error('dynamicComponent Error', e);
-            _this2.setState({ hasError: true });
-          });
+          var cachedData = _memoryCache2.default.get(this.props.fetch_url);
+          if (cachedData && this.props.useCache) {
+            console.log('got data from cache', this.props.fetch_url, cachedData, this.props.cacheTimeout);
+            resources = dataTransform(cachedData);
+            this.assignResources(resources);
+          } else {
+            this.props.fetchAction.call(this, this.props.fetch_url, this.props.fetch_options).then(function (dynamicData) {
+              if (_this2.props.useCache) {
+                _memoryCache2.default.put(_this2.props.fetch_url, dynamicData, _this2.props.cacheTimeout, function () {
+                  console.log('removing from cache: ' + _this2.props.fetch_url);
+                });
+              }
+              resources = dataTransform(dynamicData);
+              _this2.assignResources(resources);
+            }).catch(function (e) {
+              console.error('dynamicComponent Error', e);
+              _this2.setState({ hasError: true });
+            });
+          }
         } else {
           setTimeout(function () {
             try {

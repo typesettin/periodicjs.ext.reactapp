@@ -3,7 +3,7 @@
 function getTabs(options) {
   const { tabs = [], type, props, componentProps = {}, bindprops,  } = options;
   //tabs={name,layout}
-  return Object.assign({
+  const tabscomponet= Object.assign({
     component: 'ResponsiveTabs',
     bindprops,
     props: Object.assign({
@@ -18,6 +18,8 @@ function getTabs(options) {
       tabs,
     }, props),
   }, componentProps);
+  if (options.debug) console.log(tabscomponet)
+  return tabscomponet;
 }
 
 module.exports = {

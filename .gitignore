@@ -4,6 +4,7 @@ logs
 npm-debug.log*
 *.DS_Store
 .DS_Store
+package-lock.json
 
 # Runtime data
 pids

@@ -1,1 +1,0 @@
- * react-file-reader-input - https://www.npmjs.com/package/react-file-reader-input

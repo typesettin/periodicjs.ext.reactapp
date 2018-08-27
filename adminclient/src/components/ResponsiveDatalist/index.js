@@ -59,7 +59,12 @@ const defaultProps = {
 };
 
 function getDatumValue(datum) {
-  const returnProperty = (this.props.returnFormOptionsValue || (Object.keys(datum).length === 2 && typeof datum.label !== 'undefined' && typeof datum.value !== 'undefined')) ? 'value' : this.props.returnProperty;
+  let returnProperty = (this.props.returnFormOptionsValue || (Object.keys(datum).length === 2 && typeof datum.label !== 'undefined' && typeof datum.value !== 'undefined'))
+    ? 'value'
+    : this.props.returnProperty;
+  if (typeof this.props.returnProperty !== 'string') returnProperty = this.props.selector;
+
+  // console.log({ datum, returnProperty }, 'datum[ returnProperty ] ', datum[ returnProperty ]);
 
   return (returnProperty) ? datum[ returnProperty ] : datum;
 }
@@ -71,6 +76,7 @@ class ResponsiveDatalist extends Component {
       disabled: props.disabled,
       data: props.data,
       value: props.value,
+      internal_value: props.value,
       selectedData: props.selectedData,
       isSearching: false,
     };
@@ -226,7 +232,8 @@ class ResponsiveDatalist extends Component {
             style={notificationStyle}
           >
             {this.getDatalistDisplay({
-              datum:selected,
+              // datum:selected,
+              datum:this.state.internal_value[k],
               displayField: this.props.displayField,
               selector: this.props.selector,
             })}
@@ -244,14 +251,15 @@ class ResponsiveDatalist extends Component {
           >
 
             {this.getDatalistDisplay({
-              datum:this.state.value,
+              // datum:this.state.value,
+              datum:this.state.internal_value,
               displayField: this.props.displayField,
               selector: this.props.selector,
             })}
           </rb.Notification>)
         : null;
     let displayOptions = (Array.isArray(this.state.selectedData) && this.state.selectedData && this.state.selectedData.length)
-      ? this.state.selectedData.map((datum, k)=>{
+      ? this.state.selectedData.map((datum, k) => {
         return (
           <rb.Notification
             key={k}
@@ -271,16 +279,20 @@ class ResponsiveDatalist extends Component {
                 // console.debug('clicked onclick',this.props);
                 if(this.props.multi){
                   let newValue = (this.state.value && Array.isArray(this.state.value) && this.state.value.length)
-                    ? this.state.value.concat([ datum, ])
-                    : [ datum, ];
+                    ? this.state.value.concat([ (datum), ])
+                    // ? this.state.value.concat([ datum, ])
+                    : [ (datum), ];
+                    // : [ datum, ];
                   this.setState({
-                    value:newValue,
+                    value:newValue.map(v=>this.getDatum),
+                    internal_value:newValue,
                     selectedData: [],
                   });
                   this.props.onChange(newValue);
                 } else {
                   this.setState({
-                    value: datum,
+                    value: this.getDatum(datum),// datum,
+                    internal_value: datum,// datum,
                     selectedData: [],
                   });
                   this.props.onChange(datum);

@@ -48,7 +48,6 @@ function getValidStatus(state, name) {
   return (state.formDataValid && state.formDataValid[ name ]);
 }
 
-
 function getFormElementHelp(hasError, state, name) {
   return (hasError) ? {
     color: 'isDanger',
@@ -126,6 +125,15 @@ function getFormLabel(formElement) {
 
 function getInitialValue(formElement, state) {
   // console.debug({formElement, state})
+  if (!formElement.value && formElement.headers && Array.isArray(formElement.headers) && formElement.headers.length) {
+    formElement.value = formElement.headers.reduce((returnValue, header, i) => {
+      if (i === 0) {
+        returnValue[ 0 ] = { };
+      }
+      returnValue[ 0 ][ header.sortid ] = header.value;
+      return returnValue;
+    },[]);
+  }
   let formElementValue = formElement.value;
  
   if (!formElement.showNullValue && (state[ formElement.name ] === null || formElementValue === null || formElementValue === 'null')) {
@@ -147,6 +155,22 @@ function getInitialValue(formElement, state) {
 }
 
 function getPassablePropsKeyEvents(passableProps, formElement) {
+  const customEventFunctions = [ '_onClick', '_onKeyPress', '_onBlur', '_onFocus', '_onKeyUp', ];
+  customEventFunctions.forEach(customEventFunc => {
+    if (formElement[ customEventFunc ]) {
+      passableProps[ customEventFunc.replace('_', '') ] = (e) => {
+        // eslint-disable-next-line
+        const clickFunc = Function('e', 'formElement', '"use strict";' + formElement[ customEventFunc ]).bind(this);
+        clickFunc(e, formElement);
+      };
+    }
+    // if (formElement._onClick) {
+    //   passableProps.onClick = (e) => {
+    //     const clickFunc = Function('e','formElement', '"use strict";' + formElement._onClick).bind(this);
+    //     clickFunc(e, formElement);
+    //   };
+    // }
+  });
   if (formElement.keyPress) {
     let customKeyPress = () => { };
     if (typeof formElement.keyPress==='string' && formElement.keyPress.indexOf('func:this.props') !== -1) {
@@ -779,6 +803,38 @@ export function getRawInput(options) {
       </input>
       {getCustomErrorLabel(hasError, this.state, formElement)}
     </div>  
+  </FormItem>);
+}
+
+export function getButton(options) {
+  let { formElement, i, onValueChange, } = options;
+  let hasError = getErrorStatus(this.state, formElement.name);
+  let passableProps = formElement.passProps || {};
+  let getPassablePropkeyevents = getPassablePropsKeyEvents.bind(this);
+  passableProps = getPassablePropkeyevents(passableProps, formElement);
+  if (!onValueChange) {
+    onValueChange = (/*event*/) => {
+      // let text = event.target.value;
+      let updatedStateProp = {};
+      updatedStateProp[ formElement.name ] = (this.state[ formElement.name ] ) ? false : 'on';
+      // console.log({ updatedStateProp });
+      if (formElement.onChangeFilter) {
+        const onChangeFunc = getFunctionFromProps.call(this, { propFunc: formElement.onChangeFilter });
+        updatedStateProp = onChangeFunc.call(this, Object.assign({},this.state,updatedStateProp), updatedStateProp);
+      }
+      this.setState(updatedStateProp);
+    };
+  }
+
+  return (<FormItem key={i} {...formElement.layoutProps} >
+    {getFormLabel(formElement)}  
+      <Button {...passableProps}
+        type={formElement.type}
+        onChange={onValueChange}
+    >
+      {formElement.value || passableProps.value}
+      </Button>
+      {getCustomErrorLabel(hasError, this.state, formElement)}
   </FormItem>);
 }
 

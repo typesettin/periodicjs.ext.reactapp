@@ -173,6 +173,8 @@ var packageJSON = {
     'file-saver': '^1.3.3',
     flat: '^2.0.1',
     'json-2-csv': '^2.1.0',
+    luxon: '^1.3.3',
+    'memory-cache': '^0.2.0',
     mime: '^1.3.6',
     'rc-slider': '^6.2.0',
     'rc-steps': '^2.5.1',
@@ -199,7 +201,7 @@ var packageJSON = {
     test: 'react-scripts test --env=jsdom',
     eject: 'react-scripts eject'
   },
-  proxy: 'https://localhost:8787',
+  proxy: 'https://local-diginn.repapp.io:8900',
   homepage: '/extensions/periodicjs.ext.reactapp'
 };
 
