@@ -36,6 +36,10 @@ var _keys = require('babel-runtime/core-js/object/keys');
 
 var _keys2 = _interopRequireDefault(_keys);
 
+var _typeof2 = require('babel-runtime/helpers/typeof');
+
+var _typeof3 = _interopRequireDefault(_typeof2);
+
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
@@ -120,12 +124,12 @@ var defaultProps = {
 };
 
 function getDatumValue(datum) {
-  var returnProperty = this.props.returnFormOptionsValue || (0, _keys2.default)(datum).length === 2 && typeof datum.label !== 'undefined' && typeof datum.value !== 'undefined' ? 'value' : this.props.returnProperty;
-  if (typeof this.props.returnProperty !== 'string') returnProperty = this.props.selector;
+  // eslint-disable-next-line 
+  var returnProperty = this.props.returnFormOptionsValue || datum && (typeof datum === 'undefined' ? 'undefined' : (0, _typeof3.default)(datum)) === 'object' && (0, _keys2.default)(datum).length === 2 && typeof datum.label !== 'undefined' && typeof datum.value !== 'undefined' ? 'value' : this.props.returnProperty;
+  // if (typeof this.props.returnProperty !== 'string') returnProperty = this.props.selector;
 
-  // console.log({ datum, returnProperty }, 'datum[ returnProperty ] ', datum[ returnProperty ]);
-
-  return returnProperty ? datum[returnProperty] : datum;
+  // if(typeof datum !== 'object') console.error('datum is not an object')
+  return returnProperty && (typeof datum === 'undefined' ? 'undefined' : (0, _typeof3.default)(datum)) === 'object' ? datum[returnProperty] : datum;
 }
 
 var ResponsiveDatalist = function (_Component) {
@@ -136,11 +140,15 @@ var ResponsiveDatalist = function (_Component) {
 
     var _this = (0, _possibleConstructorReturn3.default)(this, (ResponsiveDatalist.__proto__ || (0, _getPrototypeOf2.default)(ResponsiveDatalist)).call(this, props));
 
+    var initialValue = props.value;
+    if (props.multi && props.value && Array.isArray(props.value) === false && props.value.indexOf(',') >= 0) {
+      initialValue = props.value.split(',');
+    }
     _this.state = {
       disabled: props.disabled,
       data: props.data,
-      value: props.value,
-      internal_value: props.value,
+      value: props.multi && initialValue && Array.isArray(initialValue) === false ? [initialValue] : initialValue,
+      internal_value: props.multi && initialValue && Array.isArray(initialValue) === false ? [initialValue] : initialValue,
       selectedData: props.selectedData,
       isSearching: false
     };
@@ -148,6 +156,7 @@ var ResponsiveDatalist = function (_Component) {
     _this.searchFunction = (0, _debounce2.default)(_this.updateDataList, 200);
     _this.filterStaticData = _this.filterStaticData.bind(_this);
     _this.getDatum = getDatumValue.bind(_this);
+    _this.updateDataList = _this.updateDataList.bind(_this);
     return _this;
   }
 
@@ -244,9 +253,9 @@ var ResponsiveDatalist = function (_Component) {
       var displayField = options.displayField,
           selector = options.selector,
           datum = options.datum;
-      // console.debug('getDatalistDisplay', { options });
 
       var displayText = datum[displayField] || datum.title || datum.name || datum.username || datum.email || datum[selector] || (datum && typeof datum === 'string' ? datum : '');
+      // console.debug('getDatalistDisplay', { options,displayText });
       return _react2.default.createElement(
         'span',
         { style: {
@@ -282,25 +291,31 @@ var ResponsiveDatalist = function (_Component) {
       // console.debug('clicked onclick',this.props);
       // console.debug('this.state.value',this.state.value);
       if (this.props.multi) {
-        var newValue = (0, _assign2.default)([], [].concat(this.state.value));
+        var newValue = [].concat(this.state.internal_value);
         newValue.splice(index, 1);
         // let oldValue = this.state.value;
         this.setState({
-          // value: [],
-          value: newValue,
+          value: newValue.map(function (v) {
+            return _this5.getDatum(v);
+          }),
+          internal_value: newValue,
           selectedData: [],
           update: new Date()
         }, function () {
           // this.props.onChange([]);
-          _this5.props.onChange(newValue);
+          _this5.props.onChange(newValue.map(function (v) {
+            return _this5.getDatum(v);
+          }));
         });
       } else {
         var datum = undefined;
         this.setState({
-          value: datum,
+          value: this.getDatum(datum),
+          internal_value: datum,
           selectedData: []
+        }, function () {
+          _this5.props.onChange(datum);
         });
-        this.props.onChange(datum);
       }
     }
   }, {
@@ -317,7 +332,7 @@ var ResponsiveDatalist = function (_Component) {
         margin: '0px 0px 0px 20px',
         borderRadius: '19px'
       };
-      var selectData = this.props.multi ? this.state.value && this.state.value.length ? this.state.value.map(function (selected, k) {
+      var selectData = this.props.multi ? this.state.internal_value && this.state.internal_value.length ? this.state.internal_value.map(function (selected, k) {
         return _react2.default.createElement(
           rb.Notification,
           {
@@ -371,27 +386,27 @@ var ResponsiveDatalist = function (_Component) {
               paddingRight: '0px'
             },
             onClick: function onClick() {
-              // console.debug('clicked onclick',this.props);
               if (_this6.props.multi) {
-                var newValue = _this6.state.value && Array.isArray(_this6.state.value) && _this6.state.value.length ? _this6.state.value.concat([datum])
-                // ? this.state.value.concat([ datum, ])
-                : [datum];
-                // : [ datum, ];
+                var newValue = _this6.state.internal_value && Array.isArray(_this6.state.internal_value) && _this6.state.internal_value.length ? _this6.state.internal_value.concat([datum]) : [datum];
                 _this6.setState({
                   value: newValue.map(function (v) {
-                    return _this6.getDatum;
+                    return _this6.getDatum(v);
                   }),
                   internal_value: newValue,
                   selectedData: []
+                }, function () {
+                  _this6.props.onChange(newValue.map(function (v) {
+                    return _this6.getDatum(v);
+                  }));
                 });
-                _this6.props.onChange(newValue);
               } else {
                 _this6.setState({
                   value: _this6.getDatum(datum), // datum,
                   internal_value: datum, // datum,
                   selectedData: []
+                }, function () {
+                  _this6.props.onChange(datum);
                 });
-                _this6.props.onChange(datum);
               }
             } }),
           _this6.getDatalistDisplay({

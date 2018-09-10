@@ -137,7 +137,7 @@ var defaultUserNavigation = {
 };
 var packageJSON = {
   name: 'adminclient',
-  version: '11.0.0',
+  version: '11.5.0',
   'private': true,
   devDependencies: {
     'animate.css': '^3.5.2',
@@ -168,13 +168,13 @@ var packageJSON = {
     'babel-polyfill': '^6.23.0',
     debounce: '^1.0.0',
     'draft-js': '^0.10.0',
+    luxon: '^1.3.3',
+    'memory-cache': '^0.2.0',
     eslint: '^3.14.1',
     'eslint-plugin-react': '^6.9.0',
     'file-saver': '^1.3.3',
     flat: '^2.0.1',
     'json-2-csv': '^2.1.0',
-    luxon: '^1.3.3',
-    'memory-cache': '^0.2.0',
     mime: '^1.3.6',
     'rc-slider': '^6.2.0',
     'rc-steps': '^2.5.1',
@@ -201,7 +201,7 @@ var packageJSON = {
     test: 'react-scripts test --env=jsdom',
     eject: 'react-scripts eject'
   },
-  proxy: 'https://local-diginn.repapp.io:8900',
+  proxy: 'https://localhost:8787',
   homepage: '/extensions/periodicjs.ext.reactapp'
 };
 

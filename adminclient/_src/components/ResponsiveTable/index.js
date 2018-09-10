@@ -4,10 +4,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _keys = require('babel-runtime/core-js/object/keys');
-
-var _keys2 = _interopRequireDefault(_keys);
-
 var _extends2 = require('babel-runtime/helpers/extends');
 
 var _extends3 = _interopRequireDefault(_extends2);
@@ -15,6 +11,10 @@ var _extends3 = _interopRequireDefault(_extends2);
 var _stringify = require('babel-runtime/core-js/json/stringify');
 
 var _stringify2 = _interopRequireDefault(_stringify);
+
+var _toConsumableArray2 = require('babel-runtime/helpers/toConsumableArray');
+
+var _toConsumableArray3 = _interopRequireDefault(_toConsumableArray2);
 
 var _typeof2 = require('babel-runtime/helpers/typeof');
 
@@ -27,6 +27,10 @@ var _slicedToArray3 = _interopRequireDefault(_slicedToArray2);
 var _defineProperty2 = require('babel-runtime/helpers/defineProperty');
 
 var _defineProperty3 = _interopRequireDefault(_defineProperty2);
+
+var _keys = require('babel-runtime/core-js/object/keys');
+
+var _keys2 = _interopRequireDefault(_keys);
 
 var _assign = require('babel-runtime/core-js/object/assign');
 
@@ -149,7 +153,14 @@ var ResponsiveTable = function (_Component) {
     }
     _this.filterSelectOptions = (0, _TableHelpers.getFilterOptions)({ rows: rows, headers: headers, filters: _this.props.filterSelectOptions, simpleSearchFilter: _this.props.simpleSearchFilter });
     _this.sortableSelctOptions = (0, _TableHelpers.getFilterSortableOption)({ headers: headers });
-
+    // const newRowData = (headers && Array.isArray(headers) && headers.length)
+    //   ? headers.reduce((newRow, header) => {
+    //     if (header.sortid && header.footerFormElementPassProps && header.footerFormElementPassProps.value) {
+    //       newRow[ header.sortid ] = header.footerFormElementPassProps.value;
+    //     }
+    //     return newRow;
+    //   })
+    //   : {};
     _this.state = {
       headers: headers,
       rows: rows,
@@ -159,7 +170,7 @@ var ResponsiveTable = function (_Component) {
       limit: props.limit,
       currentPage: props.currentPage,
       numItems: props.numItems || rows.length,
-      numPages: Math.ceil(props.numItems / props.limit),
+      numPages: Math.ceil((props.numItems || rows.length) / props.limit),
       numButtons: props.numButtons,
       isLoading: false,
       sortProp: _this.props.searchField || '_id',
@@ -188,6 +199,8 @@ var ResponsiveTable = function (_Component) {
     _this.removeFilterRow = _this.removeFilterByDeleteRow.bind(_this);
     _this.addFilterRow = _this.addFilterByAddRow.bind(_this);
     _this.updateNewFilterRowText = _this.updateNewFilterRowDataText.bind(_this);
+    _this.searchField = _this.props.searchField || Array.isArray(_this.props.headers) && _this.props.headers.length ? _this.props.headers[0].sortid : Array.isArray(_this.state.headers) && _this.state.headers.length ? _this.state.headers[0].sortid : undefined;
+    _this.fastUpdateRows = _this.fastUpdateRows.bind(_this);
     return _this;
   }
 
@@ -227,6 +240,27 @@ var ResponsiveTable = function (_Component) {
       });
     }
   }, {
+    key: 'fastUpdateRows',
+    value: function fastUpdateRows(_ref) {
+      var _this2 = this;
+
+      var rows = _ref.rows,
+          clearNewRowData = _ref.clearNewRowData;
+
+      var filteredRows = rows.filter(function (row) {
+        return row && (0, _keys2.default)(row).length > 0;
+      });
+      var updatedState = { rows: filteredRows };
+      if (clearNewRowData) {
+        updatedState.newRowData = {};
+      }
+      // console.log({ filteredRows, rows, updatedState, });
+      this.setState(updatedState, function () {
+        // console.warn('update form', { rows, }, 'this.props.onChange', this.props.onChange.toString());
+        if (_this2.props.tableForm) _this2.props.onChange(updatedState);
+      });
+    }
+  }, {
     key: 'updateSelectedRow',
     value: function updateSelectedRow(options) {
       // console.debug({ options });
@@ -241,7 +275,8 @@ var ResponsiveTable = function (_Component) {
     key: 'updateByAddingRows',
     value: function updateByAddingRows(newrows) {
       var rows = this.state.rows.concat(newrows || []);
-      this.updateTableData({ rows: rows, clearNewRowData: true });
+      // this.updateTableData({ rows, clearNewRowData: true, });
+      this.fastUpdateRows({ rows: rows, clearNewRowData: true });
     }
   }, {
     key: 'updateByAddRow',
@@ -251,16 +286,20 @@ var ResponsiveTable = function (_Component) {
       rows.splice(rows.length, 0, newRow);
       // console.debug({ rowIndex, rows, deletedRow }, this.state.rows);
       // this.props.onChange({ rows, });
-      this.updateTableData({ rows: rows, clearNewRowData: true });
+      // this.updateTableData({ rows, clearNewRowData: true, });
+      this.fastUpdateRows({ rows: rows, clearNewRowData: true });
     }
   }, {
     key: 'updateByDeleteRow',
     value: function updateByDeleteRow(rowIndex) {
-      var rows = this.state.rows.concat([]);
-      rows.splice(rowIndex, 1);
-      // console.debug({ rowIndex, rows }, this.state.rows);
-      // this.props.onChange({ rows, });
-      this.updateTableData({ rows: rows });
+      var newrows = []; //.concat(this.state.rows||[]);
+      this.state.rows.forEach(function (row, i) {
+        // console.log({ rowIndex, i });
+        if (i !== rowIndex) {
+          newrows.push(row);
+        }
+      });
+      this.fastUpdateRows({ rows: newrows });
     }
   }, {
     key: 'updateByMoveRowUp',
@@ -270,7 +309,7 @@ var ResponsiveTable = function (_Component) {
       rows.splice(rowIndex - 1, 0, deletedRow);
       // console.debug({ rowIndex, rows, deletedRow }, this.state.rows);
       // this.props.onChange({ rows, });
-      this.updateTableData({ rows: rows });
+      this.fastUpdateRows({ rows: rows });
     }
   }, {
     key: 'updateByMoveRowDown',
@@ -280,7 +319,7 @@ var ResponsiveTable = function (_Component) {
       rows.splice(rowIndex + 1, 0, deletedRow);
       // console.debug({ rowIndex, rows, deletedRow }, this.state.rows);
       // this.props.onChange({ rows, });
-      this.updateTableData({ rows: rows });
+      this.fastUpdateRows({ rows: rows });
     }
   }, {
     key: 'updateNewRowDataText',
@@ -310,15 +349,15 @@ var ResponsiveTable = function (_Component) {
       rows[rowIndex][name] = text;
       // console.debug({ rowIndex, rows, deletedRow }, this.state.rows);
       // this.props.onChange({ rows, });
-      this.updateTableData({ rows: rows });
+      this.fastUpdateRows({ rows: rows });
     }
   }, {
     key: 'handleFileUpload',
     value: function handleFileUpload(type) {
-      var _this2 = this;
+      var _this3 = this;
 
       return function (e, results) {
-        var updatefunction = type === 'replace' ? _this2.replaceRows : _this2.addingRows;
+        var updatefunction = type === 'replace' ? _this3.replaceRows : _this3.addingRows;
         try {
           console.debug({ e: e, results: results });
           results.forEach(function (result) {
@@ -332,7 +371,7 @@ var ResponsiveTable = function (_Component) {
                 // console.debug({ newRows, }, 'e.target.result', e.target.result);
                 updatefunction(newRows);
               }, {
-                options: _this2.props.csvOptions
+                options: _this3.props.csvOptions
                 // keys: this.state.headers.map(header => header.sortid),  
               });
             } else {
@@ -341,25 +380,25 @@ var ResponsiveTable = function (_Component) {
             }
           });
         } catch (e) {
-          _this2.props.errorNotification(e);
+          _this3.props.errorNotification(e);
         }
       };
     }
   }, {
     key: 'removeFilterByDeleteRow',
     value: function removeFilterByDeleteRow(rowIndex) {
-      var _this3 = this;
+      var _this4 = this;
 
       var rows = this.state.filterRowData.concat([]);
       rows.splice(rowIndex, 1);
       this.setState({ filterRowData: rows }, function () {
-        _this3.updateTableData({});
+        _this4.updateTableData({});
       });
     }
   }, {
     key: 'addFilterByAddRow',
     value: function addFilterByAddRow() {
-      var _this4 = this;
+      var _this5 = this;
 
       var rows = this.state.filterRowData.concat([]);
       var newRow = (0, _assign2.default)({}, this.state.filterRowNewData);
@@ -371,7 +410,7 @@ var ResponsiveTable = function (_Component) {
       } else {
         // console.debug('addFilterByAddRow', { rows });
         this.setState({ filterRowData: rows, filterRowNewData: _TableHelpers.defaultNewRowData }, function () {
-          _this4.updateTableData({});
+          _this5.updateTableData({});
         });
       }
     }
@@ -389,11 +428,23 @@ var ResponsiveTable = function (_Component) {
     }
   }, {
     key: 'updateTableData',
-    value: function updateTableData(options) {
-      var _this5 = this;
+    value: function updateTableData() {
+      var _this6 = this;
 
-      var updatedState = {};
+      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      var updatedState = {
+        modifyTimeStamp: new Date()
+      };
       var newSortOptions = {};
+      // console.warn('updateTableData',{options})
+      // options.rows = undefined;
+      // console.log('updateTableData this', this,{updatedState});
+      if (options.newrows) {
+        options.rows = undefined;
+        delete options.rows;
+        options.rows = [].concat(options.newrows);
+      }
       if (options.clearNewRowData) {
         updatedState.newRowData = {};
       }
@@ -404,9 +455,13 @@ var ResponsiveTable = function (_Component) {
         updatedState.selectedRowData = options.selectedRowData;
       }
       if (!this.props.baseUrl) {
-        // console.debug({options})
-        updatedState.rows = typeof options.rows !== 'undefined' ? options.rows : this.props.rows;
-        // console.debug({ updatedState, });
+        var searchField = this.searchField;
+        if (options.rows && Array.isArray(options.rows)) {
+          updatedState = (0, _assign2.default)({}, updatedState, { rows: [].concat((0, _toConsumableArray3.default)(options.rows)) });
+        } else {
+          updatedState.rows = typeof options.rows !== 'undefined' ? options.rows : this.props.rows;
+        }
+        console.debug('initial', { updatedState: updatedState });
         if (options.sort) {
           newSortOptions.sortProp = options.sort;
           if (this.state.sortProp === options.sort) {
@@ -420,15 +475,15 @@ var ResponsiveTable = function (_Component) {
         } else if (this.props.turnOffTableSort) {
           updatedState.rows = updatedState.rows;
         } else if ((this.state.sortOrder || this.state.sortProp) && !this.state.disableSort) {
-          newSortOptions.sortProp = this.state.sortProp;
-          newSortOptions.sortOrder = this.state.sortOrder === 'desc' || this.state.sortOrder === '-' ? 'desc' : 'asc';
-          updatedState.rows = updatedState.rows.sort(_util2.default.sortObject(newSortOptions.sortOrder, newSortOptions.sortProp));
+          // newSortOptions.sortProp = this.state.sortProp;
+          // newSortOptions.sortOrder = (this.state.sortOrder === 'desc' || this.state.sortOrder === '-') ? 'desc' : 'asc';
+          // updatedState.rows = updatedState.rows.sort(utilities.sortObject(newSortOptions.sortOrder, newSortOptions.sortProp));
         }
 
         if (this.props.tableSearch && this.state.filterRowData && this.state.filterRowData.length) {
           var filteredRows = [];
           updatedState.rows.forEach(function (row) {
-            _this5.state.filterRowData.forEach(function (filter) {
+            _this6.state.filterRowData.forEach(function (filter) {
               if (row[filter.property]) {
                 switch (filter.filter_value) {
                   case 'like':
@@ -482,27 +537,32 @@ var ResponsiveTable = function (_Component) {
                 }
               }
             });
-            // row[ this.props.searchField ].indexOf(options.search) !== -1
+            // row[ searchField ].indexOf(options.search) !== -1
           });
           updatedState.rows = filteredRows;
           // console.debug('updatedState.rows', updatedState.rows, { filteredRows, });
         }
-        if (this.props.tableSearch && this.props.searchField && options.search) {
-          updatedState.rows = (updatedState.rows || this.props.rows).filter(function (row) {
-            return row[_this5.props.searchField] && row[_this5.props.searchField].indexOf(options.search) !== -1;
+        if (this.props.tableSearch && searchField && options.search) {
+          updatedState.rows = updatedState.rows.filter(function (row) {
+            return row[searchField] && row[searchField].toString().toLowerCase().indexOf(options.search.toString().toLowerCase()) !== -1;
           });
         }
         updatedState.numPages = Math.ceil(updatedState.rows.length / this.state.limit);
         updatedState.limit = this.state.limit;
         updatedState.currentPage = typeof options.pagenum !== 'undefined' ? options.pagenum : this.state.currentPage && this.state.currentPage <= updatedState.numPages ? this.state.currentPage : 1;
         updatedState.isLoading = false;
-
-        if (this.props.tableForm) {
-          // console.debug('befroe', {updatedState})
-          this.props.onChange(updatedState);
-        }
         // else {
-        this.setState(updatedState);
+        // if (this.props.tableForm) {
+        //   // console.warn('calling on change with baseurl', { updatedState });
+        //   this.props.onChange(updatedState);
+        // }
+        // this.setState(updatedState);
+        this.setState(updatedState, function () {
+          if (_this6.props.tableForm) {
+            _this6.props.onChange(updatedState);
+          }
+        });
+
         // }
       } else {
         if (options.sort) {
@@ -546,14 +606,14 @@ var ResponsiveTable = function (_Component) {
             // console.log('this.props.dataMap',this.props.dataMap)
             response = response.data;
           }
-          _this5.props.dataMap.forEach(function (data) {
+          _this6.props.dataMap.forEach(function (data) {
             if (data.key === 'rows') {
               var rows = response[data.value] || [];
               rows = rows.documents ? rows.documents : rows;
               // console.log({ rows });
-              if (_this5.props.flattenRowData) {
+              if (_this6.props.flattenRowData) {
                 updatedState[data.key] = rows.map(function (row) {
-                  return (0, _assign2.default)({}, row, (0, _flat.flatten)(row, _this5.props.flattenRowDataOptions));
+                  return (0, _assign2.default)({}, row, (0, _flat.flatten)(row, _this6.props.flattenRowDataOptions));
                 });
               }
             } else {
@@ -563,9 +623,9 @@ var ResponsiveTable = function (_Component) {
               updatedState[data.key] = response[data.value];
             }
           });
-          updatedState.numPages = Math.ceil(updatedState.numItems / _this5.state.limit);
-          updatedState.limit = _this5.state.limit;
-          updatedState.currentPage = typeof options.pagenum !== 'undefined' ? options.pagenum : _this5.props.currentPage;
+          updatedState.numPages = Math.ceil(updatedState.numItems / _this6.state.limit);
+          updatedState.limit = _this6.state.limit;
+          updatedState.currentPage = typeof options.pagenum !== 'undefined' ? options.pagenum : _this6.props.currentPage;
           updatedState.isLoading = false;
 
           if (options.sort) {
@@ -573,19 +633,25 @@ var ResponsiveTable = function (_Component) {
             updatedState.sortProp = options.sort;
           }
           // console.log({ updatedState });
-          if (_this5.props.tableForm) {
-            _this5.props.onChange(updatedState);
-          }
-          _this5.setState(updatedState);
+          // if (this.props.tableForm) {
+          //   // console.warn('calling on change with baseurl', { updatedState });
+          //   this.props.onChange(updatedState);
+          // }
+          // this.setState(updatedState);
+          _this6.setState(updatedState, function () {
+            if (_this6.props.tableForm) {
+              _this6.props.onChange(updatedState);
+            }
+          });
         }, function (e) {
-          _this5.props.errorNotification(e);
+          _this6.props.errorNotification(e);
         });
       }
     }
   }, {
     key: 'formatValue',
     value: function formatValue(value, row, options, header) {
-      var _this6 = this;
+      var _this7 = this;
 
       try {
         // console.debug({ value, row, options, header, });
@@ -653,7 +719,7 @@ var ResponsiveTable = function (_Component) {
                 var text = event.target.value;
                 var name = header.sortid;
                 var rowIndex = options.rowIndex;
-                _this6.updateInlineRowText({ name: name, text: text, rowIndex: rowIndex });
+                _this7.updateInlineRowText({ name: name, text: text, rowIndex: rowIndex });
               }
             }),
             value
@@ -669,7 +735,7 @@ var ResponsiveTable = function (_Component) {
                 var text = event.target.value;
                 var name = header.sortid;
                 var rowIndex = options.rowIndex;
-                _this6.updateInlineRowText({ name: name, text: text, rowIndex: rowIndex });
+                _this7.updateInlineRowText({ name: name, text: text, rowIndex: rowIndex });
               }
             }),
             value
@@ -685,7 +751,7 @@ var ResponsiveTable = function (_Component) {
                 var text = event.target.value;
                 var name = header.sortid;
                 var rowIndex = options.rowIndex;
-                _this6.updateInlineRowText({ name: name, text: text, rowIndex: rowIndex });
+                _this7.updateInlineRowText({ name: name, text: text, rowIndex: rowIndex });
               } }),
             selectOptions.map(function (opt, k) {
               return _react2.default.createElement(
@@ -709,7 +775,7 @@ var ResponsiveTable = function (_Component) {
               var text = event;
               var name = header.sortid;
               var rowIndex = options.rowIndex;
-              _this6.updateInlineRowText({ name: name, text: text, rowIndex: rowIndex });
+              _this7.updateInlineRowText({ name: name, text: text, rowIndex: rowIndex });
             }
           }));
         } else if (typeof options.idx !== 'undefined' && typeof returnValue === 'string' && returnValue.indexOf('--idx--') !== -1) {
@@ -778,20 +844,21 @@ var ResponsiveTable = function (_Component) {
   }, {
     key: 'updateGetFooterAddRow',
     value: function updateGetFooterAddRow(header) {
-      var _this7 = this;
+      var _this8 = this;
 
       if (header.selectedOptionRowHeader) return null;
       switch (header.formtype) {
         case 'select':
           return _react2.default.createElement(
             rb.Select,
-            (0, _extends3.default)({}, header.footerFormElementPassProps, {
+            (0, _extends3.default)({
               value: this.state.newRowData[header.sortid] || header.defaultValue,
               onChange: function onChange(event) {
                 var text = event.target.value;
                 var name = header.sortid;
-                _this7.updateNewRowText({ name: name, text: text });
-              } }),
+                _this8.updateNewRowText({ name: name, text: text });
+              }
+            }, header.footerFormElementPassProps),
             header.formoptions.map(function (opt, k) {
               return _react2.default.createElement(
                 'option',
@@ -802,13 +869,14 @@ var ResponsiveTable = function (_Component) {
           );
         // break;  
         case 'textarea':
-          return _react2.default.createElement(rb.Textarea, (0, _extends3.default)({}, header.footerFormElementPassProps, {
+          return _react2.default.createElement(rb.Textarea, (0, _extends3.default)({
             value: this.state.newRowData[header.sortid] || '',
             onChange: function onChange(event) {
               var text = event.target.value;
               var name = header.sortid;
-              _this7.updateNewRowText({ name: name, text: text });
-            } }));
+              _this8.updateNewRowText({ name: name, text: text });
+            }
+          }, header.footerFormElementPassProps));
         // break;  
         case 'code':
           var CodeMirrorProps = (0, _assign2.default)({}, {
@@ -855,23 +923,24 @@ var ResponsiveTable = function (_Component) {
           , (0, _extends3.default)({}, this.props, {
             datalistdata: rowdata,
             onChange: function onChange(event) {
-              console.log('inside this.props', _this7.props);
+              // console.log('inside this.props', this.props);
 
               var text = event;
               var name = header.sortid;
-              _this7.updateNewRowText({ name: name, text: text });
+              _this8.updateNewRowText({ name: name, text: text });
             }
             // {{...}updateFunction}
           }, header.datalistProps));
         case 'text':
         default:
-          return _react2.default.createElement(rb.Input, (0, _extends3.default)({}, header.footerFormElementPassProps, {
+          return _react2.default.createElement(rb.Input, (0, _extends3.default)({
             value: this.state.newRowData[header.sortid] || '',
             onChange: function onChange(event) {
               var text = event.target.value;
               var name = header.sortid;
-              _this7.updateNewRowText({ name: name, text: text });
-            } }));
+              _this8.updateNewRowText({ name: name, text: text });
+            }
+          }, header.footerFormElementPassProps));
         // break;  
       }
     }
@@ -887,13 +956,16 @@ var ResponsiveTable = function (_Component) {
   }, {
     key: 'render',
     value: function render() {
-      var _this8 = this;
+      var _this9 = this;
 
       // console.debug('render this.state', this.state);
       var calcStartIndex = (this.state.currentPage - 1) * this.state.limit;
       var startIndex = !this.props.baseUrl ? calcStartIndex : 0;
       var endIndex = !this.props.baseUrl ? this.state.limit * this.state.currentPage : this.state.limit;
-      var displayRows = this.state.rows.slice(startIndex, endIndex);
+      var displayRows = this.state.rows.slice(startIndex, endIndex).filter(function (row) {
+        return row && (typeof row === 'undefined' ? 'undefined' : (0, _typeof3.default)(row)) === 'object' && (0, _keys2.default)(row).length;
+      });
+      // console.warn({ displayRows });
       var mergedCustomLayout = this.props.customLayout && displayRows && displayRows.length ? _react2.default.createElement(
         'div',
         { style: (0, _assign2.default)({
@@ -901,13 +973,13 @@ var ResponsiveTable = function (_Component) {
             display: 'flex'
           }, this.props.customLayoutStyle) },
         displayRows.map(function (row) {
-          var mergedLayout = (0, _assign2.default)({}, _this8.props.customLayout, {
-            props: (0, _assign2.default)({}, _this8.props.customLayout.props, row, { row: row }, {
-              __ra_rt_link: _this8.props.customLayout.link ? _this8.getHeaderLinkURL(_this8.props.customLayout.link, row) : undefined
+          var mergedLayout = (0, _assign2.default)({}, _this9.props.customLayout, {
+            props: (0, _assign2.default)({}, _this9.props.customLayout.props, row, { row: row }, {
+              __ra_rt_link: _this9.props.customLayout.link ? _this9.getHeaderLinkURL(_this9.props.customLayout.link, row) : undefined
             })
           });
           // console.debug({ mergedLayout });
-          return _this8.getRenderedComponent(mergedLayout);
+          return _this9.getRenderedComponent(mergedLayout);
         })
       ) : null;
       var _state = this.state,
@@ -941,7 +1013,7 @@ var ResponsiveTable = function (_Component) {
             rb.PageButton,
             { isActive: currentPage === 1,
               onClick: function onClick() {
-                return _this8.updateTableData({ pagenum: 1 });
+                return _this9.updateTableData({ pagenum: 1 });
               }
             },
             '1'
@@ -964,7 +1036,7 @@ var ResponsiveTable = function (_Component) {
               rb.PageButton,
               {
                 onClick: function onClick() {
-                  return _this8.updateTableData({ pagenum: index + 1 });
+                  return _this9.updateTableData({ pagenum: index + 1 });
                 }
               },
               index + 1
@@ -978,7 +1050,7 @@ var ResponsiveTable = function (_Component) {
               rb.PageButton,
               { color: 'isPrimary', isActive: true,
                 onClick: function onClick() {
-                  return _this8.updateTableData({ pagenum: index + 1 });
+                  return _this9.updateTableData({ pagenum: index + 1 });
                 } },
               index + 1
             )
@@ -1002,7 +1074,7 @@ var ResponsiveTable = function (_Component) {
           _react2.default.createElement(
             rb.PageButton,
             { onClick: function onClick() {
-                return _this8.updateTableData({ pagenum: lastIndex + 1 });
+                return _this9.updateTableData({ pagenum: lastIndex + 1 });
               } },
             lastIndex + 1
           )
@@ -1018,7 +1090,7 @@ var ResponsiveTable = function (_Component) {
         ) : _react2.default.createElement(
           rb.PageButton,
           { onClick: function onClick() {
-              return _this8.updateTableData({ pagenum: _this8.state.currentPage - 1 });
+              return _this9.updateTableData({ pagenum: _this9.state.currentPage - 1 });
             } },
           'Previous'
         ),
@@ -1034,7 +1106,7 @@ var ResponsiveTable = function (_Component) {
         ) : _react2.default.createElement(
           rb.PageButton,
           { onClick: function onClick() {
-              return _this8.updateTableData({ pagenum: _this8.state.currentPage + 1 });
+              return _this9.updateTableData({ pagenum: _this9.state.currentPage + 1 });
             } },
           'Next'
         )
@@ -1048,7 +1120,7 @@ var ResponsiveTable = function (_Component) {
             style: this.state.showFilterSearch ? { background: '#69707a', color: '#f5f7fa', borderColor: 'transparent' } : this.state.filterRowData.length > 0 ? { background: '#222324', color: 'white', borderColor: 'transparent' } : undefined
           }, this.props.filterButtonProps, {
             onClick: function onClick() {
-              _this8.toggleAdvancedSearchFilters();
+              _this9.toggleAdvancedSearchFilters();
             }
           }),
           'Advanced'
@@ -1062,18 +1134,18 @@ var ResponsiveTable = function (_Component) {
           this.props.filterAddonProps,
           _react2.default.createElement(rb.Input, (0, _extends3.default)({}, this.props.filterSearchProps, {
             onChange: function onChange(data) {
-              _this8.searchFunction({ search: data.target.value });
-              _this8.searchInputTextVal = data.target.value; //TODO: this is janky fix it
+              _this9.searchFunction({ search: data.target.value });
+              _this9.searchInputTextVal = data.target.value; //TODO: this is janky fix it
             },
             ref: function ref(input) {
-              _this8.searchTextInput = input;
+              _this9.searchTextInput = input;
             }
           })),
           _react2.default.createElement(
             rb.Button,
             (0, _extends3.default)({}, this.props.searchButtonProps, {
               onClick: function onClick() {
-                _this8.searchFunction({ search: _this8.searchInputTextVal });
+                _this9.searchFunction({ search: _this9.searchInputTextVal });
               }
             }),
             'Search'
@@ -1145,7 +1217,7 @@ var ResponsiveTable = function (_Component) {
                       _react2.default.createElement(
                         rb.Button,
                         { onClick: function onClick() {
-                            _this8.removeFilterRow(l);
+                            _this9.removeFilterRow(l);
                           } },
                         '⤫'
                       )
@@ -1169,7 +1241,7 @@ var ResponsiveTable = function (_Component) {
                         onChange: function onChange(event) {
                           var text = event.target.value;
                           var name = 'property';
-                          _this8.updateNewFilterRowText({ name: name, text: text });
+                          _this9.updateNewFilterRowText({ name: name, text: text });
                         }
                       },
                       this.filterSelectOptions.map(function (filter, fp) {
@@ -1191,7 +1263,7 @@ var ResponsiveTable = function (_Component) {
                         onChange: function onChange(event) {
                           var text = event.target.value;
                           var name = 'filter_value';
-                          _this8.updateNewFilterRowText({ name: name, text: text });
+                          _this9.updateNewFilterRowText({ name: name, text: text });
                         }
                       },
                       _TableHelpers.filterQuerySelectOptions.map(function (filter, ft) {
@@ -1211,7 +1283,7 @@ var ResponsiveTable = function (_Component) {
                       onChange: function onChange(event) {
                         var text = event.target.value;
                         var name = 'value';
-                        _this8.updateNewFilterRowText({ name: name, text: text });
+                        _this9.updateNewFilterRowText({ name: name, text: text });
                       } })
                   ),
                   _react2.default.createElement(
@@ -1220,7 +1292,7 @@ var ResponsiveTable = function (_Component) {
                     _react2.default.createElement(
                       rb.Button,
                       { style: { width: '100%' }, onClick: function onClick() {
-                          _this8.addFilterRow();
+                          _this9.addFilterRow();
                         } },
                       'Add filter'
                     )
@@ -1281,8 +1353,8 @@ var ResponsiveTable = function (_Component) {
               _react2.default.createElement(
                 rb.Button,
                 { icon: 'fa fa-download', onClick: function onClick() {
-                    _this8.props.fileSaver({
-                      data: _this8.state.rows,
+                    _this9.props.fileSaver({
+                      data: _this9.state.rows,
                       filename: window.location.pathname.replace(/\//gi, '_') + '.json'
                     });
                   } },
@@ -1292,9 +1364,9 @@ var ResponsiveTable = function (_Component) {
                 rb.Button,
                 { icon: 'fa fa-download', onClick: function onClick() {
                     // console.debug('this.state.rows', this.state.rows);
-                    (0, _json2Csv.json2csv)(_this8.state.rows, function (err, csv) {
+                    (0, _json2Csv.json2csv)(_this9.state.rows, function (err, csv) {
                       // console.debug('before csv',csv );
-                      _this8.props.fileSaver({
+                      _this9.props.fileSaver({
                         data: csv,
                         type: 'text/csv;charset=utf-8',
                         filename: window.location.pathname.replace(/\//gi, '_') + '.csv'
@@ -1312,10 +1384,10 @@ var ResponsiveTable = function (_Component) {
                 rb.Button,
                 { icon: 'fa fa-download', onClick: function onClick() {
                     // console.debug('this.state.rows', this.state.rows);
-                    var headers = [];_this8.state.headers.forEach(function (header) {
+                    var headers = [];_this9.state.headers.forEach(function (header) {
                       if (header.sortid) headers.push(header.sortid);
                     });
-                    var filtered_rows = _this8.state.rows.map(function (row) {
+                    var filtered_rows = _this9.state.rows.map(function (row) {
                       var copy = (0, _assign2.default)({}, row);
                       (0, _keys2.default)(copy).forEach(function (key) {
                         if (headers.indexOf(key) === -1) {
@@ -1327,7 +1399,7 @@ var ResponsiveTable = function (_Component) {
                     // console.log({ filtered_rows });
                     (0, _json2Csv.json2csv)(filtered_rows, function (err, csv) {
                       // console.debug('before csv',csv );
-                      _this8.props.fileSaver({
+                      _this9.props.fileSaver({
                         data: csv,
                         type: 'text/csv;charset=utf-8',
                         filename: window.location.pathname.replace(/\//gi, '_') + '.csv'
@@ -1369,8 +1441,8 @@ var ResponsiveTable = function (_Component) {
                           value: this.state.sortProp || 'createdat',
                           onChange: function onChange(event) {
                             var text = event.target.value;
-                            _this8.setState({ sortProp: text }, function () {
-                              _this8.updateTableData({});
+                            _this9.setState({ sortProp: text }, function () {
+                              _this9.updateTableData({});
                             });
                           }
                         },
@@ -1388,8 +1460,8 @@ var ResponsiveTable = function (_Component) {
                           value: this.state.sortOrder || 'desc',
                           onChange: function onChange(event) {
                             var text = event.target.value;
-                            _this8.setState({ sortOrder: text }, function () {
-                              _this8.updateTableData({});
+                            _this9.setState({ sortOrder: text }, function () {
+                              _this9.updateTableData({});
                             });
                           }
                         },
@@ -1423,8 +1495,8 @@ var ResponsiveTable = function (_Component) {
                           value: this.state.limit,
                           onChange: function onChange(event) {
                             var text = event.target.value;
-                            _this8.setState({ limit: text }, function () {
-                              _this8.updateTableData({});
+                            _this9.setState({ limit: text }, function () {
+                              _this9.updateTableData({});
                             });
                           }
                         },
@@ -1462,7 +1534,7 @@ var ResponsiveTable = function (_Component) {
                           value: this.state.currentPage,
                           onChange: function onChange(event) {
                             var text = event.target.value;
-                            _this8.searchFunction({ pagenum: text });
+                            _this9.searchFunction({ pagenum: text });
                           }
                         },
                         [this.state.numPages].reduce(function (result, key) {
@@ -1474,7 +1546,7 @@ var ResponsiveTable = function (_Component) {
                         }, []).map(function (lim, lp) {
                           return _react2.default.createElement(
                             'option',
-                            { value: lim, key: lp, disabled: lim === _this8.state.currentPage },
+                            { value: lim, key: lp, disabled: lim === _this9.state.currentPage },
                             lim
                           );
                         })
@@ -1532,8 +1604,8 @@ var ResponsiveTable = function (_Component) {
                       'a',
                       (0, _extends3.default)({ style: {
                           cursor: 'pointer'
-                        } }, _this8.props.headerLinkProps, { onClick: function onClick() {
-                          _this8.updateTableData({ sort: header.sortid });
+                        } }, _this9.props.headerLinkProps, { onClick: function onClick() {
+                          _this9.updateTableData({ sort: header.sortid });
                         } }),
                       header.label
                     ) : header.label
@@ -1551,37 +1623,40 @@ var ResponsiveTable = function (_Component) {
                   return _react2.default.createElement(
                     rb.Th,
                     (0, _extends3.default)({ key: idx }, header.headerColumnProps),
-                    idx === _this8.state.headers.length - 1 ? _react2.default.createElement(
+                    idx === _this9.state.headers.length - 1 ? _react2.default.createElement(
                       'span',
-                      (0, _extends3.default)({ className: '__ra_rt_tf', style: { display: 'flex' } }, _this8.props.tableFormButtonWrapperProps),
-                      _this8.props.replaceButton ? _react2.default.createElement(
+                      (0, _extends3.default)({ className: '__ra_rt_tf', style: {
+                          display: 'flex',
+                          justifyContent: 'flex-end'
+                        } }, _this9.props.tableFormButtonWrapperProps),
+                      _this9.props.replaceButton ? _react2.default.createElement(
                         _reactFileReaderInput2.default,
-                        { as: 'text', onChange: _this8.handleFileUpload.call(_this8, 'replace') },
+                        { as: 'text', onChange: _this9.handleFileUpload.call(_this9, 'replace') },
                         _react2.default.createElement(
                           rb.Button,
-                          _this8.props.replaceButtonProps,
-                          _this8.props.replaceButtonLabel || 'Replace'
+                          _this9.props.replaceButtonProps,
+                          _this9.props.replaceButtonLabel || ''
                         )
                       ) : null,
-                      _this8.props.uploadAddButton ? _react2.default.createElement(
+                      _this9.props.uploadAddButton ? _react2.default.createElement(
                         _reactFileReaderInput2.default,
-                        { as: 'text', onChange: _this8.handleFileUpload.call(_this8, 'add') },
+                        { as: 'text', onChange: _this9.handleFileUpload.call(_this9, 'add') },
                         _react2.default.createElement(
                           rb.Button,
-                          _this8.props.uploadAddButtonProps,
-                          _this8.props.uploadAddButtonLabel || 'Upload'
+                          _this9.props.uploadAddButtonProps,
+                          _this9.props.uploadAddButtonLabel || ''
                         )
                       ) : null,
                       _react2.default.createElement(
                         rb.Button,
-                        (0, _extends3.default)({}, _this8.props.tableFormAddButtonProps, {
-                          style: { width: '100%' },
+                        (0, _extends3.default)({
                           onClick: function onClick() {
-                            _this8.updateByAddRow();
-                          } }),
-                        _this8.props.formRowAddButtonLabel ? _this8.props.formRowAddButtonLabel : 'Add'
+                            _this9.updateByAddRow();
+                          }
+                        }, _this9.props.tableFormAddButtonProps),
+                        _this9.props.formRowAddButtonLabel ? _this9.props.formRowAddButtonLabel : ''
                       )
-                    ) : _this8.getFooterAddRow(header)
+                    ) : _this9.getFooterAddRow(header)
                   );
                 })
               )
@@ -1592,17 +1667,18 @@ var ResponsiveTable = function (_Component) {
               displayRows.map(function (row, rowIndex) {
                 return _react2.default.createElement(
                   rb.Tr,
-                  { key: 'row' + rowIndex, className: _this8.props.selectEntireRow && rowIndex === _this8.state.selectedRowIndex ? '__selected' : undefined },
-                  _this8.state.headers.map(function (header, colIndex) {
-                    // console.debug({header});
+                  { key: 'row' + rowIndex, className: _this9.props.selectEntireRow && rowIndex === _this9.state.selectedRowIndex ? '__selected' : undefined },
+                  _this9.state.headers.map(function (header, colIndex) {
+                    // console.warn('displayRows.length',displayRows.length,{rowIndex,colIndex});
+
                     if (header.link) {
                       return _react2.default.createElement(
                         rb.Td,
                         (0, _extends3.default)({ key: 'row' + rowIndex + 'col' + colIndex }, header.columnProps),
                         _react2.default.createElement(
                           _reactRouter.Link,
-                          (0, _extends3.default)({}, header.linkProps, { to: _this8.getHeaderLinkURL(header.link, row) }),
-                          _this8.formatValue(typeof row[header.sortid] !== 'undefined' ? row[header.sortid] : header.value, row, {
+                          (0, _extends3.default)({}, header.linkProps, { to: _this9.getHeaderLinkURL(header.link, row) }),
+                          _this9.formatValue(typeof row[header.sortid] !== 'undefined' ? row[header.sortid] : header.value, row, {
                             idx: rowIndex + calcStartIndex,
                             momentFormat: header.momentFormat,
                             numeralFormat: header.numeralFormat,
@@ -1619,26 +1695,27 @@ var ResponsiveTable = function (_Component) {
                       return _react2.default.createElement(
                         rb.Td,
                         (0, _extends3.default)({ key: 'row' + rowIndex + 'col' + colIndex, style: { textAlign: 'right' } }, header.columnProps),
-                        rowIndex !== 0 && _this8.props.useUpArrowButton ? _react2.default.createElement(
+                        rowIndex !== 0 && _this9.props.useUpArrowButton ? _react2.default.createElement(
                           rb.Button,
-                          (0, _extends3.default)({}, _this8.props.formRowUpButton, { onClick: function onClick() {
-                              _this8.moveRowUp(rowIndex);
+                          (0, _extends3.default)({}, _this9.props.formRowUpButton, { onClick: function onClick() {
+                              _this9.moveRowUp(rowIndex);
                             } }),
-                          _this8.props.formRowUputtonLabel ? _this8.props.formRowUputtonLabel : '⇧'
+                          _this9.props.formRowUputtonLabel ? _this9.props.formRowUputtonLabel : '⇧'
                         ) : null,
-                        rowIndex < _this8.state.rows.length - 1 && _this8.props.useDownArrowButton ? _react2.default.createElement(
+                        rowIndex < _this9.state.rows.length - 1 && _this9.props.useDownArrowButton ? _react2.default.createElement(
                           rb.Button,
-                          (0, _extends3.default)({}, _this8.props.formRowDownButton, { onClick: function onClick() {
-                              _this8.moveRowDown(rowIndex);
+                          (0, _extends3.default)({}, _this9.props.formRowDownButton, { onClick: function onClick() {
+                              _this9.moveRowDown(rowIndex);
                             } }),
-                          _this8.props.formRowDownButtonLabel ? _this8.props.formRowDownButtonLabel : '⇩'
+                          _this9.props.formRowDownButtonLabel ? _this9.props.formRowDownButtonLabel : '⇩'
                         ) : null,
                         _react2.default.createElement(
                           rb.Button,
-                          (0, _extends3.default)({}, _this8.props.formRowDeleteButton, { onClick: function onClick() {
-                              _this8.deleteRow(rowIndex);
-                            } }),
-                          _this8.props.formRowDeleteButtonLabel ? _this8.props.formRowDeleteButtonLabel : '⤫'
+                          (0, _extends3.default)({ onClick: function onClick() {
+                              // console.log('CLICKING REMOVE', { rowIndex });
+                              _this9.deleteRow(rowIndex);
+                            } }, _this9.props.formRowDeleteButton),
+                          _this9.props.formRowDeleteButtonLabel ? _this9.props.formRowDeleteButtonLabel : '⤫'
                         )
                       );
                     } else if (header.buttons && header.buttons.length) {
@@ -1647,13 +1724,13 @@ var ResponsiveTable = function (_Component) {
                         rb.Td,
                         (0, _extends3.default)({ key: 'row' + rowIndex + 'col' + colIndex }, header.columnProps),
                         header.buttons.map(function (button) {
-                          return _this8.getRenderedComponent((0, _assign2.default)({
+                          return _this9.getRenderedComponent((0, _assign2.default)({
                             component: 'ResponsiveButton',
                             props: (0, _assign2.default)({
                               onclickPropObject: row,
                               buttonProps: {}
                             }, button.passProps),
-                            children: _this8.formatValue(typeof row[header.sortid] !== 'undefined' ? row[header.sortid] : header.value, row, {
+                            children: _this9.formatValue(typeof row[header.sortid] !== 'undefined' ? row[header.sortid] : header.value, row, {
                               idx: rowIndex + calcStartIndex,
                               momentFormat: header.momentFormat,
                               image: header.image,
@@ -1670,15 +1747,15 @@ var ResponsiveTable = function (_Component) {
                       return _react2.default.createElement(
                         rb.Td,
                         (0, _extends3.default)({ key: 'row' + rowIndex + 'col' + colIndex }, header.columnProps, { onClick: function onClick() {
-                            if (_this8.props.selectEntireRow) {
-                              _this8.selectRow({
+                            if (_this9.props.selectEntireRow) {
+                              _this9.selectRow({
                                 selectedRowData: row,
                                 selectedRowIndex: rowIndex
                               });
                             }
                             // console.debug({ event, rowIndex });
                           } }),
-                        _this8.formatValue.call(_this8, typeof row[header.sortid] !== 'undefined' ? row[header.sortid] : header.value, row, {
+                        _this9.formatValue.call(_this9, row && typeof row[header.sortid] !== 'undefined' ? row[header.sortid] : header.value, row, {
                           rowIndex: rowIndex,
                           idx: rowIndex + calcStartIndex,
                           momentFormat: header.momentFormat,

@@ -91,7 +91,13 @@ var defaultProps = {
     style: {
       height: '100%'
     }
-  }
+  },
+  tabs: [{
+    name: '',
+    layout: {
+      component: 'div'
+    }
+  }]
 };
 
 var ResponsiveTabs = function (_Component) {
@@ -103,11 +109,24 @@ var ResponsiveTabs = function (_Component) {
     // console.debug('responsiveTab',{props})
     var _this = (0, _possibleConstructorReturn3.default)(this, (ResponsiveTabs.__proto__ || (0, _getPrototypeOf2.default)(ResponsiveTabs)).call(this, props));
 
+    var initialTab = props.tabs[0];
+    var tabs = props.tabs;
+    var initialTabName = props.currentTab || props.initialTab || props.tabs[0].name;
+    if (typeof initialTabName === 'string') {
+      var initialTabNameIndex = props.tabs.findIndex(function (tab) {
+        return tab.name === initialTabName;
+      });
+      if (initialTabNameIndex < 1) initialTabNameIndex = 0;
+      initialTab = props.tabs[initialTabNameIndex];
+    }
+    if (props.onlyUseInitialTab) {
+      tabs = [initialTab];
+    }
     _this.state = {
       tabsType: props.tabsType,
-      tabs: props.tabs,
+      tabs: tabs,
       isButton: props.isButton,
-      currentTab: '' || props.tabs[0],
+      currentTab: initialTab,
       currentLayout: '',
       tabgroupProps: props.tabgroupProps,
       tabsProps: props.tabsProps
@@ -154,74 +173,77 @@ var ResponsiveTabs = function (_Component) {
       var _this2 = this;
 
       var TabSelector = null;
-      if (this.props.customTabLayout) {
-        TabSelector = this.state.tabs.map(function (tab, i) {
-          var active = tab.name === _this2.state.currentTab.name ? true : false;
-          var buttonStyle = tab.name === _this2.state.currentTab.name ? _styles2.default.activeButton : {};
-          var customTab = (0, _assign2.default)({}, _this2.props.customTabLayout);
-          customTab.props = (0, _assign2.default)({
-            style: buttonStyle
-          }, customTab.props, {
-            onClick: function onClick() {
-              return _this2.changeTab(tab);
-            },
-            isActive: { active: active },
-            key: tab.name + '-' + i,
-            tab: tab
+      if (this.props.hideTabSelector === true && (this.state.tabs.length === 1 || this.props.onlyUseInitialTab)) {
+        TabSelector = null;
+      } else {
+        if (this.props.customTabLayout) {
+          TabSelector = this.state.tabs.map(function (tab, i) {
+            var active = tab.name === _this2.state.currentTab.name ? true : false;
+            var buttonStyle = tab.name === _this2.state.currentTab.name ? _styles2.default.activeButton : {};
+            var customTab = (0, _assign2.default)({}, _this2.props.customTabLayout);
+            customTab.props = (0, _assign2.default)({
+              style: buttonStyle
+            }, customTab.props, {
+              onClick: function onClick() {
+                return _this2.changeTab(tab);
+              },
+              isActive: { active: active },
+              key: tab.name + '-' + i,
+              tab: tab
+            });
+            return _this2.getRenderedComponent(customTab);
           });
-          return _this2.getRenderedComponent(customTab);
-        });
-      } else if (this.state.tabsType === 'pageToggle') {
-        TabSelector = this.state.tabs.map(function (tab, i) {
-          var active = tab.name === _this2.state.currentTab.name ? true : false;
-          var buttonStyle = tab.name === _this2.state.currentTab.name ? _styles2.default.activeButton : {};
-          if (_this2.state.isButton) return _react2.default.createElement(
-            _reBulma.Tab,
-            (0, _extends3.default)({}, tab.tabProps, { key: tab.name + '-' + i, isActive: active, onClick: function onClick() {
-                return _this2.changeTab(tab);
-              } }),
-            _react2.default.createElement(
-              _reBulma.Button,
-              { style: buttonStyle },
-              tab.name
-            )
-          );
-          return _react2.default.createElement(
-            _reBulma.Tab,
-            (0, _extends3.default)({}, tab.tabProps, { key: tab.name + '-' + i, isActive: active, onClick: function onClick() {
-                return _this2.changeTab(tab);
-              } }),
-            tab.name
-          );
-        });
-      } else if (this.state.tabsType === 'select') {
-        TabSelector = _react2.default.createElement(
-          _reBulma.Select,
-          (0, _extends3.default)({}, this.state.tabgroupProps, {
-            onChange: function onChange(e) {
-              _this2.changeTab(e.target.value);
-            } }),
-          this.props.tabs.map(function (tab, idx) {
+        } else if (this.state.tabsType === 'pageToggle') {
+          TabSelector = this.state.tabs.map(function (tab, i) {
+            var active = tab.name === _this2.state.currentTab.name ? true : false;
+            var buttonStyle = tab.name === _this2.state.currentTab.name ? _styles2.default.activeButton : {};
+            if (_this2.state.isButton) return _react2.default.createElement(
+              _reBulma.Tab,
+              (0, _extends3.default)({}, tab.tabProps, { key: tab.name + '-' + i, isActive: active, onClick: function onClick() {
+                  return _this2.changeTab(tab);
+                } }),
+              _react2.default.createElement(
+                _reBulma.Button,
+                { style: buttonStyle },
+                tab.name
+              )
+            );
             return _react2.default.createElement(
-              'option',
-              (0, _extends3.default)({ key: idx, value: idx }, tab.tabProps),
+              _reBulma.Tab,
+              (0, _extends3.default)({}, tab.tabProps, { key: tab.name + '-' + i, isActive: active, onClick: function onClick() {
+                  return _this2.changeTab(tab);
+                } }),
               tab.name
             );
-          })
-        );
-      } else if (this.state.tabsType === 'navBar') {
-        TabSelector = this.state.tabs.map(function (tab, idx) {
-          var active = tab.name === _this2.state.currentTab.name ? true : false;
-          return _react2.default.createElement(
-            _reBulma.Tab,
-            (0, _extends3.default)({}, tab.tabProps, { key: idx, isActive: active, onClick: function onClick() {
-                return _this2.changeTab(tab);
+          });
+        } else if (this.state.tabsType === 'select') {
+          TabSelector = _react2.default.createElement(
+            _reBulma.Select,
+            (0, _extends3.default)({}, this.state.tabgroupProps, {
+              onChange: function onChange(e) {
+                _this2.changeTab(e.target.value);
               } }),
-            tab.name
+            this.props.tabs.map(function (tab, idx) {
+              return _react2.default.createElement(
+                'option',
+                (0, _extends3.default)({ key: idx, value: idx }, tab.tabProps),
+                tab.name
+              );
+            })
           );
-        });
+        } else if (this.state.tabsType === 'navBar') {
+          TabSelector = this.state.tabs.map(function (tab, idx) {
+            var active = tab.name === _this2.state.currentTab.name ? true : false;
+            return _react2.default.createElement(
+              _reBulma.Tab,
+              (0, _extends3.default)({}, tab.tabProps, { key: idx, isActive: active, onClick: function onClick() {
+                  return _this2.changeTab(tab);
+                } }),
+              tab.name
+            );
+          });
+        }
       }
-
       return this.props.vertical ? _react2.default.createElement(
         _reBulma.Columns,
         this.props.tabContainer,

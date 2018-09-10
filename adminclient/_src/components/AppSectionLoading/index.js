@@ -45,7 +45,7 @@ var Loading = function (_Component) {
     value: function render() {
       return _react2.default.createElement(
         _reBulma.Hero,
-        { className: '__ra_app_section_loading', size: 'isFullheight' },
+        { className: '__ra_app_section_loading', style: this.props.style },
         _react2.default.createElement(
           _reBulma.HeroBody,
           null,
@@ -56,10 +56,10 @@ var Loading = function (_Component) {
               _reBulma.Button,
               { color: 'isWhite', state: 'isLoading' },
               'Loading'
-            )
+            ),
+            this.props.children
           )
-        ),
-        this.props.children
+        )
       );
     }
   }]);

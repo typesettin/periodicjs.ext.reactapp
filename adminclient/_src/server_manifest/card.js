@@ -36,6 +36,7 @@ function getImage(options) {
 function getContent(options) {
   return options.content ? {
     component: 'CardContent',
+    props: options.contentProps,
     children: Array.isArray(options.content) ? options.content : [options.content]
   } : null;
 }
@@ -54,15 +55,27 @@ function getFooter(options) {
 
 function getCard() {
   var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { props: {} };
-  var componentProps = options.componentProps;
+  var componentProps = options.componentProps,
+      responsive = options.responsive;
   var _options$props$cardPr = options.props.cardProps,
       cardProps = _options$props$cardPr === undefined ? {} : _options$props$cardPr;
-  // console.log('getCard',{ options,cardProps });
 
-  return (0, _assign2.default)({
+  var Image = getImage(options);
+  var Content = getContent(options);
+  var Footer = getFooter(options);
+  // console.log('getCard',{ options,cardProps });
+  return responsive ? (0, _assign2.default)({
+    component: 'ResponsiveCard',
+    props: (0, _assign2.default)({
+      cardTitle: options.title,
+      iconRight: options.iconRight,
+      iconLeft: options.iconLeft
+    }, cardProps),
+    children: [].concat(Image ? Image.children : []).concat(Content ? Content.children : []).concat(Footer ? Footer.children : [])
+  }, componentProps) : (0, _assign2.default)({
     component: 'Card',
     props: cardProps,
-    children: [getTitle(options), getImage(options), getContent(options), getFooter(options)]
+    children: [getTitle(options), Image, Content, Footer]
   }, componentProps);
 }
 

@@ -522,18 +522,26 @@ function setCoreDataConfigurations() {
  * @return {boolean} Returns true if user privileges exist in view privilege array. Additionally returns true if view privileges is not defined           
  */
 function determineAccess(privileges, layout) {
-  if (!privileges.length && (!layout.privileges || !layout.privileges.length)) return true;
-  let hasAccess = false;
-  if (!layout.privileges) hasAccess = true;
-  else {
-    if (privileges.length) {
-      for (let i = 0; i < privileges.length; i++) {
-        hasAccess = (layout.privileges.indexOf(privileges[i]) !== -1);
-        if (hasAccess) break;
+  try {
+    if (!privileges.length && ( !layout || !layout.privileges || !layout.privileges.length)) {
+      return true;
+    }
+    let hasAccess = false;
+    if (!layout.privileges) hasAccess = true;
+    else {
+      if (privileges.length) {
+        for (let i = 0; i < privileges.length; i++) {
+          hasAccess = (layout.privileges.indexOf(privileges[i]) !== -1);
+          if (hasAccess) break;
+        }
       }
     }
+    return hasAccess;
+    
+  } catch (e) {
+    console.log('ERROR',{privileges,layout})
+    throw e;
   }
-  return hasAccess;
 }
 
 /**
@@ -562,7 +570,7 @@ function recursivePrivilegesFilter(privileges = {}, config = {}, isRoot = false)
   return Object.keys(config).reduce((result, key) => {
     let layout = (isRoot) ? config[key].layout : config[key];
     let hasAccess = determineAccess(privileges, layout);
-    if (hasAccess) {
+    if (hasAccess && layout) {
       result[key] = config[key];
       if (Array.isArray(layout.children) && layout.children.length) result[key].children = recursivePrivilegesFilter(privileges, result[key].children);
     }

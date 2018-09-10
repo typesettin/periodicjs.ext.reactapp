@@ -263,7 +263,7 @@ function getInitialValue(formElement, state) {
 function getPassablePropsKeyEvents(passableProps, formElement) {
   var _this2 = this;
 
-  var customEventFunctions = ['_onClick', '_onKeyPress', '_onBlur', '_onFocus', '_onKeyUp'];
+  var customEventFunctions = ['_onClick', '_onKeyPress', '_onBlur', '_onFocus', '_onKeyUp', '_onChange'];
   customEventFunctions.forEach(function (customEventFunc) {
     if (formElement[customEventFunc]) {
       passableProps[customEventFunc.replace('_', '')] = function (e) {
@@ -434,15 +434,24 @@ function getFormDatatable(options) {
     _FormItem2.default,
     (0, _extends3.default)({ key: i }, formElement.layoutProps),
     getFormLabel(formElement),
-    _react2.default.createElement(_ResponsiveTable2.default, (0, _extends3.default)({}, passedProps, {
+    _react2.default.createElement(_ResponsiveTable2.default, (0, _extends3.default)({
       onChange: function onChange(newvalue) {
         var selectedRowData = formElement.selectEntireRow && (newvalue.selectedRowData || newvalue.selectedRowIndex) ? (0, _defineProperty3.default)({}, formElement.name + '__tabledata', {
           selectedRowData: newvalue.selectedRowData,
           selectedRowIndex: newvalue.selectedRowIndex
         }) : {};
         var flattenedData = _this3.props.flattenFormData ? (0, _flat2.default)((0, _assign2.default)({}, selectedRowData, (0, _defineProperty3.default)({}, formElement.name, newvalue.rows))) : {};
+        var formDataTables = (0, _assign2.default)({}, _this3.state.formDataTables, (0, _defineProperty3.default)({}, formElement.name, newvalue.rows));
+        if (_this3.props.flattenFormData) {
+          (0, _keys2.default)(_this3.state).forEach(function (stateProperty) {
+            if (stateProperty.indexOf(formElement.name + '.') === 0) {
+              delete _this3.state[stateProperty];
+            }
+          });
+        }
+
         var updatedStateProp = (0, _assign2.default)((0, _defineProperty3.default)({
-          formDataTables: (0, _assign2.default)({}, _this3.state.formDataTables, (0, _defineProperty3.default)({}, formElement.name, newvalue.rows))
+          formDataTables: formDataTables
         }, formElement.name, newvalue.rows), flattenedData, selectedRowData);
         if (formElement.onChangeFilter) {
           var onChangeFunc = getFunctionFromProps.call(_this3, { propFunc: formElement.onChangeFilter });
@@ -451,7 +460,7 @@ function getFormDatatable(options) {
         // console.debug('DATATABLE',updatedStateProp);
         _this3.setState(updatedStateProp);
       },
-      value: initialValue })),
+      value: initialValue }, passedProps)),
     getCustomErrorLabel(hasError, this.state, formElement)
   );
 }
@@ -500,13 +509,24 @@ function getFormDatalist(options) {
     _FormItem2.default,
     (0, _extends3.default)({ key: i }, formElement.layoutProps),
     getFormLabel(formElement),
-    _react2.default.createElement(_ResponsiveDatalist2.default, (0, _extends3.default)({}, passedProps, {
+    _react2.default.createElement(_ResponsiveDatalist2.default, (0, _extends3.default)({
       onChange: function onChange(newvalue) {
+        // console.log({newvalue})
         var updatedStateProp = {};
         updatedStateProp[formElement.name] = newvalue;
+
+        if (_this4.props.flattenFormData) {
+          (0, _keys2.default)(_this4.state).forEach(function (stateProperty) {
+            if (stateProperty.indexOf(formElement.name + '.') === 0) {
+              // console.log('deleting',stateProperty)
+              delete _this4.state[stateProperty];
+            }
+          });
+        }
+        // console.log({updatedStateProp})
         _this4.setState(updatedStateProp);
       },
-      value: initialValue }))
+      value: initialValue }, passedProps))
   );
 }
 
@@ -601,13 +621,14 @@ function getFormMaskedInput(options) {
     _react2.default.createElement(
       'span',
       wrapperProps,
-      _react2.default.createElement(_reactTextMask2.default, (0, _extends3.default)({}, passableProps, {
+      _react2.default.createElement(_reactTextMask2.default, (0, _extends3.default)({
         mask: mask,
         className: hasError ? passableProps.className + ' __re-bulma_is-danger' : passableProps.className,
         color: hasError ? 'isDanger' : undefined,
         onChange: onChange,
         placeholder: formElement.placeholder,
-        value: initialValue })),
+        value: initialValue
+      }, passableProps)),
       getCustomErrorIcon(hasError, isValid, this.state, formElement),
       getCustomErrorLabel(hasError, this.state, formElement)
     )
@@ -671,14 +692,14 @@ function getFormTextInputArea(options) {
     _FormItem2.default,
     (0, _extends3.default)({ key: i }, formElement.layoutProps, { initialIcon: formElement.initialIcon, isValid: isValid, hasError: hasError, hasValue: hasValue }),
     getFormLabel(formElement),
-    _react2.default.createElement(_reBulma.Input, (0, _extends3.default)({}, passableProps, {
+    _react2.default.createElement(_reBulma.Input, (0, _extends3.default)({
       help: getFormElementHelp(hasError, this.state, formElement.name),
       color: hasError ? 'isDanger' : undefined,
       icon: hasError ? formElement.errorIcon || 'fa fa-warning' : isValid ? formElement.validIcon || 'fa fa-check' : formElement.initialIcon ? formElement.initialIcon : undefined,
       hasIconRight: formElement.errorIconRight,
       onChange: onChange,
       placeholder: formElement.placeholder,
-      value: initialValue }))
+      value: initialValue }, passableProps))
   );
 }
 
@@ -710,7 +731,7 @@ function getFormTextArea(options) {
     _FormItem2.default,
     (0, _extends3.default)({ key: i }, formElement.layoutProps, { initialIcon: formElement.initialIcon, isValid: isValid, hasError: hasError, hasValue: hasValue }),
     getFormLabel(formElement),
-    _react2.default.createElement(_reBulma.Textarea, (0, _extends3.default)({}, passableProps, {
+    _react2.default.createElement(_reBulma.Textarea, (0, _extends3.default)({
       onChange: function onChange(event) {
         return _onChange()(event);
       },
@@ -719,7 +740,7 @@ function getFormTextArea(options) {
       color: hasError ? 'isDanger' : undefined,
       hasIconRight: formElement.errorIconRight,
       placeholder: formElement.placeholder || formElement.label,
-      value: this.state[formElement.name] || initialValue }))
+      value: this.state[formElement.name] || initialValue }, passableProps))
   );
 }
 
@@ -762,7 +783,7 @@ function getFormSelect(options) {
       { className: '__re-bulma_control', style: { position: 'relative', display: 'block' } },
       _react2.default.createElement(
         _reBulma.Select,
-        (0, _extends3.default)({}, formElement.passProps, {
+        (0, _extends3.default)({
           style: (0, _assign2.default)({}, { flex: 'inherit', marginBottom: 0 }, formElement.passProps && formElement.passProps.style ? formElement.passProps.style : {}),
           help: getFormElementHelp(hasError, this.state, formElement.name),
           color: hasError ? 'isDanger' : undefined,
@@ -771,7 +792,7 @@ function getFormSelect(options) {
             if (customCallbackfunction) customCallbackfunction(event);
           },
           placeholder: formElement.placeholder || formElement.label,
-          value: this.state[formElement.name] || initialValue }),
+          value: this.state[formElement.name] || initialValue }, formElement.passProps),
         selectOptions.map(function (opt, k) {
           return _react2.default.createElement(
             'option',
@@ -825,12 +846,11 @@ function getFormCheckbox(options) {
     _FormItem2.default,
     (0, _extends3.default)({ key: i }, formElement.layoutProps, { hasError: hasError, hasValue: hasValue }),
     getFormDataLabel(formElement),
-    _react2.default.createElement('input', (0, _extends3.default)({}, formElement.passProps, {
+    _react2.default.createElement('input', (0, _extends3.default)({
       type: formElement.type || 'checkbox',
       name: this.state[formElement.formdata_name] || formElement.name,
       checked: formElement.type === 'radio' ? this.state[formElement.name] === formElement.value : this.state[formElement.name],
-      onChange: onValueChange
-    })),
+      onChange: onValueChange }, formElement.passProps)),
     _react2.default.createElement(
       'span',
       formElement.placeholderProps,
@@ -883,15 +903,15 @@ function getFormSwitch(options) {
     _react2.default.createElement(
       'div',
       null,
-      _react2.default.createElement(_rcSwitch2.default, (0, _extends3.default)({}, formElement.passProps, {
-        // type={formElement.type || 'checkbox'}
-        // name={this.state[ formElement.formdata_name] || formElement.name}
-        checked: this.state[formElement.name]
+      _react2.default.createElement(_rcSwitch2.default
+      // type={formElement.type || 'checkbox'}
+      // name={this.state[ formElement.formdata_name] || formElement.name}
+      , (0, _extends3.default)({ checked: this.state[formElement.name]
         // disabled={this.state.disabled}
         // checkedChildren={'on'}
         // unCheckedChildren={''}
         , onChange: onValueChange
-      }))
+      }, formElement.passProps))
     ),
     _react2.default.createElement(
       'span',
@@ -944,11 +964,10 @@ function getRawInput(options) {
     _react2.default.createElement(
       'div',
       wrapperProps,
-      _react2.default.createElement('input', (0, _extends3.default)({}, passableProps, {
+      _react2.default.createElement('input', (0, _extends3.default)({
         type: formElement.type,
         checked: this.state[formElement.name],
-        onChange: onValueChange
-      })),
+        onChange: onValueChange }, passableProps)),
       getCustomErrorLabel(hasError, this.state, formElement)
     )
   );
@@ -985,10 +1004,9 @@ function getButton(options) {
     getFormLabel(formElement),
     _react2.default.createElement(
       _reBulma.Button,
-      (0, _extends3.default)({}, passableProps, {
+      (0, _extends3.default)({
         type: formElement.type,
-        onChange: onValueChange
-      }),
+        onChange: onValueChange }, passableProps),
       formElement.value || passableProps.value
     ),
     getCustomErrorLabel(hasError, this.state, formElement)
@@ -1061,9 +1079,8 @@ function getSliderInput(options) {
       wrapperProps,
       _react2.default.createElement(
         _rcSlider2.default,
-        (0, _extends3.default)({}, passableProps, {
-          onChange: onValueChange
-        }),
+        (0, _extends3.default)({
+          onChange: onValueChange }, passableProps),
         formElement.leftLabel ? _react2.default.createElement(
           'span',
           { className: '__reactapp_slider__label __reactapp_slider__label_left' },
@@ -1281,7 +1298,7 @@ function getFormSubmit(options) {
     getFormLabel(formElement),
     _react2.default.createElement(
       _reBulma.Button,
-      (0, _extends3.default)({}, passableProps, {
+      (0, _extends3.default)({
         onClick: function onClick() {
           var validated_formdata = _FormHelpers.validateForm.call(_this13, { formdata: _this13.state, validationErrors: {} });
           var updateStateData = {
@@ -1347,7 +1364,7 @@ function getFormSubmit(options) {
                 }]
               } }, formElement.confirmModal)) : _this13.submitForm.call(_this13);
           });
-        } }),
+        } }, passableProps),
       formElement.value
     )
   );

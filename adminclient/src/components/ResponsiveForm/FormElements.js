@@ -10,7 +10,7 @@ import capitalize from 'capitalize';
 // import ResponsiveButton from '../ResponsiveButton';
 // import { EditorState, } from 'draft-js';
 import Slider from 'rc-slider';
-import { default as RCSwitch } from 'rc-switch';
+import { default as RCSwitch, } from 'rc-switch';
 import { ControlLabel, Label, Input, Button, CardFooterItem, Select, Textarea, Group, Image, } from 're-bulma';
 import MaskedInput from 'react-text-mask';
 import moment from 'moment';
@@ -78,7 +78,7 @@ function getCustomErrorIcon(hasError, isValid, state, formelement) {
     position: 'absolute',
     top: '5px',
     zIndex: '4',
-    right: '24px'
+    right: '24px',
   }, formelement.customIconStyle);
   let iconVar = (hasError)
     ? formelement.errorIcon || 'fa fa-warning'
@@ -100,13 +100,14 @@ function valueChangeHandler(formElement) {
     let updatedStateProp = {};
     updatedStateProp[ formElement.name ] = text;
     if (formElement.onChangeFilter) {
-      const onChangeFunc = getFunctionFromProps.call(this, { propFunc: formElement.onChangeFilter });
-      updatedStateProp = onChangeFunc.call(this, Object.assign({},this.state,updatedStateProp), updatedStateProp);
+      const onChangeFunc = getFunctionFromProps.call(this, { propFunc: formElement.onChangeFilter, });
+      updatedStateProp = onChangeFunc.call(this, Object.assign({}, this.state, updatedStateProp), updatedStateProp);
     }
     this.setState(updatedStateProp, () => {
       if(formElement.validateOnChange){
-      this.validateFormElement({ formElement, });
-    }});
+        this.validateFormElement({ formElement, });
+      }
+});
   };
 }
 
@@ -132,7 +133,7 @@ function getInitialValue(formElement, state) {
       }
       returnValue[ 0 ][ header.sortid ] = header.value;
       return returnValue;
-    },[]);
+    }, []);
   }
   let formElementValue = formElement.value;
  
@@ -155,7 +156,7 @@ function getInitialValue(formElement, state) {
 }
 
 function getPassablePropsKeyEvents(passableProps, formElement) {
-  const customEventFunctions = [ '_onClick', '_onKeyPress', '_onBlur', '_onFocus', '_onKeyUp', ];
+  const customEventFunctions = ['_onClick', '_onKeyPress', '_onBlur', '_onFocus', '_onKeyUp', '_onChange',];
   customEventFunctions.forEach(customEventFunc => {
     if (formElement[ customEventFunc ]) {
       passableProps[ customEventFunc.replace('_', '') ] = (e) => {
@@ -236,7 +237,7 @@ function getPassablePropsKeyEvents(passableProps, formElement) {
 }
 
 function getFunctionFromProps(options) {
-  const { propFunc } = options;
+  const { propFunc, } = options;
 
   if (typeof propFunc === 'string' && propFunc.indexOf('func:this.props.reduxRouter') !== -1) {
     return this.props.reduxRouter[ this.props.replace('func:this.props.reduxRouter.', '') ];
@@ -247,14 +248,14 @@ function getFunctionFromProps(options) {
   } else if(typeof this.props[propFunc] ==='function') {
     return propFunc;
   } else {
-    return function () { }
+    return function () { };
   }
 }
 
 export function getFormDatatable(options){
   let { formElement, i, } = options;
   let initialValue = getInitialValue(formElement,
-  (Object.keys(this.state.formDataTables).length && this.state.formDataTables[formElement.name])?this.state.formDataTables :  Object.assign({}, this.state, unflatten(this.state, { overwrite: true })));
+  (Object.keys(this.state.formDataTables).length && this.state.formDataTables[formElement.name])?this.state.formDataTables :  Object.assign({}, this.state, unflatten(this.state, { overwrite: true, })));
   // console.debug({ initialValue },this.state, this.state[formElement.name]);
   let hasError = getErrorStatus(this.state, formElement.name);
   const getTableHeaders = (row) => {
@@ -311,7 +312,7 @@ export function getFormDatatable(options){
       : [];
     }
     return header;
-  })
+  });
   let passedProps = Object.assign(
     {},
     this.props,
@@ -341,7 +342,7 @@ export function getFormDatatable(options){
   //   // console.debug({formElement,initialValue, },'this.state',this.state);
   return (<FormItem key={i} {...formElement.layoutProps} >
   {getFormLabel(formElement)}  
-    <ResponsiveTable {...passedProps}
+    <ResponsiveTable 
       onChange={(newvalue) => {
         let selectedRowData = (formElement.selectEntireRow && (newvalue.selectedRowData || newvalue.selectedRowIndex))
           ? {
@@ -354,18 +355,31 @@ export function getFormDatatable(options){
         let flattenedData = (this.props.flattenFormData)
           ? flatten(Object.assign({}, selectedRowData, { [ formElement.name ]: newvalue.rows, }))
           : {};
+        const formDataTables = Object.assign(
+          {},
+          this.state.formDataTables,
+          { [ formElement.name ]: newvalue.rows, }
+        );
+        if (this.props.flattenFormData) {
+          Object.keys(this.state).forEach(stateProperty => {
+            if (stateProperty.indexOf(`${formElement.name}.`) === 0) {
+              delete this.state[ stateProperty ];
+            }
+          });
+        }
+
         let updatedStateProp = Object.assign({
-          formDataTables: Object.assign({}, this.state.formDataTables, { [ formElement.name ]: newvalue.rows, }),
+          formDataTables,
           [ formElement.name ]: newvalue.rows,
         }, flattenedData, selectedRowData);
         if (formElement.onChangeFilter) {
-          const onChangeFunc = getFunctionFromProps.call(this, { propFunc: formElement.onChangeFilter });
-          updatedStateProp = onChangeFunc.call(this, Object.assign({},this.state,updatedStateProp), updatedStateProp);
+          const onChangeFunc = getFunctionFromProps.call(this, { propFunc: formElement.onChangeFilter, });
+          updatedStateProp = onChangeFunc.call(this, Object.assign({}, this.state, updatedStateProp), updatedStateProp);
         }
         // console.debug('DATATABLE',updatedStateProp);
         this.setState(updatedStateProp);
       }}
-      value={initialValue} />
+      value={initialValue} {...passedProps}/>
     {getCustomErrorLabel(hasError, this.state, formElement)}
   </FormItem>);
 }
@@ -411,13 +425,24 @@ export function getFormDatalist(options){
   }
   return (<FormItem key={i} {...formElement.layoutProps} >
   {getFormLabel(formElement)}  
-    <ResponsiveDatalist {...passedProps}
-      onChange={(newvalue)=>{
+    <ResponsiveDatalist 
+      onChange={(newvalue) => {
+        // console.log({newvalue})
         let updatedStateProp = {};
         updatedStateProp[ formElement.name ] = newvalue;
+
+        if (this.props.flattenFormData) {
+          Object.keys(this.state).forEach(stateProperty => {
+            if (stateProperty.indexOf(`${formElement.name}.`) === 0) {
+              // console.log('deleting',stateProperty)
+              delete this.state[ stateProperty ];
+            }
+          });
+        }
+        // console.log({updatedStateProp})
         this.setState(updatedStateProp);
       }}
-      value={ initialValue } />
+      value={ initialValue } {...passedProps}/>
   </FormItem>);
 }
 
@@ -458,7 +483,7 @@ export function getFormMaskedInput(options) {
     });
   }
 
-  formElement.customErrorProps = (formElement.customErrorProps) ? Object.assign({}, { marginTop: '6px' }, formElement.customErrorProps) : {marginTop: '6px'};
+  formElement.customErrorProps = (formElement.customErrorProps) ? Object.assign({}, { marginTop: '6px', }, formElement.customErrorProps) : { marginTop: '6px' ,};
 
   let mask = [];
   function maskFunction(maskProp) {
@@ -480,7 +505,7 @@ export function getFormMaskedInput(options) {
       } else {
         return maskProp;
       }
-    }
+    };
   }
   if (formElement.createNumberMask && typeof passableProps.mask ==='string' && passableProps.mask.indexOf('func:window') !== -1 && typeof window[ passableProps.mask.replace('func:window.', '') ] === 'function') {
     let numberMaskConfig = (typeof window[ passableProps.mask.replace('func:window.', '') ].call(this, formElement) === 'object') ? window[ passableProps.mask.replace('func:window.', '') ].call(this, formElement) : {};
@@ -507,13 +532,13 @@ export function getFormMaskedInput(options) {
     {getFormLabel(formElement)}
     <span {...wrapperProps}>
       <MaskedInput
-      {...passableProps}
         mask={mask}
         className={(hasError) ? passableProps.className + ' __re-bulma_is-danger' : passableProps.className}  
       color={(hasError)?'isDanger':undefined}
       onChange={onChange}
       placeholder={formElement.placeholder}
-      value={initialValue} />
+      value={initialValue} 
+      {...passableProps}/>
       {getCustomErrorIcon(hasError, isValid, this.state, formElement)}  
       {getCustomErrorLabel(hasError, this.state, formElement)}
     </span>
@@ -555,8 +580,8 @@ export function getFormTextInputArea(options) {
         updatedStateProp[ formElement.name ] =(passableProps.maxLength)? text.substring(0, passableProps.maxLength): text;
       }
       if (formElement.onChangeFilter) {
-        const onChangeFunc = getFunctionFromProps.call(this, { propFunc: formElement.onChangeFilter });
-        updatedStateProp = onChangeFunc.call(this, Object.assign({},this.state,updatedStateProp), updatedStateProp);
+        const onChangeFunc = getFunctionFromProps.call(this, { propFunc: formElement.onChangeFilter, });
+        updatedStateProp = onChangeFunc.call(this, Object.assign({}, this.state, updatedStateProp), updatedStateProp);
       }
       this.setState(updatedStateProp);
     };
@@ -572,14 +597,14 @@ export function getFormTextInputArea(options) {
   }
   return (<FormItem key={i} {...formElement.layoutProps} initialIcon={formElement.initialIcon} isValid={isValid} hasError={hasError} hasValue={hasValue} >
     {getFormLabel(formElement)}  
-    <Input {...passableProps}
+    <Input 
       help={getFormElementHelp(hasError, this.state, formElement.name)}
       color={(hasError)?'isDanger':undefined}
       icon={(hasError) ? formElement.errorIcon || 'fa fa-warning' : (isValid) ? formElement.validIcon || 'fa fa-check' : (formElement.initialIcon) ? formElement.initialIcon : undefined}
       hasIconRight={formElement.errorIconRight}
       onChange={onChange}
       placeholder={formElement.placeholder}
-      value={ initialValue } />
+      value={ initialValue } {...passableProps}/>
   </FormItem>);
 }
 
@@ -598,21 +623,23 @@ export function getFormTextArea(options) {
     initialValue = JSON.stringify(initialValue, null, 2);
   }
   if (formElement.disableOnChange) {
-    onChange = () => { return () => {}};
+    onChange = () => {
+      return () => {};
+    };
   } else if (!onChange) {
     onChange = valueChangeHandler.bind(this, formElement);
   }
 
   return (<FormItem key={i} {...formElement.layoutProps} initialIcon={formElement.initialIcon} isValid={isValid} hasError={hasError} hasValue={hasValue} >
     {getFormLabel(formElement)}  
-    <Textarea {...passableProps}
+    <Textarea 
       onChange={(event)=>onChange()(event)}
       help={getFormElementHelp(hasError, this.state, formElement.name)}
       icon={(hasError) ? formElement.errorIcon || 'fa fa-warning' : (isValid) ? formElement.validIcon || 'fa fa-check' : (formElement.initialIcon) ? formElement.initialIcon : undefined}
       color={(hasError)?'isDanger':undefined}
       hasIconRight={formElement.errorIconRight}
       placeholder={formElement.placeholder||formElement.label}
-      value={this.state[ formElement.name ] || initialValue} />
+      value={this.state[ formElement.name ] || initialValue} {...passableProps} />
   </FormItem>);
 }
 
@@ -630,7 +657,9 @@ export function getFormSelect(options) {
     initialValue = JSON.stringify(initialValue, null, 2);
   }
   if (formElement.disableOnChange) {
-    onChange = () => { return () => {}};
+    onChange = () => {
+      return () => {};
+    };
   } else if (!onChange) {
     onChange = valueChangeHandler.bind(this, formElement);
   }  
@@ -645,9 +674,9 @@ export function getFormSelect(options) {
 
   return (<FormItem key={i} {...formElement.layoutProps} initialIcon={formElement.initialIcon} isValid={isValid} hasError={hasError} hasValue={hasValue} >
     {getFormLabel(formElement)}  
-    <span className="__re-bulma_control" style={{ position: 'relative', display: 'block'}}>
-      <Select {...formElement.passProps}
-        style={Object.assign({}, { flex: 'inherit', marginBottom: 0 }, (formElement.passProps && formElement.passProps.style) ? formElement.passProps.style : {})}  
+    <span className="__re-bulma_control" style={{ position: 'relative', display: 'block', }}>
+      <Select 
+        style={Object.assign({}, { flex: 'inherit', marginBottom: 0, }, (formElement.passProps && formElement.passProps.style) ? formElement.passProps.style : {})}  
         help={getFormElementHelp(hasError, this.state, formElement.name)}
         color={(hasError)?'isDanger':undefined}
         onChange={(event)=>{
@@ -655,7 +684,7 @@ export function getFormSelect(options) {
           if(customCallbackfunction) customCallbackfunction(event);
         }}
         placeholder={formElement.placeholder||formElement.label}
-        value={this.state[ formElement.name ] || initialValue} >
+        value={this.state[ formElement.name ] || initialValue} {...formElement.passProps}>
         {selectOptions.map((opt, k) => {
           return <option key={k} disabled={opt.disabled} value={opt.value}>{opt.label || opt.value}</option>;
         })}
@@ -685,8 +714,8 @@ export function getFormCheckbox(options) {
       }
       // console.debug('after', { updatedStateProp, formElement, }, event.target);
       if (formElement.onChangeFilter) {
-        const onChangeFunc = getFunctionFromProps.call(this, { propFunc: formElement.onChangeFilter });
-        updatedStateProp = onChangeFunc.call(this, Object.assign({},this.state,updatedStateProp), updatedStateProp);
+        const onChangeFunc = getFunctionFromProps.call(this, { propFunc: formElement.onChangeFilter, });
+        updatedStateProp = onChangeFunc.call(this, Object.assign({}, this.state, updatedStateProp), updatedStateProp);
       }
       this.setState(updatedStateProp, () => {
         if(formElement.validateOnChange){
@@ -698,13 +727,13 @@ export function getFormCheckbox(options) {
 
   return (<FormItem key={i} {...formElement.layoutProps} hasError={hasError} hasValue={hasValue} >
     {getFormDataLabel(formElement)}  
-    <input {...formElement.passProps}
+    <input 
       type={formElement.type || 'checkbox'}
       name={this.state[ formElement.formdata_name] || formElement.name}
       checked={(formElement.type === 'radio')
         ? this.state[ formElement.name ] === formElement.value
         : this.state[ formElement.name ]}
-      onChange={onValueChange}
+      onChange={onValueChange} {...formElement.passProps}
     >
     </input>
     <span {...formElement.placeholderProps}>{this.state[ formElement.formdata_placeholder] || formElement.placeholder}</span>
@@ -728,12 +757,12 @@ export function getFormSwitch(options) {
       
       // console.debug('after', { updatedStateProp, formElement, }, event.target);
       if (formElement.onChange) {
-        const onChangeFunc = getFunctionFromProps.call(this, { propFunc: formElement.onChange });
-        onChangeFunc.call(this, Object.assign({},this.state,updatedStateProp), updatedStateProp);
+        const onChangeFunc = getFunctionFromProps.call(this, { propFunc: formElement.onChange, });
+        onChangeFunc.call(this, Object.assign({}, this.state, updatedStateProp), updatedStateProp);
       }
       if (formElement.onChangeFilter) {
-        const onChangeFunc = getFunctionFromProps.call(this, { propFunc: formElement.onChangeFilter });
-        updatedStateProp = onChangeFunc.call(this, Object.assign({},this.state,updatedStateProp), updatedStateProp);
+        const onChangeFunc = getFunctionFromProps.call(this, { propFunc: formElement.onChangeFilter, });
+        updatedStateProp = onChangeFunc.call(this, Object.assign({}, this.state, updatedStateProp), updatedStateProp);
       }
       this.setState(updatedStateProp, () => {
         if(formElement.validateOnChange){
@@ -747,14 +776,14 @@ export function getFormSwitch(options) {
     {getFormDataLabel(formElement)}  
     <div>
       <RCSwitch
-        {...formElement.passProps}
     // type={formElement.type || 'checkbox'}
     // name={this.state[ formElement.formdata_name] || formElement.name}
     checked={this.state[ formElement.name ]}
     // disabled={this.state.disabled}
     // checkedChildren={'on'}
     // unCheckedChildren={''}
-    onChange={onValueChange}
+    onChange={onValueChange} 
+    {...formElement.passProps}
     />
     </div>
     <span {...formElement.placeholderProps}>{this.state[ formElement.formdata_placeholder] || formElement.placeholder}</span>
@@ -785,8 +814,8 @@ export function getRawInput(options) {
       updatedStateProp[ formElement.name ] = (this.state[ formElement.name ] ) ? false : 'on';
       // console.log({ updatedStateProp });
       if (formElement.onChangeFilter) {
-        const onChangeFunc = getFunctionFromProps.call(this, { propFunc: formElement.onChangeFilter });
-        updatedStateProp = onChangeFunc.call(this, Object.assign({},this.state,updatedStateProp), updatedStateProp);
+        const onChangeFunc = getFunctionFromProps.call(this, { propFunc: formElement.onChangeFilter, });
+        updatedStateProp = onChangeFunc.call(this, Object.assign({}, this.state, updatedStateProp), updatedStateProp);
       }
       this.setState(updatedStateProp);
     };
@@ -795,10 +824,10 @@ export function getRawInput(options) {
   return (<FormItem key={i} {...formElement.layoutProps} >
     {getFormLabel(formElement)}  
     <div {...wrapperProps}>
-      <input {...passableProps}
+      <input
         type={formElement.type}
         checked={this.state[ formElement.name ]}
-        onChange={onValueChange}
+        onChange={onValueChange}  {...passableProps}
       >
       </input>
       {getCustomErrorLabel(hasError, this.state, formElement)}
@@ -819,8 +848,8 @@ export function getButton(options) {
       updatedStateProp[ formElement.name ] = (this.state[ formElement.name ] ) ? false : 'on';
       // console.log({ updatedStateProp });
       if (formElement.onChangeFilter) {
-        const onChangeFunc = getFunctionFromProps.call(this, { propFunc: formElement.onChangeFilter });
-        updatedStateProp = onChangeFunc.call(this, Object.assign({},this.state,updatedStateProp), updatedStateProp);
+        const onChangeFunc = getFunctionFromProps.call(this, { propFunc: formElement.onChangeFilter, });
+        updatedStateProp = onChangeFunc.call(this, Object.assign({}, this.state, updatedStateProp), updatedStateProp);
       }
       this.setState(updatedStateProp);
     };
@@ -828,9 +857,9 @@ export function getButton(options) {
 
   return (<FormItem key={i} {...formElement.layoutProps} >
     {getFormLabel(formElement)}  
-      <Button {...passableProps}
+      <Button
         type={formElement.type}
-        onChange={onValueChange}
+        onChange={onValueChange} {...passableProps}
     >
       {formElement.value || passableProps.value}
       </Button>
@@ -878,8 +907,8 @@ export function getSliderInput(options) {
       updatedStateProp[ formElement.name ] = val;
       // console.log({ updatedStateProp });
       if (formElement.onChangeFilter) {
-        const onChangeFunc = getFunctionFromProps.call(this, { propFunc: formElement.onChangeFilter });
-        updatedStateProp = onChangeFunc.call(this, Object.assign({},this.state,updatedStateProp), updatedStateProp);
+        const onChangeFunc = getFunctionFromProps.call(this, { propFunc: formElement.onChangeFilter, });
+        updatedStateProp = onChangeFunc.call(this, Object.assign({}, this.state, updatedStateProp), updatedStateProp);
       }
       this.setState(updatedStateProp);
       customCallbackfunction(val);
@@ -890,8 +919,8 @@ export function getSliderInput(options) {
   return (<FormItem key={i} {...formElement.layoutProps} >
     {getFormLabel(formElement)}  
     <div {...wrapperProps}>
-      <Slider {...passableProps}
-        onChange={onValueChange}
+      <Slider 
+        onChange={onValueChange} {...passableProps}
       >
         {(formElement.leftLabel)
           ? (<span className="__reactapp_slider__label __reactapp_slider__label_left">{formElement.leftLabel}</span>)
@@ -987,8 +1016,8 @@ export function getFormCode(options) {
         let updatedStateProp = {};
         updatedStateProp[ formElement.name ] = newvalue;
         if (formElement.onChangeFilter) {
-          const onChangeFunc = getFunctionFromProps.call(this, { propFunc: formElement.onChangeFilter });
-          updatedStateProp = onChangeFunc.call(this, Object.assign({},this.state,updatedStateProp), updatedStateProp);
+          const onChangeFunc = getFunctionFromProps.call(this, { propFunc: formElement.onChangeFilter, });
+          updatedStateProp = onChangeFunc.call(this, Object.assign({}, this.state, updatedStateProp), updatedStateProp);
         }
         this.setState(updatedStateProp);
       }.bind(this) : onValueChange,
@@ -1022,8 +1051,8 @@ export function getFormEditor(options) {
       let updatedStateProp = {};
       updatedStateProp[ formElement.name ] = newvalue.target.value;
       if (formElement.onChangeFilter) {
-        const onChangeFunc = getFunctionFromProps.call(this, { propFunc: formElement.onChangeFilter });
-        updatedStateProp = onChangeFunc.call(this, Object.assign({},this.state,updatedStateProp), updatedStateProp);
+        const onChangeFunc = getFunctionFromProps.call(this, { propFunc: formElement.onChangeFilter, });
+        updatedStateProp = onChangeFunc.call(this, Object.assign({}, this.state, updatedStateProp), updatedStateProp);
       }
       this.setState(updatedStateProp);
     };
@@ -1067,15 +1096,15 @@ export function getFormSubmit(options) {
       : undefined,
   }, (this.props.useLoadingButtons && this.state.__formIsSubmitting)
       ? {
-        state:'isLoading'
+        state:'isLoading',
       }
       : {},
     formElement.passProps);
   return (<FormItem key={i} {...formElement.layoutProps} >
     {getFormLabel(formElement)}  
-    <Button {...passableProps}
+    <Button 
       onClick={() => { 
-        let validated_formdata = validateForm.call(this, { formdata: this.state, validationErrors: {} });
+        let validated_formdata = validateForm.call(this, { formdata: this.state, validationErrors: {}, });
         let updateStateData = {
           formDataErrors: validated_formdata.validationErrors,
         };
@@ -1144,10 +1173,10 @@ export function getFormSubmit(options) {
                     ], 
                   },
                 ],
-              } ,}, formElement.confirmModal))
+              }, }, formElement.confirmModal))
             : this.submitForm.call(this);
         });
-      }}>
+      }} {...passableProps}>
       {formElement.value}
     </Button>
   </FormItem>);

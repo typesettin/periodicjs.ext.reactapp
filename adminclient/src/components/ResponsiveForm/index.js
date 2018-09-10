@@ -129,7 +129,7 @@ class ResponsiveForm extends Component{
     this.getFormGroup = getFormGroup.bind(this);
     this.getImage = getImage.bind(this);
     this.validateFormElement = validateFormElement.bind(this);
-
+    this.submitForm = this.submitForm.bind(this);
     this.staticLayouts = (this.props.staticLayouts)
       ? Object.keys(this.props.staticLayouts).reduce((result, layout) => {
         result[layout] = this.getRenderedComponent(this.props.staticLayouts[layout], this.state);
@@ -206,7 +206,7 @@ class ResponsiveForm extends Component{
     delete formdata.formDataTables;
     delete formdata.__formGroups;
     
-    console.log({ formdata });
+    // console.log({ formdata });
 
     let assigedHiddenFields = getAssigedHiddenField({ formdata, hiddenInputs, submitFormData, });
     hiddenInputs = assigedHiddenFields.hiddenInputs;

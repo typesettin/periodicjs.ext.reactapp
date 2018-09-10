@@ -100,7 +100,9 @@
     var fixedpath = (redirectpath.charAt(0)==='/')?redirectpath:'/'+redirectpath;
     this.props.reduxRouter.push(redirectpath.replace(/\/\//gi,''));
   }
-
+  function testRef(component){
+    console.warn({component});
+  }
 /*
 window.__reactapp = Object.assign({}, {
   __ra_helpers: {
