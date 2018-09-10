@@ -42,6 +42,7 @@ function getImage(options) {
 function getContent(options) {
   return (options.content) ? {
     component: 'CardContent',
+    props:options.contentProps,
     children: (Array.isArray(options.content))
       ? options.content
       : [options.content, ],

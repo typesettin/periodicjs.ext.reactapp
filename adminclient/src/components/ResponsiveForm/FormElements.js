@@ -796,7 +796,7 @@ export function getRawInput(options) {
     {getFormLabel(formElement)}  
     <div {...wrapperProps}>
       <input {...passableProps}
-        type={formElement.type}
+        type={passableProps.type || formElement.type}
         checked={this.state[ formElement.name ]}
         onChange={onValueChange}
       >
