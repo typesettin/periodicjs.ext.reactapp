@@ -147,6 +147,9 @@ export function getRenderedComponent(componentObject, resources, debug) {
       thisprops,
       componentObject.props, asyncprops, windowprops, evalProps, insertedComponents);
     
+    if (renderedCompProps.ref) {
+      renderedCompProps.ref = getFunction({ propFunc: renderedCompProps.ref, });
+    }
       //Allowing for window functions
     if(componentObject.hasWindowFunc || componentObject.hasPropFunc){
       Object.keys(renderedCompProps).forEach(key => {

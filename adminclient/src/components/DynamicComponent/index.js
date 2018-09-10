@@ -5,10 +5,13 @@ import AppSectionLoadingIndex from '../AppSectionLoading/index';
 import AppSectionLoadingError from '../AppSectionLoading/error';
 import flatten, { unflatten, } from 'flat';
 import { getAreaChart, getLayout, getLevel, getLineChart, getPageWrapper, getRechart, getVictoryChart, } from '../../server_manifest/standard';
-import { getTable, getBasicTable, getSheet } from '../../server_manifest/table';
+import { getTable, getBasicTable, getSheet, } from '../../server_manifest/table';
 import { createForm, } from '../../server_manifest/forms';
 import { getCard, } from '../../server_manifest/card';
 import cache from 'memory-cache';
+import numeral from 'numeral';
+import moment from 'moment';
+import luxon from 'luxon';
 
 const functionalComponents = {
   getAreaChart, getLayout, getLevel, getLineChart, getPageWrapper, getRechart, getVictoryChart, getTable, getBasicTable, getSheet, createForm, getCard,
@@ -22,6 +25,7 @@ const propTypes = {
   dynamicDataTransformFunction: PropTypes.string,
   functionalComponent: PropTypes.string,
   functionalComponentProps: PropTypes.object,
+  flattenOptions: PropTypes.object,
   layout: PropTypes.object,
 };
 const defaultProps = {
@@ -52,24 +56,42 @@ class DynamicComponent extends Component {
       hasError: false,
       resources: {},
     };
+    
+    this.loadingStyle = (props)
+      ? props.style
+      : props.layout && props.layout.props && props.layout.props.style
+        ? props.layout.props.style
+        : {// eslint-disable-next-line 
+          height: props.height || props.minheight || props.layout && props.layout.props && props.layout.props
+            ? props.layout.props.height || props.layout.props.minheight || props.layout.props.minHeight
+            : undefined,
+        };
+    this.computeResources = this.computeResources.bind(this);
   }
   assignResources(resources) {
     // console.warn({ resources });
     let dynamicLayout;
-    const functionalProps = (this.props.assignFunctionalResourceProperty)
-      ? Object.assign({}, this.props.functionalComponentProps, {
-        [this.props.assignFunctionalResourceProperty]:resources
-      })
-      : this.props.functionalComponentProps;
+    let functionalProps;
+    if (this.props.assignFunctionalResourceProperty) {
+      const flattenedFunctionalProps = flatten(this.props.functionalComponentProps,this.props.flattenOptions);
+      flattenedFunctionalProps[ this.props.assignFunctionalResourceProperty ] = resources;
+      functionalProps = Object.assign({}, unflatten(flattenedFunctionalProps), { ignoreReduxProps:true , });
+    }
+    // console.log('this.props.functionalComponentProps',this.props.functionalComponentProps,{functionalProps});
+    // const functionalProps = (this.props.assignFunctionalResourceProperty)
+    //   ? Object.assign({}, this.props.functionalComponentProps, {
+    //     [this.props.assignFunctionalResourceProperty]:resources,
+    //   })
+    //   : this.props.functionalComponentProps;
     const generatedLayout = (this.props.functionalComponent && this.props.functionalComponentProps)
       ? functionalComponents[ this.props.functionalComponent ](functionalProps)
       : this.props.layout;
 
     if (this.props.assignResourceProperty) {
-      const flattenedLayout = flatten(generatedLayout);
+      const flattenedLayout = flatten(generatedLayout,this.props.flattenOptions);
       // console.warn('before flattenedLayout', flattenedLayout);
       flattenedLayout[ this.props.assignResourceProperty ] = resources;
-      dynamicLayout = Object.assign({}, unflatten(flattenedLayout),{ignoreReduxProps:true});
+      dynamicLayout = Object.assign({}, unflatten(flattenedLayout), { ignoreReduxProps:true , });
       // console.warn(' unflatten(flattenedLayout', unflatten(flattenedLayout));
       // console.warn('after flattenedLayout', flattenedLayout);
     } else {
@@ -77,20 +99,27 @@ class DynamicComponent extends Component {
     }
     this.setState({
       hasError: false,
+      error: undefined,
       hasLoaded: true,
       resources,
       dynamicLayout,
     });
   }
-  componentDidMount() {
+  computeResources(componentProps) {
     try {
+      const props = {
+        luxon,
+        moment,
+        numeral,
+      };
       // eslint-disable-next-line 
-      const dataTransform = (this.props.dynamicDataTransformFunction) // eslint-disable-next-line 
-        ? Function('dynamicData', this.props.dynamicDataTransformFunction)
+      const dataTransform = (componentProps.dynamicDataTransformFunction) // eslint-disable-next-line 
+        ? Function('dynamicData', `"use strict";
+${componentProps.dynamicDataTransformFunction}`).bind({ props, })
         : function componentDidMount_dataTransform(dynamicData) {
           return dynamicData;
         }; 
-      // console.warn('this.props.dynamicDataTransformFunction', this.props.dynamicDataTransformFunction);
+      // console.warn('componentProps.dynamicDataTransformFunction', componentProps.dynamicDataTransformFunction);
       // console.warn('dataTransform', dataTransform);
       let resources = {};
       Object.defineProperty(
@@ -100,40 +129,77 @@ class DynamicComponent extends Component {
           value:'componentDidMount_dataTransform',
         }
       );
-      if (this.props.fetch_url) {
-        const cachedData = cache.get(this.props.fetch_url);
-        if (cachedData && this.props.useCache) {
-          console.log('got data from cache', this.props.fetch_url, cachedData, this.props.cacheTimeout);
+      if (componentProps.fetch_url) {
+        const cachedData = cache.get(componentProps.fetch_url);
+        if (cachedData && componentProps.useCache) {
+          console.log('got data from cache', componentProps.fetch_url, cachedData, componentProps.cacheTimeout);
           resources = dataTransform(cachedData);
           this.assignResources(resources);
         } else {
-          this.props.fetchAction.call(this,this.props.fetch_url, this.props.fetch_options)
+          componentProps.fetchAction.call(this, componentProps.fetch_url, componentProps.fetch_options)
             .then(dynamicData => {
-              if (this.props.useCache) {
-                cache.put(this.props.fetch_url, dynamicData,this.props.cacheTimeout,()=>{ console.log('removing from cache: '+this.props.fetch_url) });
+              if (componentProps.useCache) {
+                cache.put(componentProps.fetch_url, dynamicData, componentProps.cacheTimeout, ()=>{
+                  console.log('removing from cache: '+componentProps.fetch_url); 
+                });
               }
               resources = dataTransform(dynamicData);
               this.assignResources(resources);
             })
             .catch(e => {
               console.error('dynamicComponent Error', e);
-              this.setState({ hasError: true, });
+              this.setState({
+                hasError: true,
+                error: e,
+              });
             });
         }
       } else {
         setTimeout(() => { 
           try {
-            resources = dataTransform(this.props.data);
+            resources = dataTransform(componentProps.data);
             this.assignResources(resources);
           } catch (err) {
             console.error('uncaughtError', err);
-            this.setState({ hasError: true, });
+            this.setState({
+              hasError: true,
+              error: err,
+            });
           }
         }, 0);
       }
     } catch (e) {
       console.error('dynamicComponent UncaughtError', e);
-      this.setState({ hasError: true, });
+      this.setState({
+        hasError: true,
+        error:e,
+      });
+    }
+  }
+  componentDidMount() {
+    try {
+      this.computeResources(this.props);
+    } catch (e) {
+      console.error('dynamicComponent UncaughtError', e);
+      this.setState({
+        hasError: true,
+        error:e,
+      });
+    }
+  }
+  componentWillReceiveProps(nextProps) {
+    // console.debug({ nextProps });
+    // this.setState(nextProps);
+    if (nextProps.fetch_url) {
+      this.setState({
+        hasLoaded: false,
+      });
+      this.computeResources(Object.assign({}, this.props, nextProps));
+    } else {
+      this.setState({
+        resources: nextProps.resources,
+        dynamicLayout: nextProps.dynamicLayout,
+      });
     }
   }
   render() {
@@ -141,15 +207,15 @@ class DynamicComponent extends Component {
     try {
       // let dynamicComponentLayout = (<AppSectionLoadingIndex />);
       if (this.state.hasError) {
-        return <AppSectionLoadingError key={Math.random()} />;
+        return <AppSectionLoadingError key={Math.random()} style={this.loadingStyle} />;
       } else if (this.state.hasLoaded) {
         return this.getRenderedComponent(this.state.dynamicLayout || this.props.layout, this.state.resources);
       } else {
-        return <AppSectionLoadingIndex key={Math.random()}/>;
+        return <AppSectionLoadingIndex key={Math.random()} style={this.loadingStyle}/>;
       }
     } catch (e) {
       console.error(e, 'this.state', this.state, 'this.props', this.props);
-      return <AppSectionLoadingError key={Math.random()}/>;
+      return <AppSectionLoadingError key={Math.random()} style={this.loadingStyle}/>;
     }
   }
 }  

@@ -1,5 +1,5 @@
 import React, { Component, PropTypes, } from 'react';
-import { Tabs, TabGroup, Tab, Button, Select, Label, Columns, Column } from 're-bulma';
+import { Tabs, TabGroup, Tab, Button, Select, Label, Columns, Column, } from 're-bulma';
 import styles from '../../styles';
 import { getRenderedComponent, } from '../AppLayoutMap';
 
@@ -29,33 +29,52 @@ const defaultProps = {
   tabContainer: {
     isGapless: true,
     style: {
-      height:'100%'
-    }
+      height:'100%',
+    },
   },
   verticalTabTabsContainer: {
     size: 'is2',
     style: {
       // height:'100%',
       flexDirection:'row',
-    }
+    },
   },
   verticalTabContentContainer: {
     size: 'is10',
     style: {
       height:'100%',
-    }
-  }
+    },
+  },
+  tabs: [
+    {
+      name: '',
+      layout: {
+        component:'div',
+      },
+    },
+  ],
 };
 
 class ResponsiveTabs extends Component {
   constructor(props) {
     super(props);
     // console.debug('responsiveTab',{props})
+    let initialTab = props.tabs[ 0 ];
+    let tabs = props.tabs;
+    const initialTabName = props.currentTab || props.initialTab || props.tabs[ 0 ].name;
+    if (typeof initialTabName === 'string') {
+      let initialTabNameIndex = props.tabs.findIndex(tab => tab.name === initialTabName);
+      if (initialTabNameIndex < 1) initialTabNameIndex = 0;
+      initialTab = props.tabs[ initialTabNameIndex ];
+    }
+    if (props.onlyUseInitialTab) {
+      tabs = [ initialTab ];
+    }
     this.state = {
       tabsType: props.tabsType,
-      tabs: props.tabs,
+      tabs,
       isButton: props.isButton,
-      currentTab: '' || props.tabs[0],
+      currentTab: initialTab,
       currentLayout: '',
       tabgroupProps: props.tabgroupProps,
       tabsProps: props.tabsProps,
@@ -83,60 +102,66 @@ class ResponsiveTabs extends Component {
     // console.log('this.props.onChange',this.props.onChange)
     // console.log('onChangeFunc',onChangeFunc)
     onChangeFunc(tab);
-
   } 
   componentWillMount() {
-    let defaultLayout = (this.state.currentTab.layout && (Object.keys(this.state.currentTab.layout).length >= 1)) ? this.getRenderedComponent(this.state.currentTab.layout) : '';
+    let defaultLayout = (this.state.currentTab.layout && (Object.keys(this.state.currentTab.layout).length >= 1))
+      ? this.getRenderedComponent(this.state.currentTab.layout)
+      : '';
     this.setState({
       currentLayout: defaultLayout,
     });
   }
   render() {
     let TabSelector = null;
-    if (this.props.customTabLayout) {
-      TabSelector = this.state.tabs.map((tab, i) => { 
-        let active = (tab.name === this.state.currentTab.name) ? true : false;
-        let buttonStyle = (tab.name === this.state.currentTab.name) ? styles.activeButton : {};
-        let customTab = Object.assign({}, this.props.customTabLayout);
-        customTab.props = Object.assign({
-          style:buttonStyle
-        }, customTab.props, {
-          onClick: () => this.changeTab(tab),
-          isActive: { active },
-          key: `${tab.name}-${i}`,
-          tab,
+    if (this.props.hideTabSelector === true && (this.state.tabs.length === 1 || this.props.onlyUseInitialTab)) { 
+      TabSelector = null;
+    } else{
+      if (this.props.customTabLayout) {
+        TabSelector = this.state.tabs.map((tab, i) => {
+          let active = (tab.name === this.state.currentTab.name) ? true : false;
+          let buttonStyle = (tab.name === this.state.currentTab.name) ? styles.activeButton : {};
+          let customTab = Object.assign({}, this.props.customTabLayout);
+          customTab.props = Object.assign({
+            style: buttonStyle,
+          }, customTab.props, {
+              onClick: () => this.changeTab(tab),
+              isActive: { active, },
+              key: `${tab.name}-${i}`,
+              tab,
+            });
+          return this.getRenderedComponent(customTab);
         });
-        return this.getRenderedComponent(customTab);
-      });
-    } else if (this.state.tabsType === 'pageToggle') { 
-      TabSelector = this.state.tabs.map((tab, i) => {
-        let active = (tab.name === this.state.currentTab.name) ? true : false;
-        let buttonStyle = (tab.name === this.state.currentTab.name) ? styles.activeButton : {};
-        if (this.state.isButton) return (
-          <Tab {...tab.tabProps} key={`${tab.name}-${i}`} isActive={active} onClick={() => this.changeTab(tab)}><Button style={buttonStyle}>{tab.name}</Button></Tab>
-        );
-        return (
-          <Tab {...tab.tabProps} key={`${tab.name}-${i}`} isActive={active} onClick={() => this.changeTab(tab)}>{tab.name}</Tab>
-        );
-      });
-    } else if (this.state.tabsType === 'select') { 
-      TabSelector = (<Select { ...this.state.tabgroupProps }
-        onChange={(e) => { this.changeTab(e.target.value) }}>
-        {this.props.tabs.map((tab, idx) => {
-          return <option key={idx} value={idx} {...tab.tabProps}>
-            {tab.name}
-          </option>
-        })}
-      </Select>);
-    } else if (this.state.tabsType === 'navBar') {
-      TabSelector = this.state.tabs.map((tab, idx) => {
-        let active = (tab.name === this.state.currentTab.name) ? true : false;
-        return (
-          <Tab {...tab.tabProps} key={idx} isActive={active} onClick={() => this.changeTab(tab)}>{tab.name}</Tab>
-        );
-      });
+      } else if (this.state.tabsType === 'pageToggle') {
+        TabSelector = this.state.tabs.map((tab, i) => {
+          let active = (tab.name === this.state.currentTab.name) ? true : false;
+          let buttonStyle = (tab.name === this.state.currentTab.name) ? styles.activeButton : {};
+          if (this.state.isButton) return (
+            <Tab {...tab.tabProps} key={`${tab.name}-${i}`} isActive={active} onClick={() => this.changeTab(tab)}><Button style={buttonStyle}>{tab.name}</Button></Tab>
+          );
+          return (
+            <Tab {...tab.tabProps} key={`${tab.name}-${i}`} isActive={active} onClick={() => this.changeTab(tab)}>{tab.name}</Tab>
+          );
+        });
+      } else if (this.state.tabsType === 'select') {
+        TabSelector = (<Select {...this.state.tabgroupProps}
+          onChange={(e) => {
+            this.changeTab(e.target.value);
+          }}>
+          {this.props.tabs.map((tab, idx) => {
+            return <option key={idx} value={idx} {...tab.tabProps}>
+              {tab.name}
+            </option>;
+          })}
+        </Select>);
+      } else if (this.state.tabsType === 'navBar') {
+        TabSelector = this.state.tabs.map((tab, idx) => {
+          let active = (tab.name === this.state.currentTab.name) ? true : false;
+          return (
+            <Tab {...tab.tabProps} key={idx} isActive={active} onClick={() => this.changeTab(tab)}>{tab.name}</Tab>
+          );
+        });
+      }
     }
-    
     return (this.props.vertical)
       ? (
         <Columns {...this.props.tabContainer}>

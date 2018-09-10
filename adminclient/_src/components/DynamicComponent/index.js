@@ -4,10 +4,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _defineProperty2 = require('babel-runtime/helpers/defineProperty');
-
-var _defineProperty3 = _interopRequireDefault(_defineProperty2);
-
 var _assign = require('babel-runtime/core-js/object/assign');
 
 var _assign2 = _interopRequireDefault(_assign);
@@ -62,12 +58,25 @@ var _memoryCache = require('memory-cache');
 
 var _memoryCache2 = _interopRequireDefault(_memoryCache);
 
+var _numeral = require('numeral');
+
+var _numeral2 = _interopRequireDefault(_numeral);
+
+var _moment = require('moment');
+
+var _moment2 = _interopRequireDefault(_moment);
+
+var _luxon = require('luxon');
+
+var _luxon2 = _interopRequireDefault(_luxon);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// import { Columns, } from 're-bulma';
 var functionalComponents = {
   getAreaChart: _standard.getAreaChart, getLayout: _standard.getLayout, getLevel: _standard.getLevel, getLineChart: _standard.getLineChart, getPageWrapper: _standard.getPageWrapper, getRechart: _standard.getRechart, getVictoryChart: _standard.getVictoryChart, getTable: _table.getTable, getBasicTable: _table.getBasicTable, getSheet: _table.getSheet, createForm: _forms.createForm, getCard: _card.getCard
 };
+// import { Columns, } from 're-bulma';
+
 var propTypes = {
   assignResourceProperty: _react.PropTypes.string,
   assignFunctionalResourceProperty: _react.PropTypes.string,
@@ -77,6 +86,7 @@ var propTypes = {
   dynamicDataTransformFunction: _react.PropTypes.string,
   functionalComponent: _react.PropTypes.string,
   functionalComponentProps: _react.PropTypes.object,
+  flattenOptions: _react.PropTypes.object,
   layout: _react.PropTypes.object
 };
 var defaultProps = {
@@ -112,6 +122,11 @@ var DynamicComponent = function (_Component) {
       hasError: false,
       resources: {}
     };
+
+    _this.loadingStyle = props ? props.style : props.layout && props.layout.props && props.layout.props.style ? props.layout.props.style : { // eslint-disable-next-line 
+      height: props.height || props.minheight || props.layout && props.layout.props && props.layout.props ? props.layout.props.height || props.layout.props.minheight || props.layout.props.minHeight : undefined
+    };
+    _this.computeResources = _this.computeResources.bind(_this);
     return _this;
   }
 
@@ -120,11 +135,22 @@ var DynamicComponent = function (_Component) {
     value: function assignResources(resources) {
       // console.warn({ resources });
       var dynamicLayout = void 0;
-      var functionalProps = this.props.assignFunctionalResourceProperty ? (0, _assign2.default)({}, this.props.functionalComponentProps, (0, _defineProperty3.default)({}, this.props.assignFunctionalResourceProperty, resources)) : this.props.functionalComponentProps;
+      var functionalProps = void 0;
+      if (this.props.assignFunctionalResourceProperty) {
+        var flattenedFunctionalProps = (0, _flat2.default)(this.props.functionalComponentProps, this.props.flattenOptions);
+        flattenedFunctionalProps[this.props.assignFunctionalResourceProperty] = resources;
+        functionalProps = (0, _assign2.default)({}, (0, _flat.unflatten)(flattenedFunctionalProps), { ignoreReduxProps: true });
+      }
+      // console.log('this.props.functionalComponentProps',this.props.functionalComponentProps,{functionalProps});
+      // const functionalProps = (this.props.assignFunctionalResourceProperty)
+      //   ? Object.assign({}, this.props.functionalComponentProps, {
+      //     [this.props.assignFunctionalResourceProperty]:resources,
+      //   })
+      //   : this.props.functionalComponentProps;
       var generatedLayout = this.props.functionalComponent && this.props.functionalComponentProps ? functionalComponents[this.props.functionalComponent](functionalProps) : this.props.layout;
 
       if (this.props.assignResourceProperty) {
-        var flattenedLayout = (0, _flat2.default)(generatedLayout);
+        var flattenedLayout = (0, _flat2.default)(generatedLayout, this.props.flattenOptions);
         // console.warn('before flattenedLayout', flattenedLayout);
         flattenedLayout[this.props.assignResourceProperty] = resources;
         dynamicLayout = (0, _assign2.default)({}, (0, _flat.unflatten)(flattenedLayout), { ignoreReduxProps: true });
@@ -135,62 +161,107 @@ var DynamicComponent = function (_Component) {
       }
       this.setState({
         hasError: false,
+        error: undefined,
         hasLoaded: true,
         resources: resources,
         dynamicLayout: dynamicLayout
       });
     }
   }, {
-    key: 'componentDidMount',
-    value: function componentDidMount() {
+    key: 'computeResources',
+    value: function computeResources(componentProps) {
       var _this2 = this;
 
       try {
+        var props = {
+          luxon: _luxon2.default,
+          moment: _moment2.default,
+          numeral: _numeral2.default
+        };
         // eslint-disable-next-line 
-        var dataTransform = this.props.dynamicDataTransformFunction ? // eslint-disable-next-line 
-        Function('dynamicData', this.props.dynamicDataTransformFunction) : function componentDidMount_dataTransform(dynamicData) {
+        var dataTransform = componentProps.dynamicDataTransformFunction ? // eslint-disable-next-line 
+        Function('dynamicData', '"use strict";\n' + componentProps.dynamicDataTransformFunction).bind({ props: props }) : function componentDidMount_dataTransform(dynamicData) {
           return dynamicData;
         };
-        // console.warn('this.props.dynamicDataTransformFunction', this.props.dynamicDataTransformFunction);
+        // console.warn('componentProps.dynamicDataTransformFunction', componentProps.dynamicDataTransformFunction);
         // console.warn('dataTransform', dataTransform);
         var resources = {};
         Object.defineProperty(dataTransform, 'name', {
           value: 'componentDidMount_dataTransform'
         });
-        if (this.props.fetch_url) {
-          var cachedData = _memoryCache2.default.get(this.props.fetch_url);
-          if (cachedData && this.props.useCache) {
-            console.log('got data from cache', this.props.fetch_url, cachedData, this.props.cacheTimeout);
+        if (componentProps.fetch_url) {
+          var cachedData = _memoryCache2.default.get(componentProps.fetch_url);
+          if (cachedData && componentProps.useCache) {
+            console.log('got data from cache', componentProps.fetch_url, cachedData, componentProps.cacheTimeout);
             resources = dataTransform(cachedData);
             this.assignResources(resources);
           } else {
-            this.props.fetchAction.call(this, this.props.fetch_url, this.props.fetch_options).then(function (dynamicData) {
-              if (_this2.props.useCache) {
-                _memoryCache2.default.put(_this2.props.fetch_url, dynamicData, _this2.props.cacheTimeout, function () {
-                  console.log('removing from cache: ' + _this2.props.fetch_url);
+            componentProps.fetchAction.call(this, componentProps.fetch_url, componentProps.fetch_options).then(function (dynamicData) {
+              if (componentProps.useCache) {
+                _memoryCache2.default.put(componentProps.fetch_url, dynamicData, componentProps.cacheTimeout, function () {
+                  console.log('removing from cache: ' + componentProps.fetch_url);
                 });
               }
               resources = dataTransform(dynamicData);
               _this2.assignResources(resources);
             }).catch(function (e) {
               console.error('dynamicComponent Error', e);
-              _this2.setState({ hasError: true });
+              _this2.setState({
+                hasError: true,
+                error: e
+              });
             });
           }
         } else {
           setTimeout(function () {
             try {
-              resources = dataTransform(_this2.props.data);
+              resources = dataTransform(componentProps.data);
               _this2.assignResources(resources);
             } catch (err) {
               console.error('uncaughtError', err);
-              _this2.setState({ hasError: true });
+              _this2.setState({
+                hasError: true,
+                error: err
+              });
             }
           }, 0);
         }
       } catch (e) {
         console.error('dynamicComponent UncaughtError', e);
-        this.setState({ hasError: true });
+        this.setState({
+          hasError: true,
+          error: e
+        });
+      }
+    }
+  }, {
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      try {
+        this.computeResources(this.props);
+      } catch (e) {
+        console.error('dynamicComponent UncaughtError', e);
+        this.setState({
+          hasError: true,
+          error: e
+        });
+      }
+    }
+  }, {
+    key: 'componentWillReceiveProps',
+    value: function componentWillReceiveProps(nextProps) {
+      // console.debug({ nextProps });
+      // this.setState(nextProps);
+      if (nextProps.fetch_url) {
+        this.setState({
+          hasLoaded: false
+        });
+        this.computeResources((0, _assign2.default)({}, this.props, nextProps));
+      } else {
+        this.setState({
+          resources: nextProps.resources,
+          dynamicLayout: nextProps.dynamicLayout
+        });
       }
     }
   }, {
@@ -200,15 +271,15 @@ var DynamicComponent = function (_Component) {
       try {
         // let dynamicComponentLayout = (<AppSectionLoadingIndex />);
         if (this.state.hasError) {
-          return _react2.default.createElement(_error2.default, { key: Math.random() });
+          return _react2.default.createElement(_error2.default, { key: Math.random(), style: this.loadingStyle });
         } else if (this.state.hasLoaded) {
           return this.getRenderedComponent(this.state.dynamicLayout || this.props.layout, this.state.resources);
         } else {
-          return _react2.default.createElement(_index2.default, { key: Math.random() });
+          return _react2.default.createElement(_index2.default, { key: Math.random(), style: this.loadingStyle });
         }
       } catch (e) {
         console.error(e, 'this.state', this.state, 'this.props', this.props);
-        return _react2.default.createElement(_error2.default, { key: Math.random() });
+        return _react2.default.createElement(_error2.default, { key: Math.random(), style: this.loadingStyle });
       }
     }
   }]);

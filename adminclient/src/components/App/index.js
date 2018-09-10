@@ -115,6 +115,19 @@ const reduxActions = {
     goForward: () => store.dispatch(goForward()),
     goBack: () => store.dispatch(goBack()),
   },
+  routerFormSubmit: (formdata) => {
+    console.log({formdata})
+    const nonFormFields = [ '$loki', 'formDataError', 'meta', '__formIsSubmitting', '__formOptions', ];
+    const fields = Object.keys(formdata).filter(field=>nonFormFields.indexOf(field)===-1);
+    const qs = fields.reduce((querystring, field)=>{
+      if(typeof formdata[field] !=='undefined') querystring+=`&${field}=${formdata[field]}`;
+      return querystring;
+    },'');
+    const pathname = window.location.pathname;
+    const redirect = `${pathname}?${qs}`;
+    // console.log({ fields, qs, pathname,  redirect});
+    store.dispatch(push(redirect));
+  },
 };
 const mapDispatchToProps = (/*dispatch*/) => {
   return reduxActions;

@@ -73,15 +73,15 @@ function getCard(options = { props: {}, }) {
       component: 'ResponsiveCard',
       props: Object.assign({
         cardTitle: options.title,
-        iconRight: options.iconRight,
-        iconLeft: options.iconLeft,
+        iconRight:options.iconRight,
+        iconLeft:options.iconLeft,
       }, cardProps),
       children: []
         .concat(Image ? Image.children : [])
         .concat(Content ? Content.children : [])
         .concat(Footer ? Footer.children : [])
     },
-    componentProps)
+      componentProps)
     : Object.assign({
       component: 'Card',
       props: cardProps,

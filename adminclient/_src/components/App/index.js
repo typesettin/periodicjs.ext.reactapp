@@ -24,6 +24,10 @@ var _inherits2 = require('babel-runtime/helpers/inherits');
 
 var _inherits3 = _interopRequireDefault(_inherits2);
 
+var _keys = require('babel-runtime/core-js/object/keys');
+
+var _keys2 = _interopRequireDefault(_keys);
+
 var _assign = require('babel-runtime/core-js/object/assign');
 
 var _assign2 = _interopRequireDefault(_assign);
@@ -346,6 +350,21 @@ var reduxActions = {
     goBack: function goBack() {
       return _stores2.default.dispatch((0, _reactRouterRedux.goBack)());
     }
+  },
+  routerFormSubmit: function routerFormSubmit(formdata) {
+    console.log({ formdata: formdata });
+    var nonFormFields = ['$loki', 'formDataError', 'meta', '__formIsSubmitting', '__formOptions'];
+    var fields = (0, _keys2.default)(formdata).filter(function (field) {
+      return nonFormFields.indexOf(field) === -1;
+    });
+    var qs = fields.reduce(function (querystring, field) {
+      if (typeof formdata[field] !== 'undefined') querystring += '&' + field + '=' + formdata[field];
+      return querystring;
+    }, '');
+    var pathname = window.location.pathname;
+    var redirect = pathname + '?' + qs;
+    // console.log({ fields, qs, pathname,  redirect});
+    _stores2.default.dispatch((0, _reactRouterRedux.push)(redirect));
   }
 };
 var mapDispatchToProps = function mapDispatchToProps() /*dispatch*/{

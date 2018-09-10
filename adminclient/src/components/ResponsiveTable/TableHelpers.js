@@ -133,7 +133,32 @@ export const defaultProps = {
     isExpanded:true, 
   },
   tableFormAddButtonProps: {
-    color:'isPrimary',
+    color: 'isPrimary',
+    icon: 'fa fa-plus',
+    style: {
+      // width: '100%',
+      paddingRight: '0px',
+      paddingLeft: '0.4rem',
+    },
+    title:'Add',
+  },
+  uploadAddButtonProps: {
+    icon: 'fa fa-upload',
+    style: {
+      // width: '100%',
+      paddingRight: '0px',
+      paddingLeft: '0.4rem',
+    },
+    title:'Upload',
+  },
+  replaceButtonProps: {
+    icon: 'fa fa-table',
+    style: {
+      // width: '100%',
+      paddingRight: '0px',
+      paddingLeft: '0.4rem',
+    },
+    title:'Replace',
   },
   selectEntireRow: false,
   useInputRows: false,
@@ -220,7 +245,7 @@ export function getFilterOptions(options) {
       selectOptions.push({ label: filter.label || filter, value: filter.value || filter, });
     });
   } else {
-    if (rows && rows.length && !simpleSearchFilter) {
+    if (rows && rows.length && !simpleSearchFilter && rows[ 0 ]) {
       let rowheaders = Object.keys(rows[ 0 ]);
       // console.debug({ rowheaders });
       useableheaders = Object.assign([], rowheaders, useableheaders);
