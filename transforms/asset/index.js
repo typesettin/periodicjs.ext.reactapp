@@ -20,17 +20,17 @@ function formatAssetIndex(req) {
         if (asset.assettype.match('image')) {
           asset.transform.exif = (asset.attributes && asset.attributes.exif_data) ?
             (asset.attributes.exif_data && asset.attributes.exif_data.gps && Object.keys(asset.attributes.exif_data.gps).length) ?
-            'fa fa-map' :
-            false :
+              'fa fa-map' :
+              false :
             'fa fa-map-o';
         }
         asset.transform.encrypted = (asset.attributes && asset.attributes.encrypted_client_side) ? 'fa fa-lock' : false;
         asset.transform.fileurl = helper.getFileURL({ asset, periodic, req, skip_decryption: true, });
         let assetpreviewImg = helper.getAssetPreview(asset);
         asset.transform.preview = `${
-            (req.headers.origin === 'http://localhost:3000' && assetpreviewImg.indexOf('http') === -1)
-              ? 'http://localhost:8786'
-              : ''}${assetpreviewImg}`;
+          (req.headers.origin === 'http://localhost:3000' && assetpreviewImg.indexOf('http') === -1)
+            ? 'http://localhost:8786'
+            : ''}${assetpreviewImg}`;
         asset.transform.size = prettysize(asset.size);
         if (asset.transform.exif) {
           asset.transform.attributes.push(asset.transform.exif);
@@ -38,6 +38,8 @@ function formatAssetIndex(req) {
         if (asset.transform.encrypted) {
           asset.transform.attributes.push(asset.transform.encrypted);
         }
+        asset.resolvedfileurl = helper.getContentFileURL({ asset, periodic, req, });
+
         // console.log({ asset });
         return asset;
       });

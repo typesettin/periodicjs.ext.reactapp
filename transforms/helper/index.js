@@ -20,6 +20,27 @@ function _getAdminPathname(periodic, pathname) {
   return `${adminPrefix}${pathname}`;
 }
 
+function _getAdminPathnameContentData(periodic, pathname) {
+  let adminPrefix = (typeof periodic.app.locals.adminPath === 'string' && periodic.app.locals.adminPath !== '/' && periodic.app.locals.adminPath) ?
+    periodic.app.locals.adminPath :
+    '/';
+
+  return `${adminPrefix}contentdata${pathname}`;
+}
+exports.getContentFileURL = function(options) {
+  let { periodic, req, asset, skip_decryption, } = options;
+  if (skip_decryption && asset.attributes && asset.attributes.encrypted_client_side) {
+    return '/extensions/periodicjs.ext.reactapp/img/icons/key167.svg';
+  } else if (asset.attributes && asset.attributes.encrypted_client_side) {
+    let decryptedFilePath = _getAdminPathnameContentData(periodic, `/secure-asset/${ asset._id 
+    }/${ asset.attributes.original_filename }`);
+    // asset.fileurl_encrypted = asset.fileurl;
+    return decryptedFilePath;
+  } else {
+    return asset.fileurl;
+  }
+};
+
 exports.getAdminPathname = _getAdminPathname;
 
 exports.getFileURL = function(options) {
@@ -28,7 +49,7 @@ exports.getFileURL = function(options) {
     return '/extensions/periodicjs.ext.reactapp/img/icons/key167.svg';
   } else if (asset.attributes && asset.attributes.encrypted_client_side) {
     let decryptedFilePath = _getAdminPathname(periodic, `/periodic/securecontent/secure-asset/${ asset._id 
-}/${ asset.attributes.periodicFilename }`);
+    }/${ asset.attributes.periodicFilename }`);
     // asset.fileurl_encrypted = asset.fileurl;
     return (req.headers.origin === 'http://localhost:3000') ?
       'http://localhost:8786' + decryptedFilePath :
