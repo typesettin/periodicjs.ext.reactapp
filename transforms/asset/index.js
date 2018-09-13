@@ -38,7 +38,10 @@ function formatAssetIndex(req) {
         if (asset.transform.encrypted) {
           asset.transform.attributes.push(asset.transform.encrypted);
         }
-        asset.resolvedfileurl = helper.getContentFileURL({ asset, periodic, req, });
+        const fileURL = helper.getContentFileURL({ asset, periodic, req, });
+        asset.resolvedfileurl = (req.headers && req.headers[ 'x-access-token' ])
+          ? fileURL + '?access_token=' + req.headers[ 'x-access-token' ]
+          : fileURL;
 
         // console.log({ asset });
         return asset;

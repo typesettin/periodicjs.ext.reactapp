@@ -111,12 +111,18 @@ function createForm(options) {
     url: options.action, //'/tranforms',
     options: {
       method: (options.method) ? options.method.toUpperCase() : 'POST',
+      'Content-Type': 'application/json',
     },
     'params': options.actionParams, /** [{key:':id',val:'_id'}] */
     
   },
-    (options.onSubmit) ? getFormOnSubmitCallbacks('onSubmit', options) : {},
-    (options.onComplete) ? getFormOnSubmitCallbacks('onComplete', options) : {}
+  (options.onSubmit) 
+    ? getFormOnSubmitCallbacks('onSubmit', options) 
+    : {},
+  (options.onComplete) 
+    ? getFormOnSubmitCallbacks('onComplete', options) 
+    : {},
+  options.formSubmissionProps
   );
   const validations = getFormValidations(options);
   const formProps = {
