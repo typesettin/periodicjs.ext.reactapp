@@ -40,7 +40,7 @@ function getFormElement(formElement) {
 function getFormgroups(options) {
   const randomKey = Math.random;  
   return options.rows.map(row => (Object.assign({}, row, {
-    gridProps: {
+    gridProps: Object.assign({
       key: randomKey(),
       // style: {
       //   marginTop: 30,
@@ -52,7 +52,7 @@ function getFormgroups(options) {
           overflow:'auto',
         },
       }:undefined, 
-    },
+    },row.gridProps),
     formElements: (row.formElements && row.formElements.length)?row.formElements.map(getFormElement):[],
   })));
 }
@@ -111,18 +111,13 @@ function createForm(options) {
     url: options.action, //'/tranforms',
     options: {
       method: (options.method) ? options.method.toUpperCase() : 'POST',
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json'
     },
     'params': options.actionParams, /** [{key:':id',val:'_id'}] */
     
   },
-  (options.onSubmit) 
-    ? getFormOnSubmitCallbacks('onSubmit', options) 
-    : {},
-  (options.onComplete) 
-    ? getFormOnSubmitCallbacks('onComplete', options) 
-    : {},
-  options.formSubmissionProps
+    (options.onSubmit) ? getFormOnSubmitCallbacks('onSubmit', options) : {},
+    (options.onComplete) ? getFormOnSubmitCallbacks('onComplete', options) : {}
   );
   const validations = getFormValidations(options);
   const formProps = {
