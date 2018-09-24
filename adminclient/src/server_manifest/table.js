@@ -24,7 +24,7 @@ function getTableHeader(options = {}) {
 }
 
 function getTableBody(options = {}) {
-  const { data, bodyProps, tableRowProps, tableColProps, customRowProps = {}, htmlTD, stringifyValues, stringifySpacing, } = options;
+  const { data, bodyProps, tableRowProps, tableColProps, customRowProps = {}, htmlTD, stringifyValues, stringifySpacing } = options;
   try {
     return {
       component: 'Tbody',
@@ -45,12 +45,12 @@ function getTableBody(options = {}) {
               : {}),
           children: (typeof row[ col ] === 'object' && typeof row[ col ].displayValue !=='undefined')
             ? row[ col ].displayValue || ' '
-            : typeof row[ col ] ==='object' && stringifyValues ?JSON.stringify(row[ col ], null, stringifySpacing):row[ col ],
+            : typeof row[ col ] ==='object' && stringifyValues ?JSON.stringify(row[ col ],null,stringifySpacing):row[ col ],
         })),  
       })),
     };
   } catch (e) {
-    console.error(e);
+    console.error(e)
     return null;
   }
 }
@@ -81,6 +81,7 @@ function getTableFooter(options = {}) {
 
 function getBasicTable(options = {}) {
   const {
+    debug = true,
     hasHeader = true,
     hasBody = true,
     hasFooter = true,
@@ -125,9 +126,11 @@ function getBasicTable(options = {}) {
     
   } catch (e) {
     console.error(e);
-    return {
-      component:'Table',
+    const emptyTable = {
+      component: 'Table',
     };
+    if (debug) emptyTable.children = e.toString();
+    return emptyTable;
   }
 }
 
@@ -154,7 +157,7 @@ function getTable(options) {
       }, {
         'key': 'numPages',
         'value': `${schemaName}pages`,
-      },],
+      }, ],
       'headerLinkProps': {
         'style': {
           'textDecoration': 'none',

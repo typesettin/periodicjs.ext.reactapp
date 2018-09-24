@@ -103,7 +103,11 @@ export function getRenderedComponent(componentObject, resources, debug) {
   // console.log('this.props', this);
   renderIndex++;
   // if(resources) console.info({ resources });
-  if (!componentObject) {
+  if (componentObject && componentObject.$$typeof) { 
+    return componentObject;
+  } else if (componentObject && componentObject.component.$$typeof) {
+    return componentObject.component;
+  } else if (!componentObject) {
     return createElement('span', {}, debug ? 'Error: Missing Component Object' : '');
   }
   try {

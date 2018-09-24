@@ -114,7 +114,9 @@ function getTableFooter() {
 
 function getBasicTable() {
   var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  var _options$hasHeader = options.hasHeader,
+  var _options$debug = options.debug,
+      debug = _options$debug === undefined ? true : _options$debug,
+      _options$hasHeader = options.hasHeader,
       hasHeader = _options$hasHeader === undefined ? true : _options$hasHeader,
       _options$hasBody = options.hasBody,
       hasBody = _options$hasBody === undefined ? true : _options$hasBody,
@@ -155,9 +157,11 @@ function getBasicTable() {
     };
   } catch (e) {
     console.error(e);
-    return {
+    var emptyTable = {
       component: 'Table'
     };
+    if (debug) emptyTable.children = e.toString();
+    return emptyTable;
   }
 }
 

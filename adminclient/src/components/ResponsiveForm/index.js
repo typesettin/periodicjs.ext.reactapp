@@ -1,6 +1,7 @@
 import React, { Component, PropTypes, } from 'react';
 import { Columns, Card, CardHeader, CardHeaderTitle, CardContent, CardFooter, CardFooterItem, Notification, Column, Label, } from 're-bulma'; 
 import ResponsiveCard from '../ResponsiveCard';
+import ResponsiveTabs from '../ResponsiveTabs';
 import { getRenderedComponent, } from '../AppLayoutMap';
 import utilities from '../../util';
 import { getFormTextInputArea, getFormMaskedInput, getFormCheckbox, getFormSubmit, getFormSelect, getCardFooterItem, getFormCode, getFormTextArea, getFormEditor, getFormLink, getHiddenInput, getFormGroup, getImage, getFormDatalist, getRawInput, getSliderInput, getFormDatatable, getFormSwitch, getButton, } from './FormElements';
@@ -54,7 +55,7 @@ const defaultProps = {
 };
 
 function getFunctionFromProps(options) {
-  const { propFunc } = options;
+  const { propFunc, } = options;
 
   if (typeof propFunc === 'string' && propFunc.indexOf('func:this.props.reduxRouter') !== -1) {
     return this.props.reduxRouter[ this.props.replace('func:this.props.reduxRouter.', '') ];
@@ -449,6 +450,42 @@ class ResponsiveForm extends Component{
           // return <Column key={j} {...formElement.layoutProps}>{`${formElement.label || formElement.name }(${formElement.type || 'unknown'}):${ this.state[formElement.name] || formElement.value }`}</Column>;
         }
       };
+      /** If the formgroup is a tab, insert tabs elements
+       * [
+       * {
+       *  tab:{},
+       *  formElementTabs:[{
+       *    name:'tab name'   
+       *    formTabGroups:[ { formElements:[] } ]
+       *  }]}
+       * ]
+       * 
+       */
+      if (formgroup.tabs) {
+        keyValue++;
+        keyValue += i + Math.random();
+        let columnProps = gridProps.subColumnProps || {
+          isMultiline:true,
+        };
+        return (
+          <ResponsiveTabs
+            key={keyValue++}
+            tabs={formgroup.formElementTabs.map(formTab => ({
+              name: formTab.name,
+              layout: {
+                component: (
+                  <div>
+                    {formTab.formTabGroups.map((formTabGroup, f) => (
+                      <Columns {...gridProps} key={keyValue+i+f}>
+                        {formTabGroup.formElements.map(getFormElements)}
+                      </Columns>
+                    ))}
+                  </div>),
+              },
+            }))}
+            {...formgroup.tabs.props} />
+        );
+      }
       /** If the formgroup is a card and has two columns, it will create a single card with two inputs split into two columns based on which ones are set in each column */
       if (formgroup.card && formgroup.card.twoColumns) {
         keyValue++;

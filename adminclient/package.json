@@ -64,6 +64,6 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
-  "proxy": "https://localhost:8787",
+  "proxy": "https://local-aurify.repapp.io:8900",
   "homepage": "/extensions/periodicjs.ext.reactapp"
 }

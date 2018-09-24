@@ -54,6 +54,10 @@ var _ResponsiveCard = require('../ResponsiveCard');
 
 var _ResponsiveCard2 = _interopRequireDefault(_ResponsiveCard);
 
+var _ResponsiveTabs = require('../ResponsiveTabs');
+
+var _ResponsiveTabs2 = _interopRequireDefault(_ResponsiveTabs);
+
 var _AppLayoutMap = require('../AppLayoutMap');
 
 var _util = require('../../util');
@@ -503,6 +507,45 @@ var ResponsiveForm = function (_Component) {
             // return <Column key={j} {...formElement.layoutProps}>{`${formElement.label || formElement.name }(${formElement.type || 'unknown'}):${ this.state[formElement.name] || formElement.value }`}</Column>;
           }
         };
+        /** If the formgroup is a tab, insert tabs elements
+         * [
+         * {
+         *  tab:{},
+         *  formElementTabs:[{
+         *    name:'tab name'   
+         *    formTabGroups:[ { formElements:[] } ]
+         *  }]}
+         * ]
+         * 
+         */
+        if (formgroup.tabs) {
+          keyValue++;
+          keyValue += i + Math.random();
+          var columnProps = gridProps.subColumnProps || {
+            isMultiline: true
+          };
+          return _react2.default.createElement(_ResponsiveTabs2.default, (0, _extends3.default)({
+            key: keyValue++,
+            tabs: formgroup.formElementTabs.map(function (formTab) {
+              return {
+                name: formTab.name,
+                layout: {
+                  component: _react2.default.createElement(
+                    'div',
+                    null,
+                    formTab.formTabGroups.map(function (formTabGroup, f) {
+                      return _react2.default.createElement(
+                        _reBulma.Columns,
+                        (0, _extends3.default)({}, gridProps, { key: keyValue + i + f }),
+                        formTabGroup.formElements.map(getFormElements)
+                      );
+                    })
+                  )
+                }
+              };
+            })
+          }, formgroup.tabs.props));
+        }
         /** If the formgroup is a card and has two columns, it will create a single card with two inputs split into two columns based on which ones are set in each column */
         if (formgroup.card && formgroup.card.twoColumns) {
           keyValue++;
@@ -566,7 +609,7 @@ var ResponsiveForm = function (_Component) {
         if (formgroup.card && formgroup.card.singleCard) {
           keyValue++;
           keyValue += i;
-          var columnProps = gridProps.subColumnProps || {
+          var _columnProps = gridProps.subColumnProps || {
             isMultiline: true
           }; //previously was size=isHalf
           return _react2.default.createElement(
@@ -574,7 +617,7 @@ var ResponsiveForm = function (_Component) {
             (0, _extends3.default)({}, formgroup.card.props, { key: keyValue++ }),
             _react2.default.createElement(
               _reBulma.Columns,
-              columnProps,
+              _columnProps,
               formgroup.formElements && formgroup.formElements.length ? formgroup.formElements.map(getFormElements) : null
             )
           );
@@ -583,13 +626,13 @@ var ResponsiveForm = function (_Component) {
         if (formgroup.card && !formgroup.card.twoColumns && !formgroup.card.doubleCard) {
           keyValue++;
           keyValue += i;
-          var _columnProps = gridProps.subColumnProps || {}; //previously was size=isHalf
+          var _columnProps2 = gridProps.subColumnProps || {}; //previously was size=isHalf
           return _react2.default.createElement(
             _reBulma.Columns,
             gridProps,
             _react2.default.createElement(
               _reBulma.Column,
-              _columnProps,
+              _columnProps2,
               _react2.default.createElement(
                 _ResponsiveCard2.default,
                 (0, _extends3.default)({}, formgroup.card.props, { key: keyValue++ }),
