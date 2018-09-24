@@ -137,8 +137,13 @@ export function setAddNameToName(options) {
     }
     if (formElm.type === 'datalist') {
       // console.debug('before',{formElm,formdata});
-      if (formElm.datalist.multi && formdata[formElm.name] && formdata[formElm.name].length) {
-        formdata[formElm.name] = formdata[formElm.name].map(datum => datum[formElm.datalist.selector || '_id']);
+      if (formElm.datalist.multi && formdata[ formElm.name ] && formdata[ formElm.name ].length) {
+        const datalistValues = (Array.isArray(formdata[ formElm.name ]))
+          ? formdata[ formElm.name ]
+          : [formdata[ formElm.name ]];
+        formdata[ formElm.name ] = datalistValues.map(datum => (typeof datum === 'string')
+          ? datum
+          : datum[ formElm.datalist.selector || '_id' ]);
       } else if (formdata[formElm.name] && Object.keys(formdata[formElm.name]).length) {
         formdata[formElm.name] = formdata[formElm.name][formElm.datalist.selector || '_id'];
       }

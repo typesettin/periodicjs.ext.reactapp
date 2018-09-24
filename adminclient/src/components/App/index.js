@@ -23,6 +23,8 @@ import numeral from 'numeral';
 import capitalize from 'capitalize';
 import moment from 'moment';
 import luxon from 'luxon';
+import flatten from 'flat';
+
 // import debounce from 'debounce';
 const history = getHistory(historySettings, AppConfigSettings, store);
 
@@ -47,6 +49,7 @@ window.__reactapp = Object.assign({}, {
     luxon,
     capitalize,
     pluralize,
+    flatten,
   },
 }, window.__reactapp);
 window.__reactapp.setDynamicData = (prop, val) => store.dispatch(actions.dynamic.setDynamicData(prop, val));

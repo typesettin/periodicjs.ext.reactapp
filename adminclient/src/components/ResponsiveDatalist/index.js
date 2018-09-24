@@ -74,6 +74,7 @@ function getDatumValue(datum) {
 class ResponsiveDatalist extends Component {
   constructor(props) {
     super(props);
+    // console.log('ResponsiveDatalist',{ props });
     let initialValue = props.value;
     if (props.multi && props.value && Array.isArray(props.value) === false && props.value.indexOf(',') >= 0) {
       initialValue = props.value.split(',');
@@ -90,6 +91,7 @@ class ResponsiveDatalist extends Component {
       selectedData: props.selectedData,
       isSearching: false,
     };
+    // console.warn('ResponsiveDatalist this.state',this.state);
     this.inputProps = Object.assign({}, this.props.passableProps);
     this.searchFunction = debounce(this.updateDataList, 200);
     this.filterStaticData = this.filterStaticData.bind(this);
@@ -103,6 +105,7 @@ class ResponsiveDatalist extends Component {
   }
 
   filterStaticData(options) {
+    // console.warn('this.props.datalistdata',this.props.datalistdata)
     if (this.props.returnFormOptionsValue) {
       return this.props.datalistdata.filter(item => (item.label.indexOf(options.search) > -1));
     } else if (options.search) {
@@ -153,12 +156,15 @@ class ResponsiveDatalist extends Component {
       this.setState(updatedState);
       //value is the array of selected values
       //selectedData is the filtered list that changes everytime user types
+      // console.warn({ options,  });
     } else{
       console.debug({ options,  });
     }
   }
   onChangeHandler(event) {
+    console.warn('onChangeHandler', { event });
     const search = (event && event.target && event.target.value) ? event.target.value : '';
+    console.warn('onChangeHandler', { search });
     this.searchFunction({ search, });
   }
   onBlurHandler() {
@@ -318,6 +324,7 @@ class ResponsiveDatalist extends Component {
           </rb.Notification>);
       })
       : null;
+    // console.log('this.inputProps',this.inputProps)
     return(<div {...this.props.wrapperProps}>
       <div style={{ width:'100%', }}>
         <rb.Input {...this.inputProps}

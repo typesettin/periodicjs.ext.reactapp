@@ -1,4 +1,4 @@
-'use strict';
+
 const path = require('path');
 const fs = require('fs-extra');
 const Promisie = require('promisie');
@@ -159,9 +159,9 @@ function pullConfigurationSettings(reload) {
       Promise.resolve({ extensions:Array.from(periodic.extensions.values()).filter(ext => ext.periodic_config && ext.periodic_config.periodicjs_ext_reactapp), }), // fs.readJson(path.join(__dirname, '../../../content/config/extensions.json')),
       handleAmbiguousExtensionType(path.join(__dirname, '../periodicjs.reactapp.json')),
     ]
-    )
+  )
     .then(configurationData => {
-      let [configuration, adminExtSettings,] = configurationData;
+      let [configuration, adminExtSettings, ] = configurationData;
       adminExtSettings = adminExtSettings['periodicjs_ext_reactapp'];
       let operations = {};
       if (reload === 'manifest' || reload === true || !Object.keys(manifestSettings).length) {
@@ -192,16 +192,16 @@ function pullConfigurationSettings(reload) {
       // console.log(util.inspect(navigation,{depth:20 }));
       manifestSettings = Object.assign(manifestSettings,
         (reload === 'manifest' || reload === true || !Object.keys(manifestSettings).length) ?
-        manifest :
-        manifestSettings);
+          manifest :
+          manifestSettings);
       navigationSettings = Object.assign(navigationSettings,
         (reload === 'navigation' || reload === true || !Object.keys(navigationSettings).length) ?
-        navigation :
-        navigationSettings);
+          navigation :
+          navigationSettings);
       unauthenticatedManifestSettings = Object.assign(unauthenticatedManifestSettings,
         (reload === 'unauthenticated' || reload === true || !Object.keys(unauthenticatedManifestSettings).length) ?
-        unauthenticated_manifest :
-        unauthenticatedManifestSettings);
+          unauthenticated_manifest :
+          unauthenticatedManifestSettings);
       return result;
     })
     .catch(e => Promisie.reject(e));
@@ -258,7 +258,7 @@ function readConfigurations(originalFilePath, configurationType) {
  * @return {Object[]}       An array of configuration objects for any successfully resolved file reads
  */
 function readAndStoreConfigurations(paths, type) {
-  paths = (Array.isArray(paths)) ? paths : [paths,];
+  paths = (Array.isArray(paths)) ? paths : [paths, ];
   // console.log({ paths });
   let reads = paths.map(_path => {
     if (typeof _path === 'string') return readConfigurations.bind(null, _path, type);
@@ -290,7 +290,7 @@ function generateComponentOperations(data, defaults) {
   return Object.keys(data).reduce((result, key) => {
     if (typeof data[key] === 'string') {
       result[key] = function() {
-        return readAndStoreConfigurations([data[key],], 'components')
+        return readAndStoreConfigurations([data[key], ], 'components')
           .then(result => {
             if (result.length) return result[0];
             return Promisie.reject('unable to read property resetting to default value');
@@ -336,7 +336,7 @@ function handleNavigationCompilation(navigation, isExtension) {
   }, {
     component: 'MenuList',
     children: [],
-  },];
+  }, ];
   let subLinks = extensionsNav[1];
   let compiled = navigation.reduce((result, nav) => {
     result.wrapper = Object.assign(result.wrapper || {}, nav.wrapper);
@@ -539,7 +539,7 @@ function determineAccess(privileges, layout) {
     return hasAccess;
     
   } catch (e) {
-    console.log('ERROR',{privileges,layout})
+    console.log('ERROR', { privileges, layout ,});
     throw e;
   }
 }

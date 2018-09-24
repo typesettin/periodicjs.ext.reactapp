@@ -24,30 +24,35 @@ function getTableHeader(options = {}) {
 }
 
 function getTableBody(options = {}) {
-  const { data, bodyProps, tableRowProps, tableColProps, customRowProps = {}, htmlTD, stringifyValues, stringifySpacing } = options;
-  return {
-    component: 'Tbody',
-    props: bodyProps || {},
-    children: data.map((row, i) => ({
-      component: 'Tr',
-      props: Object.assign({
-      }, tableRowProps, customRowProps[i]),
-      children: Object.keys(row).map(col => ({
-        component: htmlTD ? 'td' : 'Td',
-        props: Object.assign(
-          {
-            className: '__re-bulma_td',                  
-          },
-          tableColProps,
-          (typeof row[ col ] === 'object' && typeof row[ col ].columnProps)
-            ? row[ col ].columnProps
-            : {}),
-        children: (typeof row[ col ] === 'object' && typeof row[ col ].displayValue !=='undefined')
-          ? row[ col ].displayValue || ' '
-          : typeof row[ col ] ==='object' && stringifyValues ?JSON.stringify(row[ col ],null,stringifySpacing):row[ col ],
-      })),  
-    })),
-  };
+  const { data, bodyProps, tableRowProps, tableColProps, customRowProps = {}, htmlTD, stringifyValues, stringifySpacing, } = options;
+  try {
+    return {
+      component: 'Tbody',
+      props: bodyProps || {},
+      children: data.map((row, i) => ({
+        component: 'Tr',
+        props: Object.assign({
+        }, tableRowProps, customRowProps[i]),
+        children: Object.keys(row).map(col => ({
+          component: htmlTD ? 'td' : 'Td',
+          props: Object.assign(
+            {
+              className: '__re-bulma_td',                  
+            },
+            tableColProps,
+            (typeof row[ col ] === 'object' && typeof row[ col ].columnProps)
+              ? row[ col ].columnProps
+              : {}),
+          children: (typeof row[ col ] === 'object' && typeof row[ col ].displayValue !=='undefined')
+            ? row[ col ].displayValue || ' '
+            : typeof row[ col ] ==='object' && stringifyValues ?JSON.stringify(row[ col ], null, stringifySpacing):row[ col ],
+        })),  
+      })),
+    };
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
 }
 
 function getTableFooter(options = {}) {
@@ -97,25 +102,33 @@ function getBasicTable(options = {}) {
     stringifyValues = true,
     stringifySpacing = 2,
   } = options;
-  const headers = header || Object.keys(data[ 0 ]);
-  const footers = footer || headers;
-  const tableProps = props || {};
-  return {
-    component: 'Table',
-    ignoreReduxProps,
-    props: tableProps,
-    children: [
-      hasHeader
-        ? getTableHeader({ data, headers, headerProps, capitalizeHeaders, htmlTH, customRowProps, })
-        : null,
-      hasBody
-        ? getTableBody({ data, bodyProps, tableRowProps, tableColProps, htmlTD, customRowProps, stringifyValues, stringifySpacing, })
-        : null,
-      hasFooter
-        ? getTableFooter({ data, footers, footerProps, htmlTF, customRowProps, })
-        : null,
-    ],
-  };
+  try {
+    const headers = header || Object.keys(data[ 0 ]);
+    const footers = footer || headers;
+    const tableProps = props || {};
+    return {
+      component: 'Table',
+      ignoreReduxProps,
+      props: tableProps,
+      children: [
+        hasHeader
+          ? getTableHeader({ data, headers, headerProps, capitalizeHeaders, htmlTH, customRowProps, })
+          : null,
+        hasBody
+          ? getTableBody({ data, bodyProps, tableRowProps, tableColProps, htmlTD, customRowProps, stringifyValues, stringifySpacing, })
+          : null,
+        hasFooter
+          ? getTableFooter({ data, footers, footerProps, htmlTF, customRowProps, })
+          : null,
+      ],
+    };
+    
+  } catch (e) {
+    console.error(e);
+    return {
+      component:'Table',
+    };
+  }
 }
 
 function getTable(options) {
@@ -141,7 +154,7 @@ function getTable(options) {
       }, {
         'key': 'numPages',
         'value': `${schemaName}pages`,
-      }, ],
+      },],
       'headerLinkProps': {
         'style': {
           'textDecoration': 'none',

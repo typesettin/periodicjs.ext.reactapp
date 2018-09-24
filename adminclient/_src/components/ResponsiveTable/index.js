@@ -161,6 +161,8 @@ var ResponsiveTable = function (_Component) {
     //     return newRow;
     //   })
     //   : {};
+    var numItems = typeof props.numItems === 'number' ? props.numItems : rows.length;
+    var numPages = _this.props.numPages || Math.ceil(numItems / props.limit);
     _this.state = {
       headers: headers,
       rows: rows,
@@ -169,8 +171,8 @@ var ResponsiveTable = function (_Component) {
       hasFooter: props.hasFooter,
       limit: props.limit,
       currentPage: props.currentPage,
-      numItems: props.numItems || rows.length,
-      numPages: Math.ceil((props.numItems || rows.length) / props.limit),
+      numItems: numItems,
+      numPages: numPages,
       numButtons: props.numButtons,
       isLoading: false,
       sortProp: _this.props.searchField || '_id',
@@ -461,7 +463,7 @@ var ResponsiveTable = function (_Component) {
         } else {
           updatedState.rows = typeof options.rows !== 'undefined' ? options.rows : this.props.rows;
         }
-        console.debug('initial', { updatedState: updatedState });
+        // console.debug('initial',{ updatedState, });
         if (options.sort) {
           newSortOptions.sortProp = options.sort;
           if (this.state.sortProp === options.sort) {

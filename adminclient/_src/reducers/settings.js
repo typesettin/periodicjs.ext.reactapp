@@ -137,7 +137,7 @@ var defaultUserNavigation = {
 };
 var packageJSON = {
   name: 'adminclient',
-  version: '11.5.0',
+  version: '11.6.0',
   'private': true,
   devDependencies: {
     'animate.css': '^3.5.2',
@@ -201,7 +201,7 @@ var packageJSON = {
     test: 'react-scripts test --env=jsdom',
     eject: 'react-scripts eject'
   },
-  proxy: 'https://localhost:8787',
+  proxy: 'https://local-aurify.repapp.io:8900',
   homepage: '/extensions/periodicjs.ext.reactapp'
 };
 

@@ -56,6 +56,8 @@ class ResponsiveTable extends Component {
     //     return newRow;
     //   })
     //   : {};
+    const numItems = typeof props.numItems === 'number' ? props.numItems : rows.length;
+    const numPages = this.props.numPages || Math.ceil(numItems / props.limit);
     this.state = {
       headers: headers,
       rows: rows,
@@ -64,8 +66,8 @@ class ResponsiveTable extends Component {
       hasFooter: props.hasFooter,
       limit: props.limit,
       currentPage: props.currentPage,
-      numItems: props.numItems || rows.length,
-      numPages: Math.ceil((props.numItems || rows.length) / props.limit),
+      numItems,
+      numPages,
       numButtons: props.numButtons,
       isLoading: false,
       sortProp: this.props.searchField || '_id',
@@ -307,7 +309,7 @@ class ResponsiveTable extends Component {
       } else {
         updatedState.rows = (typeof options.rows !== 'undefined') ? options.rows : this.props.rows;
       }
-      console.debug('initial',{ updatedState, });
+      // console.debug('initial',{ updatedState, });
       if (options.sort) {
         newSortOptions.sortProp = options.sort;
         if (this.state.sortProp === options.sort) {

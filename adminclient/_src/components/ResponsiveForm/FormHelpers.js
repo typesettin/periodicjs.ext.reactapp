@@ -182,8 +182,9 @@ function setAddNameToName(options) {
     if (formElm.type === 'datalist') {
       // console.debug('before',{formElm,formdata});
       if (formElm.datalist.multi && formdata[formElm.name] && formdata[formElm.name].length) {
-        formdata[formElm.name] = formdata[formElm.name].map(function (datum) {
-          return datum[formElm.datalist.selector || '_id'];
+        var datalistValues = Array.isArray(formdata[formElm.name]) ? formdata[formElm.name] : [formdata[formElm.name]];
+        formdata[formElm.name] = datalistValues.map(function (datum) {
+          return typeof datum === 'string' ? datum : datum[formElm.datalist.selector || '_id'];
         });
       } else if (formdata[formElm.name] && (0, _keys2.default)(formdata[formElm.name]).length) {
         formdata[formElm.name] = formdata[formElm.name][formElm.datalist.selector || '_id'];

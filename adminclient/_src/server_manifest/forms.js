@@ -48,7 +48,7 @@ function getFormgroups(options) {
   var randomKey = Math.random;
   return options.rows.map(function (row) {
     return (0, _assign2.default)({}, row, {
-      gridProps: {
+      gridProps: (0, _assign2.default)({
         key: randomKey(),
         // style: {
         //   marginTop: 30,
@@ -60,7 +60,7 @@ function getFormgroups(options) {
             overflow: 'auto'
           }
         } : undefined
-      },
+      }, row.gridProps),
       formElements: row.formElements && row.formElements.length ? row.formElements.map(getFormElement) : []
     });
   });
@@ -119,7 +119,8 @@ function createForm(options) {
     success: getFormNotification(options),
     url: options.action, //'/tranforms',
     options: {
-      method: options.method ? options.method.toUpperCase() : 'POST'
+      method: options.method ? options.method.toUpperCase() : 'POST',
+      'Content-Type': 'application/json'
     },
     'params': options.actionParams /** [{key:':id',val:'_id'}] */
 

@@ -199,7 +199,7 @@ function getCustomErrorIcon(hasError, isValid, state, formelement) {
   return formelement.errorIconRight || formelement.errorIconLeft ? _react2.default.createElement('i', { className: '__re-bulma_fa ' + iconVar, style: iconStyle }) : null;
 }
 
-function valueChangeHandler(formElement) {
+function valueChangeHandler(formElement, callback) {
   var _this = this;
 
   return function (event) {
@@ -500,11 +500,14 @@ function getFormDatalist(options) {
     var datalistdata = [];
     if (this.props.__formOptions && this.props.__formOptions[formElement.name]) {
       datalistdata = this.props.__formOptions[formElement.name];
+    } else if (formElement.options) {
+      datalistdata = formElement.options;
     } else {
       datalistdata = this.props.formdata[(0, _pluralize2.default)(formElement.datalist.entity)] || [];
     }
     passedProps.datalistdata = datalistdata;
   }
+  // console.log({formElement, initialValue})
   return _react2.default.createElement(
     _FormItem2.default,
     (0, _extends3.default)({ key: i }, formElement.layoutProps),

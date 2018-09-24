@@ -60,25 +60,30 @@ function getTableBody() {
       stringifyValues = options.stringifyValues,
       stringifySpacing = options.stringifySpacing;
 
-  return {
-    component: 'Tbody',
-    props: bodyProps || {},
-    children: data.map(function (row, i) {
-      return {
-        component: 'Tr',
-        props: (0, _assign2.default)({}, tableRowProps, customRowProps[i]),
-        children: (0, _keys2.default)(row).map(function (col) {
-          return {
-            component: htmlTD ? 'td' : 'Td',
-            props: (0, _assign2.default)({
-              className: '__re-bulma_td'
-            }, tableColProps, (0, _typeof3.default)(row[col]) === 'object' && (0, _typeof3.default)(row[col].columnProps) ? row[col].columnProps : {}),
-            children: (0, _typeof3.default)(row[col]) === 'object' && typeof row[col].displayValue !== 'undefined' ? row[col].displayValue || ' ' : (0, _typeof3.default)(row[col]) === 'object' && stringifyValues ? (0, _stringify2.default)(row[col], null, stringifySpacing) : row[col]
-          };
-        })
-      };
-    })
-  };
+  try {
+    return {
+      component: 'Tbody',
+      props: bodyProps || {},
+      children: data.map(function (row, i) {
+        return {
+          component: 'Tr',
+          props: (0, _assign2.default)({}, tableRowProps, customRowProps[i]),
+          children: (0, _keys2.default)(row).map(function (col) {
+            return {
+              component: htmlTD ? 'td' : 'Td',
+              props: (0, _assign2.default)({
+                className: '__re-bulma_td'
+              }, tableColProps, (0, _typeof3.default)(row[col]) === 'object' && (0, _typeof3.default)(row[col].columnProps) ? row[col].columnProps : {}),
+              children: (0, _typeof3.default)(row[col]) === 'object' && typeof row[col].displayValue !== 'undefined' ? row[col].displayValue || ' ' : (0, _typeof3.default)(row[col]) === 'object' && stringifyValues ? (0, _stringify2.default)(row[col], null, stringifySpacing) : row[col]
+            };
+          })
+        };
+      })
+    };
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
 }
 
 function getTableFooter() {
@@ -138,15 +143,22 @@ function getBasicTable() {
       _options$stringifySpa = options.stringifySpacing,
       stringifySpacing = _options$stringifySpa === undefined ? 2 : _options$stringifySpa;
 
-  var headers = header || (0, _keys2.default)(data[0]);
-  var footers = footer || headers;
-  var tableProps = props || {};
-  return {
-    component: 'Table',
-    ignoreReduxProps: ignoreReduxProps,
-    props: tableProps,
-    children: [hasHeader ? getTableHeader({ data: data, headers: headers, headerProps: headerProps, capitalizeHeaders: capitalizeHeaders, htmlTH: htmlTH, customRowProps: customRowProps }) : null, hasBody ? getTableBody({ data: data, bodyProps: bodyProps, tableRowProps: tableRowProps, tableColProps: tableColProps, htmlTD: htmlTD, customRowProps: customRowProps, stringifyValues: stringifyValues, stringifySpacing: stringifySpacing }) : null, hasFooter ? getTableFooter({ data: data, footers: footers, footerProps: footerProps, htmlTF: htmlTF, customRowProps: customRowProps }) : null]
-  };
+  try {
+    var headers = header || (0, _keys2.default)(data[0]);
+    var footers = footer || headers;
+    var tableProps = props || {};
+    return {
+      component: 'Table',
+      ignoreReduxProps: ignoreReduxProps,
+      props: tableProps,
+      children: [hasHeader ? getTableHeader({ data: data, headers: headers, headerProps: headerProps, capitalizeHeaders: capitalizeHeaders, htmlTH: htmlTH, customRowProps: customRowProps }) : null, hasBody ? getTableBody({ data: data, bodyProps: bodyProps, tableRowProps: tableRowProps, tableColProps: tableColProps, htmlTD: htmlTD, customRowProps: customRowProps, stringifyValues: stringifyValues, stringifySpacing: stringifySpacing }) : null, hasFooter ? getTableFooter({ data: data, footers: footers, footerProps: footerProps, htmlTF: htmlTF, customRowProps: customRowProps }) : null]
+    };
+  } catch (e) {
+    console.error(e);
+    return {
+      component: 'Table'
+    };
+  }
 }
 
 function getTable(options) {

@@ -138,6 +138,7 @@ var ResponsiveDatalist = function (_Component) {
   function ResponsiveDatalist(props) {
     (0, _classCallCheck3.default)(this, ResponsiveDatalist);
 
+    // console.log('ResponsiveDatalist',{ props });
     var _this = (0, _possibleConstructorReturn3.default)(this, (ResponsiveDatalist.__proto__ || (0, _getPrototypeOf2.default)(ResponsiveDatalist)).call(this, props));
 
     var initialValue = props.value;
@@ -152,6 +153,7 @@ var ResponsiveDatalist = function (_Component) {
       selectedData: props.selectedData,
       isSearching: false
     };
+    // console.warn('ResponsiveDatalist this.state',this.state);
     _this.inputProps = (0, _assign2.default)({}, _this.props.passableProps);
     _this.searchFunction = (0, _debounce2.default)(_this.updateDataList, 200);
     _this.filterStaticData = _this.filterStaticData.bind(_this);
@@ -172,6 +174,7 @@ var ResponsiveDatalist = function (_Component) {
     value: function filterStaticData(options) {
       var _this2 = this;
 
+      // console.warn('this.props.datalistdata',this.props.datalistdata)
       if (this.props.returnFormOptionsValue) {
         return this.props.datalistdata.filter(function (item) {
           return item.label.indexOf(options.search) > -1;
@@ -228,6 +231,7 @@ var ResponsiveDatalist = function (_Component) {
         this.setState(updatedState);
         //value is the array of selected values
         //selectedData is the filtered list that changes everytime user types
+        // console.warn({ options,  });
       } else {
         console.debug({ options: options });
       }
@@ -235,7 +239,9 @@ var ResponsiveDatalist = function (_Component) {
   }, {
     key: 'onChangeHandler',
     value: function onChangeHandler(event) {
+      console.warn('onChangeHandler', { event: event });
       var search = event && event.target && event.target.value ? event.target.value : '';
+      console.warn('onChangeHandler', { search: search });
       this.searchFunction({ search: search });
     }
   }, {
@@ -416,6 +422,7 @@ var ResponsiveDatalist = function (_Component) {
           })
         );
       }) : null;
+      // console.log('this.inputProps',this.inputProps)
       return _react2.default.createElement(
         'div',
         this.props.wrapperProps,

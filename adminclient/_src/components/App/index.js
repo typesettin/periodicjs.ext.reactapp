@@ -86,6 +86,10 @@ var _luxon = require('luxon');
 
 var _luxon2 = _interopRequireDefault(_luxon);
 
+var _flat = require('flat');
+
+var _flat2 = _interopRequireDefault(_flat);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // import constants from '../../constants';
@@ -206,7 +210,8 @@ window.__reactapp = (0, _assign2.default)({}, {
     moment: _moment2.default,
     luxon: _luxon2.default,
     capitalize: _capitalize2.default,
-    pluralize: _pluralize2.default
+    pluralize: _pluralize2.default,
+    flatten: _flat2.default
   }
 }, window.__reactapp);
 window.__reactapp.setDynamicData = function (prop, val) {

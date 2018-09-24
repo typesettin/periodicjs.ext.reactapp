@@ -93,7 +93,7 @@ function getCustomErrorIcon(hasError, isValid, state, formelement) {
     : null;
 }
 
-function valueChangeHandler(formElement) {
+function valueChangeHandler(formElement, callback) {
   return  (event) => {
     let text = event.target.value;
     // console.debug({ text, formElement, });
@@ -418,11 +418,14 @@ export function getFormDatalist(options){
     let datalistdata = [];
     if(this.props.__formOptions && this.props.__formOptions[formElement.name]){
       datalistdata = this.props.__formOptions[formElement.name];
+    } else if (formElement.options) {
+      datalistdata = formElement.options;
     } else {
       datalistdata = this.props.formdata[pluralize(formElement.datalist.entity)] || [];
     }
     passedProps.datalistdata = datalistdata;
   }
+  // console.log({formElement, initialValue})
   return (<FormItem key={i} {...formElement.layoutProps} >
   {getFormLabel(formElement)}  
     <ResponsiveDatalist 
