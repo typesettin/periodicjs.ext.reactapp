@@ -161,8 +161,12 @@ var ResponsiveTable = function (_Component) {
     //     return newRow;
     //   })
     //   : {};
-    var numItems = typeof props.numItems === 'number' ? props.numItems : rows.length;
-    var numPages = _this.props.numPages || Math.ceil(numItems / props.limit);
+    var numItems = typeof props.numItems === 'number' ? props.numItems : 0;
+    if (rows.length && typeof props.numItems === 'number' && rows.length > props.numItems) numItems = rows.length;
+    // const numItems = (rows.length > props.nu) typeof props.numItems === 'number' ? props.numItems : rows.length;
+    var numPages = _this.props.numPages;
+    var calcNumPages = Math.ceil(numItems / props.limit);
+    if (calcNumPages > numPages) numPages = calcNumPages;
     _this.state = {
       headers: headers,
       rows: rows,
@@ -201,7 +205,7 @@ var ResponsiveTable = function (_Component) {
     _this.removeFilterRow = _this.removeFilterByDeleteRow.bind(_this);
     _this.addFilterRow = _this.addFilterByAddRow.bind(_this);
     _this.updateNewFilterRowText = _this.updateNewFilterRowDataText.bind(_this);
-    _this.searchField = _this.props.searchField || Array.isArray(_this.props.headers) && _this.props.headers.length ? _this.props.headers[0].sortid : Array.isArray(_this.state.headers) && _this.state.headers.length ? _this.state.headers[0].sortid : undefined;
+    _this.searchField = _this.props.searchField ? _this.props.searchField : Array.isArray(_this.props.headers) && _this.props.headers.length ? _this.props.headers[0].sortid : Array.isArray(_this.state.headers) && _this.state.headers.length ? _this.state.headers[0].sortid : undefined;
     _this.fastUpdateRows = _this.fastUpdateRows.bind(_this);
     return _this;
   }

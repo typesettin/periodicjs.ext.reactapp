@@ -153,7 +153,7 @@ var DynamicComponent = function (_Component) {
         var flattenedLayout = (0, _flat2.default)(generatedLayout, this.props.flattenOptions);
         // console.warn('before flattenedLayout', flattenedLayout);
         flattenedLayout[this.props.assignResourceProperty] = resources;
-        dynamicLayout = (0, _assign2.default)({}, (0, _flat.unflatten)(flattenedLayout), { ignoreReduxProps: true });
+        dynamicLayout = (0, _assign2.default)({}, (0, _flat.unflatten)(flattenedLayout), { ignoreReduxProps: false });
         // console.warn(' unflatten(flattenedLayout', unflatten(flattenedLayout));
         // console.warn('after flattenedLayout', flattenedLayout);
       } else {
