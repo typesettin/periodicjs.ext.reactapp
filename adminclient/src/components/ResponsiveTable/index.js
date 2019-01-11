@@ -56,8 +56,12 @@ class ResponsiveTable extends Component {
     //     return newRow;
     //   })
     //   : {};
-    const numItems = typeof props.numItems === 'number' ? props.numItems : rows.length;
-    const numPages = this.props.numPages || Math.ceil(numItems / props.limit);
+    let numItems = (typeof props.numItems === 'number') ? props.numItems : 0;
+    if (rows.length && typeof props.numItems === 'number' && rows.length > props.numItems) numItems = rows.length;
+    // const numItems = (rows.length > props.nu) typeof props.numItems === 'number' ? props.numItems : rows.length;
+    let numPages = this.props.numPages;
+    const calcNumPages = Math.ceil(numItems / props.limit);
+    if (calcNumPages > numPages) numPages = calcNumPages;
     this.state = {
       headers: headers,
       rows: rows,
@@ -96,11 +100,13 @@ class ResponsiveTable extends Component {
     this.removeFilterRow = this.removeFilterByDeleteRow.bind(this);
     this.addFilterRow = this.addFilterByAddRow.bind(this);
     this.updateNewFilterRowText = this.updateNewFilterRowDataText.bind(this);
-    this.searchField = this.props.searchField || (Array.isArray(this.props.headers) && this.props.headers.length)
-    ? this.props.headers[ 0 ].sortid
-    : (Array.isArray(this.state.headers) && this.state.headers.length)
-      ? this.state.headers[ 0 ].sortid
-        : undefined;
+    this.searchField = (this.props.searchField)
+      ? this.props.searchField
+      : (Array.isArray(this.props.headers) && this.props.headers.length)
+        ? this.props.headers[ 0 ].sortid
+        : (Array.isArray(this.state.headers) && this.state.headers.length)
+          ? this.state.headers[ 0 ].sortid
+          : undefined;
     this.fastUpdateRows = this.fastUpdateRows.bind(this);
   }
   componentWillReceiveProps(nextProps) {

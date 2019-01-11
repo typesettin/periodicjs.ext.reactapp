@@ -91,7 +91,7 @@ class DynamicComponent extends Component {
       const flattenedLayout = flatten(generatedLayout,this.props.flattenOptions);
       // console.warn('before flattenedLayout', flattenedLayout);
       flattenedLayout[ this.props.assignResourceProperty ] = resources;
-      dynamicLayout = Object.assign({}, unflatten(flattenedLayout), { ignoreReduxProps:true , });
+      dynamicLayout = Object.assign({}, unflatten(flattenedLayout), { ignoreReduxProps:false , });
       // console.warn(' unflatten(flattenedLayout', unflatten(flattenedLayout));
       // console.warn('after flattenedLayout', flattenedLayout);
     } else {
