@@ -157,7 +157,7 @@ var packageJSON = {
     'react-router': '^3.0.0',
     'react-router-redux': '^4.0.7',
     'react-scripts': '2.1.5',
-    recharts: '^1.0.0-beta.1',
+    recharts: '^1.5.0',
     redux: '^3.6.0',
     'redux-logger': '^2.7.4',
     'redux-thunk': '^2.1.0',
@@ -195,7 +195,7 @@ var packageJSON = {
     'socket.io-client': '^2.2.0',
     'text-mask-addons': '^3.6.0',
     'validate.js': '^0.11.1',
-    victory: '^0.24.0',
+    victory: '^31.2.0',
     'whatwg-fetch': '^2.0.3'
   },
   scripts: {
