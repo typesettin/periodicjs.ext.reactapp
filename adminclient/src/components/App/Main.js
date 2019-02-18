@@ -8,16 +8,21 @@ import AppHeader from '../AppHeader';
 import AppFooter from '../AppFooter';
 import AppSidebar from '../AppSidebar';
 import FloatingNav from '../AppSidebar/FloatingNav';
+import Log from '../AppSectionLoading/log';
 // import AppSectionLoading from '../AppSectionLoading';
+import { initSockets, } from './SocketHelper';
 import AppSectionLoadingOverlay from '../AppSectionLoading/overlay';
 import AppOverlay from '../AppOverlay';
+// let once = true;
+
 // import utilities from '../../util';
 
 class MainApp extends Component{
   constructor(props/*, context*/) {
     super(props);
     this.state = props;
-    // this.previousRoute = {};
+    initSockets.call(this, { auth: true, });
+
   }
   componentWillReceiveProps(nextProps) {
     // console.log('componentWillReceiveProps nextProps', nextProps);
@@ -27,14 +32,21 @@ class MainApp extends Component{
     } 
   }
   componentDidMount() {
+    // if (this.state.settings.use_sockets && once) {
+    //   once = false;
+      
+
+    // }
     if (this.state.settings.noauth) {
       this.props.fetchUnauthenticatedManifest()
         .then(() => {
           this.props.setUILoadedState(true);
+          // initSockets.call(this, { auth:false, });
         })
         .catch((error) => {
           this.props.errorNotification(error);
           this.props.setUILoadedState(true);
+          // initSockets.call(this, { auth:false, });
         });
     } else {
       Promise.all([
@@ -89,8 +101,21 @@ class MainApp extends Component{
               console.log('MAIN componentDidMount USER IS NOT LOGGED IN');
             }
             this.props.setUILoadedState(true);  
+            // console.debug('main this.state.user', this.state.user);
+            // if (socket) {
+            //   console.debug('HAS SOCKET state.user',state.user)
+      
+            //   socket.emit('authentication', {
+            //     user: state.user,
+            //   });
+            // } else {
+            //   console.debug('NO SOCKET')
+            // }
+            // initSockets.call(this, { auth: true, });
+            // this.props.initUserSocket();
           } catch (e) {
             this.props.errorNotification(e);
+            // initSockets.call(this, { auth:false, });
             // console.error(e)
             // console.log(e);
           }
@@ -102,6 +127,7 @@ class MainApp extends Component{
           // console.error('MAIN componentDidMount: JWT USER Login Error.', error);
           this.props.logoutUser();
           this.props.setUILoadedState(true);
+          // initSockets.call(this, { auth:false, });
         });
       
     }
@@ -157,6 +183,7 @@ class MainApp extends Component{
         <Columns className="reactapp__main_container" style={Object.assign({}, styles.fullMinHeight, styles.fullHeight)}>
           {sidebarColumn}
           {overlay}
+          <Log {...this.props} />
           <Column className="reactapp__main_content" style={styles.fullMinHeight}>
             {(this.state.ui.app_container_ui_is_loaded === false)?null:this.props.children}
           </Column>

@@ -1,12 +1,11 @@
 {
-  "main.css": "static/css/main.8b9644b7.css",
-  "main.css.map": "static/css/main.8b9644b7.css.map",
-  "main.js": "static/js/main.9dabdbd8.js",
-  "main.js.map": "static/js/main.9dabdbd8.js.map",
-  "static/media/fontawesome-webfont.eot?v=4.7.0": "static/media/fontawesome-webfont.674f50d2.eot",
-  "static/media/fontawesome-webfont.svg?v=4.7.0": "static/media/fontawesome-webfont.912ec66d.svg",
-  "static/media/fontawesome-webfont.ttf?v=4.7.0": "static/media/fontawesome-webfont.b06871f2.ttf",
-  "static/media/fontawesome-webfont.woff2?v=4.7.0": "static/media/fontawesome-webfont.af7ae505.woff2",
-  "static/media/fontawesome-webfont.woff?v=4.7.0": "static/media/fontawesome-webfont.fee66e71.woff",
-  "static/media/slick.svg": "static/media/slick.f97e3bbf.svg"
+  "main.css": "/extensions/periodicjs.ext.reactapp/static/css/main.7b52e702.css",
+  "main.js": "/extensions/periodicjs.ext.reactapp/static/js/main.951b591f.js",
+  "main.js.map": "/extensions/periodicjs.ext.reactapp/static/js/main.951b591f.js.map",
+  "index.html": "/extensions/periodicjs.ext.reactapp/index.html",
+  "precache-manifest.46dcfb6893a981f4d9e2447c09e766d5.js": "/extensions/periodicjs.ext.reactapp/precache-manifest.46dcfb6893a981f4d9e2447c09e766d5.js",
+  "service-worker.js": "/extensions/periodicjs.ext.reactapp/service-worker.js",
+  "static/css/main.7b52e702.css.map": "/extensions/periodicjs.ext.reactapp/static/css/main.7b52e702.css.map",
+  "static/media/font-awesome.css": "/extensions/periodicjs.ext.reactapp/static/media/fontawesome-webfont.fee66e71.woff",
+  "static/media/slick-theme.css": "/extensions/periodicjs.ext.reactapp/static/media/slick.f97e3bbf.svg"
 }

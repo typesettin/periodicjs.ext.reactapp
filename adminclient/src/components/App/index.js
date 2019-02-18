@@ -24,6 +24,8 @@ import capitalize from 'capitalize';
 import moment from 'moment';
 import luxon from 'luxon';
 import flatten from 'flat';
+import io from 'socket.io-client';
+window.io = io;
 
 // import debounce from 'debounce';
 const history = getHistory(historySettings, AppConfigSettings, store);
@@ -34,6 +36,7 @@ const mapStateToProps = (state) => {
     page: state.page,
     settings: state.settings,
     ui: state.ui,
+    log: state.log,
     user: state.user,
     manifest: state.manifest,
     notification: state.notification,
@@ -65,7 +68,7 @@ const reduxActions = {
   }, //.dispatch(actions.user.getUserStatus()),
   redirect: (locationURL) => {
     // console.debug({ locationURL, });
-    if (typeof location === 'string') {
+    if (typeof locationURL === 'string') {
       window.location = locationURL;
     } else {
       window.location = locationURL.location;
@@ -94,6 +97,7 @@ const reduxActions = {
   },
   logoutUser: () => store.dispatch(actions.user.logoutUser()),
   setDynamicData: (prop, val) => store.dispatch(actions.dynamic.setDynamicData(prop, val)),
+  setSocket: (socket) => store.dispatch(actions.dynamic.setSocket(socket)),
   fetchLoginComponent: () => store.dispatch(utilities.setCacheConfiguration(actions.ui.fetchComponent(CONSTANTS.ui.LOGIN_COMPONENT), 'components.login')),
   fetchMainComponent: () => store.dispatch(utilities.setCacheConfiguration(actions.ui.fetchComponent(CONSTANTS.ui.MAIN_COMPONENT), 'components.main')),
   fetchErrorComponents: () => store.dispatch(utilities.setCacheConfiguration(actions.ui.fetchComponent(CONSTANTS.ui.ERROR_COMPONENTS), 'components.error')),
@@ -106,6 +110,11 @@ const reduxActions = {
     setErrorComponents: reduxActions.setErrorComponents,
   }))),
   fetchUnauthenticatedManifest: (options = {}) => store.dispatch(actions.manifest.fetchUnauthenticatedManifest(options)),
+  hideLog: () => store.dispatch(actions.log.hideLog()),
+  showLog: () => store.dispatch(actions.log.showLog()),
+  createLog: (logData) => {
+    store.dispatch(actions.log.createLog(logData))
+  },
   setActiveNavLink: (id) => store.dispatch(actions.ui.setActiveNavItem(id)),
   enforceMFA: (noRedirect) => store.dispatch(actions.user.enforceMFA(noRedirect)),
   validateMFA: (jwt_token) => store.dispatch(actions.user.validateMFA(jwt_token)),
@@ -119,13 +128,13 @@ const reduxActions = {
     goBack: () => store.dispatch(goBack()),
   },
   routerFormSubmit: (formdata) => {
-    console.log({formdata})
-    const nonFormFields = [ '$loki', 'formDataError', 'meta', '__formIsSubmitting', '__formOptions', ];
+    // console.log({ formdata, });
+    const nonFormFields = ['$loki', 'formDataError', 'meta', '__formIsSubmitting', '__formOptions',];
     const fields = Object.keys(formdata).filter(field=>nonFormFields.indexOf(field)===-1);
     const qs = fields.reduce((querystring, field)=>{
       if(typeof formdata[field] !=='undefined') querystring+=`&${field}=${formdata[field]}`;
       return querystring;
-    },'');
+    }, '');
     const pathname = window.location.pathname;
     const redirect = `${pathname}?${qs}`;
     // console.log({ fields, qs, pathname,  redirect});

@@ -12,6 +12,11 @@ const dynamicReducer = (state, action) => {
     return Object.assign({}, state, {
       [dynamicPayload.prop]: dynamicPayload.value,
     });
+  case constants.dynamic.SET_SOCKET:
+    var { socket, } = action.payload;
+    return Object.assign({}, state, {
+      socket,
+    });
   default:
     return Object.assign(initialState, state);
   }

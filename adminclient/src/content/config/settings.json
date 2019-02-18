@@ -4,6 +4,8 @@
   "adminPath":"/r-admin",
   "routerHistory":"browserHistory",
   "hot_reload": false,
+  "use_sockets": true,
+  "socket_server": false,
   "disableLogger": false,
   "includeCoreData": {
     "manifest": true,

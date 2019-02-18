@@ -90,6 +90,10 @@ var _flat = require('flat');
 
 var _flat2 = _interopRequireDefault(_flat);
 
+var _socket = require('socket.io-client');
+
+var _socket2 = _interopRequireDefault(_socket);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // import constants from '../../constants';
@@ -105,6 +109,8 @@ var AppConfigSettings = {
   adminPath: '/r-admin',
   routerHistory: 'browserHistory',
   hot_reload: false,
+  use_sockets: true,
+  socket_server: false,
   disableLogger: false,
   includeCoreData: {
     manifest: true,
@@ -187,6 +193,8 @@ var AppConfigSettings = {
 // import logo from './logo.svg';
 // import './App.css';
 
+window.io = _socket2.default;
+
 // import debounce from 'debounce';
 var history = (0, _history.getHistory)(_history.historySettings, AppConfigSettings, _stores2.default);
 
@@ -196,6 +204,7 @@ var mapStateToProps = function mapStateToProps(state) {
     page: state.page,
     settings: state.settings,
     ui: state.ui,
+    log: state.log,
     user: state.user,
     manifest: state.manifest,
     notification: state.notification
@@ -233,7 +242,7 @@ var reduxActions = {
   }, //.dispatch(actions.user.getUserStatus()),
   redirect: function redirect(locationURL) {
     // console.debug({ locationURL, });
-    if (typeof location === 'string') {
+    if (typeof locationURL === 'string') {
       window.location = locationURL;
     } else {
       window.location = locationURL.location;
@@ -295,6 +304,9 @@ var reduxActions = {
   setDynamicData: function setDynamicData(prop, val) {
     return _stores2.default.dispatch(_actions2.default.dynamic.setDynamicData(prop, val));
   },
+  setSocket: function setSocket(socket) {
+    return _stores2.default.dispatch(_actions2.default.dynamic.setSocket(socket));
+  },
   fetchLoginComponent: function fetchLoginComponent() {
     return _stores2.default.dispatch(_util2.default.setCacheConfiguration(_actions2.default.ui.fetchComponent(_index2.default.ui.LOGIN_COMPONENT), 'components.login'));
   },
@@ -323,6 +335,15 @@ var reduxActions = {
   fetchUnauthenticatedManifest: function fetchUnauthenticatedManifest() {
     var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     return _stores2.default.dispatch(_actions2.default.manifest.fetchUnauthenticatedManifest(options));
+  },
+  hideLog: function hideLog() {
+    return _stores2.default.dispatch(_actions2.default.log.hideLog());
+  },
+  showLog: function showLog() {
+    return _stores2.default.dispatch(_actions2.default.log.showLog());
+  },
+  createLog: function createLog(logData) {
+    _stores2.default.dispatch(_actions2.default.log.createLog(logData));
   },
   setActiveNavLink: function setActiveNavLink(id) {
     return _stores2.default.dispatch(_actions2.default.ui.setActiveNavItem(id));
@@ -357,7 +378,7 @@ var reduxActions = {
     }
   },
   routerFormSubmit: function routerFormSubmit(formdata) {
-    console.log({ formdata: formdata });
+    // console.log({ formdata, });
     var nonFormFields = ['$loki', 'formDataError', 'meta', '__formIsSubmitting', '__formOptions'];
     var fields = (0, _keys2.default)(formdata).filter(function (field) {
       return nonFormFields.indexOf(field) === -1;

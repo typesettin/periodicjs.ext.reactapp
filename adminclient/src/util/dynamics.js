@@ -202,40 +202,67 @@ export const fetchAction = function _fetchAction(pathname, fetchOptions = {}, su
     ? state.settings.userprofile.options.headers
     : {};
   let successCallback = console.debug;
+  function handleSuccessFunc() {
+    if (success.success.modal) {
+      this.props.createModal(success.success.modal);
+    } else if (success.success.notification) {
+      this.props.createNotification(success.success.notification);
+    } else {
+      this.props.createNotification({ text: 'Saved', timeout:4000, type:'success',  });
+    }
+  }
+  function handleSuccessData(successData) {
+    let successCallbackProp = success.successCallback;
+    if (typeof successCallbackProp === 'string' && successCallbackProp.indexOf('func:this.props.reduxRouter') !== -1) { 
+      successCallback = this.props.reduxRouter[ successCallbackProp.replace('func:this.props.reduxRouter.', '') ];
+    } else if (typeof successCallbackProp === 'string' && successCallbackProp.indexOf('func:this.props') !== -1) { 
+      successCallback = this.props[ success.successCallback.replace('func:this.props.', '') ];
+    } else if (typeof successCallbackProp === 'string' && successCallbackProp.indexOf('func:window') !== -1 && typeof window[ success.successCallback.replace('func:window.', '') ]==='function') { 
+      successCallback = window[ success.successCallback.replace('func:window.', '') ].bind(this);
+    }
+    if (fetchOptions.successCallback === 'func:this.props.setDynamicData') {
+      this.props.setDynamicData(success.dynamicField, success.successProps || successData);
+    } else {
+      successCallback(success.successProps || successData);
+    }
+  }
   delete headers.clientid_default;
   if (state.user && state.user.jwt_token) {
     headers[ 'x-access-token' ] = state.user.jwt_token;
   }
   fetchOptions.headers = Object.assign({}, fetchOptions.headers, headers);
+  if (fetchOptions.method === 'socket') {
+    return new Promise((resolve, reject) => {
+      try {
+        this.props.dynamic.socket.emit(pathname, fetchOptions, (successData) => {
+          if (success.succes) {
+            handleSuccessFunc();
+          } 
+          if (success.successCallback) {
+            handleSuccessData(successData);
+          } else {
+            resolve(successData);
+          }
+        });
+        
+      } catch (e) {
+        this.props.errorNotification(e);
+        reject(e);
+      }
+    });
+  }
+  // state.settings.use_sockets
 
   return fetch(pathname, fetchOptions)
     .then(utilities.checkStatus)
     .then(res => {
       if (success.success) {
-        if (success.success.modal) {
-          this.props.createModal(success.success.modal);
-        } else if (success.success.notification) {
-          this.props.createNotification(success.success.notification);
-        } else {
-          this.props.createNotification({ text: 'Saved', timeout:4000, type:'success',  });
-        }
+        handleSuccessFunc();
       } 
       if (success.successCallback) {
         res.json()
           .then(successData => {
-            let successCallbackProp = success.successCallback;
-            if (typeof successCallbackProp === 'string' && successCallbackProp.indexOf('func:this.props.reduxRouter') !== -1) { 
-              successCallback = this.props.reduxRouter[ successCallbackProp.replace('func:this.props.reduxRouter.', '') ];
-            } else if (typeof successCallbackProp === 'string' && successCallbackProp.indexOf('func:this.props') !== -1) { 
-              successCallback = this.props[ success.successCallback.replace('func:this.props.', '') ];
-            } else if (typeof successCallbackProp === 'string' && successCallbackProp.indexOf('func:window') !== -1 && typeof window[ success.successCallback.replace('func:window.', '') ]==='function') { 
-              successCallback = window[ success.successCallback.replace('func:window.', '') ].bind(this);
-            }
-            if (fetchOptions.successCallback === 'func:this.props.setDynamicData') {
-              this.props.setDynamicData(success.dynamicField, success.successProps || successData);
-            } else {
-              successCallback(success.successProps || successData);
-            }
+            handleSuccessData(successData);
           });
       } else {
         return res.json();

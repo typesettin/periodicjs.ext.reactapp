@@ -7,7 +7,9 @@ import qs from 'querystring';
 import utilities from '../util';
 import manifest from './manifest';
 import notification from './notification';
+// import { initSockets } from '../components/App/SocketHelper';
 let __global__returnURL = false;
+// let authSend = 0;
 // import { Platform, } from 'react-web';
 // import Immutable from 'immutable';
 
@@ -15,6 +17,17 @@ const checkStatus = utilities.checkStatus;
 
 var initializationThrottle;
 var initializationTimeout;
+
+function getSocketUser({ url, json, response, }) {
+  return {
+    email: json.user.email,
+    username: json.user.name || json.user.username,
+    jwt_token: json.token,
+    jwt_token_expires: json.expires,
+    jwt_token_timeout: json.timeout,
+    userdata: json.user,
+  };
+}
 
 const user = {
   getUserStatus() {
@@ -39,15 +52,24 @@ const user = {
    * @param {object} options what-wg fetch options
    */
   recievedLoginUser(url, response, json) {
-    return {
-      type: constants.user.LOGIN_DATA_SUCCESS,
-      payload: {
-        url,
-        response,
-        json,
-        updatedAt: new Date(),
-        timestamp: Date.now(),
-      },
+    return (dispatch, getState) => {
+      const state = getState();
+      const socket = state.dynamic.socket;
+      const user = getSocketUser({ url, response, json, });
+      socket.emit('authentication', {
+        user,
+        reconnection: true,
+      });
+      dispatch({
+        type: constants.user.LOGIN_DATA_SUCCESS,
+        payload: {
+          url,
+          response,
+          json,
+          updatedAt: new Date(),
+          timestamp: Date.now(),
+        },
+      });
     };
   },
     /**
@@ -55,15 +77,24 @@ const user = {
    * @param {object} options what-wg fetch options
    */
   saveUserProfile(url, response, json) {
-    return {
-      type: constants.user.SAVE_DATA_SUCCESS,
-      payload: {
-        url,
-        response,
-        json,
-        updatedAt: new Date(),
-        timestamp: Date.now(),
-      },
+    return (dispatch, getState) => {
+      const state = getState();
+      const socket = state.dynamic.socket;
+      const user = getSocketUser({ url, response, json, });
+      socket.emit('authentication', {
+        user,
+        reconnection: true,
+      });
+      dispatch({
+        type: constants.user.SAVE_DATA_SUCCESS,
+        payload: {
+          url,
+          response,
+          json,
+          updatedAt: new Date(),
+          timestamp: Date.now(),
+        },
+      });
     };
   },
   updateUserProfileSuccess(profile) {
@@ -77,7 +108,7 @@ const user = {
     };
   },
   updateUserProfile(profile) {
-    console.debug('updatedUserProfile', { profile, });
+    // console.debug('updatedUserProfile', { profile, });
     return (dispatch/*, getState*/) => {
       try {
         if (!profile || !profile.userdata) {
@@ -365,7 +396,7 @@ const user = {
             let t = setTimeout(() => { 
               this.logoutUser()(dispatch, getState);
               clearTimeout(t);
-            },2000)
+            }, 2000);
           } else {
             // console.log('utilities.getMFAPath(state)')
             let mfapath = utilities.getMFAPath(state);
@@ -531,6 +562,24 @@ const user = {
         },
       };
       let state = getState();
+      // console.log('auth user', state.user, 'state.dynamic.socket', state.dynamic.socket, { authSend, });
+      // const socket = state.dynamic.socket;
+      // if (authSend === 0) {
+        
+      // if (socket) {
+      //   console.debug('HAS SOCKET state.user',state.user)
+
+      //   socket.emit('authentication', {
+      //     user: state.user,
+      //   });
+      // } else {
+      //   console.debug('NO SOCKET')
+      // }
+      //   // socket.emit('/user/account', { user: state.user, authSend, });
+      // }
+      // authSend++;
+      // alert(state.user.email);
+
       if (state.manifest && state.manifest.authenticated && state.manifest.authenticated.hasLoaded && state.settings && state.settings.user && state.settings.user.navigation && state.settings.user.navigation.hasLoaded && state.settings.user.preferences && state.settings.user.preferences.hasLoaded) {
         if (initializationTimeout) {
           clearTimeout(initializationTimeout);

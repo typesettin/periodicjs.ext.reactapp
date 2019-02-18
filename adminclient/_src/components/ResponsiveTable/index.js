@@ -187,7 +187,8 @@ var ResponsiveTable = function (_Component) {
       selectedRowData: {},
       selectedRowIndex: {},
       showFilterSearch: props.showFilterSearch,
-      disableSort: props.disableSort
+      disableSort: props.disableSort,
+      hiddenHeaders: []
       // usingFiltersInSearch: props.usingFiltersInSearch,
     };
     _this.searchFunction = (0, _debounce2.default)(_this.updateTableData, 200);
@@ -276,6 +277,18 @@ var ResponsiveTable = function (_Component) {
     key: 'updateByReplacingRows',
     value: function updateByReplacingRows(newrows) {
       this.updateTableData({ rows: newrows.concat([]), clearNewRowData: true });
+    }
+  }, {
+    key: 'toggleHeader',
+    value: function toggleHeader(_ref2) {
+      var header = _ref2.header;
+
+      var hiddenIndex = this.state.hiddenHeaders.findIndex(function (head) {
+        return head === header.sortid;
+      });
+      var hiddenHeaders = [].concat(this.state.hiddenHeaders);
+      if (hiddenIndex < 0) hiddenHeaders.push(header.sortid);else hiddenHeaders.splice(hiddenIndex, 1);
+      this.setState({ hiddenHeaders: hiddenHeaders });
     }
   }, {
     key: 'updateByAddingRows',
@@ -1086,6 +1099,9 @@ var ResponsiveTable = function (_Component) {
           )
         ));
       }
+      var showableFilters = this.state.headers.filter(function (header) {
+        return _this9.state.hiddenHeaders.includes(header.sortid) === false;
+      });
       var footer = _react2.default.createElement(
         rb.Pagination,
         null,
@@ -1567,6 +1583,39 @@ var ResponsiveTable = function (_Component) {
                   )
                 )
               )
+            ),
+            _react2.default.createElement('hr', null),
+            _react2.default.createElement(
+              'details',
+              null,
+              _react2.default.createElement(
+                'summary',
+                null,
+                _react2.default.createElement(
+                  'strong',
+                  null,
+                  'Hide columns:'
+                )
+              ),
+              _react2.default.createElement(
+                rb.Columns,
+                { isMultiline: true },
+                this.state.headers.map(function (header, h) {
+                  return _react2.default.createElement(
+                    rb.Column,
+                    { key: h },
+                    _react2.default.createElement(
+                      'label',
+                      null,
+                      _react2.default.createElement('input', { type: 'checkbox', checked: _this9.state.hiddenHeaders.includes(header.sortid) ? 'checked' : '',
+                        onChange: function onChange() /*event*/{
+                          _this9.toggleHeader({ header: header /* event, */ });
+                        } }),
+                      header.label || header.sortid
+                    )
+                  );
+                })
+              )
             )
           )
         ) : null,
@@ -1602,7 +1651,7 @@ var ResponsiveTable = function (_Component) {
               _react2.default.createElement(
                 rb.Tr,
                 null,
-                this.state.headers.map(function (header, idx) {
+                showableFilters.map(function (header, idx) {
                   return _react2.default.createElement(
                     rb.Th,
                     (0, _extends3.default)({ key: idx, style: { cursor: 'pointer' } }, header.headerColumnProps),
@@ -1625,7 +1674,7 @@ var ResponsiveTable = function (_Component) {
               _react2.default.createElement(
                 rb.Tr,
                 null,
-                this.state.headers.map(function (header, idx) {
+                showableFilters.map(function (header, idx) {
                   return _react2.default.createElement(
                     rb.Th,
                     (0, _extends3.default)({ key: idx }, header.headerColumnProps),
@@ -1674,7 +1723,7 @@ var ResponsiveTable = function (_Component) {
                 return _react2.default.createElement(
                   rb.Tr,
                   { key: 'row' + rowIndex, className: _this9.props.selectEntireRow && rowIndex === _this9.state.selectedRowIndex ? '__selected' : undefined },
-                  _this9.state.headers.map(function (header, colIndex) {
+                  showableFilters.map(function (header, colIndex) {
                     // console.warn('displayRows.length',displayRows.length,{rowIndex,colIndex});
 
                     if (header.link) {

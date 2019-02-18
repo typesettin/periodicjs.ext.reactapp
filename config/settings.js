@@ -15,6 +15,9 @@ module.exports = {
     'name': 'Admin Panel',
     'title': 'Admin Panel',
     include_index_route: true,
+    'use_sockets': false,
+    'socket_server': false,
+    socket_server_options: {},
     'includeCoreData': {
       'manifest': true,
       'navigation': true,

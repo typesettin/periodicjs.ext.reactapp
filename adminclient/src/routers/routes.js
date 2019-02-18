@@ -1,15 +1,15 @@
-import containers from '../containers';
+import {PageComponents} from '../containers';
 
-function getRoutes(appContainer) {
+export function getRoutes(appContainer) {
   let sharedChildRoutes = [{
     path: 'login**',
-    component: containers.PageComponents.LoginPage,
+    component: PageComponents.LoginPage,
     indexRoute: { 
-      component: containers.PageComponents.LoginPage,
+      component: PageComponents.LoginPage,
     },
   }, {
     path: '*',
-    component: containers.PageComponents.DynamicPage,
+    component: PageComponents.DynamicPage,
   }, ];
   return {
     childRoutes: [{
@@ -18,7 +18,7 @@ function getRoutes(appContainer) {
       // onEnter: requireAuth,
       indexRoute: { 
       // onEnter: requireAuth,
-        component: containers.PageComponents.LoginPage,
+        component: PageComponents.LoginPage,
       },
       childRoutes: sharedChildRoutes,
     }, {
@@ -27,14 +27,14 @@ function getRoutes(appContainer) {
       // onEnter: requireAuth,
       indexRoute: { 
       // onEnter: requireAuth,
-        component: containers.PageComponents.LoginPage,
+        component: PageComponents.LoginPage,
       },
       childRoutes: sharedChildRoutes,
     }, ],
   };
 }
 
-exports.getRoutes = getRoutes;
+// exports.getRoutes = getRoutes;
 
 export default getRoutes;
 //https://github.com/ReactTraining/react-router/blob/efac1a8ff4c26d6b7379adf2ab903f1892276362/examples/auth-flow/app.js#L122

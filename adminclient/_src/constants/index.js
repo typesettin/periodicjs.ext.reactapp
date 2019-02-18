@@ -9,6 +9,8 @@ var AppConfigSettings = {
   adminPath: '/r-admin',
   routerHistory: 'browserHistory',
   hot_reload: false,
+  use_sockets: true,
+  socket_server: false,
   disableLogger: false,
   includeCoreData: {
     manifest: true,
@@ -126,7 +128,8 @@ exports.default = {
     CLIENT_CACHE_DATA_SUCCESS: 'client cache data succeeded'
   },
   dynamic: {
-    SET_DYNAMIC_DATA: 'set dynamic data'
+    SET_DYNAMIC_DATA: 'set dynamic data',
+    SET_SOCKET: 'set socket connection'
     // SHOW_ERROR:'show error notification',
   },
   output: {
@@ -157,6 +160,11 @@ exports.default = {
     FAILED_NOTIFICATION_CREATION: 'failed to create notification',
     SHOW_MODAL: 'show modal',
     HIDE_MODAL: 'hide modal'
+  },
+  log: {
+    LOG_DATA: 'Add data to sys logs',
+    SHOW_LOG: 'show logs',
+    HIDE_LOG: 'hide logs'
   },
   ui: {
     TOGGLE_SIDEBAR: 'toggle side menu',

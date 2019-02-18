@@ -28,12 +28,17 @@ var _notification = require('./notification');
 
 var _notification2 = _interopRequireDefault(_notification);
 
+var _log = require('./log');
+
+var _log2 = _interopRequireDefault(_log);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var actionCreators = {
   notification: _notification2.default,
   manifest: _manifest2.default,
   ui: _ui2.default,
+  log: _log2.default,
   dynamic: _dynamic2.default,
   output: _output2.default,
   user: _user2.default

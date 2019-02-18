@@ -2,6 +2,7 @@ import { combineReducers, } from 'redux';
 import dynamicReducer from './dynamic';
 import manifestReducer from './manifest';
 import notificationReducer from './notification';
+import logReducer from './log';
 import userReducer from './user';
 import outputReducer from './output';
 import uiReducer from './ui';
@@ -13,6 +14,7 @@ const ReactAdminReducer = combineReducers({
   routing: routerReducer,
   settings: settingsReducer,
   ui: uiReducer,
+  log: logReducer,
   user: userReducer,
   output: outputReducer,
   manifest: manifestReducer,

@@ -121,21 +121,6 @@ var defaultProps = {
   updateStateOnSubmit: false
 };
 
-function getFunctionFromProps(options) {
-  var propFunc = options.propFunc;
-
-
-  if (typeof propFunc === 'string' && propFunc.indexOf('func:this.props.reduxRouter') !== -1) {
-    return this.props.reduxRouter[this.props.replace('func:this.props.reduxRouter.', '')];
-  } else if (typeof propFunc === 'string' && propFunc.indexOf('func:this.props') !== -1) {
-    return this.props[this.props.replace('func:this.props.', '')];
-  } else if (typeof propFunc === 'string' && propFunc.indexOf('func:window') !== -1 && typeof window[propFunc.replace('func:window.', '')] === 'function') {
-    return window[propFunc.replace('func:window.', '')];
-  } else if (typeof this.props[propFunc] === 'function') {
-    return propFunc;
-  }
-}
-
 var ResponsiveForm = function (_Component) {
   (0, _inherits3.default)(ResponsiveForm, _Component);
 
@@ -388,7 +373,7 @@ var ResponsiveForm = function (_Component) {
     key: 'componentWillUpdate',
     value: function componentWillUpdate(nextProps, nextState) {
       if (this.props.filterFunction) {
-        var filterFunction = getFunctionFromProps.call(this, { propFunc: this.props.filterFunction });
+        var filterFunction = _FormHelpers.getFunctionFromProps.call(this, { propFunc: this.props.filterFunction });
         nextState = filterFunction.call(this, nextState);
       }
       if (this.props.onChange) {
@@ -521,9 +506,9 @@ var ResponsiveForm = function (_Component) {
         if (formgroup.tabs) {
           keyValue++;
           keyValue += i + Math.random();
-          var columnProps = gridProps.subColumnProps || {
-            isMultiline: true
-          };
+          // let columnProps = gridProps.subColumnProps || {
+          //   isMultiline:true,
+          // };
           return _react2.default.createElement(_ResponsiveTabs2.default, (0, _extends3.default)({
             key: keyValue++,
             tabs: formgroup.formElementTabs.map(function (formTab) {
@@ -609,7 +594,7 @@ var ResponsiveForm = function (_Component) {
         if (formgroup.card && formgroup.card.singleCard) {
           keyValue++;
           keyValue += i;
-          var _columnProps = gridProps.subColumnProps || {
+          var columnProps = gridProps.subColumnProps || {
             isMultiline: true
           }; //previously was size=isHalf
           return _react2.default.createElement(
@@ -617,7 +602,7 @@ var ResponsiveForm = function (_Component) {
             (0, _extends3.default)({}, formgroup.card.props, { key: keyValue++ }),
             _react2.default.createElement(
               _reBulma.Columns,
-              _columnProps,
+              columnProps,
               formgroup.formElements && formgroup.formElements.length ? formgroup.formElements.map(getFormElements) : null
             )
           );
@@ -626,13 +611,13 @@ var ResponsiveForm = function (_Component) {
         if (formgroup.card && !formgroup.card.twoColumns && !formgroup.card.doubleCard) {
           keyValue++;
           keyValue += i;
-          var _columnProps2 = gridProps.subColumnProps || {}; //previously was size=isHalf
+          var _columnProps = gridProps.subColumnProps || {}; //previously was size=isHalf
           return _react2.default.createElement(
             _reBulma.Columns,
             gridProps,
             _react2.default.createElement(
               _reBulma.Column,
-              _columnProps2,
+              _columnProps,
               _react2.default.createElement(
                 _ResponsiveCard2.default,
                 (0, _extends3.default)({}, formgroup.card.props, { key: keyValue++ }),
@@ -721,7 +706,7 @@ var ResponsiveForm = function (_Component) {
         this.props.onError(this.props.formerror);
       }
       if (this.props.filterFunction) {
-        var filterFunction = getFunctionFromProps.call(this, { propFunc: this.props.filterFunction });
+        var filterFunction = _FormHelpers.getFunctionFromProps.call(this, { propFunc: this.props.filterFunction });
         prevState = filterFunction.call(this, prevState);
       }
       if (this.props.afterChange) {

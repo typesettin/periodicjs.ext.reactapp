@@ -300,3 +300,16 @@ export function submitWindowFunc(options) {
   delete formdata.formDataErrors;
   window[this.props.onSubmit.replace('func:window.', '')].call(this, submitFormData);
 }
+
+export function getFunctionFromProps(options) {
+  const { propFunc, } = options;
+  if (typeof propFunc === 'string' && propFunc.indexOf('func:this.props.reduxRouter') !== -1) {
+    return this.props.reduxRouter[ this.props.replace('func:this.props.reduxRouter.', '') ];
+  } else if (typeof propFunc === 'string' && propFunc.indexOf('func:this.props') !== -1) {
+    return this.props[ this.props.replace('func:this.props.', '') ];
+  } else if (typeof propFunc === 'string' && propFunc.indexOf('func:window') !== -1 && typeof window[propFunc.replace('func:window.', '')] ==='function') {
+    return window[ propFunc.replace('func:window.', '') ];
+  } else if(typeof this.props[propFunc] ==='function') {
+    return this.props[propFunc];
+  }
+}

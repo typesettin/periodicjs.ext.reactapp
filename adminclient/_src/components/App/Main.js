@@ -72,6 +72,12 @@ var _FloatingNav = require('../AppSidebar/FloatingNav');
 
 var _FloatingNav2 = _interopRequireDefault(_FloatingNav);
 
+var _log = require('../AppSectionLoading/log');
+
+var _log2 = _interopRequireDefault(_log);
+
+var _SocketHelper = require('./SocketHelper');
+
 var _overlay = require('../AppSectionLoading/overlay');
 
 var _overlay2 = _interopRequireDefault(_overlay);
@@ -82,9 +88,10 @@ var _AppOverlay2 = _interopRequireDefault(_AppOverlay);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+// let once = true;
+
 // import utilities from '../../util';
 
-// import AppSectionLoading from '../AppSectionLoading';
 var MainApp = function (_Component) {
   (0, _inherits3.default)(MainApp, _Component);
 
@@ -94,7 +101,8 @@ var MainApp = function (_Component) {
     var _this = (0, _possibleConstructorReturn3.default)(this, (MainApp.__proto__ || (0, _getPrototypeOf2.default)(MainApp)).call(this, props));
 
     _this.state = props;
-    // this.previousRoute = {};
+    _SocketHelper.initSockets.call(_this, { auth: true });
+
     return _this;
   }
 
@@ -112,12 +120,19 @@ var MainApp = function (_Component) {
     value: function componentDidMount() {
       var _this2 = this;
 
+      // if (this.state.settings.use_sockets && once) {
+      //   once = false;
+
+
+      // }
       if (this.state.settings.noauth) {
         this.props.fetchUnauthenticatedManifest().then(function () {
           _this2.props.setUILoadedState(true);
+          // initSockets.call(this, { auth:false, });
         }).catch(function (error) {
           _this2.props.errorNotification(error);
           _this2.props.setUILoadedState(true);
+          // initSockets.call(this, { auth:false, });
         });
       } else {
         _promise2.default.all([_serverSideReactNative.AsyncStorage.getItem(_constants2.default.jwt_token.TOKEN_NAME), _serverSideReactNative.AsyncStorage.getItem(_constants2.default.jwt_token.TOKEN_DATA), _serverSideReactNative.AsyncStorage.getItem(_constants2.default.jwt_token.PROFILE_JSON), this.props.fetchMainComponent(), this.props.fetchErrorComponents(), this.props.fetchUnauthenticatedManifest(), _serverSideReactNative.AsyncStorage.getItem(_constants2.default.user.MFA_AUTHENTICATED)]
@@ -164,8 +179,21 @@ var MainApp = function (_Component) {
               console.log('MAIN componentDidMount USER IS NOT LOGGED IN');
             }
             _this2.props.setUILoadedState(true);
+            // console.debug('main this.state.user', this.state.user);
+            // if (socket) {
+            //   console.debug('HAS SOCKET state.user',state.user)
+
+            //   socket.emit('authentication', {
+            //     user: state.user,
+            //   });
+            // } else {
+            //   console.debug('NO SOCKET')
+            // }
+            // initSockets.call(this, { auth: true, });
+            // this.props.initUserSocket();
           } catch (e) {
             _this2.props.errorNotification(e);
+            // initSockets.call(this, { auth:false, });
             // console.error(e)
             // console.log(e);
           }
@@ -175,6 +203,7 @@ var MainApp = function (_Component) {
           // console.error('MAIN componentDidMount: JWT USER Login Error.', error);
           _this2.props.logoutUser();
           _this2.props.setUILoadedState(true);
+          // initSockets.call(this, { auth:false, });
         });
       }
       if (document && document.body && document.body.classList && document.body.classList.add) {
@@ -228,6 +257,7 @@ var MainApp = function (_Component) {
             { className: 'reactapp__main_container', style: (0, _assign2.default)({}, _styles2.default.fullMinHeight, _styles2.default.fullHeight) },
             sidebarColumn,
             overlay,
+            _react2.default.createElement(_log2.default, this.props),
             _react2.default.createElement(
               _reBulma.Column,
               { className: 'reactapp__main_content', style: _styles2.default.fullMinHeight },
@@ -241,6 +271,8 @@ var MainApp = function (_Component) {
   }]);
   return MainApp;
 }(_react.Component);
+// import AppSectionLoading from '../AppSectionLoading';
+
 
 MainApp.contextTypes = {
   router: _react.PropTypes.object.isRequired

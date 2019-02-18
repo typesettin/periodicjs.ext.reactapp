@@ -1,5 +1,10 @@
 'use strict';
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.PageComponents = undefined;
+
 var _login = require('./login');
 
 var _login2 = _interopRequireDefault(_login);
@@ -17,7 +22,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 // import BlogIndex from './blogindex';
 // import BlogItem from './blogitem';
 // import DocumentationPage from './documentation';
-exports.PageComponents = {
+var PageComponents = exports.PageComponents = {
   // HomePage,
   LoginPage: _login2.default,
   // BlogPage,

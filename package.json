@@ -5,7 +5,7 @@
     "url": "http://about.me/yawjosephetse"
   },
   "bugs": {
-    "url": "https://github.com/typesettin/periodicjs.ext.reactapp/issues"
+    "url": "https://github.com/repetere/periodicjs.ext.reactapp/issues"
   },
   "bundleDependencies": false,
   "config": {
@@ -63,8 +63,6 @@
     "react-text-mask": "^5.0.2",
     "recharts": "^1.0.0-beta.1",
     "semver": "^5.3.0",
-    "socket.io": "^1.3.5",
-    "socket.io-client": "^1.4.0",
     "text-mask-addons": "^3.6.0",
     "ua-parser-js": "^0.7.12",
     "useragent": "^2.1.13",
@@ -124,13 +122,15 @@
     "sinon": "^1.17.4",
     "sinon-chai": "^2.8.0",
     "string-to-json": "^0.1.0",
+    "socket.io": "^2.2.0",
+    "socket.io-client": "^2.2.0",
     "webpack": "^2.4.1"
   },
   "directories": {},
   "engines": {
     "node": "^6.x"
   },
-  "homepage": "https://github.com/typesettin/periodicjs.ext.reactapp#readme",
+  "homepage": "https://github.com/repetere/periodicjs.ext.reactapp#readme",
   "keywords": [
     "server-side-react",
     "cms",
@@ -144,7 +144,7 @@
   "optionalDependencies": {},
   "repository": {
     "type": "git",
-    "url": "git://github.com/typesettin/periodicjs.ext.reactapp.git"
+    "url": "git://github.com/repetere/periodicjs.ext.reactapp.git"
   },
   "scripts": {
     "build_ie": "webpack --config adminclient/config/webpack.config.ie.js --debug --progress",
@@ -156,5 +156,5 @@
     "ssr_build": "babel adminclient/src -d adminclient/_src --ignore adminclient/src/components/RACodeMirror/",
     "test": "mocha -R spec --recursive"
   },
-  "version": "11.6.2"
+  "version": "11.7.0"
 }

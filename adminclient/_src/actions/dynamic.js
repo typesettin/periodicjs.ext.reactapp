@@ -21,6 +21,12 @@ var dynamic = {
       type: _constants2.default.dynamic.SET_DYNAMIC_DATA,
       payload: { prop: prop, value: value }
     };
+  },
+  setSocket: function setSocket(socket) {
+    return {
+      type: _constants2.default.dynamic.SET_SOCKET,
+      payload: { socket: socket }
+    };
   }
 };
 

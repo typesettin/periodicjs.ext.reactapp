@@ -30,6 +30,8 @@ var AppConfigSettings = {
   adminPath: '/r-admin',
   routerHistory: 'browserHistory',
   hot_reload: false,
+  use_sockets: true,
+  socket_server: false,
   disableLogger: false,
   includeCoreData: {
     manifest: true,
@@ -117,7 +119,7 @@ var disableLogger = function disableLogger(store) {
     };
   };
 };
-var logger = windowState.disableLogger ? disableLogger : (0, _reduxLogger2.default)();
+var logger = !windowState.disableLogger ? disableLogger : (0, _reduxLogger2.default)();
 // const logger = (store) => (next) => (action) => {
 //   console.log('dispatching: ', action,{store});
 //   return next(action);

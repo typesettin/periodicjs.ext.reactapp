@@ -6,7 +6,7 @@ import AppSectionLoadingError from '../AppSectionLoading/error';
 import flatten, { unflatten, } from 'flat';
 import { getAreaChart, getLayout, getLevel, getLineChart, getPageWrapper, getRechart, getVictoryChart, } from '../../server_manifest/standard';
 import { getTable, getBasicTable, getSheet, } from '../../server_manifest/table';
-import { createForm, } from '../../server_manifest/forms';
+import { createForm, } from '../../server_manifest/forms-es';
 import { getCard, } from '../../server_manifest/card';
 import cache from 'memory-cache';
 import numeral from 'numeral';

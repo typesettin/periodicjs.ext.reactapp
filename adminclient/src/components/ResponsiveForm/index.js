@@ -5,7 +5,7 @@ import ResponsiveTabs from '../ResponsiveTabs';
 import { getRenderedComponent, } from '../AppLayoutMap';
 import utilities from '../../util';
 import { getFormTextInputArea, getFormMaskedInput, getFormCheckbox, getFormSubmit, getFormSelect, getCardFooterItem, getFormCode, getFormTextArea, getFormEditor, getFormLink, getHiddenInput, getFormGroup, getImage, getFormDatalist, getRawInput, getSliderInput, getFormDatatable, getFormSwitch, getButton, } from './FormElements';
-import { getCallbackFromString, setFormNameFields, assignHiddenFields, validateForm, assignFormBody, handleFormSubmitNotification, handleSuccessCallbacks, submitThisDotPropsFunc, submitWindowFunc, validateFormElement, } from './FormHelpers';
+import { getCallbackFromString, setFormNameFields, assignHiddenFields, validateForm, assignFormBody, handleFormSubmitNotification, handleSuccessCallbacks, submitThisDotPropsFunc, submitWindowFunc, validateFormElement, getFunctionFromProps, } from './FormHelpers';
 import flatten from 'flat';
 import qs from 'querystring';
 // function getCallbackFromString(fetchOptions.successCallback) {
@@ -54,19 +54,6 @@ const defaultProps = {
   updateStateOnSubmit: false,
 };
 
-function getFunctionFromProps(options) {
-  const { propFunc, } = options;
-
-  if (typeof propFunc === 'string' && propFunc.indexOf('func:this.props.reduxRouter') !== -1) {
-    return this.props.reduxRouter[ this.props.replace('func:this.props.reduxRouter.', '') ];
-  } else if (typeof propFunc === 'string' && propFunc.indexOf('func:this.props') !== -1) {
-    return this.props[ this.props.replace('func:this.props.', '') ];
-  } else if (typeof propFunc === 'string' && propFunc.indexOf('func:window') !== -1 && typeof window[propFunc.replace('func:window.', '')] ==='function') {
-    return window[ propFunc.replace('func:window.', '') ];
-  } else if(typeof this.props[propFunc] ==='function') {
-    return propFunc;
-  }
-}
 
 class ResponsiveForm extends Component{
   constructor(props) {
@@ -464,9 +451,9 @@ class ResponsiveForm extends Component{
       if (formgroup.tabs) {
         keyValue++;
         keyValue += i + Math.random();
-        let columnProps = gridProps.subColumnProps || {
-          isMultiline:true,
-        };
+        // let columnProps = gridProps.subColumnProps || {
+        //   isMultiline:true,
+        // };
         return (
           <ResponsiveTabs
             key={keyValue++}

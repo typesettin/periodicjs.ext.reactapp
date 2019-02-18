@@ -18,6 +18,10 @@ var _notification = require('./notification');
 
 var _notification2 = _interopRequireDefault(_notification);
 
+var _log = require('./log');
+
+var _log2 = _interopRequireDefault(_log);
+
 var _user = require('./user');
 
 var _user2 = _interopRequireDefault(_user);
@@ -43,6 +47,7 @@ var ReactAdminReducer = (0, _redux.combineReducers)({
   routing: _reactRouterRedux.routerReducer,
   settings: _settings2.default,
   ui: _ui2.default,
+  log: _log2.default,
   user: _user2.default,
   output: _output2.default,
   manifest: _manifest2.default,

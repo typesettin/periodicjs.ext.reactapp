@@ -11,6 +11,12 @@ const dynamic = {
       payload: { prop, value, },
     };
   },
+  setSocket(socket) {
+    return {
+      type: constants.dynamic.SET_SOCKET,
+      payload: { socket, },
+    };
+  },
 };
 
 export default dynamic;

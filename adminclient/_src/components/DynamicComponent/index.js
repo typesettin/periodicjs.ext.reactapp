@@ -50,7 +50,7 @@ var _standard = require('../../server_manifest/standard');
 
 var _table = require('../../server_manifest/table');
 
-var _forms = require('../../server_manifest/forms');
+var _formsEs = require('../../server_manifest/forms-es');
 
 var _card = require('../../server_manifest/card');
 
@@ -73,7 +73,7 @@ var _luxon2 = _interopRequireDefault(_luxon);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var functionalComponents = {
-  getAreaChart: _standard.getAreaChart, getLayout: _standard.getLayout, getLevel: _standard.getLevel, getLineChart: _standard.getLineChart, getPageWrapper: _standard.getPageWrapper, getRechart: _standard.getRechart, getVictoryChart: _standard.getVictoryChart, getTable: _table.getTable, getBasicTable: _table.getBasicTable, getSheet: _table.getSheet, createForm: _forms.createForm, getCard: _card.getCard
+  getAreaChart: _standard.getAreaChart, getLayout: _standard.getLayout, getLevel: _standard.getLevel, getLineChart: _standard.getLineChart, getPageWrapper: _standard.getPageWrapper, getRechart: _standard.getRechart, getVictoryChart: _standard.getVictoryChart, getTable: _table.getTable, getBasicTable: _table.getBasicTable, getSheet: _table.getSheet, createForm: _formsEs.createForm, getCard: _card.getCard
 };
 // import { Columns, } from 're-bulma';
 

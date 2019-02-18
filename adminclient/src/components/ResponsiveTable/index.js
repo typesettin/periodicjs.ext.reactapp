@@ -83,6 +83,7 @@ class ResponsiveTable extends Component {
       selectedRowIndex: {},
       showFilterSearch: props.showFilterSearch,
       disableSort: props.disableSort,
+      hiddenHeaders:[],
       // usingFiltersInSearch: props.usingFiltersInSearch,
     };
     this.searchFunction = debounce(this.updateTableData, 200);
@@ -160,6 +161,13 @@ class ResponsiveTable extends Component {
   }
   updateByReplacingRows(newrows) {
     this.updateTableData({ rows: newrows.concat([]), clearNewRowData: true, });
+  }
+  toggleHeader({ header, }) {
+    const hiddenIndex = this.state.hiddenHeaders.findIndex(head=>head===header.sortid);
+    const hiddenHeaders = [].concat(this.state.hiddenHeaders);
+    if (hiddenIndex < 0) hiddenHeaders.push(header.sortid);
+    else hiddenHeaders.splice(hiddenIndex, 1);
+    this.setState({ hiddenHeaders, });
   }
   updateByAddingRows(newrows) {
     let rows = this.state.rows.concat(newrows || []);
@@ -311,7 +319,7 @@ class ResponsiveTable extends Component {
     if (!this.props.baseUrl) {
       const searchField = this.searchField;
       if (options.rows && Array.isArray(options.rows)) {
-        updatedState = Object.assign({}, updatedState, { rows: [ ...options.rows ] });
+        updatedState = Object.assign({}, updatedState, { rows: [...options.rows, ], });
       } else {
         updatedState.rows = (typeof options.rows !== 'undefined') ? options.rows : this.props.rows;
       }
@@ -888,6 +896,7 @@ class ResponsiveTable extends Component {
         </li>
       ));
     }
+    const showableFilters = this.state.headers.filter(header => this.state.hiddenHeaders.includes(header.sortid) === false);
     const footer = (
       <rb.Pagination>
         {(this.state.currentPage < 2)
@@ -1016,6 +1025,7 @@ class ResponsiveTable extends Component {
                   <li><strong>Date Values:</strong> For date filters, Moment is used for date filters with the following moment format: YYYY-MM-DDTHH:MM:SS</li>
                   <li><strong>Boolean values</strong> "true" is converted to <em>true</em></li>
                 </ul>
+                
                 <p><strong>Export:</strong></p> 
                 <rb.Button icon="fa fa-download" onClick={() => {
                   this.props.fileSaver({
@@ -1159,6 +1169,22 @@ class ResponsiveTable extends Component {
                   </rb.Tr>  
                 </rb.Tbody>  
               </rb.Table>
+              <hr />
+              <details>
+                  <summary>
+                    <strong>Hide columns:</strong>
+                  </summary>
+                  <rb.Columns isMultiline>
+                    {this.state.headers.map((header, h) => {
+                      return (<rb.Column key={h}>
+                        <label><input type="checkbox" checked={this.state.hiddenHeaders.includes(header.sortid) ? 'checked' : ''}
+                          onChange={(/*event*/) => {
+                            this.toggleHeader({ header, /* event, */ });
+                          }} />{header.label || header.sortid}</label>
+                    </rb.Column>);
+                    })}
+                  </rb.Columns>
+                </details>
             </rb.Message>
           </div>
           : null}
@@ -1185,7 +1211,7 @@ class ResponsiveTable extends Component {
             : (<rb.Table {...this.props.tableProps}>
               <rb.Thead className="__ra_rt_thead">
                 <rb.Tr>
-                  {this.state.headers.map((header, idx) => (
+                  {showableFilters.map((header, idx) => (
                     <rb.Th key={idx} style={{ cursor: 'pointer', }}  {...header.headerColumnProps}>{(header.sortable)
                       ? (<a style={{
                         cursor: 'pointer',
@@ -1200,12 +1226,12 @@ class ResponsiveTable extends Component {
               {(this.props.tableForm && this.props.addNewRows)
                 ? (<rb.Tfoot>
                   <rb.Tr>
-                    {this.state.headers.map((header, idx) => (
+                    {showableFilters.map((header, idx) => (
                       <rb.Th key={idx} {...header.headerColumnProps}> 
                         {(idx === this.state.headers.length - 1)
                           ? (<span className="__ra_rt_tf" style={{
                             display: 'flex',
-                            justifyContent:'flex-end'
+                            justifyContent:'flex-end',
                           }} {...this.props.tableFormButtonWrapperProps}>
                             {(this.props.replaceButton)
                               ? <FileReaderInput as="text" onChange={this.handleFileUpload.call(this, 'replace')}>
@@ -1235,7 +1261,7 @@ class ResponsiveTable extends Component {
               <rb.Tbody>
                 {displayRows.map((row, rowIndex) => (
                   <rb.Tr key={`row${rowIndex}`} className={(this.props.selectEntireRow && rowIndex ===  this.state.selectedRowIndex)?'__selected':undefined} >
-                    {this.state.headers.map((header, colIndex) => {
+                    {showableFilters.map((header, colIndex) => {
                       // console.warn('displayRows.length',displayRows.length,{rowIndex,colIndex});
 
                       if (header.link) {
