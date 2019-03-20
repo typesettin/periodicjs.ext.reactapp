@@ -1,7 +1,7 @@
 // import { Router, EventRouter, } from 'simple-socket-router/lib/router.mjs';
 import { Router, EventRouter, } from 'simple-socket-router/bundle/router.esm.js';
 import { getFunctionFromProps, } from '../ResponsiveForm/FormHelpers';
-// let once = true;
+let once = false;
 
 export function initSockets(options = {}) {
   const { auth, } = options;
@@ -18,7 +18,6 @@ export function initSockets(options = {}) {
     const reduxFunction = this.getSocketFunction({ propFunc, });
     if (reduxFunction) reduxFunction.call(this, ...props);
     // else this.props.errorNotification(new Error('Invalid Live Update'));
-    // console.debug('got the request from server test route', { req, });
   });
   const socketOptions = Object.assign({
     // transports: [ 'websocket', ],
@@ -42,9 +41,14 @@ export function initSockets(options = {}) {
     meta: e,
   }));
   socket.on('connect_error', (e) => console.debug(e));
-  socket.on('disconnect', (reason) => this.props.createNotification({
-    text:`Live Updated Disconnected: ${reason}. Refresh for live updates`,
-  }));
+  socket.on('disconnect', (reason) => {
+    if (once === false) {
+      this.props.createNotification({
+        text: `Live Updated Disconnected: ${reason}. Refresh for live updates`,
+      });
+      once = true;
+    }
+  });
   socket.on('reconnect', ( attemptNumber ) => {
     socket.emit('authentication', {
       user: auth

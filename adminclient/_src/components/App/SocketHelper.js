@@ -20,9 +20,9 @@ var _FormHelpers = require('../ResponsiveForm/FormHelpers');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// let once = true;
-
 // import { Router, EventRouter, } from 'simple-socket-router/lib/router.mjs';
+var once = false;
+
 function initSockets() {
   var _this = this;
 
@@ -40,7 +40,6 @@ function initSockets() {
     var reduxFunction = _this.getSocketFunction({ propFunc: propFunc });
     if (reduxFunction) reduxFunction.call.apply(reduxFunction, [_this].concat((0, _toConsumableArray3.default)(props)));
     // else this.props.errorNotification(new Error('Invalid Live Update'));
-    // console.debug('got the request from server test route', { req, });
   });
   var socketOptions = (0, _assign2.default)({
     // transports: [ 'websocket', ],
@@ -65,9 +64,12 @@ function initSockets() {
     return console.debug(e);
   });
   socket.on('disconnect', function (reason) {
-    return _this.props.createNotification({
-      text: 'Live Updated Disconnected: ' + reason + '. Refresh for live updates'
-    });
+    if (once === false) {
+      _this.props.createNotification({
+        text: 'Live Updated Disconnected: ' + reason + '. Refresh for live updates'
+      });
+      once = true;
+    }
   });
   socket.on('reconnect', function (attemptNumber) {
     socket.emit('authentication', {

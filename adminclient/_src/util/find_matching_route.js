@@ -1,5 +1,10 @@
 'use strict';
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.findMatchingRoutePath = exports.getParameterizedPath = undefined;
+
 var _keys = require('babel-runtime/core-js/object/keys');
 
 var _keys2 = _interopRequireDefault(_keys);
@@ -15,7 +20,7 @@ var ROUTE_MAP = {};
  * @param  {string} route The route that should be converted into a regexp
  * @return {Object}       Returns an object with param keys and a path regexp
  */
-var getParameterizedPath = function getParameterizedPath(route) {
+var getParameterizedPath = exports.getParameterizedPath = function getParameterizedPath(route) {
   if (ROUTE_MAP[route]) {
     return ROUTE_MAP[route];
   } else {
@@ -39,7 +44,7 @@ var getParameterizedPath = function getParameterizedPath(route) {
  * @param  {string} location The window location that should be resolved
  * @return {string}          A matching dynamic route
  */
-var findMatchingRoutePath = function findMatchingRoutePath(routes, location) {
+var findMatchingRoutePath = exports.findMatchingRoutePath = function findMatchingRoutePath(routes, location) {
   var matching;
   location = /\?[^\s]+$/.test(location) ? location.replace(/^([^\s\?]+)\?[^\s]+$/, '$1') : location;
   (0, _keys2.default)(routes).forEach(function (key) {
@@ -49,10 +54,3 @@ var findMatchingRoutePath = function findMatchingRoutePath(routes, location) {
   // console.log({ routes, location, matching, });
   return matching;
 };
-
-module.exports = {
-  getParameterizedPath: getParameterizedPath,
-  findMatchingRoutePath: findMatchingRoutePath
-};
-// exports.getParameterizedPath = getParameterizedPath;
-// exports.findMatchingRoutePath = findMatchingRoutePath;

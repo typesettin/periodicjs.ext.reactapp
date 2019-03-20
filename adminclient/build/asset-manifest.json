@@ -1,11 +1,11 @@
 {
-  "main.css": "/extensions/periodicjs.ext.reactapp/static/css/main.2e5a748d.css",
-  "main.js": "/extensions/periodicjs.ext.reactapp/static/js/main.bd3fd2a3.js",
-  "main.js.map": "/extensions/periodicjs.ext.reactapp/static/js/main.bd3fd2a3.js.map",
+  "main.css": "/extensions/periodicjs.ext.reactapp/static/css/main.067fd5a4.css",
+  "main.js": "/extensions/periodicjs.ext.reactapp/static/js/main.0c6bf620.js",
+  "main.js.map": "/extensions/periodicjs.ext.reactapp/static/js/main.0c6bf620.js.map",
   "index.html": "/extensions/periodicjs.ext.reactapp/index.html",
-  "precache-manifest.983855377cf9fed4cecedd9bee6fe221.js": "/extensions/periodicjs.ext.reactapp/precache-manifest.983855377cf9fed4cecedd9bee6fe221.js",
+  "precache-manifest.c4907461960913e334b0488051b58fb1.js": "/extensions/periodicjs.ext.reactapp/precache-manifest.c4907461960913e334b0488051b58fb1.js",
   "service-worker.js": "/extensions/periodicjs.ext.reactapp/service-worker.js",
-  "static/css/main.2e5a748d.css.map": "/extensions/periodicjs.ext.reactapp/static/css/main.2e5a748d.css.map",
+  "static/css/main.067fd5a4.css.map": "/extensions/periodicjs.ext.reactapp/static/css/main.067fd5a4.css.map",
   "static/media/font-awesome.css": "/extensions/periodicjs.ext.reactapp/static/media/fontawesome-webfont.fee66e71.woff",
   "static/media/slick-theme.css": "/extensions/periodicjs.ext.reactapp/static/media/slick.f97e3bbf.svg"
 }
