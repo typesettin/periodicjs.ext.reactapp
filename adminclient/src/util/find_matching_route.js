@@ -1,3 +1,4 @@
+'use strict';
 const PathRegExp = require('path-to-regexp');
 // const ROUTE_MAP = new Map();
 const ROUTE_MAP = {};
@@ -7,7 +8,7 @@ const ROUTE_MAP = {};
  * @param  {string} route The route that should be converted into a regexp
  * @return {Object}       Returns an object with param keys and a path regexp
  */
-export const getParameterizedPath = function (route) {
+const getParameterizedPath = function (route) {
   if (ROUTE_MAP[route]) {
     return ROUTE_MAP[route];
   } else {
@@ -32,7 +33,7 @@ export const getParameterizedPath = function (route) {
  * @param  {string} location The window location that should be resolved
  * @return {string}          A matching dynamic route
  */
-export const findMatchingRoutePath = function (routes, location) {
+const findMatchingRoutePath = function (routes, location) {
   var matching;
   location = (/\?[^\s]+$/.test(location)) ? location.replace(/^([^\s\?]+)\?[^\s]+$/, '$1') : location;
   Object.keys(routes).forEach(function(key){
@@ -42,3 +43,10 @@ export const findMatchingRoutePath = function (routes, location) {
   // console.log({ routes, location, matching, });
   return matching;
 };
+
+module.exports = {
+  getParameterizedPath:getParameterizedPath,
+  findMatchingRoutePath:findMatchingRoutePath,
+};
+// exports.getParameterizedPath = getParameterizedPath;
+// exports.findMatchingRoutePath = findMatchingRoutePath;

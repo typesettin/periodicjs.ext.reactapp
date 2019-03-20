@@ -173,6 +173,21 @@ export function getRenderedComponent(componentObject, resources, debug) {
         }
       });
     }
+    if (componentObject.__dangerouslyCalcProps && Object.keys(componentObject.__dangerouslyCalcProps).length) {
+      Object.keys(componentObject.__dangerouslyCalcProps).forEach(epropName => {
+        const functionBodyString = componentObject.__dangerouslyCalcProps[ epropName ];
+        // eslint-disable-next-line
+        const stringFunction = Function('renderedCompProps', functionBodyString);
+        Object.defineProperty(
+          stringFunction,
+          'name',
+          {
+            value: `${epropName}Function`,
+          }
+        );
+        renderedCompProps[ epropName ] = stringFunction(renderedCompProps);
+      });
+    }
     if (renderedCompProps._children /* && !componentObject.children */) {
       if (Array.isArray(renderedCompProps._children)) {
         componentObject.children = [].concat(renderedCompProps._children);

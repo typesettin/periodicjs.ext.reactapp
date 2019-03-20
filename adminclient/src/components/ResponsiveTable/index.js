@@ -83,7 +83,7 @@ class ResponsiveTable extends Component {
       selectedRowIndex: {},
       showFilterSearch: props.showFilterSearch,
       disableSort: props.disableSort,
-      hiddenHeaders:[],
+      hiddenHeaders: props.hiddenHeaders || [],
       // usingFiltersInSearch: props.usingFiltersInSearch,
     };
     this.searchFunction = debounce(this.updateTableData, 200);
@@ -335,7 +335,7 @@ class ResponsiveTable extends Component {
         updatedState.sortOrder = newSortOptions.sortOrder;
         updatedState.sortProp = options.sort;
       } else if (this.props.turnOffTableSort){
-        updatedState.rows = updatedState.rows;
+        // updatedState.rows = updatedState.rows;
       } else if ((this.state.sortOrder || this.state.sortProp) && !this.state.disableSort) {
         // newSortOptions.sortProp = this.state.sortProp;
         // newSortOptions.sortOrder = (this.state.sortOrder === 'desc' || this.state.sortOrder === '-') ? 'desc' : 'asc';
@@ -440,7 +440,7 @@ class ResponsiveTable extends Component {
           newSortOptions.sortOrder = '';
         }
       } else if (this.props.turnOffTableSort){
-        updatedState.rows = updatedState.rows;
+        // updatedState.rows = updatedState.rows;
       } else if (this.state.sortOrder || this.state.sortProp) {
         newSortOptions.sortProp = this.state.sortProp;
         newSortOptions.sortOrder = (this.state.sortOrder === 'desc' || this.state.sortOrder === '-') ? '-' : '';
@@ -910,7 +910,7 @@ class ResponsiveTable extends Component {
           : (<rb.PageButton onClick={()=>this.updateTableData({ pagenum: (this.state.currentPage+1), })}>Next</rb.PageButton>)}  
       </rb.Pagination>);
     
-    var fbts= <a/>;
+    var fbts= <span/>;
     if(this.props.filterSearch){
       fbts = <rb.Button
         style={(this.state.showFilterSearch)
@@ -1206,10 +1206,14 @@ class ResponsiveTable extends Component {
           </div>)
             : null
           }
-          {(this.props.customLayout && displayRows && displayRows.length)
+          {(displayRows.length === 0 && this.props.emptyLayout)
+            ? this.getRenderedComponent(this.props.emptyLayout)
+            : (this.props.customLayout && displayRows && displayRows.length)
             ? mergedCustomLayout
-            : (<rb.Table {...this.props.tableProps}>
-              <rb.Thead className="__ra_rt_thead">
+            :
+            (<rb.Table {...this.props.tableProps}>
+              {(this.props.showHeader)
+                ? <rb.Thead className="__ra_rt_thead">
                 <rb.Tr>
                   {showableFilters.map((header, idx) => (
                     <rb.Th key={idx} style={{ cursor: 'pointer', }}  {...header.headerColumnProps}>{(header.sortable)
@@ -1223,6 +1227,8 @@ class ResponsiveTable extends Component {
                   ))}
                 </rb.Tr>
               </rb.Thead>
+                : null}
+              
               {(this.props.tableForm && this.props.addNewRows)
                 ? (<rb.Tfoot>
                   <rb.Tr>

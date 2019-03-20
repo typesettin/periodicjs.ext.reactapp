@@ -2,6 +2,7 @@ import constants from '../constants';
 
 const initialState = {
   logs: [],
+  // messages: [],
   showLogs:false,
 };
 

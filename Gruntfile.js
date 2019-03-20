@@ -25,13 +25,13 @@ module.exports = function(grunt) {
       },
     },
     copy: {
-      main: {
-        cwd: 'adminclient/build',
-        // cwd: 'public',
-        expand: true,
-        src: '**/*.*',
-        dest: '../../public/extensions/periodicjs.ext.reactapp',
-      },
+      // main: {
+      //   cwd: 'adminclient/build',
+      //   // cwd: 'public',
+      //   expand: true,
+      //   src: '**/*.*',
+      //   dest: '../../public/extensions/periodicjs.ext.reactapp',
+      // },
       ext: {
         cwd: 'adminclient/build',
         // cwd: 'public',

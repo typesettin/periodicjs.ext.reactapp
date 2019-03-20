@@ -74,6 +74,8 @@ export const defaultProps = {
   hasPagination: true,
   hasHeader: false,
   hasFooter: false,
+  showHeader: true,
+  showFooter: true,
   tableFooter: false,
   onChange: (event) => {
     console.debug(event);

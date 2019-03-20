@@ -1,6 +1,6 @@
 // import PathRegExp from 'path-to-regexp';
 import querystring from 'querystring';
-import { findMatchingRoutePath, getParameterizedPath, } from '../../../utilities/find_matching_route';
+import { findMatchingRoutePath, getParameterizedPath, } from './find_matching_route';
 
 export const getParameterized = getParameterizedPath;
 
