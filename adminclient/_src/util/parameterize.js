@@ -17,7 +17,7 @@ var _querystring = require('querystring');
 
 var _querystring2 = _interopRequireDefault(_querystring);
 
-var _find_matching_route = require('../../../utilities/find_matching_route');
+var _find_matching_route = require('./find_matching_route');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 

@@ -16,6 +16,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var initialState = {
   logs: [],
+  // messages: [],
   showLogs: false
 };
 

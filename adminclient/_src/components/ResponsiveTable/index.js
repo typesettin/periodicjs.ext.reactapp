@@ -188,7 +188,7 @@ var ResponsiveTable = function (_Component) {
       selectedRowIndex: {},
       showFilterSearch: props.showFilterSearch,
       disableSort: props.disableSort,
-      hiddenHeaders: []
+      hiddenHeaders: props.hiddenHeaders || []
       // usingFiltersInSearch: props.usingFiltersInSearch,
     };
     _this.searchFunction = (0, _debounce2.default)(_this.updateTableData, 200);
@@ -492,7 +492,7 @@ var ResponsiveTable = function (_Component) {
           updatedState.sortOrder = newSortOptions.sortOrder;
           updatedState.sortProp = options.sort;
         } else if (this.props.turnOffTableSort) {
-          updatedState.rows = updatedState.rows;
+          // updatedState.rows = updatedState.rows;
         } else if ((this.state.sortOrder || this.state.sortProp) && !this.state.disableSort) {
           // newSortOptions.sortProp = this.state.sortProp;
           // newSortOptions.sortOrder = (this.state.sortOrder === 'desc' || this.state.sortOrder === '-') ? 'desc' : 'asc';
@@ -592,7 +592,7 @@ var ResponsiveTable = function (_Component) {
             newSortOptions.sortOrder = '';
           }
         } else if (this.props.turnOffTableSort) {
-          updatedState.rows = updatedState.rows;
+          // updatedState.rows = updatedState.rows;
         } else if (this.state.sortOrder || this.state.sortProp) {
           newSortOptions.sortProp = this.state.sortProp;
           newSortOptions.sortOrder = this.state.sortOrder === 'desc' || this.state.sortOrder === '-' ? '-' : '';
@@ -1134,7 +1134,7 @@ var ResponsiveTable = function (_Component) {
         )
       );
 
-      var fbts = _react2.default.createElement('a', null);
+      var fbts = _react2.default.createElement('span', null);
       if (this.props.filterSearch) {
         fbts = _react2.default.createElement(
           rb.Button,
@@ -1642,10 +1642,10 @@ var ResponsiveTable = function (_Component) {
               'Loading'
             )
           ) : null,
-          this.props.customLayout && displayRows && displayRows.length ? mergedCustomLayout : _react2.default.createElement(
+          displayRows.length === 0 && this.props.emptyLayout ? this.getRenderedComponent(this.props.emptyLayout) : this.props.customLayout && displayRows && displayRows.length ? mergedCustomLayout : _react2.default.createElement(
             rb.Table,
             this.props.tableProps,
-            _react2.default.createElement(
+            this.props.showHeader ? _react2.default.createElement(
               rb.Thead,
               { className: '__ra_rt_thead' },
               _react2.default.createElement(
@@ -1667,7 +1667,7 @@ var ResponsiveTable = function (_Component) {
                   );
                 })
               )
-            ),
+            ) : null,
             this.props.tableForm && this.props.addNewRows ? _react2.default.createElement(
               rb.Tfoot,
               null,

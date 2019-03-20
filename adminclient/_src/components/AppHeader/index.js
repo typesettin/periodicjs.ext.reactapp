@@ -46,7 +46,7 @@ var _styles = require('../../styles');
 
 var _styles2 = _interopRequireDefault(_styles);
 
-var _route_prefixes = require('../../../../utilities/route_prefixes');
+var _route_prefixes = require('./route_prefixes');
 
 var _capitalize = require('capitalize');
 
