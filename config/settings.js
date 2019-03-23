@@ -109,6 +109,7 @@ module.exports = {
     default_manifests: {
       include_core_data:true,
       include_settings: true,
+      include_default_manifests: true,
     },
     default_navigation: {
       include_settings: true,

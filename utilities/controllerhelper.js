@@ -1,4 +1,4 @@
-
+'use strict';
 const path = require('path');
 const fs = require('fs-extra');
 const Promisie = require('promisie');
@@ -163,6 +163,10 @@ function pullConfigurationSettings(reload) {
     .then(configurationData => {
       let [configuration, adminExtSettings, ] = configurationData;
       adminExtSettings = adminExtSettings['periodicjs_ext_reactapp'];
+      if (periodic.settings.extensions[ 'periodicjs.ext.reactapp' ].default_manifests.include_default_manifests === false) {
+        adminExtSettings.manifests = [];
+        adminExtSettings.unauthenticated = [];
+      }
       let operations = {};
       if (reload === 'manifest' || reload === true || !Object.keys(manifestSettings).length) {
         operations = Object.assign(operations, {
