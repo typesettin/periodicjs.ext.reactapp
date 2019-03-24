@@ -15,6 +15,11 @@ const logger = (!windowState.disableLogger) ? disableLogger : createLogger();
 //   console.log('dispatching: ', action,{store});
 //   return next(action);
 // };
+const windowStore = (store) => (next) => (action) => {
+  if (typeof window[ windowState.hookFunction ] === 'function') window[ windowState.hookFunction ]({ store, next, action });
+  // console .log('dispatching: ', action,{store});
+  return next(action);
+};
 
 const getRouterHistoryType = function(routerHistoryType){
   return (routerHistoryType==='browserHistory') ? browserHistory : hashHistory;
@@ -27,6 +32,7 @@ const AppReduxStore = createStore(
     routerMiddleware(getRouterHistoryType(AppConfigSettings.routerHistory))
     // promise,
     , logger
+    , windowStore
   )
 );
 

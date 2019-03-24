@@ -124,6 +124,15 @@ var logger = !windowState.disableLogger ? disableLogger : (0, _reduxLogger2.defa
 //   console.log('dispatching: ', action,{store});
 //   return next(action);
 // };
+var windowStore = function windowStore(store) {
+  return function (next) {
+    return function (action) {
+      if (typeof window[windowState.hookFunction] === 'function') window[windowState.hookFunction]({ store: store, next: next, action: action });
+      // console .log('dispatching: ', action,{store});
+      return next(action);
+    };
+  };
+};
 
 var getRouterHistoryType = function getRouterHistoryType(routerHistoryType) {
   return routerHistoryType === 'browserHistory' ? _reactRouter.browserHistory : _reactRouter.hashHistory;
@@ -131,7 +140,7 @@ var getRouterHistoryType = function getRouterHistoryType(routerHistoryType) {
 
 var AppReduxStore = (0, _redux.createStore)(_reducers2.default, (0, _redux.applyMiddleware)(_reduxThunk2.default, (0, _reactRouterRedux.routerMiddleware)(getRouterHistoryType(AppConfigSettings.routerHistory))
 // promise,
-, logger));
+, logger, windowStore));
 
 if (module.hot) {
   // Enable Webpack hot module replacement for reducers
