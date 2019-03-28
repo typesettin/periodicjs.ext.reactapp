@@ -31,6 +31,7 @@ import DynamicComponent from '../DynamicComponent';
 import ResponsiveTabs from '../ResponsiveTabs';
 import ResponsiveBar from '../ResponsiveBar';
 import ResponsiveLink from '../ResponsiveLink';
+import ResponsiveIFrame from '../ResponsiveIFrame';
 import ResponsiveButton from '../ResponsiveButton';
 import ResponsiveSteps from '../ResponsiveSteps';
 import FormItem from '../FormItem';
@@ -39,9 +40,21 @@ let advancedBinding = getAdvancedBinding();
 let renderIndex = 0;
 
 export function getFunctionFromProps(options) {
-  const { propFunc } = options;
-  
-  if (typeof propFunc === 'string' && propFunc.indexOf('func:this.props.reduxRouter') !== -1) {
+  const { propFunc, propBody, } = options;
+  if (typeof propFunc === 'string' && propFunc.includes('func:inline')) {
+    // eslint-disable-next-line
+    const InlineFunction = Function('param1','param2','"use strict";' + propBody);
+    const [ propFuncName, funcName, ] = propFunc.split('.');
+    // console.info({ propFunc, propBody, propFuncName, funcName, });
+    Object.defineProperty(
+      InlineFunction,
+      'name',
+      {
+        value: funcName,
+      }
+    );
+    return InlineFunction.bind(this);
+  } else if (typeof propFunc === 'string' && propFunc.indexOf('func:this.props.reduxRouter') !== -1) {
     return this.props.reduxRouter[ propFunc.replace('func:this.props.reduxRouter.', '') ];
   } else if (typeof propFunc === 'string' && propFunc.indexOf('func:this.props') !== -1) {
     return this.props[ propFunc.replace('func:this.props.', '') ].bind(this);
@@ -58,6 +71,7 @@ export let AppLayoutMap = Object.assign({}, { victory,
   recharts, ResponsiveForm, DynamicLayout, DynamicComponent, DynamicForm, RawOutput, RawStateOutput, FormItem, MenuAppLink, SubMenuLinks, ResponsiveTable, ResponsiveCard, DynamicChart, /* DynamicResponsiveChart,*/ ResponsiveBar, ResponsiveTabs, ResponsiveDatalist, CodeMirror, Range, Slider, GoogleMap, Carousel, PreviewEditor, ResponsiveSteps, /* Editor,*/
   ResponsiveLink,
   ResponsiveButton,
+  ResponsiveIFrame,
   MaskedInput,
   RCTable,
   RCTree,
@@ -147,12 +161,16 @@ export function getRenderedComponent(componentObject, resources, debug) {
     // if (componentObject.__dangerouslyInsertComponents){ console.log({ insertedComponents });}
     let renderedCompProps = Object.assign({
       key: renderIndex,
+      __inline:{},
     }, thisDotProps,
       thisprops,
       componentObject.props, asyncprops, windowprops, evalProps, insertedComponents);
     
     if (renderedCompProps.ref) {
-      renderedCompProps.ref = getFunction({ propFunc: renderedCompProps.ref, });
+      renderedCompProps.ref = getFunction({
+        propFunc: renderedCompProps.ref,
+        propBody: componentObject.__inline[ renderedCompProps.ref ],
+      });
     }
       //Allowing for window functions
     if(componentObject.hasWindowFunc || componentObject.hasPropFunc){
@@ -177,7 +195,7 @@ export function getRenderedComponent(componentObject, resources, debug) {
       Object.keys(componentObject.__dangerouslyCalcProps).forEach(epropName => {
         const functionBodyString = componentObject.__dangerouslyCalcProps[ epropName ];
         // eslint-disable-next-line
-        const stringFunction = Function('renderedCompProps', functionBodyString);
+        const stringFunction = Function('renderedCompProps', '"use strict";' + functionBodyString);
         Object.defineProperty(
           stringFunction,
           'name',

@@ -42,7 +42,7 @@ export function initSockets(options = {}) {
   }));
   socket.on('connect_error', (e) => console.debug(e));
   socket.on('disconnect', (reason) => {
-    if (once === false) {
+    if (once === false && this.state.settings.socket_disconnect_message) {
       this.props.createNotification({
         text: `Live Updated Disconnected: ${reason}. Refresh for live updates`,
       });

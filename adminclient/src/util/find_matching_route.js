@@ -34,6 +34,7 @@ export const getParameterizedPath = function (route) {
  */
 export const findMatchingRoutePath = function (routes, location) {
   var matching;
+  // eslint-disable-next-line
   location = (/\?[^\s]+$/.test(location)) ? location.replace(/^([^\s\?]+)\?[^\s]+$/, '$1') : location;
   Object.keys(routes).forEach(function(key){
     var result = getParameterizedPath(key);

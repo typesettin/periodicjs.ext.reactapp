@@ -651,7 +651,10 @@ export function getFormSelect(options) {
   let initialValue = getInitialValue(formElement, this.state); //formElement.value || this.state[ formElement.name ] || getPropertyAttribute({ element:formElement, property:this.state, });
   let hasError = getErrorStatus(this.state, formElement.name);
   let isValid = getValidStatus(this.state, formElement.name);
-  let hasValue = (formElement.name && this.state[formElement.name])? true : false;
+  let getPassablePropkeyevents = getPassablePropsKeyEvents.bind(this);
+  let passableProps = getPassablePropkeyevents(formElement.passProps, formElement);
+  formElement.passProps = Object.assign({}, formElement.passProps, passableProps);
+  let hasValue = (formElement.name && this.state[ formElement.name ]) ? true : false;
   let selectOptions = (this.state.__formOptions && this.state.__formOptions[ formElement.name ])
     ? this.state.__formOptions[ formElement.name ]
     : formElement.options || [];
@@ -728,6 +731,10 @@ export function getFormCheckbox(options) {
     };
   }
 
+  let getPassablePropkeyevents = getPassablePropsKeyEvents.bind(this);
+  let passableProps = getPassablePropkeyevents(formElement.passProps, formElement);
+  formElement.passProps = Object.assign({}, formElement.passProps, passableProps);
+
   return (<FormItem key={i} {...formElement.layoutProps} hasError={hasError} hasValue={hasValue} >
     {getFormDataLabel(formElement)}  
     <input 
@@ -774,6 +781,10 @@ export function getFormSwitch(options) {
       });
     };
   }
+
+  let getPassablePropkeyevents = getPassablePropsKeyEvents.bind(this);
+  // let passableProps = getPassablePropkeyevents(formElement.passProps, formElement);
+  formElement.passProps =  getPassablePropkeyevents(formElement.passProps, formElement);
 
   return (<FormItem key={i} {...formElement.layoutProps} hasError={hasError} hasValue={hasValue} >
     {getFormDataLabel(formElement)}  
@@ -959,7 +970,7 @@ export function getImage(options) {
   //formElement.value || this.state[ formElement.name ] || getPropertyAttribute({ element:formElement, property:this.state, });
   return (<FormItem key={i} {...formElement.layoutProps} >
     {getFormLabel(formElement)}  
-    {(formElement.link)
+    {(formElement.link)          // eslint-disable-next-line
       ? (<a href={initialValue} target="_blank"><Image key={i}  {...imageProps} src={this.state[formElement.preview]||initialValue} /></a>)
       : <Image key={i}  {...imageProps} src={this.state[formElement.preview]||initialValue} />
     }
@@ -1093,6 +1104,10 @@ export function getFormEditor(options) {
 
 export function getFormSubmit(options) {
   let { formElement, i, } = options;
+
+  let getPassablePropkeyevents = getPassablePropsKeyEvents.bind(this);
+  let customPassableProps = getPassablePropkeyevents(formElement.passProps, formElement);
+  // formElement.passProps = Object.assign({}, formElement.passProps, passableProps);
   let passableProps = Object.assign({
     state: (formElement.confirmModal && Object.keys(this.state.formDataErrors).length>0)
       ? 'isDisabled'
@@ -1102,6 +1117,7 @@ export function getFormSubmit(options) {
         state:'isLoading',
       }
       : {},
+    customPassableProps,
     formElement.passProps);
   return (<FormItem key={i} {...formElement.layoutProps} >
     {getFormLabel(formElement)}  

@@ -17,7 +17,9 @@ module.exports = {
     include_index_route: true,
     'use_sockets': false,
     'socket_server': false,
+    socket_disconnect_message:false,
     socket_server_options: {},
+    hookFunction:undefined,
     'includeCoreData': {
       'manifest': true,
       'navigation': true,
