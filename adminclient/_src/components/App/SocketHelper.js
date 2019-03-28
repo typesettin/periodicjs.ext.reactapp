@@ -64,7 +64,7 @@ function initSockets() {
     return console.debug(e);
   });
   socket.on('disconnect', function (reason) {
-    if (once === false) {
+    if (once === false && _this.state.settings.socket_disconnect_message) {
       _this.props.createNotification({
         text: 'Live Updated Disconnected: ' + reason + '. Refresh for live updates'
       });

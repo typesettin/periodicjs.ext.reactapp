@@ -4,6 +4,10 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _extends2 = require('babel-runtime/helpers/extends');
+
+var _extends3 = _interopRequireDefault(_extends2);
+
 var _typeof2 = require('babel-runtime/helpers/typeof');
 
 var _typeof3 = _interopRequireDefault(_typeof2);
@@ -65,7 +69,7 @@ var AppFooter = function (_Component) {
     value: function render() {
       return _react2.default.createElement(
         _reBulma.Nav,
-        { style: (0, _assign2.default)({}, _styles2.default.fixedBottom, _styles2.default.footerContainer, this.props.settings.ui.footer.navStyle), className: this.props.settings.ui.initialization.show_footer || this.props.user.isLoggedIn ? 'animated fadeInUp Header-Speed reactapp__app_footer' : 'animated slideOutUp Header-Speed reactapp__app_footer' },
+        (0, _extends3.default)({ style: (0, _assign2.default)({}, _styles2.default.fixedBottom, _styles2.default.footerContainer, this.props.settings.ui.footer.navStyle), className: this.props.settings.ui.initialization.show_footer || this.props.user.isLoggedIn ? 'animated fadeInUp Header-Speed reactapp__app_footer' : 'animated slideOutUp Header-Speed reactapp__app_footer' }, this.props.settings.ui.footer.navProps),
         this.props.ui.components && this.props.ui.components.footer && (0, _typeof3.default)(this.props.ui.components.footer) === 'object' && this.props.ui.components.footer.layout ? this.getRenderedComponent(this.props.ui.components.footer.layout) : _react2.default.createElement(
           _reBulma.Container,
           null,

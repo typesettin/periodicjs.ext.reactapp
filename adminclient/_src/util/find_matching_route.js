@@ -46,6 +46,7 @@ var getParameterizedPath = exports.getParameterizedPath = function getParameteri
  */
 var findMatchingRoutePath = exports.findMatchingRoutePath = function findMatchingRoutePath(routes, location) {
   var matching;
+  // eslint-disable-next-line
   location = /\?[^\s]+$/.test(location) ? location.replace(/^([^\s\?]+)\?[^\s]+$/, '$1') : location;
   (0, _keys2.default)(routes).forEach(function (key) {
     var result = getParameterizedPath(key);

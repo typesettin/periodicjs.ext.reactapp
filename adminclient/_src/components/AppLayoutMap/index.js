@@ -17,6 +17,10 @@ var _assign = require('babel-runtime/core-js/object/assign');
 
 var _assign2 = _interopRequireDefault(_assign);
 
+var _slicedToArray2 = require('babel-runtime/helpers/slicedToArray');
+
+var _slicedToArray3 = _interopRequireDefault(_slicedToArray2);
+
 exports.getFunctionFromProps = getFunctionFromProps;
 exports.getComponentFromMap = getComponentFromMap;
 exports.getRenderedComponent = getRenderedComponent;
@@ -139,6 +143,10 @@ var _ResponsiveLink = require('../ResponsiveLink');
 
 var _ResponsiveLink2 = _interopRequireDefault(_ResponsiveLink);
 
+var _ResponsiveIFrame = require('../ResponsiveIFrame');
+
+var _ResponsiveIFrame2 = _interopRequireDefault(_ResponsiveIFrame);
+
 var _ResponsiveButton = require('../ResponsiveButton');
 
 var _ResponsiveButton2 = _interopRequireDefault(_ResponsiveButton);
@@ -159,17 +167,32 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// import DynamicResponsiveChart from '../DynamicChart/responsive';
-var advancedBinding = (0, _advancedBinding.getAdvancedBinding)();
 // import Editor from '../RAEditor';
+var advancedBinding = (0, _advancedBinding.getAdvancedBinding)();
+// import DynamicResponsiveChart from '../DynamicChart/responsive';
 
 var renderIndex = 0;
 
 function getFunctionFromProps(options) {
-  var propFunc = options.propFunc;
+  var propFunc = options.propFunc,
+      propBody = options.propBody;
+
+  if (typeof propFunc === 'string' && propFunc.includes('func:inline')) {
+    // eslint-disable-next-line
+    var InlineFunction = Function('param1', 'param2', '"use strict";' + propBody);
+
+    var _propFunc$split = propFunc.split('.'),
+        _propFunc$split2 = (0, _slicedToArray3.default)(_propFunc$split, 2),
+        propFuncName = _propFunc$split2[0],
+        funcName = _propFunc$split2[1];
+    // console.info({ propFunc, propBody, propFuncName, funcName, });
 
 
-  if (typeof propFunc === 'string' && propFunc.indexOf('func:this.props.reduxRouter') !== -1) {
+    Object.defineProperty(InlineFunction, 'name', {
+      value: funcName
+    });
+    return InlineFunction.bind(this);
+  } else if (typeof propFunc === 'string' && propFunc.indexOf('func:this.props.reduxRouter') !== -1) {
     return this.props.reduxRouter[propFunc.replace('func:this.props.reduxRouter.', '')];
   } else if (typeof propFunc === 'string' && propFunc.indexOf('func:this.props') !== -1) {
     return this.props[propFunc.replace('func:this.props.', '')].bind(this);
@@ -186,6 +209,7 @@ var AppLayoutMap = exports.AppLayoutMap = (0, _assign2.default)({}, { victory: v
   recharts: recharts, ResponsiveForm: _ResponsiveForm2.default, DynamicLayout: _DynamicLayout2.default, DynamicComponent: _DynamicComponent2.default, DynamicForm: _DynamicForm2.default, RawOutput: _RawOutput2.default, RawStateOutput: _RawStateOutput2.default, FormItem: _FormItem2.default, MenuAppLink: _MenuAppLink2.default, SubMenuLinks: _SubMenuLinks2.default, ResponsiveTable: _ResponsiveTable2.default, ResponsiveCard: _ResponsiveCard2.default, DynamicChart: _DynamicChart2.default, /* DynamicResponsiveChart,*/ResponsiveBar: _ResponsiveBar2.default, ResponsiveTabs: _ResponsiveTabs2.default, ResponsiveDatalist: _ResponsiveDatalist2.default, CodeMirror: _RACodeMirror2.default, Range: _rcSlider.Range, Slider: _rcSlider2.default, GoogleMap: _googleMapReact2.default, Carousel: _reactResponsiveCarousel.Carousel, PreviewEditor: _PreviewEditor2.default, ResponsiveSteps: _ResponsiveSteps2.default, /* Editor,*/
   ResponsiveLink: _ResponsiveLink2.default,
   ResponsiveButton: _ResponsiveButton2.default,
+  ResponsiveIFrame: _ResponsiveIFrame2.default,
   MaskedInput: _reactTextMask2.default,
   RCTable: _rcTable2.default,
   RCTree: _rcTree2.default,
@@ -267,11 +291,15 @@ function getRenderedComponent(componentObject, resources, debug) {
     }, {}) : {};
     // if (componentObject.__dangerouslyInsertComponents){ console.log({ insertedComponents });}
     var renderedCompProps = (0, _assign2.default)({
-      key: renderIndex
+      key: renderIndex,
+      __inline: {}
     }, thisDotProps, thisprops, componentObject.props, asyncprops, windowprops, evalProps, insertedComponents);
 
     if (renderedCompProps.ref) {
-      renderedCompProps.ref = getFunction({ propFunc: renderedCompProps.ref });
+      renderedCompProps.ref = getFunction({
+        propFunc: renderedCompProps.ref,
+        propBody: componentObject.__inline[renderedCompProps.ref]
+      });
     }
     //Allowing for window functions
     if (componentObject.hasWindowFunc || componentObject.hasPropFunc) {
@@ -295,7 +323,7 @@ function getRenderedComponent(componentObject, resources, debug) {
       (0, _keys2.default)(componentObject.__dangerouslyCalcProps).forEach(function (epropName) {
         var functionBodyString = componentObject.__dangerouslyCalcProps[epropName];
         // eslint-disable-next-line
-        var stringFunction = Function('renderedCompProps', functionBodyString);
+        var stringFunction = Function('renderedCompProps', '"use strict";' + functionBodyString);
         Object.defineProperty(stringFunction, 'name', {
           value: epropName + 'Function'
         });

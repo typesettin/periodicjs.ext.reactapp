@@ -755,6 +755,9 @@ function getFormSelect(options) {
   var initialValue = getInitialValue(formElement, this.state); //formElement.value || this.state[ formElement.name ] || getPropertyAttribute({ element:formElement, property:this.state, });
   var hasError = getErrorStatus(this.state, formElement.name);
   var isValid = getValidStatus(this.state, formElement.name);
+  var getPassablePropkeyevents = getPassablePropsKeyEvents.bind(this);
+  var passableProps = getPassablePropkeyevents(formElement.passProps, formElement);
+  formElement.passProps = (0, _assign2.default)({}, formElement.passProps, passableProps);
   var hasValue = formElement.name && this.state[formElement.name] ? true : false;
   var selectOptions = this.state.__formOptions && this.state.__formOptions[formElement.name] ? this.state.__formOptions[formElement.name] : formElement.options || [];
 
@@ -845,6 +848,10 @@ function getFormCheckbox(options) {
     };
   }
 
+  var getPassablePropkeyevents = getPassablePropsKeyEvents.bind(this);
+  var passableProps = getPassablePropkeyevents(formElement.passProps, formElement);
+  formElement.passProps = (0, _assign2.default)({}, formElement.passProps, passableProps);
+
   return _react2.default.createElement(
     _FormItem2.default,
     (0, _extends3.default)({ key: i }, formElement.layoutProps, { hasError: hasError, hasValue: hasValue }),
@@ -898,6 +905,10 @@ function getFormSwitch(options) {
       });
     };
   }
+
+  var getPassablePropkeyevents = getPassablePropsKeyEvents.bind(this);
+  // let passableProps = getPassablePropkeyevents(formElement.passProps, formElement);
+  formElement.passProps = getPassablePropkeyevents(formElement.passProps, formElement);
 
   return _react2.default.createElement(
     _FormItem2.default,
@@ -1126,7 +1137,8 @@ function getImage(options) {
     _FormItem2.default,
     (0, _extends3.default)({ key: i }, formElement.layoutProps),
     getFormLabel(formElement),
-    formElement.link ? _react2.default.createElement(
+    formElement.link ? // eslint-disable-next-line
+    _react2.default.createElement(
       'a',
       { href: initialValue, target: '_blank' },
       _react2.default.createElement(_reBulma.Image, (0, _extends3.default)({ key: i }, imageProps, { src: this.state[formElement.preview] || initialValue }))
@@ -1290,11 +1302,15 @@ function getFormSubmit(options) {
   var formElement = options.formElement,
       i = options.i;
 
+
+  var getPassablePropkeyevents = getPassablePropsKeyEvents.bind(this);
+  var customPassableProps = getPassablePropkeyevents(formElement.passProps, formElement);
+  // formElement.passProps = Object.assign({}, formElement.passProps, passableProps);
   var passableProps = (0, _assign2.default)({
     state: formElement.confirmModal && (0, _keys2.default)(this.state.formDataErrors).length > 0 ? 'isDisabled' : undefined
   }, this.props.useLoadingButtons && this.state.__formIsSubmitting ? {
     state: 'isLoading'
-  } : {}, formElement.passProps);
+  } : {}, customPassableProps, formElement.passProps);
   return _react2.default.createElement(
     _FormItem2.default,
     (0, _extends3.default)({ key: i }, formElement.layoutProps),

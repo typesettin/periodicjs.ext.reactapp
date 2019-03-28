@@ -57,6 +57,7 @@ class ResponsiveIFrame extends Component {
       );
       this.onMessageFunction = MessageFunction.bind(this);
     }
+    this.handleFrameTasks = this.handleFrameTasks.bind(this);
   }
   componentDidMount() {
     if (this.props.blockPageUI) {
@@ -101,7 +102,7 @@ class ResponsiveIFrame extends Component {
     if(this.ifr) this.ifr.contentWindow.postMessage(data, this.state.targetOrigin);
   }
 
-  handleFrameTasks = (e) => {
+  handleFrameTasks(e){
     // if (e.data.type === 'bookmark') {
       //   this.sendToFrame({ event: 'bookmark', data: window.location.hash ? window.location.hash.substr(1) : null });
       // }
