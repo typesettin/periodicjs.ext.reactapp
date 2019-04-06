@@ -202,7 +202,7 @@ export const fetchAction = function _fetchAction(pathname, fetchOptions = {}, su
     ? state.settings.userprofile.options.headers
     : {};
   let successCallback = console.debug;
-  function handleSuccessFunc() {
+  const handleSuccessFunc=()=> {
     if (success.success.modal) {
       this.props.createModal(success.success.modal);
     } else if (success.success.notification) {
@@ -211,7 +211,7 @@ export const fetchAction = function _fetchAction(pathname, fetchOptions = {}, su
       this.props.createNotification({ text: 'Saved', timeout:4000, type:'success',  });
     }
   }
-  function handleSuccessData(successData) {
+  const handleSuccessData=(successData)=> {
     let successCallbackProp = success.successCallback;
     if (typeof successCallbackProp === 'string' && successCallbackProp.indexOf('func:this.props.reduxRouter') !== -1) { 
       successCallback = this.props.reduxRouter[ successCallbackProp.replace('func:this.props.reduxRouter.', '') ];
@@ -267,5 +267,8 @@ export const fetchAction = function _fetchAction(pathname, fetchOptions = {}, su
       } else {
         return res.json();
       }
-    }).catch(this.props.errorNotification);
+    }).catch(e => {
+      console.error(e);
+      this.props.errorNotification(e); 
+    });
 };

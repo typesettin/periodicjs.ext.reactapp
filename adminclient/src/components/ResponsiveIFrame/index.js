@@ -96,6 +96,9 @@ class ResponsiveIFrame extends Component {
 
   componentWillUnmount() {
     window.removeEventListener('message', this.handleFrameTasks);
+    if (this.props.blockPageUI) {
+      this.props.setUILoadedState(true);
+    }
   }
 
   sendToFrame(data) {
@@ -108,6 +111,9 @@ class ResponsiveIFrame extends Component {
       // }
     if (e.data.type === 'iframe') {
         // console.info('handleFrameTasks',{e});
+      if (this.props.blockPageUI) {
+        this.props.setUILoadedState(true);
+      }
       if (this.onMessageFunction) {
         this.onMessageFunction(e.data);
       } else if (typeof this.props.onMessage==='string' && this.props.onMessage.includes('setDynamicData')) {
