@@ -93,15 +93,19 @@ class ResponsiveTabs extends Component {
       currentTab: tab,
       currentLayout,
     });
-    let onChangeFunc = () => { };
-    if (typeof this.props.onChange==='string' && this.props.onChange.indexOf('func:this.props') !== -1) {
-      onChangeFunc= this.props[ this.props.onChange.replace('func:this.props.', '') ];
-    } else if (typeof this.props.onChange==='string' && this.props.onChange.indexOf('func:window') !== -1 && typeof window[ this.props.onChange.replace('func:window.', '') ] ==='function') {
-      onChangeFunc= window[ this.props.onChange.replace('func:window.', '') ].bind(this);
-    } 
-    // console.log('this.props.onChange',this.props.onChange)
-    // console.log('onChangeFunc',onChangeFunc)
-    onChangeFunc(tab);
+    if (this.props.onChangeTab) {
+      this.props.onChangeTab(tab);
+    } else {
+      let onChangeFunc = () => { };
+      if (typeof this.props.onChange==='string' && this.props.onChange.indexOf('func:this.props') !== -1) {
+        onChangeFunc= this.props[ this.props.onChange.replace('func:this.props.', '') ];
+      } else if (typeof this.props.onChange==='string' && this.props.onChange.indexOf('func:window') !== -1 && typeof window[ this.props.onChange.replace('func:window.', '') ] ==='function') {
+        onChangeFunc= window[ this.props.onChange.replace('func:window.', '') ].bind(this);
+      } 
+      // console.log('this.props.onChange',this.props.onChange)
+      // console.log('onChangeFunc',onChangeFunc)
+      onChangeFunc(tab);
+    }
   } 
   componentWillMount() {
     let defaultLayout = (this.state.currentTab.layout && (Object.keys(this.state.currentTab.layout).length >= 1))

@@ -13,8 +13,9 @@ const defaultProps = {
 
 class ResponsiveLink extends Component {
   render() {
-    return <a {...this.props.passProps} href={this.props.location} onClick={(e) => {
+    return <a href={this.props.location} onClick={(e) => {
       e.preventDefault();
+      if (this.props.onClick) return this.props.onClick(e);
       this.props.reduxRouter.push(this.props.location);
       if (this.props.callback) {
         let callbackName = this.props.callback;
@@ -28,7 +29,7 @@ class ResponsiveLink extends Component {
         }
       }
       return false;
-    }} style={Object.assign({ cursor: 'pointer', }, this.props.style)}>{this.props.children}</a>;
+    }} style={Object.assign({ cursor: 'pointer', }, this.props.style)}  {...this.props.passProps} >{this.props.children}</a>;
   }
 }
 

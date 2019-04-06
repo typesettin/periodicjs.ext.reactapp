@@ -17,23 +17,23 @@
     <%
     if(Array.isArray(locals.reactapp.settings.additional_js_files.header)){
       locals.reactapp.settings.additional_js_files.header.forEach(headerJS=>{
-        %><script type="text/javascript" src="<%- headerJS %>"></script><%
+        %><script <% if(locals.reactapp.settings.use_csp){%> nonce="<%- locals.nonce %>" <%} %> type="text/javascript" src="<%- headerJS %>"></script><%
       })
     }
     %>
   </head>
   <body>
     <div id="root"><%- (typeof body!=='undefined')?body:'' %></div>
-    <script type="text/javascript">
+    <script type="text/javascript" <% if(locals.reactapp.settings.use_csp){%> nonce="<%- locals.nonce %>" <%} %> >
       <%- locals.periodic.viewHelper.passObjToClient(locals.reactapp.settings,"__padmin") %>
     </script>
       <% if(locals.reactapp.settings.application.use_custom_elements){ %><%- include(`../../../../content/container/${locals.theme_name}/views/shared/reactapp/custom_elements`,{locals});%><% } %>
-    <script type="text/javascript" src="/extensions/periodicjs.ext.reactapp/static/js/<%- locals.reactapp.reactapp_file_paths.js_file_path %>"></script>
+    <script type="text/javascript" src="/extensions/periodicjs.ext.reactapp/static/js/<%- locals.reactapp.reactapp_file_paths.js_file_path %>" <% if(locals.reactapp.settings.use_csp){%> nonce="<%- locals.nonce %>" <%} %> ></script>
     <% if(locals.reactapp.settings.application.additional_footer){ %><%- include(`../../../../content/container/${locals.theme_name}/views/shared/reactapp/footer`,{locals}) ;%><% } %>
     <%
     if(Array.isArray(locals.reactapp.settings.additional_js_files.footer)){
       locals.reactapp.settings.additional_js_files.footer.forEach(footerJS=>{
-        %><script type="text/javascript" src="<%- footerJS %>"></script><%
+        %><script type="text/javascript" <% if(locals.reactapp.settings.use_csp){%> nonce="<%- locals.nonce %>" <%} %> src="<%- footerJS %>"></script><%
       })
     }
     %>

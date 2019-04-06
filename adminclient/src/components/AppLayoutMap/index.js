@@ -39,6 +39,61 @@ import utilities from '../../util';
 let advancedBinding = getAdvancedBinding();
 let renderIndex = 0;
 
+//https://stackoverflow.com/questions/1007981/how-to-get-function-parameter-names-values-dynamically
+export const STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
+export const ARGUMENT_NAMES = /([^\s,]+)/g;
+export function getParamNames(func) {
+  var fnStr = func.toString().replace(STRIP_COMMENTS, '');
+  var result = fnStr.slice(fnStr.indexOf('(')+1, fnStr.indexOf(')')).match(ARGUMENT_NAMES);
+  if(result === null){
+    result = [];
+  }
+  return result;
+}
+
+export function getEvalProps(options = {}) {
+  const { rjx, } = options;
+  // eslint-disable-next-line
+  const scopedEval = eval; //https://github.com/rollup/rollup/wiki/Troubleshooting#avoiding-eval
+  const evProps = Object.keys(rjx.__dangerouslyEvalProps || {}).reduce((eprops, epropName) => {
+    let evVal;
+    try {
+      // eslint-disable-next-line
+      evVal = scopedEval(rjx.__dangerouslyEvalProps[ epropName ]);
+    } catch (e) { 
+      if (this.debug || rjx.debug) evVal = e;
+    }
+    eprops[ epropName ] = evVal;
+    return eprops;
+  }, {});
+  const evBindProps = Object.keys(rjx.__dangerouslyBindEvalProps || {}).reduce((eprops, epropName) => {
+    let evVal;
+    try {
+      let args;
+      // InlineFunction = Function.prototype.constructor.apply({}, args);
+      const functionDefinition = scopedEval(rjx.__dangerouslyBindEvalProps[ epropName ]);
+      if (rjx.__functionargs && rjx.__functionargs[ epropName ]) {
+        args = [this,].concat(rjx.__functionargs[ epropName ].map(arg => rjx.props[ arg ]));
+      }  else if (rjx.__functionparams) {
+        const functionDefArgs = getParamNames(functionDefinition);
+        args = [this,].concat(functionDefArgs);
+      } else {
+        args = [this,];
+      } 
+      // eslint-disable-next-line
+      evVal = functionDefinition.bind(...args);
+    } catch (e) { 
+      if (this.debug || rjx.debug) evVal = e;
+    }
+    // eslint-disable-next-line
+    eprops[ epropName ] = evVal;
+    return eprops;
+  }, {});
+
+  return Object.assign({}, evProps, evBindProps);
+}
+
+
 export function getFunctionFromProps(options) {
   const { propFunc, propBody, } = options;
   if (typeof propFunc === 'string' && propFunc.includes('func:inline')) {
@@ -50,7 +105,7 @@ export function getFunctionFromProps(options) {
       InlineFunction,
       'name',
       {
-        value: funcName,
+        value: funcName ||propFuncName,
       }
     );
     return InlineFunction.bind(this);
@@ -144,13 +199,10 @@ export function getRenderedComponent(componentObject, resources, debug) {
       ? this.props
       : null;
     //allowing javascript injections
-    let evalProps = (componentObject.__dangerouslyEvalProps)
-      ? Object.keys(componentObject.__dangerouslyEvalProps).reduce((eprops, epropName) => { 
-        // eslint-disable-next-line
-        eprops[ epropName ] = eval(componentObject.__dangerouslyEvalProps[ epropName ]);
-        return eprops;
-      }, {})
+    let evalProps = (componentObject.__dangerouslyEvalProps||componentObject.__dangerouslyBindEvalProps)
+      ? getEvalProps.call(this, { rjx:componentObject, })
       : {};
+    
     let insertedComponents = (componentObject.__dangerouslyInsertComponents)
       ? Object.keys(componentObject.__dangerouslyInsertComponents).reduce((cprops, cpropName) => {
         // eslint-disable-next-line

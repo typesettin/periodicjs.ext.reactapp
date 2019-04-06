@@ -1,7 +1,7 @@
 import React, { Component, } from 'react';
 import { Notification, Modal, Content, } from 're-bulma';
 import AppSectionLoading from '../AppSectionLoading';
-import { getRenderedComponent, } from '../AppLayoutMap';
+import { getRenderedComponent, getFunctionFromProps, } from '../AppLayoutMap';
 import utilities from '../../util';
 
 class NotificationUI extends Component {
@@ -132,6 +132,7 @@ class Overlay extends Component {
   constructor(props) {
     super(props);
     this.getRenderedComponent = getRenderedComponent.bind(this);
+    this.getFunctionFromProps = getFunctionFromProps.bind(this);
   }
   render() {
     // console.log('Overlay this.props.notification', this.props.notification);
@@ -141,18 +142,28 @@ class Overlay extends Component {
       ? this.props.notification.notifications.map((notice, key) => <NotificationUI dynamicRenderComponent={this.getRenderedComponent} hide={{
         onClick: () => {
           this.props.hideNotification(notice.id);
+          if (notice.onHide) {
+            const onHide = this.getFunctionFromProps({ propFunc: notice.onHide });
+            onHide();
+          }
         },
       }} key={key} {...notice} />)
       : null;
     let modal = (this.props.notification.modals && this.props.notification.modals.length > 0)
       ?
       this.props.notification.modals.map((modal, index) => {
-        return (<ModalUI {...this.props.notification.modals[ index ]}
+        const currentModal = this.props.notification.modals[ index ];
+
+        return (<ModalUI {...currentModal}
           getState={this.props.getState}
           key={index}  
-        hide={() => {
-          this.props.hideModal(this.props.notification.modals[index].id);
-        } }  
+          hide={() => {
+            this.props.hideModal(currentModal.id);
+            if (currentModal.onHide) {
+              const onHide = this.getFunctionFromProps({ propFunc: currentModal.onHide });
+              onHide();
+            }
+          }}  
         dynamicRenderComponent={this.getRenderedComponent} />)  
       })
       // <ModalUI {...this.props.notification.modals[ this.props.notification.modals.length - 1 ]}

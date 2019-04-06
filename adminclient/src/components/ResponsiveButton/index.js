@@ -45,6 +45,9 @@ class ResponsiveButton extends Component {
     return onclickProp;
   }
   handleOnClick(options) {
+    if (this.props.inlineClick) {
+      return this.props.inlineClick.call(this,options.event,options);
+    }
     // console.debug({ options });
     let { clickprop, thisDotProp, clickThisProp, clickPropObject, clickBaseUrl, clickAddPropObject, clickLinkParams, clickPassProps, clickFetchProps, clickSuccessProps, } = options;
     let onclickFunction = (data) => {
@@ -158,6 +161,7 @@ class ResponsiveButton extends Component {
       clickFetchProps: buttonProps.fetchProps,
       clickSuccessProps: buttonProps.successProps,
       thisDotProp: this.props,
+      event,
     });
     // console.debug({ value, selectProps });
   }
@@ -191,7 +195,7 @@ class ResponsiveButton extends Component {
       return <Select className="__ra_rb" {...this.props.selectElmProps} value={this.props.selectProps.selected}  onChange={(event) => {
         // console.log({ event });
         this.handleSelect.call(this, event, this.props.selectProps.values);
-      }}>
+      }} {...this.props.passProps}>
         {options}  
       </Select>;
     } else if (this.props.buttonProps) {
@@ -200,7 +204,8 @@ class ResponsiveButton extends Component {
         style={Object.assign({
           cursor: 'pointer', display: 'inline-block',
         }, this.props.style)}
-        onClick={this.handleOnClick.bind(this, getPropsForOnClick())}
+        onClick={this.handleOnClick.bind(this, getPropsForOnClick())} 
+        {...this.props.passProps}
         >
         {
           (this.props.onclickThisProp && this.props.displayThisProps)
@@ -209,14 +214,14 @@ class ResponsiveButton extends Component {
         }
       </Button>;
     } else if (this.props.aProps){ 
-      return <a className="__ra_rb" {...this.props.aProps} href={this.getHref.call(this, getPropsForOnClick())}>{this.props.children}</a>;
+      return <a className="__ra_rb" {...this.props.aProps} href={this.getHref.call(this, getPropsForOnClick())}  {...this.props.passProps}>{this.props.children}</a>;
     } else {
       return <span className="__ra_rb"
         {...this.props.spanProps}
         style={Object.assign({
           cursor: 'pointer', display: 'inline-block',
         }, this.props.style)}
-        onClick={this.handleOnClick.bind(this, getPropsForOnClick())}
+        onClick={this.handleOnClick.bind(this, getPropsForOnClick())}  {...this.props.passProps}
       >
         {
           (this.props.onclickThisProp && this.props.displayThisProps)
