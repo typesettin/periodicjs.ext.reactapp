@@ -67,8 +67,9 @@ var ResponsiveLink = function (_Component) {
 
       return _react2.default.createElement(
         'a',
-        (0, _extends3.default)({}, this.props.passProps, { href: this.props.location, onClick: function onClick(e) {
+        (0, _extends3.default)({ href: this.props.location, onClick: function onClick(e) {
             e.preventDefault();
+            if (_this2.props.onClick) return _this2.props.onClick(e);
             _this2.props.reduxRouter.push(_this2.props.location);
             if (_this2.props.callback) {
               var callbackName = _this2.props.callback;
@@ -82,7 +83,7 @@ var ResponsiveLink = function (_Component) {
               }
             }
             return false;
-          }, style: (0, _assign2.default)({ cursor: 'pointer' }, this.props.style) }),
+          }, style: (0, _assign2.default)({ cursor: 'pointer' }, this.props.style) }, this.props.passProps),
         this.props.children
       );
     }

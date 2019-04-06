@@ -92,6 +92,13 @@ var ResponsiveCard = function (_Component) {
   (0, _createClass3.default)(ResponsiveCard, [{
     key: 'expandCard',
     value: function expandCard() {
+      if (this.state.display === true && this.props.onClose) {
+        this.props.onClose.call(this);
+      }
+      if (this.state.display === false && this.props.onOpen) {
+        this.props.onOpen.call(this);
+      }
+
       this.setState({
         display: this.state.display === true ? false : true,
         icon: this.state.display ? this.props.iconUp : this.props.iconDown

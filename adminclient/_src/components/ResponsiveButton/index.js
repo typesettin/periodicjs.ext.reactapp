@@ -106,6 +106,9 @@ var ResponsiveButton = function (_Component) {
     value: function handleOnClick(options) {
       var _this2 = this;
 
+      if (this.props.inlineClick) {
+        return this.props.inlineClick.call(this, options.event, options);
+      }
       // console.debug({ options });
       var clickprop = options.clickprop,
           thisDotProp = options.thisDotProp,
@@ -219,7 +222,8 @@ var ResponsiveButton = function (_Component) {
         clickPassProps: buttonProps.onclickProps,
         clickFetchProps: buttonProps.fetchProps,
         clickSuccessProps: buttonProps.successProps,
-        thisDotProp: this.props
+        thisDotProp: this.props,
+        event: event
       });
       // console.debug({ value, selectProps });
     }
@@ -260,7 +264,7 @@ var ResponsiveButton = function (_Component) {
           (0, _extends3.default)({ className: '__ra_rb' }, this.props.selectElmProps, { value: this.props.selectProps.selected, onChange: function onChange(event) {
               // console.log({ event });
               _this3.handleSelect.call(_this3, event, _this3.props.selectProps.values);
-            } }),
+            } }, this.props.passProps),
           options
         );
       } else if (this.props.buttonProps) {
@@ -272,13 +276,13 @@ var ResponsiveButton = function (_Component) {
               cursor: 'pointer', display: 'inline-block'
             }, this.props.style),
             onClick: this.handleOnClick.bind(this, getPropsForOnClick())
-          }),
+          }, this.props.passProps),
           this.props.onclickThisProp && this.props.displayThisProps ? this.props[this.props.onclickThisProp][this.props.displayThisProps] : this.props.children
         );
       } else if (this.props.aProps) {
         return _react2.default.createElement(
           'a',
-          (0, _extends3.default)({ className: '__ra_rb' }, this.props.aProps, { href: this.getHref.call(this, getPropsForOnClick()) }),
+          (0, _extends3.default)({ className: '__ra_rb' }, this.props.aProps, { href: this.getHref.call(this, getPropsForOnClick()) }, this.props.passProps),
           this.props.children
         );
       } else {
@@ -289,8 +293,7 @@ var ResponsiveButton = function (_Component) {
             style: (0, _assign2.default)({
               cursor: 'pointer', display: 'inline-block'
             }, this.props.style),
-            onClick: this.handleOnClick.bind(this, getPropsForOnClick())
-          }),
+            onClick: this.handleOnClick.bind(this, getPropsForOnClick()) }, this.props.passProps),
           this.props.onclickThisProp && this.props.displayThisProps ? this.props[this.props.onclickThisProp][this.props.displayThisProps] : this.props.children
         );
       }

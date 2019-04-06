@@ -3,24 +3,30 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.AppLayoutMap = undefined;
-
-var _keys = require('babel-runtime/core-js/object/keys');
-
-var _keys2 = _interopRequireDefault(_keys);
+exports.AppLayoutMap = exports.ARGUMENT_NAMES = exports.STRIP_COMMENTS = undefined;
 
 var _typeof2 = require('babel-runtime/helpers/typeof');
 
 var _typeof3 = _interopRequireDefault(_typeof2);
 
-var _assign = require('babel-runtime/core-js/object/assign');
-
-var _assign2 = _interopRequireDefault(_assign);
-
 var _slicedToArray2 = require('babel-runtime/helpers/slicedToArray');
 
 var _slicedToArray3 = _interopRequireDefault(_slicedToArray2);
 
+var _assign = require('babel-runtime/core-js/object/assign');
+
+var _assign2 = _interopRequireDefault(_assign);
+
+var _toConsumableArray2 = require('babel-runtime/helpers/toConsumableArray');
+
+var _toConsumableArray3 = _interopRequireDefault(_toConsumableArray2);
+
+var _keys = require('babel-runtime/core-js/object/keys');
+
+var _keys2 = _interopRequireDefault(_keys);
+
+exports.getParamNames = getParamNames;
+exports.getEvalProps = getEvalProps;
 exports.getFunctionFromProps = getFunctionFromProps;
 exports.getComponentFromMap = getComponentFromMap;
 exports.getRenderedComponent = getRenderedComponent;
@@ -173,6 +179,66 @@ var advancedBinding = (0, _advancedBinding.getAdvancedBinding)();
 
 var renderIndex = 0;
 
+//https://stackoverflow.com/questions/1007981/how-to-get-function-parameter-names-values-dynamically
+var STRIP_COMMENTS = exports.STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
+var ARGUMENT_NAMES = exports.ARGUMENT_NAMES = /([^\s,]+)/g;
+function getParamNames(func) {
+  var fnStr = func.toString().replace(STRIP_COMMENTS, '');
+  var result = fnStr.slice(fnStr.indexOf('(') + 1, fnStr.indexOf(')')).match(ARGUMENT_NAMES);
+  if (result === null) {
+    result = [];
+  }
+  return result;
+}
+
+function getEvalProps() {
+  var _this = this;
+
+  var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  var rjx = options.rjx;
+  // eslint-disable-next-line
+
+  var scopedEval = eval; //https://github.com/rollup/rollup/wiki/Troubleshooting#avoiding-eval
+  var evProps = (0, _keys2.default)(rjx.__dangerouslyEvalProps || {}).reduce(function (eprops, epropName) {
+    var evVal = void 0;
+    try {
+      // eslint-disable-next-line
+      evVal = scopedEval(rjx.__dangerouslyEvalProps[epropName]);
+    } catch (e) {
+      if (_this.debug || rjx.debug) evVal = e;
+    }
+    eprops[epropName] = evVal;
+    return eprops;
+  }, {});
+  var evBindProps = (0, _keys2.default)(rjx.__dangerouslyBindEvalProps || {}).reduce(function (eprops, epropName) {
+    var evVal = void 0;
+    try {
+      var args = void 0;
+      // InlineFunction = Function.prototype.constructor.apply({}, args);
+      var functionDefinition = scopedEval(rjx.__dangerouslyBindEvalProps[epropName]);
+      if (rjx.__functionargs && rjx.__functionargs[epropName]) {
+        args = [_this].concat(rjx.__functionargs[epropName].map(function (arg) {
+          return rjx.props[arg];
+        }));
+      } else if (rjx.__functionparams) {
+        var functionDefArgs = getParamNames(functionDefinition);
+        args = [_this].concat(functionDefArgs);
+      } else {
+        args = [_this];
+      }
+      // eslint-disable-next-line
+      evVal = functionDefinition.bind.apply(functionDefinition, (0, _toConsumableArray3.default)(args));
+    } catch (e) {
+      if (_this.debug || rjx.debug) evVal = e;
+    }
+    // eslint-disable-next-line
+    eprops[epropName] = evVal;
+    return eprops;
+  }, {});
+
+  return (0, _assign2.default)({}, evProps, evBindProps);
+}
+
 function getFunctionFromProps(options) {
   var propFunc = options.propFunc,
       propBody = options.propBody;
@@ -189,7 +255,7 @@ function getFunctionFromProps(options) {
 
 
     Object.defineProperty(InlineFunction, 'name', {
-      value: funcName
+      value: funcName || propFuncName
     });
     return InlineFunction.bind(this);
   } else if (typeof propFunc === 'string' && propFunc.indexOf('func:this.props.reduxRouter') !== -1) {
@@ -244,7 +310,7 @@ function getComponentFromMap() {
 }
 
 function getRenderedComponent(componentObject, resources, debug) {
-  var _this = this;
+  var _this2 = this;
 
   if (debug) {
     console.debug({ resources: resources, componentObject: componentObject });
@@ -279,14 +345,11 @@ function getRenderedComponent(componentObject, resources, debug) {
     }, this.props, componentObject.props, this.props.getState())) : {};
     var thisDotProps = !_react2.default.DOM[componentObject.component] && !rebulma[componentObject.component] && !componentObject.ignoreReduxProps ? this.props : null;
     //allowing javascript injections
-    var evalProps = componentObject.__dangerouslyEvalProps ? (0, _keys2.default)(componentObject.__dangerouslyEvalProps).reduce(function (eprops, epropName) {
-      // eslint-disable-next-line
-      eprops[epropName] = eval(componentObject.__dangerouslyEvalProps[epropName]);
-      return eprops;
-    }, {}) : {};
+    var evalProps = componentObject.__dangerouslyEvalProps || componentObject.__dangerouslyBindEvalProps ? getEvalProps.call(this, { rjx: componentObject }) : {};
+
     var insertedComponents = componentObject.__dangerouslyInsertComponents ? (0, _keys2.default)(componentObject.__dangerouslyInsertComponents).reduce(function (cprops, cpropName) {
       // eslint-disable-next-line
-      cprops[cpropName] = getRenderedComponent.call(_this, componentObject.__dangerouslyInsertComponents[cpropName], resources, debug);
+      cprops[cpropName] = getRenderedComponent.call(_this2, componentObject.__dangerouslyInsertComponents[cpropName], resources, debug);
       return cprops;
     }, {}) : {};
     // if (componentObject.__dangerouslyInsertComponents){ console.log({ insertedComponents });}
@@ -315,7 +378,7 @@ function getRenderedComponent(componentObject, resources, debug) {
     if (componentObject.hasWindowComponent && window.__ra_custom_elements) {
       (0, _keys2.default)(renderedCompProps).forEach(function (key) {
         if (typeof renderedCompProps[key] === 'string' && renderedCompProps[key].indexOf('func:window.__ra_custom_elements') !== -1 && typeof window.__ra_custom_elements[renderedCompProps[key].replace('func:window.__ra_custom_elements.', '')] === 'function') {
-          renderedCompProps[key] = _react2.default.createElement(window.__ra_custom_elements[renderedCompProps[key].replace('func:window.__ra_custom_elements.', '')], renderedCompProps['windowCompProps'] ? renderedCompProps['windowCompProps'] : _this.props, null);
+          renderedCompProps[key] = _react2.default.createElement(window.__ra_custom_elements[renderedCompProps[key].replace('func:window.__ra_custom_elements.', '')], renderedCompProps['windowCompProps'] ? renderedCompProps['windowCompProps'] : _this2.props, null);
         }
       });
     }
@@ -412,7 +475,7 @@ function getRenderedComponent(componentObject, resources, debug) {
       renderedCompProps,
       //props children
       componentObject.children && Array.isArray(componentObject.children) && typeof componentObject.children !== 'string' ? componentObject.children.map(function (childComponentObject) {
-        return getRenderedComponent.call(_this, componentObject.bindprops ? (0, _assign2.default)({}, childComponentObject, {
+        return getRenderedComponent.call(_this2, componentObject.bindprops ? (0, _assign2.default)({}, childComponentObject, {
           props: (0, _assign2.default)({}, renderedCompProps, childComponentObject.thisprops && childComponentObject.thisprops.style || // this is to make sure when you bind props, if you've defined props in a dynamic property, to not use bind props to  remove passing down styles
           childComponentObject.asyncprops && childComponentObject.asyncprops.style || childComponentObject.windowprops && childComponentObject.windowprops.style ? {} : {
             style: {}

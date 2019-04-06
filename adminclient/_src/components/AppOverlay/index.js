@@ -229,6 +229,7 @@ var Overlay = function (_Component3) {
     var _this5 = (0, _possibleConstructorReturn3.default)(this, (Overlay.__proto__ || (0, _getPrototypeOf2.default)(Overlay)).call(this, props));
 
     _this5.getRenderedComponent = _AppLayoutMap.getRenderedComponent.bind(_this5);
+    _this5.getFunctionFromProps = _AppLayoutMap.getFunctionFromProps.bind(_this5);
     return _this5;
   }
 
@@ -244,15 +245,25 @@ var Overlay = function (_Component3) {
         return _react2.default.createElement(NotificationUI, (0, _extends3.default)({ dynamicRenderComponent: _this6.getRenderedComponent, hide: {
             onClick: function onClick() {
               _this6.props.hideNotification(notice.id);
+              if (notice.onHide) {
+                var onHide = _this6.getFunctionFromProps({ propFunc: notice.onHide });
+                onHide();
+              }
             }
           }, key: key }, notice));
       }) : null;
       var modal = this.props.notification.modals && this.props.notification.modals.length > 0 ? this.props.notification.modals.map(function (modal, index) {
-        return _react2.default.createElement(ModalUI, (0, _extends3.default)({}, _this6.props.notification.modals[index], {
+        var currentModal = _this6.props.notification.modals[index];
+
+        return _react2.default.createElement(ModalUI, (0, _extends3.default)({}, currentModal, {
           getState: _this6.props.getState,
           key: index,
           hide: function hide() {
-            _this6.props.hideModal(_this6.props.notification.modals[index].id);
+            _this6.props.hideModal(currentModal.id);
+            if (currentModal.onHide) {
+              var onHide = _this6.getFunctionFromProps({ propFunc: currentModal.onHide });
+              onHide();
+            }
           },
           dynamicRenderComponent: _this6.getRenderedComponent }));
       })

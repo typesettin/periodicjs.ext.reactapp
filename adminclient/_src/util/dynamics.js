@@ -226,30 +226,30 @@ var fetchAction = exports.fetchAction = function _fetchAction(pathname) {
   var state = _getState.call(this)();
   var headers = state.settings && state.settings.userprofile && state.settings.userprofile.options && state.settings.userprofile.options.headers ? state.settings.userprofile.options.headers : {};
   var successCallback = console.debug;
-  function handleSuccessFunc() {
+  var handleSuccessFunc = function handleSuccessFunc() {
     if (success.success.modal) {
-      this.props.createModal(success.success.modal);
+      _this3.props.createModal(success.success.modal);
     } else if (success.success.notification) {
-      this.props.createNotification(success.success.notification);
+      _this3.props.createNotification(success.success.notification);
     } else {
-      this.props.createNotification({ text: 'Saved', timeout: 4000, type: 'success' });
+      _this3.props.createNotification({ text: 'Saved', timeout: 4000, type: 'success' });
     }
-  }
-  function handleSuccessData(successData) {
+  };
+  var handleSuccessData = function handleSuccessData(successData) {
     var successCallbackProp = success.successCallback;
     if (typeof successCallbackProp === 'string' && successCallbackProp.indexOf('func:this.props.reduxRouter') !== -1) {
-      successCallback = this.props.reduxRouter[successCallbackProp.replace('func:this.props.reduxRouter.', '')];
+      successCallback = _this3.props.reduxRouter[successCallbackProp.replace('func:this.props.reduxRouter.', '')];
     } else if (typeof successCallbackProp === 'string' && successCallbackProp.indexOf('func:this.props') !== -1) {
-      successCallback = this.props[success.successCallback.replace('func:this.props.', '')];
+      successCallback = _this3.props[success.successCallback.replace('func:this.props.', '')];
     } else if (typeof successCallbackProp === 'string' && successCallbackProp.indexOf('func:window') !== -1 && typeof window[success.successCallback.replace('func:window.', '')] === 'function') {
-      successCallback = window[success.successCallback.replace('func:window.', '')].bind(this);
+      successCallback = window[success.successCallback.replace('func:window.', '')].bind(_this3);
     }
     if (fetchOptions.successCallback === 'func:this.props.setDynamicData') {
-      this.props.setDynamicData(success.dynamicField, success.successProps || successData);
+      _this3.props.setDynamicData(success.dynamicField, success.successProps || successData);
     } else {
       successCallback(success.successProps || successData);
     }
-  }
+  };
   delete headers.clientid_default;
   if (state.user && state.user.jwt_token) {
     headers['x-access-token'] = state.user.jwt_token;
@@ -287,5 +287,8 @@ var fetchAction = exports.fetchAction = function _fetchAction(pathname) {
     } else {
       return res.json();
     }
-  }).catch(this.props.errorNotification);
+  }).catch(function (e) {
+    console.error(e);
+    _this3.props.errorNotification(e);
+  });
 };

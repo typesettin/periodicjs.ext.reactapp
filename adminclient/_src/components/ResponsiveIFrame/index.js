@@ -137,6 +137,9 @@ var ResponsiveIFrame = function (_Component) {
     key: 'componentWillUnmount',
     value: function componentWillUnmount() {
       window.removeEventListener('message', this.handleFrameTasks);
+      if (this.props.blockPageUI) {
+        this.props.setUILoadedState(true);
+      }
     }
   }, {
     key: 'sendToFrame',
@@ -151,6 +154,9 @@ var ResponsiveIFrame = function (_Component) {
       // }
       if (e.data.type === 'iframe') {
         // console.info('handleFrameTasks',{e});
+        if (this.props.blockPageUI) {
+          this.props.setUILoadedState(true);
+        }
         if (this.onMessageFunction) {
           this.onMessageFunction(e.data);
         } else if (typeof this.props.onMessage === 'string' && this.props.onMessage.includes('setDynamicData')) {
