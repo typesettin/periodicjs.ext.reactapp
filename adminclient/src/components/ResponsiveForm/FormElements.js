@@ -112,16 +112,18 @@ function valueChangeHandler(formElement, callback) {
 }
 
 function getFormLabel(formElement) {
-  return (formElement.label)
-    ? (formElement.layoutProps && formElement.layoutProps.horizontalform)
-      ? (<ControlLabel {...formElement.labelProps}>{
-        (this && this.state && this.state[formElement.formdata_label])
-        ? this.state[formElement.formdata_label]
-        : formElement.label}</ControlLabel>)
-      : (<Label {...formElement.labelProps}>{(this && this.state && this.state[formElement.formdata_label])
-        ? this.state[formElement.formdata_label]
-        : formElement.label}</Label>)
-    : null;
+  const labelValue = (this && this.state && this.state[ formElement.formdata_label ])
+    ? this.state[ formElement.formdata_label ]
+    : formElement.label;
+  if (typeof labelValue === 'object') {
+    return this.getRenderedComponent(labelValue);
+  } else {
+    return (formElement.label)
+      ? (formElement.layoutProps && formElement.layoutProps.horizontalform)
+        ? (<ControlLabel {...formElement.labelProps}>{labelValue}</ControlLabel>)
+        : (<Label {...formElement.labelProps}>{labelValue}</Label>)
+      : null;
+  }
 }
 
 function getInitialValue(formElement, state) {
@@ -341,7 +343,7 @@ export function getFormDatatable(options){
   // let inlineshape ={};// if true, should look like a regular form row, else form below
   //   // console.debug({formElement,initialValue, },'this.state',this.state);
   return (<FormItem key={i} {...formElement.layoutProps} >
-  {getFormLabel(formElement)}  
+  {getFormLabel.call(this,formElement)}  
     <ResponsiveTable 
       onChange={(newvalue) => {
         let selectedRowData = (formElement.selectEntireRow && (newvalue.selectedRowData || newvalue.selectedRowIndex))
@@ -427,7 +429,7 @@ export function getFormDatalist(options){
   }
   // console.log({formElement, initialValue})
   return (<FormItem key={i} {...formElement.layoutProps} >
-  {getFormLabel(formElement)}  
+  {getFormLabel.call(this,formElement)}  
     <ResponsiveDatalist 
       onChange={(newvalue) => {
         // console.log({newvalue})
@@ -532,7 +534,7 @@ export function getFormMaskedInput(options) {
     : wrapperProps.className;
   
   return (<FormItem key={i} {...formElement.layoutProps} initialIcon={formElement.initialIcon} isValid={isValid} hasError={hasError} hasValue={hasValue} >
-    {getFormLabel(formElement)}
+    {getFormLabel.call(this,formElement)}
     <span {...wrapperProps}>
       <MaskedInput
         mask={mask}
@@ -599,7 +601,7 @@ export function getFormTextInputArea(options) {
     });
   }
   return (<FormItem key={i} {...formElement.layoutProps} initialIcon={formElement.initialIcon} isValid={isValid} hasError={hasError} hasValue={hasValue} >
-    {getFormLabel(formElement)}  
+    {getFormLabel.call(this,formElement)}  
     <Input 
       help={getFormElementHelp(hasError, this.state, formElement.name)}
       color={(hasError)?'isDanger':undefined}
@@ -634,7 +636,7 @@ export function getFormTextArea(options) {
   }
 
   return (<FormItem key={i} {...formElement.layoutProps} initialIcon={formElement.initialIcon} isValid={isValid} hasError={hasError} hasValue={hasValue} >
-    {getFormLabel(formElement)}  
+    {getFormLabel.call(this,formElement)}  
     <Textarea 
       onChange={(event)=>onChange()(event)}
       help={getFormElementHelp(hasError, this.state, formElement.name)}
@@ -679,7 +681,7 @@ export function getFormSelect(options) {
   }
 
   return (<FormItem key={i} {...formElement.layoutProps} initialIcon={formElement.initialIcon} isValid={isValid} hasError={hasError} hasValue={hasValue} >
-    {getFormLabel(formElement)}  
+    {getFormLabel.call(this,formElement)}  
     <span className="__re-bulma_control" style={{ position: 'relative', display: 'block', }}>
       <Select 
         style={Object.assign({}, { flex: 'inherit', marginBottom: 0, }, (formElement.passProps && formElement.passProps.style) ? formElement.passProps.style : {})}  
@@ -836,7 +838,7 @@ export function getRawInput(options) {
   }
 
   return (<FormItem key={i} {...formElement.layoutProps} >
-    {getFormLabel(formElement)}  
+    {getFormLabel.call(this,formElement)}  
     <div {...wrapperProps}>
       <input
         type={formElement.type}
@@ -870,7 +872,7 @@ export function getButton(options) {
   }
 
   return (<FormItem key={i} {...formElement.layoutProps} >
-    {getFormLabel(formElement)}  
+    {getFormLabel.call(this,formElement)}  
       <Button
         type={formElement.type}
         onChange={onValueChange} {...passableProps}
@@ -931,7 +933,7 @@ export function getSliderInput(options) {
   
 
   return (<FormItem key={i} {...formElement.layoutProps} >
-    {getFormLabel(formElement)}  
+    {getFormLabel.call(this,formElement)}  
     <div {...wrapperProps}>
       <Slider 
         onChange={onValueChange} {...passableProps}
@@ -969,7 +971,7 @@ export function getImage(options) {
   }, formElement.passProps);
   //formElement.value || this.state[ formElement.name ] || getPropertyAttribute({ element:formElement, property:this.state, });
   return (<FormItem key={i} {...formElement.layoutProps} >
-    {getFormLabel(formElement)}  
+    {getFormLabel.call(this,formElement)}  
     {(formElement.link)          // eslint-disable-next-line
       ? (<a href={initialValue} target="_blank"><Image key={i}  {...imageProps} src={this.state[formElement.preview]||initialValue} /></a>)
       : <Image key={i}  {...imageProps} src={this.state[formElement.preview]||initialValue} />
@@ -990,7 +992,7 @@ export function getFormLink(options) {
   // console.debug({ linkWrapperProps, formElement });
 
   return (<FormItem key={i} {...formElement.layoutProps} >
-    {getFormLabel(formElement)}  
+    {getFormLabel.call(this,formElement)}  
     <span {...wrapperProps}>
       <span {...linkWrapperProps}>
       {button}
@@ -1003,7 +1005,7 @@ export function getFormGroup(options) {
   let { formElement, i, groupElements, } = options;
 
   return (<FormItem key={i} {...formElement.layoutProps} >
-    {getFormLabel(formElement)}  
+    {getFormLabel.call(this,formElement)}  
     <Group {...formElement.passProps}
     >
       {groupElements}  
@@ -1049,7 +1051,7 @@ export function getFormCode(options) {
   }, formElement.passProps);
 
   return (<FormItem key={i} {...formElement.layoutProps} >
-    {getFormLabel(formElement)}  
+    {getFormLabel.call(this,formElement)}  
     <RACodeMirror key={i} {...CodeMirrorProps}  />
     {getCustomErrorLabel(hasError, this.state, formElement)}
   </FormItem>
@@ -1096,7 +1098,7 @@ export function getFormEditor(options) {
   }, formElement.passProps);
 
   return (<FormItem key={i} {...formElement.layoutProps} >
-    {getFormLabel(formElement)}  
+    {getFormLabel.call(this,formElement)}  
     <PreviewEditor key={i} {...EditorProps} value={initialVal} />
   </FormItem>
   );
@@ -1120,7 +1122,7 @@ export function getFormSubmit(options) {
     customPassableProps,
     formElement.passProps);
   return (<FormItem key={i} {...formElement.layoutProps} >
-    {getFormLabel(formElement)}  
+    {getFormLabel.call(this,formElement)}  
     <Button 
       onClick={() => { 
         let validated_formdata = validateForm.call(this, { formdata: this.state, validationErrors: {}, });
