@@ -4,10 +4,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _typeof2 = require('babel-runtime/helpers/typeof');
-
-var _typeof3 = _interopRequireDefault(_typeof2);
-
 var _clearImmediate2 = require('babel-runtime/core-js/clear-immediate');
 
 var _clearImmediate3 = _interopRequireDefault(_clearImmediate2);
@@ -31,6 +27,10 @@ var _defineProperty3 = _interopRequireDefault(_defineProperty2);
 var _keys = require('babel-runtime/core-js/object/keys');
 
 var _keys2 = _interopRequireDefault(_keys);
+
+var _typeof2 = require('babel-runtime/helpers/typeof');
+
+var _typeof3 = _interopRequireDefault(_typeof2);
 
 var _assign = require('babel-runtime/core-js/object/assign');
 
@@ -220,15 +220,20 @@ function valueChangeHandler(formElement, callback) {
 }
 
 function getFormLabel(formElement) {
-  return formElement.label ? formElement.layoutProps && formElement.layoutProps.horizontalform ? _react2.default.createElement(
-    _reBulma.ControlLabel,
-    formElement.labelProps,
-    this && this.state && this.state[formElement.formdata_label] ? this.state[formElement.formdata_label] : formElement.label
-  ) : _react2.default.createElement(
-    _reBulma.Label,
-    formElement.labelProps,
-    this && this.state && this.state[formElement.formdata_label] ? this.state[formElement.formdata_label] : formElement.label
-  ) : null;
+  var labelValue = this && this.state && this.state[formElement.formdata_label] ? this.state[formElement.formdata_label] : formElement.label;
+  if ((typeof labelValue === 'undefined' ? 'undefined' : (0, _typeof3.default)(labelValue)) === 'object') {
+    return this.getRenderedComponent(labelValue);
+  } else {
+    return formElement.label ? formElement.layoutProps && formElement.layoutProps.horizontalform ? _react2.default.createElement(
+      _reBulma.ControlLabel,
+      formElement.labelProps,
+      labelValue
+    ) : _react2.default.createElement(
+      _reBulma.Label,
+      formElement.labelProps,
+      labelValue
+    ) : null;
+  }
 }
 
 function getInitialValue(formElement, state) {
@@ -433,7 +438,7 @@ function getFormDatatable(options) {
   return _react2.default.createElement(
     _FormItem2.default,
     (0, _extends3.default)({ key: i }, formElement.layoutProps),
-    getFormLabel(formElement),
+    getFormLabel.call(this, formElement),
     _react2.default.createElement(_ResponsiveTable2.default, (0, _extends3.default)({
       onChange: function onChange(newvalue) {
         var selectedRowData = formElement.selectEntireRow && (newvalue.selectedRowData || newvalue.selectedRowIndex) ? (0, _defineProperty3.default)({}, formElement.name + '__tabledata', {
@@ -511,7 +516,7 @@ function getFormDatalist(options) {
   return _react2.default.createElement(
     _FormItem2.default,
     (0, _extends3.default)({ key: i }, formElement.layoutProps),
-    getFormLabel(formElement),
+    getFormLabel.call(this, formElement),
     _react2.default.createElement(_ResponsiveDatalist2.default, (0, _extends3.default)({
       onChange: function onChange(newvalue) {
         // console.log({newvalue})
@@ -620,7 +625,7 @@ function getFormMaskedInput(options) {
   return _react2.default.createElement(
     _FormItem2.default,
     (0, _extends3.default)({ key: i }, formElement.layoutProps, { initialIcon: formElement.initialIcon, isValid: isValid, hasError: hasError, hasValue: hasValue }),
-    getFormLabel(formElement),
+    getFormLabel.call(this, formElement),
     _react2.default.createElement(
       'span',
       wrapperProps,
@@ -694,7 +699,7 @@ function getFormTextInputArea(options) {
   return _react2.default.createElement(
     _FormItem2.default,
     (0, _extends3.default)({ key: i }, formElement.layoutProps, { initialIcon: formElement.initialIcon, isValid: isValid, hasError: hasError, hasValue: hasValue }),
-    getFormLabel(formElement),
+    getFormLabel.call(this, formElement),
     _react2.default.createElement(_reBulma.Input, (0, _extends3.default)({
       help: getFormElementHelp(hasError, this.state, formElement.name),
       color: hasError ? 'isDanger' : undefined,
@@ -733,7 +738,7 @@ function getFormTextArea(options) {
   return _react2.default.createElement(
     _FormItem2.default,
     (0, _extends3.default)({ key: i }, formElement.layoutProps, { initialIcon: formElement.initialIcon, isValid: isValid, hasError: hasError, hasValue: hasValue }),
-    getFormLabel(formElement),
+    getFormLabel.call(this, formElement),
     _react2.default.createElement(_reBulma.Textarea, (0, _extends3.default)({
       onChange: function onChange(event) {
         return _onChange()(event);
@@ -783,7 +788,7 @@ function getFormSelect(options) {
   return _react2.default.createElement(
     _FormItem2.default,
     (0, _extends3.default)({ key: i }, formElement.layoutProps, { initialIcon: formElement.initialIcon, isValid: isValid, hasError: hasError, hasValue: hasValue }),
-    getFormLabel(formElement),
+    getFormLabel.call(this, formElement),
     _react2.default.createElement(
       'span',
       { className: '__re-bulma_control', style: { position: 'relative', display: 'block' } },
@@ -974,7 +979,7 @@ function getRawInput(options) {
   return _react2.default.createElement(
     _FormItem2.default,
     (0, _extends3.default)({ key: i }, formElement.layoutProps),
-    getFormLabel(formElement),
+    getFormLabel.call(this, formElement),
     _react2.default.createElement(
       'div',
       wrapperProps,
@@ -1015,7 +1020,7 @@ function getButton(options) {
   return _react2.default.createElement(
     _FormItem2.default,
     (0, _extends3.default)({ key: i }, formElement.layoutProps),
-    getFormLabel(formElement),
+    getFormLabel.call(this, formElement),
     _react2.default.createElement(
       _reBulma.Button,
       (0, _extends3.default)({
@@ -1087,7 +1092,7 @@ function getSliderInput(options) {
   return _react2.default.createElement(
     _FormItem2.default,
     (0, _extends3.default)({ key: i }, formElement.layoutProps),
-    getFormLabel(formElement),
+    getFormLabel.call(this, formElement),
     _react2.default.createElement(
       'div',
       wrapperProps,
@@ -1136,7 +1141,7 @@ function getImage(options) {
   return _react2.default.createElement(
     _FormItem2.default,
     (0, _extends3.default)({ key: i }, formElement.layoutProps),
-    getFormLabel(formElement),
+    getFormLabel.call(this, formElement),
     formElement.link ? // eslint-disable-next-line
     _react2.default.createElement(
       'a',
@@ -1164,7 +1169,7 @@ function getFormLink(options) {
   return _react2.default.createElement(
     _FormItem2.default,
     (0, _extends3.default)({ key: i }, formElement.layoutProps),
-    getFormLabel(formElement),
+    getFormLabel.call(this, formElement),
     _react2.default.createElement(
       'span',
       wrapperProps,
@@ -1186,7 +1191,7 @@ function getFormGroup(options) {
   return _react2.default.createElement(
     _FormItem2.default,
     (0, _extends3.default)({ key: i }, formElement.layoutProps),
-    getFormLabel(formElement),
+    getFormLabel.call(this, formElement),
     _react2.default.createElement(
       _reBulma.Group,
       formElement.passProps,
@@ -1238,7 +1243,7 @@ function getFormCode(options) {
   return _react2.default.createElement(
     _FormItem2.default,
     (0, _extends3.default)({ key: i }, formElement.layoutProps),
-    getFormLabel(formElement),
+    getFormLabel.call(this, formElement),
     _react2.default.createElement(_RACodeMirror2.default, (0, _extends3.default)({ key: i }, CodeMirrorProps)),
     getCustomErrorLabel(hasError, this.state, formElement)
   );
@@ -1291,7 +1296,7 @@ function getFormEditor(options) {
   return _react2.default.createElement(
     _FormItem2.default,
     (0, _extends3.default)({ key: i }, formElement.layoutProps),
-    getFormLabel(formElement),
+    getFormLabel.call(this, formElement),
     _react2.default.createElement(_PreviewEditor2.default, (0, _extends3.default)({ key: i }, EditorProps, { value: initialVal }))
   );
 }
@@ -1314,7 +1319,7 @@ function getFormSubmit(options) {
   return _react2.default.createElement(
     _FormItem2.default,
     (0, _extends3.default)({ key: i }, formElement.layoutProps),
-    getFormLabel(formElement),
+    getFormLabel.call(this, formElement),
     _react2.default.createElement(
       _reBulma.Button,
       (0, _extends3.default)({
