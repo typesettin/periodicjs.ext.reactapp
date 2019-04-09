@@ -9,6 +9,7 @@ import { default as Slick } from 'react-slick';
 import { default as RCTable } from 'rc-table';
 import { default as RCSwitch } from 'rc-switch';
 import { default as RCTree, TreeNode as RCTreeNode } from 'rc-tree';
+import Steps, { Step as RCStep, } from 'rc-steps';
 import { Carousel, } from 'react-responsive-carousel';
 import GoogleMap from 'google-map-react';
 import { getAdvancedBinding, } from './advancedBinding';
@@ -93,7 +94,6 @@ export function getEvalProps(options = {}) {
   return Object.assign({}, evProps, evBindProps);
 }
 
-
 export function getFunctionFromProps(options) {
   const { propFunc, propBody, } = options;
   if (typeof propFunc === 'string' && propFunc.includes('func:inline')) {
@@ -133,6 +133,8 @@ export let AppLayoutMap = Object.assign({}, { victory,
   RCTreeNode,
   RCSwitch,
   Slick,
+  RCSteps: Steps,
+  RCStep
 }, React.DOM, rebulma, window.__ra_custom_elements, { Link, });
 
 export function getComponentFromMap(options = {}) {

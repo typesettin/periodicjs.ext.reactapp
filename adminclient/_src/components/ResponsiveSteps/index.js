@@ -61,7 +61,8 @@ var ResponsiveSteps = function (_Component) {
 
     _this.state = {
       stepsProps: props.stepProps,
-      steps: props.steps
+      steps: props.steps,
+      current: props.current
     };
     return _this;
   }
@@ -81,15 +82,15 @@ var ResponsiveSteps = function (_Component) {
     value: function render() {
       var fullSteps = _react2.default.createElement(
         _rcSteps2.default,
-        (0, _extends3.default)({}, this.props.stepsProps, { current: this.props.current }),
-        this.props.steps.map(function (s, i) {
-          return _react2.default.createElement(_rcSteps.Step, {
+        (0, _extends3.default)({ current: this.state.current }, this.props.stepsProps),
+        this.state.steps.map(function (s, i) {
+          return _react2.default.createElement(_rcSteps.Step, (0, _extends3.default)({
             key: i,
             status: s.status,
             title: s.title,
             icon: s.icon,
-            description: s.description0
-          });
+            description: s.description
+          }, s.passProps));
         })
       );
       return fullSteps;

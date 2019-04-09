@@ -21,6 +21,7 @@ class ResponsiveSteps extends Component {
     this.state = {
       stepsProps: props.stepProps,
       steps: props.steps,
+      current: props.current,
     };
   }
 
@@ -35,15 +36,16 @@ class ResponsiveSteps extends Component {
 
   render() {
     const fullSteps = (
-      <Steps {...this.props.stepsProps} current={this.props.current}>
-        {this.props.steps.map((s, i) => {
+      <Steps current={this.state.current} {...this.props.stepsProps} >
+        {this.state.steps.map((s, i) => {
           return (
             <Step
               key={i}
               status={s.status}
               title={s.title}
               icon={s.icon}
-              description={s.description0}
+              description={s.description}
+              {...s.passProps}
             />
           );
         }) }  

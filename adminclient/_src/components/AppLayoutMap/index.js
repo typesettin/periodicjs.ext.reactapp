@@ -73,6 +73,10 @@ var _rcTree = require('rc-tree');
 
 var _rcTree2 = _interopRequireDefault(_rcTree);
 
+var _rcSteps = require('rc-steps');
+
+var _rcSteps2 = _interopRequireDefault(_rcSteps);
+
 var _reactResponsiveCarousel = require('react-responsive-carousel');
 
 var _googleMapReact = require('google-map-react');
@@ -281,7 +285,9 @@ var AppLayoutMap = exports.AppLayoutMap = (0, _assign2.default)({}, { victory: v
   RCTree: _rcTree2.default,
   RCTreeNode: _rcTree.TreeNode,
   RCSwitch: _rcSwitch2.default,
-  Slick: _reactSlick2.default
+  Slick: _reactSlick2.default,
+  RCSteps: _rcSteps2.default,
+  RCStep: _rcSteps.Step
 }, _react2.default.DOM, rebulma, window.__ra_custom_elements, { Link: _reactRouter.Link });
 
 function getComponentFromMap() {
