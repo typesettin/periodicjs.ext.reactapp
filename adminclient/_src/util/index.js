@@ -42,5 +42,6 @@ exports.default = {
   sortObject: _traverse.sortObject,
   getMFAPath: _routing.getMFAPath,
   getMFASetupPath: _routing.getMFASetupPath,
-  getDynamicFunctionName: _dynamics.getDynamicFunctionName
+  getDynamicFunctionName: _dynamics.getDynamicFunctionName,
+  confirmModalPopUp: _dynamics.confirmModalPopUp
 };

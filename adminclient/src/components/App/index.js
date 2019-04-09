@@ -62,7 +62,7 @@ const reduxActions = {
   debug: (data) => {
     console.debug(data);
   }, //.dispatch(actions.user.getUserStatus()),
-  fetchAction: function (pathname, fetchOptions, success){
+  fetchAction: function (pathname, fetchOptions, success) {
     // console.debug('in redux actions this', this);
     return utilities.fetchAction.call(this, pathname, fetchOptions, success);
   }, //.dispatch(actions.user.getUserStatus()),
@@ -83,6 +83,13 @@ const reduxActions = {
   // ajaxModal: (options) => store.dispatch(actions.notification.ajaxModal(options)),
   fileSaver: (options) => store.dispatch(actions.output.fileSaver(options)),
   createModal: (options) => store.dispatch(actions.notification.createModal(options)),
+  confirmModal: (options) => store.dispatch(actions.notification.createModal(utilities.confirmModalPopUp(options))),
+  // confirmModal: function(options) {
+  //   console.log('CONFIRM MODAL this', this, { options });
+  //   this.createModal(
+  //     utilities.confirmModalPopUp(options)  
+  //   );
+  // },
   hideModal: (options) => store.dispatch(actions.notification.hideModal(options)),
   createNotification: (options) => store.dispatch(actions.notification.createNotification(options)),
   errorNotification: (options, timeout) => store.dispatch(actions.notification.errorNotification(options, timeout)),

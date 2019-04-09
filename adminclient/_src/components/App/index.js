@@ -274,6 +274,15 @@ var reduxActions = {
   createModal: function createModal(options) {
     return _stores2.default.dispatch(_actions2.default.notification.createModal(options));
   },
+  confirmModal: function confirmModal(options) {
+    return _stores2.default.dispatch(_actions2.default.notification.createModal(_util2.default.confirmModalPopUp(options)));
+  },
+  // confirmModal: function(options) {
+  //   console.log('CONFIRM MODAL this', this, { options });
+  //   this.createModal(
+  //     utilities.confirmModalPopUp(options)  
+  //   );
+  // },
   hideModal: function hideModal(options) {
     return _stores2.default.dispatch(_actions2.default.notification.hideModal(options));
   },

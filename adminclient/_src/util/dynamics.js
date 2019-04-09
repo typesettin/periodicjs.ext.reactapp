@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.fetchAction = exports.getDynamicFunctionName = exports.fetchDynamicContent = exports.fetchSuccessContent = exports.fetchErrorContent = exports._handleFetchPaths = exports._handleDynamicParams = undefined;
+exports.fetchAction = exports.getDynamicFunctionName = exports.fetchDynamicContent = exports.confirmModalPopUp = exports.fetchSuccessContent = exports.fetchErrorContent = exports._handleFetchPaths = exports._handleDynamicParams = undefined;
 
 var _promise = require('babel-runtime/core-js/promise');
 
@@ -174,7 +174,70 @@ var fetchSuccessContent = exports.fetchSuccessContent = function _fetchSuccessCo
     }
   }
 };
-
+var confirmModalPopUp = exports.confirmModalPopUp = function confirmModalPopUp(options) {
+  var confirmModal = options.confirmModal || options;
+  var modal = (0, _assign2.default)({
+    title: 'Please Confirm',
+    text: {
+      component: 'div',
+      props: {
+        style: {
+          textAlign: 'center'
+        },
+        className: '__ra_rf_fe_s_cm'
+      },
+      children: [{
+        component: 'div',
+        props: (0, _assign2.default)({
+          className: '__ra_rf_fe_s_cm_t'
+        }, confirmModal.textContainerProps),
+        children: confirmModal.textContent || ''
+      }, {
+        component: 'div',
+        props: (0, _assign2.default)({
+          className: '__ra_rf_fe_s_cm_bc'
+        }, confirmModal.buttonWrapperProps),
+        children: [{
+          component: 'ResponsiveButton',
+          props: (0, _assign2.default)({
+            style: {
+              margin: 10
+            },
+            buttonProps: {
+              size: 'isMedium',
+              color: 'isPrimary'
+            },
+            inlineClick: function inlineClick(e) {
+              // console.log('inlineClick this', this, { e });
+              this.props.hideModal('last');
+              // eslint-disable-next-line
+              var clickFunc = Function('e', 'confirmModal', '"use strict";' + confirmModal.onClick).bind(this);
+              clickFunc(e, confirmModal);
+              // this.submitForm.call(this);
+            },
+            onclickProps: 'last'
+          }, confirmModal.yesButtonProps),
+          children: confirmModal.yesButtonText || 'Yes'
+        }, {
+          component: 'ResponsiveButton',
+          props: (0, _assign2.default)({
+            style: {
+              margin: 10
+            },
+            buttonProps: {
+              size: 'isMedium'
+            },
+            inlineClick: function inlineClick(e) {
+              this.props.hideModal('last');
+            }
+          }, confirmModal.noButtonProps),
+          children: confirmModal.noButtonText || 'No'
+        }]
+      }]
+    }
+  }, confirmModal);
+  return modal;
+};
 /**
  * Gets dynamic content for a given page, component, modal
  * @param  {string} [_pathname] The window path that should content is being fetched for. If the argument is not passed it will defaul to window.location.pathname
