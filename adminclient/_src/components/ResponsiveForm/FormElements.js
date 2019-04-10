@@ -52,6 +52,7 @@ exports.getHiddenInput = getHiddenInput;
 exports.getImage = getImage;
 exports.getFormLink = getFormLink;
 exports.getFormGroup = getFormGroup;
+exports.getFormAddons = getFormAddons;
 exports.getFormCode = getFormCode;
 exports.getFormEditor = getFormEditor;
 exports.getFormSubmit = getFormSubmit;
@@ -696,18 +697,19 @@ function getFormTextInputArea(options) {
       (0, _clearImmediate3.default)(t);
     });
   }
-  return _react2.default.createElement(
+  var inputElement = _react2.default.createElement(_reBulma.Input, (0, _extends3.default)({
+    help: getFormElementHelp(hasError, this.state, formElement.name),
+    color: hasError ? 'isDanger' : undefined,
+    icon: hasError ? formElement.errorIcon || 'fa fa-warning' : isValid ? formElement.validIcon || 'fa fa-check' : formElement.initialIcon ? formElement.initialIcon : undefined,
+    hasIconRight: formElement.errorIconRight,
+    onChange: onChange,
+    placeholder: formElement.placeholder,
+    value: initialValue }, passableProps));
+  return formElement.rawItem ? inputElement : _react2.default.createElement(
     _FormItem2.default,
     (0, _extends3.default)({ key: i }, formElement.layoutProps, { initialIcon: formElement.initialIcon, isValid: isValid, hasError: hasError, hasValue: hasValue }),
     getFormLabel.call(this, formElement),
-    _react2.default.createElement(_reBulma.Input, (0, _extends3.default)({
-      help: getFormElementHelp(hasError, this.state, formElement.name),
-      color: hasError ? 'isDanger' : undefined,
-      icon: hasError ? formElement.errorIcon || 'fa fa-warning' : isValid ? formElement.validIcon || 'fa fa-check' : formElement.initialIcon ? formElement.initialIcon : undefined,
-      hasIconRight: formElement.errorIconRight,
-      onChange: onChange,
-      placeholder: formElement.placeholder,
-      value: initialValue }, passableProps))
+    inputElement
   );
 }
 
@@ -785,35 +787,36 @@ function getFormSelect(options) {
     }
   }
 
-  return _react2.default.createElement(
+  var selectElement = _react2.default.createElement(
+    'span',
+    { className: '__re-bulma_control', style: { position: 'relative', display: 'block' } },
+    _react2.default.createElement(
+      _reBulma.Select,
+      (0, _extends3.default)({
+        style: (0, _assign2.default)({}, { flex: 'inherit', marginBottom: 0 }, formElement.passProps && formElement.passProps.style ? formElement.passProps.style : {}),
+        help: getFormElementHelp(hasError, this.state, formElement.name),
+        color: hasError ? 'isDanger' : undefined,
+        onChange: function onChange(event) {
+          _onChange2()(event);
+          if (customCallbackfunction) customCallbackfunction(event);
+        },
+        placeholder: formElement.placeholder || formElement.label,
+        value: this.state[formElement.name] || initialValue }, formElement.passProps),
+      selectOptions.map(function (opt, k) {
+        return _react2.default.createElement(
+          'option',
+          { key: k, disabled: opt.disabled, value: opt.value },
+          opt.label || opt.value
+        );
+      })
+    ),
+    !formElement.errorIconLeft ? getCustomErrorIcon(hasError, isValid, this.state, formElement) : null
+  );
+  return formElement.rawItem ? selectElement : _react2.default.createElement(
     _FormItem2.default,
     (0, _extends3.default)({ key: i }, formElement.layoutProps, { initialIcon: formElement.initialIcon, isValid: isValid, hasError: hasError, hasValue: hasValue }),
     getFormLabel.call(this, formElement),
-    _react2.default.createElement(
-      'span',
-      { className: '__re-bulma_control', style: { position: 'relative', display: 'block' } },
-      _react2.default.createElement(
-        _reBulma.Select,
-        (0, _extends3.default)({
-          style: (0, _assign2.default)({}, { flex: 'inherit', marginBottom: 0 }, formElement.passProps && formElement.passProps.style ? formElement.passProps.style : {}),
-          help: getFormElementHelp(hasError, this.state, formElement.name),
-          color: hasError ? 'isDanger' : undefined,
-          onChange: function onChange(event) {
-            _onChange2()(event);
-            if (customCallbackfunction) customCallbackfunction(event);
-          },
-          placeholder: formElement.placeholder || formElement.label,
-          value: this.state[formElement.name] || initialValue }, formElement.passProps),
-        selectOptions.map(function (opt, k) {
-          return _react2.default.createElement(
-            'option',
-            { key: k, disabled: opt.disabled, value: opt.value },
-            opt.label || opt.value
-          );
-        })
-      ),
-      !formElement.errorIconLeft ? getCustomErrorIcon(hasError, isValid, this.state, formElement) : null
-    )
+    selectElement
   );
 }
 
@@ -1017,17 +1020,18 @@ function getButton(options) {
     };
   }
 
-  return _react2.default.createElement(
+  var buttonElement = _react2.default.createElement(
+    _reBulma.Button,
+    (0, _extends3.default)({
+      type: formElement.type,
+      onChange: onValueChange }, passableProps),
+    formElement.value || passableProps.value
+  );
+  return formElement.rawItem ? buttonElement : _react2.default.createElement(
     _FormItem2.default,
     (0, _extends3.default)({ key: i }, formElement.layoutProps),
     getFormLabel.call(this, formElement),
-    _react2.default.createElement(
-      _reBulma.Button,
-      (0, _extends3.default)({
-        type: formElement.type,
-        onChange: onValueChange }, passableProps),
-      formElement.value || passableProps.value
-    ),
+    buttonElement,
     getCustomErrorLabel(hasError, this.state, formElement)
   );
 }
@@ -1196,6 +1200,24 @@ function getFormGroup(options) {
       _reBulma.Group,
       formElement.passProps,
       groupElements
+    )
+  );
+}
+
+function getFormAddons(options) {
+  var formElement = options.formElement,
+      i = options.i,
+      addonElements = options.addonElements;
+
+
+  return _react2.default.createElement(
+    _FormItem2.default,
+    (0, _extends3.default)({ key: i }, formElement.layoutProps),
+    getFormLabel.call(this, formElement),
+    _react2.default.createElement(
+      _reBulma.Addons,
+      formElement.passProps,
+      addonElements
     )
   );
 }

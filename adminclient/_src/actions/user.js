@@ -723,8 +723,11 @@ var user = {
         })), _serverSideReactNative.AsyncStorage.setItem(_constants2.default.jwt_token.PROFILE_JSON, (0, _stringify2.default)(responseData.user)), _this10.initializeAuthenticatedUser(responseData.token, false, __global__returnURL)(dispatch, getState)]);
       }).then(function () {
         dispatch(_this10.recievedLoginUser(url, fetchResponse, cachedResponseData));
+        var welcomeMessage = 'Welcome back';
+        if (cachedResponseData && cachedResponseData.user) welcomeMessage = 'Welcome back ' + cachedResponseData.user.firstname || cachedResponseData.user.name || cachedResponseData.user.email;
+        console.log({ fetchResponse: fetchResponse, cachedResponseData: cachedResponseData });
         if (!notificationsSettings.hide_login_notification) {
-          dispatch(_notification2.default.createNotification({ text: 'Welcome back', timeout: 4000, type: 'success' }));
+          dispatch(_notification2.default.createNotification({ text: welcomeMessage, timeout: 4000, type: 'success' }));
         }
         return _this10.enforceMFA()(dispatch, getState);
       }).catch(function (error) {
