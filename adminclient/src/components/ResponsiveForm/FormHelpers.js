@@ -118,6 +118,10 @@ export function setAddNameToName(options) {
   ) {
     // console.debug('skip', formElm);
     //
+  } else if (formElm.type === 'addon') {
+    if (formElm.addonElements && formElm.addonElements.length) {
+      formElm.addonElements.forEach(formElm => recursiveSetAddNameToName({ formdata, formElementFields, formElm, }));
+    }
   } else if (formElm.type === 'group') {
     if (formElm.groupElements && formElm.groupElements.length) {
       formElm.groupElements.forEach(formElm => recursiveSetAddNameToName({ formdata, formElementFields, formElm, }));
@@ -176,6 +180,8 @@ export function setFormNameFields(options) {
             if (formGroupRight) formGroupRight.forEach(formElm => addNameToName({ formElementFields, formdata, formElm, }));
           } else if (formElement.type === 'group') {
             if (formElement.groupElements && formElement.groupElements.length) formElement.groupElements.forEach(formElm => addNameToName({ formElementFields, formdata, formElm, }));
+          } else if (formElement.type === 'addon') {
+            if (formElement.addonElements && formElement.addonElements.length) formElement.addonElements.forEach(formElm => addNameToName({ formElementFields, formdata, formElm, }));
           } else if (!formElement ||
             formElement.disabled ||
             (formElement.passProps && formElement.passProps.state === 'isDisabled')

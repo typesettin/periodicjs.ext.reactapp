@@ -163,6 +163,12 @@ function setAddNameToName(options) {
   if (!formElm || formElm.disabled || formElm.passProps && formElm.passProps.state === 'isDisabled') {
     // console.debug('skip', formElm);
     //
+  } else if (formElm.type === 'addon') {
+    if (formElm.addonElements && formElm.addonElements.length) {
+      formElm.addonElements.forEach(function (formElm) {
+        return recursiveSetAddNameToName({ formdata: formdata, formElementFields: formElementFields, formElm: formElm });
+      });
+    }
   } else if (formElm.type === 'group') {
     if (formElm.groupElements && formElm.groupElements.length) {
       formElm.groupElements.forEach(function (formElm) {
@@ -227,6 +233,10 @@ function setFormNameFields(options) {
             });
           } else if (formElement.type === 'group') {
             if (formElement.groupElements && formElement.groupElements.length) formElement.groupElements.forEach(function (formElm) {
+              return addNameToName({ formElementFields: formElementFields, formdata: formdata, formElm: formElm });
+            });
+          } else if (formElement.type === 'addon') {
+            if (formElement.addonElements && formElement.addonElements.length) formElement.addonElements.forEach(function (formElm) {
               return addNameToName({ formElementFields: formElementFields, formdata: formdata, formElm: formElm });
             });
           } else if (!formElement || formElement.disabled || formElement.passProps && formElement.passProps.state === 'isDisabled') {
