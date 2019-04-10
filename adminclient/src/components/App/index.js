@@ -83,13 +83,7 @@ const reduxActions = {
   // ajaxModal: (options) => store.dispatch(actions.notification.ajaxModal(options)),
   fileSaver: (options) => store.dispatch(actions.output.fileSaver(options)),
   createModal: (options) => store.dispatch(actions.notification.createModal(options)),
-  confirmModal: (options) => store.dispatch(actions.notification.createModal(utilities.confirmModalPopUp(options))),
-  // confirmModal: function(options) {
-  //   console.log('CONFIRM MODAL this', this, { options });
-  //   this.createModal(
-  //     utilities.confirmModalPopUp(options)  
-  //   );
-  // },
+  useConfirmModal: (options) => store.dispatch(actions.notification.createModal(utilities.confirmModalPopUp(options))),
   hideModal: (options) => store.dispatch(actions.notification.hideModal(options)),
   createNotification: (options) => store.dispatch(actions.notification.createNotification(options)),
   errorNotification: (options, timeout) => store.dispatch(actions.notification.errorNotification(options, timeout)),

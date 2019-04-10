@@ -664,8 +664,11 @@ const user = {
         })
         .then(() => {
           dispatch(this.recievedLoginUser(url, fetchResponse, cachedResponseData));
+          let welcomeMessage = 'Welcome back';
+          if (cachedResponseData && cachedResponseData.user) welcomeMessage = 'Welcome back ' + cachedResponseData.user.firstname || cachedResponseData.user.name || cachedResponseData.user.email;
+          console.log({ fetchResponse, cachedResponseData });
           if(!notificationsSettings.hide_login_notification){
-            dispatch(notification.createNotification({ text: 'Welcome back', timeout:4000, type:'success', }));
+            dispatch(notification.createNotification({ text: welcomeMessage, timeout:4000, type:'success', }));
           }
           return this.enforceMFA()(dispatch, getState);
         })

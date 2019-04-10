@@ -11,7 +11,7 @@ import capitalize from 'capitalize';
 // import { EditorState, } from 'draft-js';
 import Slider from 'rc-slider';
 import { default as RCSwitch, } from 'rc-switch';
-import { ControlLabel, Label, Input, Button, CardFooterItem, Select, Textarea, Group, Image, } from 're-bulma';
+import { ControlLabel, Label, Input, Button, CardFooterItem, Select, Textarea, Group, Image, Addons, } from 're-bulma';
 import MaskedInput from 'react-text-mask';
 import moment from 'moment';
 import numeral from 'numeral';
@@ -600,17 +600,20 @@ export function getFormTextInputArea(options) {
       clearImmediate(t);
     });
   }
-  return (<FormItem key={i} {...formElement.layoutProps} initialIcon={formElement.initialIcon} isValid={isValid} hasError={hasError} hasValue={hasValue} >
-    {getFormLabel.call(this,formElement)}  
-    <Input 
-      help={getFormElementHelp(hasError, this.state, formElement.name)}
-      color={(hasError)?'isDanger':undefined}
-      icon={(hasError) ? formElement.errorIcon || 'fa fa-warning' : (isValid) ? formElement.validIcon || 'fa fa-check' : (formElement.initialIcon) ? formElement.initialIcon : undefined}
-      hasIconRight={formElement.errorIconRight}
-      onChange={onChange}
-      placeholder={formElement.placeholder}
-      value={ initialValue } {...passableProps}/>
-  </FormItem>);
+  const inputElement = (<Input
+    help={getFormElementHelp(hasError, this.state, formElement.name)}
+    color={(hasError) ? 'isDanger' : undefined}
+    icon={(hasError) ? formElement.errorIcon || 'fa fa-warning' : (isValid) ? formElement.validIcon || 'fa fa-check' : (formElement.initialIcon) ? formElement.initialIcon : undefined}
+    hasIconRight={formElement.errorIconRight}
+    onChange={onChange}
+    placeholder={formElement.placeholder}
+    value={initialValue} {...passableProps} />);
+  return formElement.rawItem
+    ? inputElement
+    : (<FormItem key={i} {...formElement.layoutProps} initialIcon={formElement.initialIcon} isValid={isValid} hasError={hasError} hasValue={hasValue} >
+      {getFormLabel.call(this, formElement)}
+      {inputElement}
+    </FormItem>);
 }
 
 export function getFormTextArea(options) {
@@ -680,26 +683,29 @@ export function getFormSelect(options) {
     } 
   }
 
-  return (<FormItem key={i} {...formElement.layoutProps} initialIcon={formElement.initialIcon} isValid={isValid} hasError={hasError} hasValue={hasValue} >
-    {getFormLabel.call(this,formElement)}  
-    <span className="__re-bulma_control" style={{ position: 'relative', display: 'block', }}>
-      <Select 
-        style={Object.assign({}, { flex: 'inherit', marginBottom: 0, }, (formElement.passProps && formElement.passProps.style) ? formElement.passProps.style : {})}  
-        help={getFormElementHelp(hasError, this.state, formElement.name)}
-        color={(hasError)?'isDanger':undefined}
-        onChange={(event)=>{
-          onChange()(event);
-          if(customCallbackfunction) customCallbackfunction(event);
-        }}
-        placeholder={formElement.placeholder||formElement.label}
-        value={this.state[ formElement.name ] || initialValue} {...formElement.passProps}>
-        {selectOptions.map((opt, k) => {
-          return <option key={k} disabled={opt.disabled} value={opt.value}>{opt.label || opt.value}</option>;
-        })}
-        </Select>
-      {(!formElement.errorIconLeft) ? getCustomErrorIcon(hasError, isValid, this.state, formElement) : null}  
-    </span>  
-  </FormItem>);
+  const selectElement = (<span className="__re-bulma_control" style={{ position: 'relative', display: 'block', }}>
+    <Select
+      style={Object.assign({}, { flex: 'inherit', marginBottom: 0, }, (formElement.passProps && formElement.passProps.style) ? formElement.passProps.style : {})}
+      help={getFormElementHelp(hasError, this.state, formElement.name)}
+      color={(hasError) ? 'isDanger' : undefined}
+      onChange={(event) => {
+        onChange()(event);
+        if (customCallbackfunction) customCallbackfunction(event);
+      }}
+      placeholder={formElement.placeholder || formElement.label}
+      value={this.state[ formElement.name ] || initialValue} {...formElement.passProps}>
+      {selectOptions.map((opt, k) => {
+        return <option key={k} disabled={opt.disabled} value={opt.value}>{opt.label || opt.value}</option>;
+      })}
+    </Select>
+    {(!formElement.errorIconLeft) ? getCustomErrorIcon(hasError, isValid, this.state, formElement) : null}
+  </span>);
+  return formElement.rawItem
+    ? selectElement
+    : (<FormItem key={i} {...formElement.layoutProps} initialIcon={formElement.initialIcon} isValid={isValid} hasError={hasError} hasValue={hasValue} >
+      {getFormLabel.call(this, formElement)}
+      {selectElement}
+    </FormItem>);
 }
 
 export function getFormCheckbox(options) {
@@ -871,16 +877,19 @@ export function getButton(options) {
     };
   }
 
-  return (<FormItem key={i} {...formElement.layoutProps} >
-    {getFormLabel.call(this,formElement)}  
-      <Button
-        type={formElement.type}
-        onChange={onValueChange} {...passableProps}
-    >
-      {formElement.value || passableProps.value}
-      </Button>
+  const buttonElement = (<Button
+    type={formElement.type}
+    onChange={onValueChange} {...passableProps}
+  >
+    {formElement.value || passableProps.value}
+  </Button>);
+  return formElement.rawItem
+    ? buttonElement
+    : (<FormItem key={i} {...formElement.layoutProps} >
+      {getFormLabel.call(this, formElement)}
+      {buttonElement}
       {getCustomErrorLabel(hasError, this.state, formElement)}
-  </FormItem>);
+    </FormItem>);
 }
 
 export function getSliderInput(options) {
@@ -1010,6 +1019,18 @@ export function getFormGroup(options) {
     >
       {groupElements}  
     </Group>
+  </FormItem>);
+}
+
+export function getFormAddons(options) {
+  let { formElement, i, addonElements, } = options;
+
+  return (<FormItem key={i} {...formElement.layoutProps} >
+    {getFormLabel.call(this,formElement)}  
+    <Addons {...formElement.passProps}
+    >
+      {addonElements}  
+    </Addons>
   </FormItem>);
 }
 

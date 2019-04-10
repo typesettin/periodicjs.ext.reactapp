@@ -4,7 +4,7 @@ import ResponsiveCard from '../ResponsiveCard';
 import ResponsiveTabs from '../ResponsiveTabs';
 import { getRenderedComponent, } from '../AppLayoutMap';
 import utilities from '../../util';
-import { getFormTextInputArea, getFormMaskedInput, getFormCheckbox, getFormSubmit, getFormSelect, getCardFooterItem, getFormCode, getFormTextArea, getFormEditor, getFormLink, getHiddenInput, getFormGroup, getImage, getFormDatalist, getRawInput, getSliderInput, getFormDatatable, getFormSwitch, getButton, } from './FormElements';
+import { getFormTextInputArea, getFormMaskedInput, getFormCheckbox, getFormSubmit, getFormSelect, getCardFooterItem, getFormCode, getFormTextArea, getFormEditor, getFormLink, getHiddenInput, getFormGroup, getFormAddons, getImage, getFormDatalist, getRawInput, getSliderInput, getFormDatatable, getFormSwitch, getButton, } from './FormElements';
 import { getCallbackFromString, setFormNameFields, assignHiddenFields, validateForm, assignFormBody, handleFormSubmitNotification, handleSuccessCallbacks, submitThisDotPropsFunc, submitWindowFunc, validateFormElement, getFunctionFromProps, } from './FormHelpers';
 import flatten from 'flat';
 import qs from 'querystring';
@@ -115,6 +115,7 @@ class ResponsiveForm extends Component{
     this.getFormEditor = getFormEditor.bind(this);
     this.getFormLink = getFormLink.bind(this);
     this.getFormGroup = getFormGroup.bind(this);
+    this.getFormAddons = getFormAddons.bind(this);
     this.getImage = getImage.bind(this);
     this.validateFormElement = validateFormElement.bind(this);
     this.submitForm = this.submitForm.bind(this);
@@ -430,6 +431,14 @@ class ResponsiveForm extends Component{
           return this.getFormSubmit({ formElement,  i:j, formgroup, }); 
         } else if (formElement.type === 'group') {
           return this.getFormGroup({ formElement,  i:j, groupElements:formElement.groupElements.map(getFormElements), }); 
+        } else if (formElement.type === 'addon') {
+          return this.getFormAddons({
+            formElement, i: j, addonElements: formElement.addonElements.map(elm => {
+              elm.rawItem = true;
+              console.log({elm})
+              return getFormElements(elm);
+            }),
+          }); 
         } else {
           formElement.passProps = Object.assign({}, formElement.passProps, { type: formElement.type, });
           return this.getFormTextInputArea({ formElement,  i:j, formgroup, });
