@@ -200,6 +200,7 @@ function getEvalProps() {
 
   var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   var rjx = options.rjx;
+  // console.warn({rjx})
   // eslint-disable-next-line
 
   var scopedEval = eval; //https://github.com/rollup/rollup/wiki/Troubleshooting#avoiding-eval
@@ -211,7 +212,9 @@ function getEvalProps() {
     } catch (e) {
       if (_this.debug || rjx.debug) evVal = e;
     }
-    eprops[epropName] = evVal;
+
+    eprops[epropName] = typeof evVal === 'function' ? evVal.call(_this, { rjx: rjx }) : evVal;
+    // console.warn('eprops',eprops)
     return eprops;
   }, {});
   var evBindProps = (0, _keys2.default)(rjx.__dangerouslyBindEvalProps || {}).reduce(function (eprops, epropName) {

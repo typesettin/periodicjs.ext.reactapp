@@ -8,13 +8,13 @@ var _extends2 = require('babel-runtime/helpers/extends');
 
 var _extends3 = _interopRequireDefault(_extends2);
 
-var _assign = require('babel-runtime/core-js/object/assign');
-
-var _assign2 = _interopRequireDefault(_assign);
-
 var _typeof2 = require('babel-runtime/helpers/typeof');
 
 var _typeof3 = _interopRequireDefault(_typeof2);
+
+var _assign = require('babel-runtime/core-js/object/assign');
+
+var _assign2 = _interopRequireDefault(_assign);
 
 var _getPrototypeOf = require('babel-runtime/core-js/object/get-prototype-of');
 
@@ -170,7 +170,9 @@ var ModalUI = function (_Component2) {
         // if (typeof this.text === 'object' && this.text.layout) {
         // }
 
-        var modelContent = content ? content : typeof _this4.text !== 'string' ? _this4.props.dynamicRenderComponent(_this4.text, passedProps, true) : _this4.text;
+        var modelContent = content ? content : typeof _this4.text !== 'string' ? _this4.props.dynamicRenderComponent((0, _assign2.default)({}, _this4.text, {
+          props: (0, _assign2.default)({}, _this4.text.props, passedProps)
+        }), passedProps, true) : _this4.text;
         var footerContent = _this4.footer ? (0, _typeof3.default)(_this4.footer) === 'object' ? _this4.props.dynamicRenderComponent(_this4.footer) : _react2.default.createElement(
           'div',
           { style: { padding: '20px' } },

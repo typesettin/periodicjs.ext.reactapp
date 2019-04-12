@@ -490,7 +490,7 @@ var ResponsiveForm = function (_Component) {
             return _this3.getFormAddons({
               formElement: formElement, i: j, addonElements: formElement.addonElements.map(function (elm) {
                 elm.rawItem = true;
-                console.log({ elm: elm });
+                // console.log({elm})
                 return getFormElements(elm);
               })
             });
