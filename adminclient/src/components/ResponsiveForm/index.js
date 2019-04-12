@@ -435,7 +435,7 @@ class ResponsiveForm extends Component{
           return this.getFormAddons({
             formElement, i: j, addonElements: formElement.addonElements.map(elm => {
               elm.rawItem = true;
-              console.log({elm})
+              // console.log({elm})
               return getFormElements(elm);
             }),
           }); 

@@ -88,7 +88,13 @@ class ModalUI extends Component {
       // if (typeof this.text === 'object' && this.text.layout) {
       // }
 
-      let modelContent = (content) ? content : ((typeof this.text !== 'string') ? this.props.dynamicRenderComponent(this.text, passedProps, true) : this.text);
+      let modelContent = (content)
+        ? content
+        : ((typeof this.text !== 'string')
+          ? this.props.dynamicRenderComponent(Object.assign({}, this.text, {
+            props: Object.assign({}, this.text.props,  passedProps),
+          }), passedProps, true) :
+          this.text);
       let footerContent = (this.footer)
         ? ((typeof this.footer === 'object')? this.props.dynamicRenderComponent(this.footer) : <div style={{ padding: '20px', }} >{this.footer}</div>)
         : undefined; 

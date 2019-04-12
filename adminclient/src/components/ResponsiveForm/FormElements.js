@@ -164,7 +164,11 @@ function getPassablePropsKeyEvents(passableProps, formElement) {
       passableProps[ customEventFunc.replace('_', '') ] = (e) => {
         // eslint-disable-next-line
         const clickFunc = Function('e', 'formElement', '"use strict";' + formElement[ customEventFunc ]).bind(this);
-        clickFunc(e, formElement);
+        try {
+          clickFunc(e, formElement);
+        } catch (error) {
+          console.error(error);
+        }
       };
     }
     // if (formElement._onClick) {

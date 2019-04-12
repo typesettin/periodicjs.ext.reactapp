@@ -54,6 +54,7 @@ export function getParamNames(func) {
 
 export function getEvalProps(options = {}) {
   const { rjx, } = options;
+  // console.warn({rjx})
   // eslint-disable-next-line
   const scopedEval = eval; //https://github.com/rollup/rollup/wiki/Troubleshooting#avoiding-eval
   const evProps = Object.keys(rjx.__dangerouslyEvalProps || {}).reduce((eprops, epropName) => {
@@ -64,7 +65,11 @@ export function getEvalProps(options = {}) {
     } catch (e) { 
       if (this.debug || rjx.debug) evVal = e;
     }
-    eprops[ epropName ] = evVal;
+    
+    eprops[ epropName ] = (typeof evVal === 'function')
+      ? evVal.call(this, { rjx })
+      : evVal;
+    // console.warn('eprops',eprops)
     return eprops;
   }, {});
   const evBindProps = Object.keys(rjx.__dangerouslyBindEvalProps || {}).reduce((eprops, epropName) => {
