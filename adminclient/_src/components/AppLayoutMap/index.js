@@ -250,9 +250,12 @@ function getFunctionFromProps(options) {
   var propFunc = options.propFunc,
       propBody = options.propBody;
 
-  if (typeof propFunc === 'string' && propFunc.includes('func:inline')) {
+  if (typeof propFunc === 'function') {
+    return propFunc.bind(this);
+  } else if (typeof propFunc === 'string' && propFunc.includes('func:inline')) {
+    var InlineFunction = void 0;
     // eslint-disable-next-line
-    var InlineFunction = Function('param1', 'param2', '"use strict";' + propBody);
+    InlineFunction = Function('param1', 'param2', '"use strict";' + propBody);
 
     var _propFunc$split = propFunc.split('.'),
         _propFunc$split2 = (0, _slicedToArray3.default)(_propFunc$split, 2),
@@ -368,7 +371,8 @@ function getRenderedComponent(componentObject, resources, debug) {
     }, thisDotProps, thisprops, componentObject.props, asyncprops, windowprops, evalProps, insertedComponents);
 
     if (renderedCompProps.ref) {
-      renderedCompProps.ref = getFunction({
+      // console.warn('typeof renderedCompProps.ref', typeof renderedCompProps.ref);
+      renderedCompProps.ref = (0, _typeof3.default)(renderedCompProps.ref) ? renderedCompProps.ref : getFunction({
         propFunc: renderedCompProps.ref,
         propBody: componentObject.__inline[renderedCompProps.ref]
       });
