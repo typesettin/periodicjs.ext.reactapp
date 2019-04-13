@@ -101,9 +101,12 @@ export function getEvalProps(options = {}) {
 
 export function getFunctionFromProps(options) {
   const { propFunc, propBody, } = options;
-  if (typeof propFunc === 'string' && propFunc.includes('func:inline')) {
+  if (typeof propFunc === 'function') {
+    return propFunc.bind(this);
+  } else if (typeof propFunc === 'string' && propFunc.includes('func:inline')) {
+    let InlineFunction;
     // eslint-disable-next-line
-    const InlineFunction = Function('param1','param2','"use strict";' + propBody);
+    InlineFunction = Function('param1','param2','"use strict";' + propBody);
     const [ propFuncName, funcName, ] = propFunc.split('.');
     // console.info({ propFunc, propBody, propFuncName, funcName, });
     Object.defineProperty(
@@ -226,10 +229,13 @@ export function getRenderedComponent(componentObject, resources, debug) {
       componentObject.props, asyncprops, windowprops, evalProps, insertedComponents);
     
     if (renderedCompProps.ref) {
-      renderedCompProps.ref = getFunction({
-        propFunc: renderedCompProps.ref,
-        propBody: componentObject.__inline[ renderedCompProps.ref ],
-      });
+      // console.warn('typeof renderedCompProps.ref', typeof renderedCompProps.ref);
+      renderedCompProps.ref = (typeof renderedCompProps.ref)
+        ? renderedCompProps.ref
+        : getFunction({
+          propFunc: renderedCompProps.ref,
+          propBody: componentObject.__inline[ renderedCompProps.ref ],
+        });
     }
       //Allowing for window functions
     if(componentObject.hasWindowFunc || componentObject.hasPropFunc){
