@@ -375,7 +375,7 @@ const user = {
       if (state.routing && state.routing.locationBeforeTransitions && state.routing.locationBeforeTransitions.pathname && state.routing.locationBeforeTransitions.pathname === returnUrl) {
         returnUrl = false;
       }
-      console.debug({ formReturnURL, returnUrl, });
+      // console.debug({ formReturnURL, returnUrl, });
       // console.log('state.settings.auth', state.settings.auth);
       // console.log('state.user.isMFAAuthenticated', state.user.isMFAAuthenticated);
       // console.log({ extensionattributes });
@@ -665,7 +665,7 @@ const user = {
         .then(() => {
           dispatch(this.recievedLoginUser(url, fetchResponse, cachedResponseData));
           let welcomeMessage = 'Welcome back';
-          if (cachedResponseData && cachedResponseData.user) welcomeMessage = 'Welcome back ' + cachedResponseData.user.firstname || cachedResponseData.user.name || cachedResponseData.user.email;
+          if (cachedResponseData && cachedResponseData.user) welcomeMessage = 'Welcome back ' + (cachedResponseData.user.firstname || cachedResponseData.user.name || cachedResponseData.user.email);
           console.log({ fetchResponse, cachedResponseData });
           if(!notificationsSettings.hide_login_notification){
             dispatch(notification.createNotification({ text: welcomeMessage, timeout:4000, type:'success', }));

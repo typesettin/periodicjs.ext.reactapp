@@ -435,7 +435,7 @@ var user = {
       if (state.routing && state.routing.locationBeforeTransitions && state.routing.locationBeforeTransitions.pathname && state.routing.locationBeforeTransitions.pathname === returnUrl) {
         returnUrl = false;
       }
-      console.debug({ formReturnURL: formReturnURL, returnUrl: returnUrl });
+      // console.debug({ formReturnURL, returnUrl, });
       // console.log('state.settings.auth', state.settings.auth);
       // console.log('state.user.isMFAAuthenticated', state.user.isMFAAuthenticated);
       // console.log({ extensionattributes });
@@ -724,7 +724,7 @@ var user = {
       }).then(function () {
         dispatch(_this10.recievedLoginUser(url, fetchResponse, cachedResponseData));
         var welcomeMessage = 'Welcome back';
-        if (cachedResponseData && cachedResponseData.user) welcomeMessage = 'Welcome back ' + cachedResponseData.user.firstname || cachedResponseData.user.name || cachedResponseData.user.email;
+        if (cachedResponseData && cachedResponseData.user) welcomeMessage = 'Welcome back ' + (cachedResponseData.user.firstname || cachedResponseData.user.name || cachedResponseData.user.email);
         console.log({ fetchResponse: fetchResponse, cachedResponseData: cachedResponseData });
         if (!notificationsSettings.hide_login_notification) {
           dispatch(_notification2.default.createNotification({ text: welcomeMessage, timeout: 4000, type: 'success' }));
