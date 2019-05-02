@@ -28,20 +28,20 @@ self.__precacheManifest = [
     "url": "/extensions/periodicjs.ext.reactapp/static/js/main.9a2a95f5.js"
   },
   {
-    "revision": "d41f55a78e6f49a5512878df1737e58a",
-    "url": "/extensions/periodicjs.ext.reactapp/static/media/slick.d41f55a7.ttf"
-  },
-  {
-    "revision": "f97e3bbf73254b0112091d0192f17aec",
-    "url": "/extensions/periodicjs.ext.reactapp/static/media/slick.f97e3bbf.svg"
-  },
-  {
     "revision": "ced611daf7709cc778da928fec876475",
     "url": "/extensions/periodicjs.ext.reactapp/static/media/slick.ced611da.eot"
   },
   {
     "revision": "b7c9e1e479de3b53f1e4e30ebac2403a",
     "url": "/extensions/periodicjs.ext.reactapp/static/media/slick.b7c9e1e4.woff"
+  },
+  {
+    "revision": "f97e3bbf73254b0112091d0192f17aec",
+    "url": "/extensions/periodicjs.ext.reactapp/static/media/slick.f97e3bbf.svg"
+  },
+  {
+    "revision": "d41f55a78e6f49a5512878df1737e58a",
+    "url": "/extensions/periodicjs.ext.reactapp/static/media/slick.d41f55a7.ttf"
   },
   {
     "revision": "92dd19fd39a8e7acac8960153b1efe59",
