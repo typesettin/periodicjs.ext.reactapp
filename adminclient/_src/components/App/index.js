@@ -361,7 +361,7 @@ var reduxActions = {
     return _stores2.default.dispatch(_actions2.default.user.authenticatedMFA());
   },
   refresh: function refresh() {
-    return _stores2.default.dispatch((0, _reactRouterRedux.push)(window.location.pathname));
+    return _stores2.default.dispatch((0, _reactRouterRedux.push)(window.location.pathname + window.location.search));
   },
   reduxRouter: {
     push: function push(location) {
