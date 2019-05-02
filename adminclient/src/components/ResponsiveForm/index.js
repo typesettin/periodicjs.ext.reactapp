@@ -257,6 +257,16 @@ class ResponsiveForm extends Component{
       fetchPostBody = updatedFormBody.fetchPostBody;
       fetchOptions = updatedFormBody.fetchOptions;
       // console.log({ headers }, 'fetchOptions.options', fetchOptions.options);
+
+      if (this.props._onSubmit) {
+        try {
+          const clickFunc = Function('formdata', '"use strict";' + this.props._onSubmit);
+          clickFunc.call(this, formdata);
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
       fetch(
         this.getFormSumitUrl(`${fetchOptions.url}${
           ((isGetRequest || this.props.stringifyBody) && fetchOptions.url.indexOf('?') !== -1)
@@ -276,7 +286,7 @@ class ResponsiveForm extends Component{
             if (fetchOptions.success) {
               formSubmitNotification({ fetchOptions, __formStateUpdate, });
             } 
-            if (fetchOptions.successCallback || fetchOptions.responseCallback) {
+            if (fetchOptions.successCallback || fetchOptions.responseCallback || this.props._onResponse) {
               let successCallback = (fetchOptions.successCallback)
                 ? getCBFromString(fetchOptions.successCallback)
                 : false;
@@ -285,6 +295,14 @@ class ResponsiveForm extends Component{
                 : false;
               res.json()
                 .then(successData => {
+                  if (this.props._onResponse) {
+                    try {
+                      const clickFunc = Function('response', '"use strict";' + this.props._onResponse);
+                      clickFunc.call(this, successData);
+                    } catch (error) {
+                      console.error(error);
+                    }
+                  }
                   if (successData && (typeof successData.successCallback === 'string' || (Array.isArray(successData.successCallback) && successData.successCallback.length))) {
                     successCallback = getCBFromString(successData.successCallback);
                   }

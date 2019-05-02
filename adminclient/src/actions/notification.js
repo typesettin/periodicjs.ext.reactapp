@@ -5,7 +5,7 @@ const generateNotificationID = () => {
 };
 
 const notification = {
-  hideNotification(id) {
+  hideNotification(id='last') {
     return {
       type: constants.notification.HIDE_NOTIFICATION,
       payload: { id, },
@@ -50,7 +50,7 @@ const notification = {
       dispatch(this.showNotification(Object.assign({}, options, { id: ID, })));
     };
   },
-  hideModal(id) {
+  hideModal(id='last') {
     return {
       type: constants.notification.HIDE_MODAL,
       payload: { id, },
