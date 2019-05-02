@@ -19,7 +19,9 @@ var generateNotificationID = function generateNotificationID() {
 };
 
 var notification = {
-  hideNotification: function hideNotification(id) {
+  hideNotification: function hideNotification() {
+    var id = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'last';
+
     return {
       type: _constants2.default.notification.HIDE_NOTIFICATION,
       payload: { id: id }
@@ -66,7 +68,9 @@ var notification = {
       dispatch(_this2.showNotification((0, _assign2.default)({}, options, { id: ID })));
     };
   },
-  hideModal: function hideModal(id) {
+  hideModal: function hideModal() {
+    var id = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'last';
+
     return {
       type: _constants2.default.notification.HIDE_MODAL,
       payload: { id: id }

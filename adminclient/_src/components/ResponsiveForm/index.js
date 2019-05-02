@@ -317,15 +317,33 @@ var ResponsiveForm = function (_Component) {
         fetchPostBody = updatedFormBody.fetchPostBody;
         fetchOptions = updatedFormBody.fetchOptions;
         // console.log({ headers }, 'fetchOptions.options', fetchOptions.options);
+
+        if (this.props._onSubmit) {
+          try {
+            var clickFunc = Function('formdata', '"use strict";' + this.props._onSubmit);
+            clickFunc.call(this, formdata);
+          } catch (error) {
+            console.error(error);
+          }
+        }
+
         fetch(this.getFormSumitUrl('' + fetchOptions.url + ((isGetRequest || this.props.stringifyBody) && fetchOptions.url.indexOf('?') !== -1 ? '&' : fetchOptions.url.indexOf('?') === -1 ? '?' : '') + (isGetRequest || this.props.stringifyBody ? _querystring2.default.stringify(submitFormData) : ''), fetchOptions.params, formdata), fetchOptions.options).then(_util2.default.checkStatus).then(function (res) {
           try {
             if (fetchOptions.success) {
               formSubmitNotification({ fetchOptions: fetchOptions, __formStateUpdate: __formStateUpdate });
             }
-            if (fetchOptions.successCallback || fetchOptions.responseCallback) {
+            if (fetchOptions.successCallback || fetchOptions.responseCallback || _this2.props._onResponse) {
               var successCallback = fetchOptions.successCallback ? getCBFromString(fetchOptions.successCallback) : false;
               var responseCallback = fetchOptions.responseCallback ? getCBFromString(fetchOptions.responseCallback) : false;
               res.json().then(function (successData) {
+                if (_this2.props._onResponse) {
+                  try {
+                    var _clickFunc = Function('response', '"use strict";' + _this2.props._onResponse);
+                    _clickFunc.call(_this2, successData);
+                  } catch (error) {
+                    console.error(error);
+                  }
+                }
                 if (successData && (typeof successData.successCallback === 'string' || Array.isArray(successData.successCallback) && successData.successCallback.length)) {
                   successCallback = getCBFromString(successData.successCallback);
                 }
