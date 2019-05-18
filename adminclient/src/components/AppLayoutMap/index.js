@@ -32,6 +32,7 @@ import DynamicComponent from '../DynamicComponent';
 import ResponsiveTabs from '../ResponsiveTabs';
 import ResponsiveBar from '../ResponsiveBar';
 import ResponsiveLink from '../ResponsiveLink';
+import ResponsiveLogs from '../AppSectionLoading/log';
 import ResponsiveIFrame from '../ResponsiveIFrame';
 import ResponsiveButton from '../ResponsiveButton';
 import ResponsiveSteps from '../ResponsiveSteps';
@@ -133,6 +134,7 @@ export function getFunctionFromProps(options) {
 export let AppLayoutMap = Object.assign({}, { victory,
   recharts, ResponsiveForm, DynamicLayout, DynamicComponent, DynamicForm, RawOutput, RawStateOutput, FormItem, MenuAppLink, SubMenuLinks, ResponsiveTable, ResponsiveCard, DynamicChart, /* DynamicResponsiveChart,*/ ResponsiveBar, ResponsiveTabs, ResponsiveDatalist, CodeMirror, Range, Slider, GoogleMap, Carousel, PreviewEditor, ResponsiveSteps, /* Editor,*/
   ResponsiveLink,
+  ResponsiveLogs,
   ResponsiveButton,
   ResponsiveIFrame,
   MaskedInput,
