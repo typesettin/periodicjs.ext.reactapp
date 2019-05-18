@@ -205,7 +205,7 @@ var packageJSON = {
     test: 'react-scripts test --env=jsdom',
     eject: 'react-scripts eject'
   },
-  proxy: 'https://local-app.jewelml.io:8900',
+  proxy: 'https://local-trainer.jewelml.io:8600',
   homepage: '/extensions/periodicjs.ext.reactapp',
   browserslist: ['>0.2%', 'not dead', 'not ie <= 11', 'not op_mini all']
 };

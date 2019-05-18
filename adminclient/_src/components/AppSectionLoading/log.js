@@ -44,6 +44,10 @@ var _styles = require('../../styles');
 
 var _styles2 = _interopRequireDefault(_styles);
 
+var _moment = require('moment');
+
+var _moment2 = _interopRequireDefault(_moment);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Logs = function (_Component) {
@@ -56,7 +60,7 @@ var Logs = function (_Component) {
     // console.debug({ props });
 
 
-    _this.state = (0, _assign2.default)({ replcommand: '' }, props);
+    _this.state = (0, _assign2.default)({ replcommand: '' }, props, props.useGetState ? props.getState() : {});
     _this.getRenderedComponent = _AppLayoutMap.getRenderedComponent.bind(_this);
     _this.handleClick = _this.handleClick.bind(_this);
     _this.handleKeyPress = _this.handleKeyPress.bind(_this);
@@ -68,8 +72,32 @@ var Logs = function (_Component) {
   (0, _createClass3.default)(Logs, [{
     key: 'componentWillReceiveProps',
     value: function componentWillReceiveProps(nextProps) {
-      // console.log('componentWillReceiveProps nextProps', nextProps);
-      this.setState(nextProps);
+      // console.log('componentWillReceiveProps nextProps.log', nextProps.log);
+      this.setState({ log: nextProps.log });
+    }
+  }, {
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      this.useSocketMessages();
+    }
+  }, {
+    key: 'useSocketMessages',
+    value: function useSocketMessages() {
+      var _this2 = this;
+
+      if (this.props.useMountedSocket) {
+        var initState = this.props.getState();
+        var socket = initState.dynamic.socket;
+        // console.debug({socket});
+        socket.onevent = function (packet) {
+          var newState = _this2.props.getState();
+          var newlog = newState.log;
+          // console.log({ packet, newlog });
+          _this2.setState({
+            log: newlog
+          });
+        };
+      }
     }
   }, {
     key: 'handleClick',
@@ -100,28 +128,60 @@ var Logs = function (_Component) {
   }, {
     key: 'render',
     value: function render() {
-      var _this2 = this;
+      var _this3 = this;
 
-      var logs = this.state.log.logs && this.state.log.logs.length > 0 ? this.state.log.logs.map(function (log, key) {
-        return _react2.default.createElement(
+      var logs = this.state.log && this.state.log.logs && this.state.log.logs.length > 0 ? this.state.log.logs.map(function (log, key) {
+        function getMSG(log) {
+          return log.meta && typeof log.meta !== 'string' && log.meta.component ? this.getRenderedComponent(log.meta) : typeof log.meta === 'string' ? log.meta : log.meta ? (0, _stringify2.default)(log.meta, null, 2) : null;
+        }
+        return _this3.props.showLogs ? _react2.default.createElement(
+          _reBulma.Notification,
+          { color: log.type },
+          _react2.default.createElement(
+            'div',
+            null,
+            _react2.default.createElement(
+              _reBulma.Label,
+              null,
+              (0, _moment2.default)(log.date).format('l LTS')
+            ),
+            _react2.default.createElement(
+              'div',
+              null,
+              log.message
+            ),
+            _react2.default.createElement(
+              'div',
+              null,
+              getMSG(log)
+            )
+          )
+        ) : _react2.default.createElement(
           _reBulma.Message,
           {
             color: log.type,
             key: key,
             header: '' + log.date + (log.message ? ' - ' + log.message : ''),
             icon: 'fa fa-times' },
-          log.meta && typeof log.meta !== 'string' && log.meta.component ? _this2.getRenderedComponent(log.meta) : typeof log.meta === 'string' ? log.meta : log.meta ? (0, _stringify2.default)(log.meta, null, 2) : null
+          getMSG(log)
         );
       }) : null;
+      var closeButton = this.props.showLogs ? _react2.default.createElement('span', null) : _react2.default.createElement(
+        _reBulma.Button,
+        { icon: 'fa fa-times', onClick: this.handleClick },
+        ' Close '
+      );
       // this.getRenderedComponent(formElement.value, undefined, true)
-      return this.state.log.showLogs ? _react2.default.createElement(
+      return this.props.showLogs || this.state.log.showLogs ? _react2.default.createElement(
         'div',
-        { style: (0, _assign2.default)({ padding: '1rem' }, _styles2.default.fullHeight, _styles2.default.mainContainer, _styles2.default.sidebarContainer, { position: 'absolute', width: '40%' }),
-          className: this.state.log.showLogs ? 'animated fadeInLeft Nav-Sidebar-Speed  __ra_l_s' : 'animated slideOutLeft Nav-Sidebar-Speed  __ra_l_s' },
+        { style: this.props.showLogs ? (0, _assign2.default)({ padding: '1rem', width: '100%' }, _styles2.default.fullHeight, _styles2.default.mainContainer, {
+            margin: 0
+          }) : (0, _assign2.default)({ padding: '1rem' }, _styles2.default.fullHeight, _styles2.default.mainContainer, _styles2.default.sidebarContainer, { position: 'absolute', width: '40%' }),
+          className: this.props.showLogs || this.state.log.showLogs ? 'animated fadeInLeft Nav-Sidebar-Speed  __ra_l_s' : 'animated slideOutLeft Nav-Sidebar-Speed  __ra_l_s' },
         _react2.default.createElement(
           'div',
           { style: (0, _assign2.default)({
-              position: 'fixed',
+              position: this.props.showLogs ? undefined : 'fixed',
               height: '100%',
               overflowY: 'auto',
               width: '96%'
@@ -138,7 +198,7 @@ var Logs = function (_Component) {
                 _reBulma.Addons,
                 null,
                 _react2.default.createElement(_reBulma.Input, { value: this.state.replcommand, onKeyPress: this.handleKeyPress, onChange: function onChange(event) {
-                    _this2.setCommand(event.target.value);
+                    _this3.setCommand(event.target.value);
                   }, style: { width: '100%' } }),
                 _react2.default.createElement(
                   _reBulma.Button,
@@ -150,11 +210,7 @@ var Logs = function (_Component) {
             _react2.default.createElement(
               _reBulma.Column,
               { size: 'isNarrow' },
-              _react2.default.createElement(
-                _reBulma.Button,
-                { icon: 'fa fa-times', onClick: this.handleClick },
-                ' Close '
-              )
+              closeButton
             )
           ),
           logs
