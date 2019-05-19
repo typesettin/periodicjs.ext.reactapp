@@ -260,6 +260,7 @@ class ResponsiveForm extends Component{
 
       if (this.props._onSubmit) {
         try {
+          // eslint-disable-next-line
           const clickFunc = Function('formdata', '"use strict";' + this.props._onSubmit);
           clickFunc.call(this, formdata);
         } catch (error) {
@@ -297,6 +298,7 @@ class ResponsiveForm extends Component{
                 .then(successData => {
                   if (this.props._onResponse) {
                     try {
+                      // eslint-disable-next-line
                       const clickFunc = Function('response', '"use strict";' + this.props._onResponse);
                       clickFunc.call(this, successData);
                     } catch (error) {

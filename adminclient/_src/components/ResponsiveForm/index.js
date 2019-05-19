@@ -320,6 +320,7 @@ var ResponsiveForm = function (_Component) {
 
         if (this.props._onSubmit) {
           try {
+            // eslint-disable-next-line
             var clickFunc = Function('formdata', '"use strict";' + this.props._onSubmit);
             clickFunc.call(this, formdata);
           } catch (error) {
@@ -338,6 +339,7 @@ var ResponsiveForm = function (_Component) {
               res.json().then(function (successData) {
                 if (_this2.props._onResponse) {
                   try {
+                    // eslint-disable-next-line
                     var _clickFunc = Function('response', '"use strict";' + _this2.props._onResponse);
                     _clickFunc.call(_this2, successData);
                   } catch (error) {

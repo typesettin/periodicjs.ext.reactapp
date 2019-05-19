@@ -785,7 +785,9 @@ var ResponsiveTable = function (_Component) {
           if (this.props.__tableOptions) {
             rowdata = Array.isArray(this.props.__tableOptions[header.sortid][options.rowIndex]) ? this.props.__tableOptions[header.sortid][options.rowIndex] : Array.isArray(this.props.__tableOptions[header.sortid]) ? this.props.__tableOptions[header.sortid] : [];
           }
-          return _react2.default.createElement(_ResponsiveDatalist2.default, (0, _extends3.default)({
+          return _react2.default.createElement(_ResponsiveDatalist2.default
+          // value={value}
+          , (0, _extends3.default)({
             getState: this.props.getState.bind(this),
             value: value
           }, header.datalistProps, {
@@ -937,9 +939,7 @@ var ResponsiveTable = function (_Component) {
           //     this.updateNewRowText({ name, text, });
           //   }.bind(this)
           // };
-          return _react2.default.createElement(_ResponsiveDatalist2.default
-          // value={value}
-          , (0, _extends3.default)({}, this.props, {
+          return _react2.default.createElement(_ResponsiveDatalist2.default, (0, _extends3.default)({}, this.props, {
             datalistdata: rowdata,
             onChange: function onChange(event) {
               // console.log('inside this.props', this.props);
