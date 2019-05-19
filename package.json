@@ -91,6 +91,7 @@
     "babel-preset-react": "^6.23.0",
     "babel-register": "^6.23.0",
     "browserify": "^13.0.0",
+    "bcrypt": "^3.0.6",
     "chai": "^3.0.0",
     "chai-as-promised": "^6.0.0",
     "coveralls": "^2.11.9",
@@ -156,5 +157,5 @@
     "ssr_build": "babel adminclient/src -d adminclient/_src --ignore adminclient/src/components/RACodeMirror/",
     "test": "mocha -R spec --recursive"
   },
-  "version": "12.3.8"
+  "version": "12.3.9"
 }
