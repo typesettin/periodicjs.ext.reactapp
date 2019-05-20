@@ -180,7 +180,7 @@ var packageJSON = {
     'rc-switch': '1.5.3',
     'rc-table': '5.6.7',
     'rc-tree': '1.7.4',
-    're-bulma': '0.4.6',
+    're-bulma': '^0.4.3',
     react: '15.3.2',
     'react-codemirror': '0.3.0',
     'react-dom': '15.3.2',

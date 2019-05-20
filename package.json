@@ -53,7 +53,7 @@
     "rc-switch": "1.5.3",
     "rc-table": "5.6.7",
     "rc-tree": "1.7.4",
-    "re-bulma": "0.4.3",
+    "re-bulma": "^0.4.3",
     "react": "15.3.2",
     "react-dom": "15.3.2",
     "react-file-reader-input": "1.1.0",
@@ -157,5 +157,5 @@
     "ssr_build": "babel adminclient/src -d adminclient/_src --ignore adminclient/src/components/RACodeMirror/",
     "test": "mocha -R spec --recursive"
   },
-  "version": "12.3.91"
+  "version": "12.3.92"
 }
